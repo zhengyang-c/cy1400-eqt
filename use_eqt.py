@@ -19,12 +19,12 @@ import copy
 
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
-query_station_day = ["TA01_2020_085"] # some day autogenerate this lol
+query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(84, 86)] # some day autogenerate this lol
 mseed_parent_folder_name = "EOS_MSEED"
-data_parent_folder_name = "EOS_SAC" # what folder structure am i uh using 
+data_parent_folder_name = "/home/zchoong001/TA01/preprocessed/TA01" # what folder structure am i uh using 
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
-detection_folder_name = "detections 20210113 1413"
+detection_folder_name = "detections 20210116 2311"
 
 # generate stations.json for a single station
 

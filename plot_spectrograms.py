@@ -150,8 +150,10 @@ for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
 			_f, _t, _Sxx = signal.spectrogram(_st[n].data, fs = _st[0].stats.sampling_rate)
 			#print()
 			axs[0, n].set_title(_st[n].stats.channel)
+
 			axs[1, n].pcolormesh(_t, _f, _Sxx, shading = 'gouraud', cmap = 'viridis')
 			axs[1, n].set_xlabel("Time relative to P-wave arrival")
+			axs[1, n].set_ylim(1, 45)
 
 		# plot 
 

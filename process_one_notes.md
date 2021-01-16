@@ -215,3 +215,22 @@ https://docs.obspy.org/packages/autogen/obspy.signal.trigger.coincidence_trigger
 
 
 need HPC support to fix something 
+
+# changing thresholds:
+
+
+```
+thresholds = [(0.8, 0.4, 0.4), (0.6, 0.4, 0.4), (0.6, 0.15, 0.15), (0.2, 0.1, 0.1), (0.15, 0.05, 0.05)]
+
+
+   16 detection 20210116_0/TA01_outputs/X_prediction_results.csv
+   17 detection 20210116_1/TA01_outputs/X_prediction_results.csv
+   19 detection 20210116_2/TA01_outputs/X_prediction_results.csv
+   19 detection 20210116_3/TA01_outputs/X_prediction_results.csv
+   20 detection 20210116_4/TA01_outputs/X_prediction_results.csv
+
+```
+
+some of them don't have p_arrival picks heh so probably not reliable
+
+and I think the current thresholds are probably ok
