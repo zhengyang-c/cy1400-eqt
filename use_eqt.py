@@ -1,4 +1,4 @@
-from EQTransformer.core.predictor import predictor
+#from EQTransformer.core.predictor import predictor
 from EQTransformer.utils.hdf5_maker import preprocessor
 import obspy
 from obspy import read
@@ -6,6 +6,7 @@ import numpy as np
 import os
 import math
 import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from datetime import datetime
 from helpme import *
@@ -20,8 +21,9 @@ import copy
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
 query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(84, 86)] # some day autogenerate this lol
+#print(query_station_day)
 mseed_parent_folder_name = "EOS_MSEED"
-data_parent_folder_name = "/home/zchoong001/TA01/preprocessed/TA01" # what folder structure am i uh using 
+data_parent_folder_name = "/home/zchoong001/TA01/preprocessed" # what folder structure am i uh using 
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
 detection_folder_name = "detections 20210116 2311"
@@ -94,7 +96,7 @@ for folder in folders:
 	all_files.append((sta, files))
 		
 
-#print(all_files)
+print(all_files)
 # convert them to MSEED format using OBSPY
 for _station, _all_days in all_files:
 	for year_day in _all_days:
@@ -103,7 +105,7 @@ for _station, _all_days in all_files:
 			# month
 			_month = datetime.datetime.strptime(_file.split(".")[6], "%j").strftime("%m")
 
-			_mseed_file_name = "AC__{}__{}__{}__{}.mseed".format(_file.split(".")[5], _month, _station, _file.split(".")[3]) # 3: channel
+			_mseed_file_name = "AC__{}__{}__{}__{}__{}.mseed".format(_file.split(".")[5], _month, _station, _file.split(".")[3], year_day.split("_")[1]) # 3: channel
 			# AC__2020__03__TA01__EHZ i think??
 			# if mseed file is written already, don't bother 
 			# TODO: add a flag to force writing (?) no point tbh
