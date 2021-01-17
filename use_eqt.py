@@ -109,17 +109,15 @@ for folder in folders:
 
 
 for _station, _all_days in all_files:
-	#print(_all_days)
+	
 	valid_days = []
 	for day in _all_days:
 		if not "{}_{}".format(_station, day) in query_station_day:
 			continue
 		valid_days.append(day)
-	#print(valid_days)
+
 
 	valid_days.sort(key = lambda x: (x.split("_")[0], x.split("_")[1]))
-
-
 
 	# for every listed file in the year list, merge all matching files in the SAC folder 
 
@@ -128,9 +126,9 @@ for _station, _all_days in all_files:
 		for c, valid_day in enumerate(valid_days):
 			_file_name = "AC.{}.00.{}.D.{}.{}.*".format(_station, _channel, valid_day.split("_")[0], valid_day.split("_")[1] )
 			if c == 0:
-				_st = read(os.path.join(data_parent_folder_name,_station,_file_name))
+				_st = read(os.path.join(data_parent_folder_name, _station, _file_name))
 			else:
-				_st += read(os.path.join(data_parent_folder_name,_station,_file_name))
+				_st += read(os.path.join(data_parent_folder_name, _station, _file_name))
 				#print("yes but ", _file_name)
 
 		_st.merge(method = 1) 
