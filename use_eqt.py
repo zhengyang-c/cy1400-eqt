@@ -1,7 +1,7 @@
 import matplotlib
 matplotlib.use('TkAgg')
-from EQTransformer.core.predictor import predictor
-from EQTransformer.utils.hdf5_maker import preprocessor
+#from EQTransformer.core.predictor import predictor
+#from EQTransformer.utils.hdf5_maker import preprocessor
 import obspy
 from obspy import read
 import numpy as np
@@ -21,10 +21,15 @@ import copy
 
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
-query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(84, 86)] # some day autogenerate this lol
+
+start_day, end_day = 84, 114
+
+query_station_day = ["TA01_2020{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
+
+query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
 mseed_parent_folder_name = "EOS_MSEED"
-data_parent_folder_name = "/home/zchoong001/TA01/preprocessed" # what folder structure am i uh using 
+data_parent_folder_name = "EOS_SAC" # what folder structure am i uh using 
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
 detection_folder_name = "17_jan_detections"
@@ -97,17 +102,63 @@ for folder in folders:
 	all_files.append((sta, files))
 		
 
-print(all_files)
+#print(all_files)
 # convert them to MSEED format using OBSPY
+#for _station, _all_days in all_files:
+
+
+
 for _station, _all_days in all_files:
+	#print(_all_days)
+	valid_days = []
+	for day in _all_days:
+		if not "{}_{}".format(_station, day) in query_station_day:
+			continue
+		valid_days.append(day)
+	#print(valid_days)
+
+	valid_days.sort(key = lambda x: (x.split("_")[0], x.split("_")[1]))
+
+
+
+	# for every listed file in the year list, merge all matching files in the SAC folder 
+
+	for _channel in ["EHE", "EHN", "EHZ"]:
+		output_file_name = "{}__{}__{}__{}__{}.mseed".format("AC", valid_days[0].split("_")[0], valid_days[0].split("_")[1], _station, _channel)
+		for c, valid_day in enumerate(valid_days):
+			_file_name = "AC.{}.00.{}.D.{}.{}.*".format(_station, _channel, valid_day.split("_")[0], valid_day.split("_")[1] )
+			if c == 0:
+				_st = read(os.path.join(data_parent_folder_name,_station,_file_name))
+			else:
+				_st += read(os.path.join(data_parent_folder_name,_station,_file_name))
+				#print("yes but ", _file_name)
+
+		_st.merge(method = 1) 
+		# documented at https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.__add__.html#handling-overlaps
+		# this will prioritise the newer trace in the case of an overlap
+
+		# just take the year and month of the first day because i'm not bothered enough right now
+		
+		if not os.path.exists(os.path.join(mseed_parent_folder_name, _station, output_file_name)):
+			_st.write(os.path.join(mseed_parent_folder_name, _station, output_file_name))
+
+		_st.clear()
+
+
+"""for _station, _all_days in all_files:
 	for year_day in _all_days:
 		for _file in _all_days[year_day]:
+
+			# read in all SAC files of the same channel, put them in the same stream, then 
+			# then merge them lol
+			# https://docs.obspy.org/packages/autogen/obspy.core.stream.Stream.merge.html#obspy.core.stream.Stream.merge
+			# https://docs.obspy.org/packages/autogen/obspy.core.trace.Trace.__add__.html#handling-overlaps
 
 			# month
 			_month = datetime.datetime.strptime(_file.split(".")[6], "%j").strftime("%m")
 
-			_mseed_file_name = "AC__{}__{}__{}__{}__{}.mseed".format(_file.split(".")[5], _month, _station, _file.split(".")[3], year_day.split("_")[1]) # 3: channel
-			# AC__2020__03__TA01__EHZ i think??
+			_mseed_file_name = "AC__{}__{}__{}__{}.mseed".format(_file.split(".")[5], _month, _station, _file.split(".")[3]) # 3: channel
+			# AC__2020__03__TA01__EHZ__085 i think??
 			# if mseed file is written already, don't bother 
 			# TODO: add a flag to force writing (?) no point tbh
 			if os.path.isfile(os.path.join(mseed_parent_folder_name, _station, _mseed_file_name)):
@@ -120,15 +171,15 @@ for _station, _all_days in all_files:
 			if not os.path.exists(os.path.join(mseed_parent_folder_name, _station)):
 				os.makedirs(os.path.join(mseed_parent_folder_name, _station))
 
-			_st.write(os.path.join(mseed_parent_folder_name, _station, _mseed_file_name), format = 'MSEED')
+			#_st.write(os.path.join(mseed_parent_folder_name, _station, _mseed_file_name), format = 'MSEED')
+"""
 
-
-if not os.path.exists(mseed_hdfs):
-	preprocessor(mseed_dir=mseed_parent_folder_name, stations_json= station_json_output, overlap=0.3, n_processor=4)
+#if not os.path.exists(mseed_hdfs):
+preprocessor(mseed_dir=mseed_parent_folder_name, stations_json= station_json_output, overlap=0.3, n_processor=4)
 
 # this is quite sketchy hmm
 if not os.path.exists(detection_folder_name):
-	predictor(input_dir = mseed_hdfs, input_model = eqt_model_path, output_dir=detection_folder_name, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, number_of_plots=50, plot_mode='time')
+	predictor(input_dir = mseed_hdfs, input_model = eqt_model_path, output_dir=detection_folder_name, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, number_of_plots=100, plot_mode='time')
 
 # read CSV to cut SAC files into smaller folders and stuff
 
