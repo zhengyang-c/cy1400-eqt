@@ -1,13 +1,14 @@
-#from EQTransformer.core.predictor import predictor
+import matplotlib
+matplotlib.use('TkAgg')
+from EQTransformer.core.predictor import predictor
 from EQTransformer.utils.hdf5_maker import preprocessor
 import obspy
 from obspy import read
 import numpy as np
 import os
 import math
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+#import matplotlib
+#import matplotlib.pyplot as plt
 from datetime import datetime
 from helpme import *
 import sys
@@ -26,7 +27,7 @@ mseed_parent_folder_name = "EOS_MSEED"
 data_parent_folder_name = "/home/zchoong001/TA01/preprocessed" # what folder structure am i uh using 
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
-detection_folder_name = "detections 20210116 2311"
+detection_folder_name = "17_jan_detections"
 
 # generate stations.json for a single station
 
@@ -147,7 +148,7 @@ for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
 		
 	pick_date_times = []
 
-	for p_arrival in df['p_arrival_time']:
+	for p_arrival in df['event_start_time']:
 		pick_date_times.append(datetime.datetime.strptime(p_arrival.split(".")[0], "%Y-%m-%d %H:%M:%S"))
 
 	#for p_arrival in pick_date_times:
