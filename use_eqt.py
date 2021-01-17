@@ -29,10 +29,14 @@ query_station_day = ["TA01_2020{}".format(str(i).zfill(3)) for i in range(start_
 query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
 mseed_parent_folder_name = "EOS_MSEED"
-data_parent_folder_name = "EOS_SAC" # what folder structure am i uh using 
+#data_parent_folder_name = "EOS_SAC"
+data_parent_folder_name = "../../TA01/preprocessed"
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
 detection_folder_name = "17_jan_detections"
+
+if not os.path.exists(mseed_parent_folder_name):
+	os.makedirs(mseed_parent_folder_name)
 
 # generate stations.json for a single station
 
@@ -109,7 +113,7 @@ for folder in folders:
 
 
 for _station, _all_days in all_files:
-	
+
 	valid_days = []
 	for day in _all_days:
 		if not "{}_{}".format(_station, day) in query_station_day:
@@ -136,6 +140,9 @@ for _station, _all_days in all_files:
 		# this will prioritise the newer trace in the case of an overlap
 
 		# just take the year and month of the first day because i'm not bothered enough right now
+
+		if not os.path.exists(os.path.join(mseed_parent_folder_name, _station)):
+			os.makedirs(os.path.join(mseed_parent_folder_name, _station))
 		
 		if not os.path.exists(os.path.join(mseed_parent_folder_name, _station, output_file_name)):
 			_st.write(os.path.join(mseed_parent_folder_name, _station, output_file_name))
