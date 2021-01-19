@@ -1,7 +1,7 @@
 import matplotlib
-matplotlib.use('TkAgg')
-#from EQTransformer.core.predictor import predictor
-#from EQTransformer.utils.hdf5_maker import preprocessor
+#matplotlib.use('TkAgg')
+from EQTransformer.core.predictor import predictor
+from EQTransformer.utils.hdf5_maker import preprocessor
 import obspy
 from obspy import read
 import numpy as np
@@ -22,18 +22,22 @@ import copy
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
 
-start_day, end_day = 84, 114
+start_day, end_day = 85, 115
 
-query_station_day = ["TA01_2020{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
+query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
+query_station_day.extend(["TA02_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)])
 
-query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
-#print(query_station_day)
-mseed_parent_folder_name = "EOS_MSEED"
+#query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
+print(query_station_day)
+
+run_string = "18_jan_multistation_2"
+
+mseed_parent_folder_name = "mseed_" +  run_string
 #data_parent_folder_name = "EOS_SAC"
-data_parent_folder_name = "../../TA01/preprocessed"
+data_parent_folder_name = "../../EOS_SAC/"
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
-detection_folder_name = "17_jan_detections"
+detection_folder_name = "detections_" + run_string
 
 if not os.path.exists(mseed_parent_folder_name):
 	os.makedirs(mseed_parent_folder_name)
@@ -124,6 +128,8 @@ for _station, _all_days in all_files:
 	valid_days.sort(key = lambda x: (x.split("_")[0], x.split("_")[1]))
 
 	# for every listed file in the year list, merge all matching files in the SAC folder 
+
+	print(valid_days)
 
 	for _channel in ["EHE", "EHN", "EHZ"]:
 		output_file_name = "{}__{}__{}__{}__{}.mseed".format("AC", valid_days[0].split("_")[0], valid_days[0].split("_")[1], _station, _channel)
