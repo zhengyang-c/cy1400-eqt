@@ -23,14 +23,21 @@ coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
 
 start_day, end_day = 85, 115
+stations_to_use = ["TA{}".format(str(i).zfill(2)) for i in range(1, 20)]
+query_station_day = []
 
-query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
-query_station_day.extend(["TA02_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)])
+for i in stations_to_use:
+	for day in range(start_day, end_day):
+		query_station_day.append("{}_2020_{}".format(i, str(day).zfill(3))) # the year lol
+#print(query_station_day)
+
+#query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
+#query_station_day.extend(["TA02_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)])
 
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
-print(query_station_day)
+#print(query_station_day)
 
-run_string = "18_jan_multistation_2"
+run_string = "19_jan_TA01-TA19"
 
 mseed_parent_folder_name = "mseed_" +  run_string
 #data_parent_folder_name = "EOS_SAC"
