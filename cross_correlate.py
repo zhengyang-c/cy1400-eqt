@@ -1,7 +1,7 @@
 import obspy
 from obspy import read
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -22,11 +22,11 @@ from matplotlib.ticker import MaxNLocator
 # SAC files in 
 
 #sac_folder_name = r"imported_figures/2020_085-113_TA01_sac_picks"
-sac_folder_name = "17_jan_detections/TA01_outputs/sac_picks"
+sac_folder_name = "detections_20_jan_TA01-TA19"
 all_files = {} # organised by station, and then by day
 
 
-for _file in glob.glob("{}/*.SAC".format(sac_folder_name)):
+for _file in glob.glob("{}/*/sac_picks/*.SAC".format(sac_folder_name)):
 	#print(_file)	
 	sta = _file.split("/")[-1].split(".")[0]
 	year = _file.split(".")[1]
@@ -70,17 +70,17 @@ def do_the_cross(all_files):
 				continue
 			_image = np.zeros((len(list(all_files[_sta1])), len(list(all_files[_sta2]))))
 			for c1, _event1 in enumerate(all_files[_sta1]):
-				_filename1_z = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHZ", _event1.split(".")[2])))
-				_filename1_n = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHN", _event1.split(".")[2])))
-				_filename1_e = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHE", _event1.split(".")[2])))
+				_filename1_z = read(os.path.join(sac_folder_name, _sta1, "sac_picks", "{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHZ", _event1.split(".")[2])))
+				_filename1_n = read(os.path.join(sac_folder_name, _sta1, "sac_picks","{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHN", _event1.split(".")[2])))
+				_filename1_e = read(os.path.join(sac_folder_name, _sta1, "sac_picks","{}.{}.{}.{}.{}.SAC".format(_sta1, _event1.split(".")[0], str(_event1.split(".")[1]).zfill(3), "EHE", _event1.split(".")[2])))
 
 				for c2, _event2 in enumerate(all_files[_sta2]):
 					if c2 <= c1:
 						continue
 
-					_filename2_z = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHZ", _event2.split(".")[2])))
-					_filename2_n = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHN", _event2.split(".")[2])))
-					_filename2_e = read(os.path.join(sac_folder_name, "{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHE", _event2.split(".")[2])))
+					_filename2_z = read(os.path.join(sac_folder_name, _sta2, "sac_picks","{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHZ", _event2.split(".")[2])))
+					_filename2_n = read(os.path.join(sac_folder_name, _sta2, "sac_picks""{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHN", _event2.split(".")[2])))
+					_filename2_e = read(os.path.join(sac_folder_name, _sta2, "sac_picks""{}.{}.{}.{}.{}.SAC".format(_sta2, _event2.split(".")[0], str(_event2.split(".")[1]).zfill(3), "EHE", _event2.split(".")[2])))
 
 					corr_z = signal.correlate(_filename1_z[0].data, _filename2_z[0].data)
 					corr_n = signal.correlate(_filename1_n[0].data, _filename2_n[0].data)
