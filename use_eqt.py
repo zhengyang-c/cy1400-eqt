@@ -22,14 +22,14 @@ import copy
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
 
-start_day, end_day = 85, 115
-stations_to_use = ["TA{}".format(str(i).zfill(2)) for i in range(1, 20)]
+start_day, end_day = 85, 109
+stations_to_use = ["TA19"]
 query_station_day = []
 
 for i in stations_to_use:
 	for day in range(start_day, end_day):
 		query_station_day.append("{}_2020_{}".format(i, str(day).zfill(3))) # the year lol
-#print(query_station_day)
+
 
 #query_station_day = ["TA01_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)]
 #query_station_day.extend(["TA02_2020_{}".format(str(i).zfill(3)) for i in range(start_day, end_day)])
@@ -37,11 +37,11 @@ for i in stations_to_use:
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
 
-run_string = "19_jan_TA01-TA19"
+run_string = "TA19_no_preproc"
 
 mseed_parent_folder_name = "mseed_" +  run_string
 #data_parent_folder_name = "EOS_SAC"
-data_parent_folder_name = "../../EOS_SAC/"
+data_parent_folder_name = "no_preproc"
 mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
 detection_folder_name = "detections_" + run_string
@@ -193,11 +193,11 @@ for _station, _all_days in all_files:
 """
 
 #if not os.path.exists(mseed_hdfs):
-preprocessor(mseed_dir=mseed_parent_folder_name, stations_json= station_json_output, overlap=0.3, n_processor=4)
+#preprocessor(mseed_dir=mseed_parent_folder_name, stations_json= station_json_output, overlap=0.3, n_processor=4)
 
 # this is quite sketchy hmm
-if not os.path.exists(detection_folder_name):
-	predictor(input_dir = mseed_hdfs, input_model = eqt_model_path, output_dir=detection_folder_name, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, number_of_plots=100, plot_mode='time')
+#if not os.path.exists(detection_folder_name):
+predictor(input_dir = mseed_hdfs, input_model = eqt_model_path, output_dir=detection_folder_name, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, number_of_plots=100, plot_mode='time')
 
 # read CSV to cut SAC files into smaller folders and stuff
 
