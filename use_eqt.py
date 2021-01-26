@@ -36,7 +36,7 @@ for i in stations_to_use:
 
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
-for run_i in range(10):
+for run_i in range(25):
 	run_string = "TA19_no_preproc_{}".format(run_i)
 
 	mseed_parent_folder_name = "mseed_" +  run_string
