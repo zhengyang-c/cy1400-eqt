@@ -37,14 +37,14 @@ for i in stations_to_use:
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
 for run_i in range(25):
-	run_string = "TA19_no_preproc_{}".format(run_i)
+	run_string = "TA19_no_preproc"
 
 	mseed_parent_folder_name = "mseed_" +  run_string
 	#data_parent_folder_name = "EOS_SAC"
 	data_parent_folder_name = "no_preproc"
 	mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
 	eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
-	detection_folder_name = "detections_" + run_string
+	detection_folder_name = "detections_" + run_string + "_{}".format(run_i)
 
 	if not os.path.exists(mseed_parent_folder_name):
 		os.makedirs(mseed_parent_folder_name)
