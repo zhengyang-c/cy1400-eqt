@@ -10,8 +10,8 @@ def main(input_file, *input_folders):
 	# input file: basically a log file as printed above, with one header row
 	# along with 4 columns, {$n, $timestamp.png, (1/0), (1/0) ... }
 
-	#print(input_file)
-	#print(input_folders[0])
+	print(input_file)
+	print(input_folders[0])
 
 	# input_folders: an ORDERED LIST of where the SAC files are 
 
