@@ -36,7 +36,8 @@ for i in stations_to_use:
 
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
-for run_i in range(25):
+
+def main(run_i)
 	run_string = "TA19_no_preproc_{}".format(run_i)
 
 	mseed_parent_folder_name = "mseed_" +  run_string
@@ -285,3 +286,10 @@ for run_i in range(25):
 
 	# and presumably also plot in mpl or something 
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('run_i', type = int)
+
+args = parser.parse_args()
+
+main(args.run_i)
