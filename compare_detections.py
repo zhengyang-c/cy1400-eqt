@@ -15,15 +15,16 @@ def main(output_file, *input_folder):
 
 	for f in input_folder[0]:
 		_indiv_set = set()
-		for event_name in glob.glob(os.path.join(f, "*.png")):
+		for event_name in glob.glob(os.path.join(f,"TA19_outputs","sac_picks", "*.png")):
 			name = event_name.split("/")[-1].split(".")
 			_name = event_name.split("/")[-1]
 			# check +/- 1 second
 			name1 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) + 1)
 			name2 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) - 1)
+			name3 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) - 2)
 			#print(name1)
 			#print(name2)
-			#if all([x not in global_list for x in [name1, name2, _name]]):
+#			if all([x not in global_list for x in [name1, name2, _name, name3]]):
 			global_list.add(_name)
 			_indiv_set.add(_name)
 		indiv_list.append(_indiv_set)
