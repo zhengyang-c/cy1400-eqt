@@ -18,6 +18,7 @@ import datetime
 import pandas as pd
 import glob
 import copy
+import argparse
 
 coordinates_doc = "station_info.dat"
 station_json_output = 'station_list.json'
@@ -37,18 +38,15 @@ for i in stations_to_use:
 #query_station_day = ["TA01_2020_085", "TA01_2020_086"] # some day autogenerate this lol
 #print(query_station_day)
 
-def main(run_i)
+def main(run_i):
 	run_string = "TA19_no_preproc"
-<<<<<<< HEAD
-
-=======
->>>>>>> f52db22214e22901b533fb8e058c83c8c5bcdd71
 	mseed_parent_folder_name = "mseed_" +  run_string
 	#data_parent_folder_name = "EOS_SAC"
 	data_parent_folder_name = "no_preproc"
 	mseed_hdfs = mseed_parent_folder_name + "_processed_hdfs"
-	eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
-	detection_folder_name = "detections_" + run_string + "_{}".format(run_i)
+#	eqt_model_path = 'EQTransformer/ModelsAndSampleData/EqT_model.h5'
+	eqt_model_path = 'EQTransformer/tests/test_trainer_outputs/final_model.h5'
+	detection_folder_name = "detections_model_ownself_" + run_string + "_{}".format(run_i)
 
 
 
