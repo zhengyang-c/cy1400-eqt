@@ -24,10 +24,11 @@ import time
 import os
 import shutil
 import multiprocessing
-from .EqT_utils import DataGenerator, _lr_schedule, cred2, PreLoadGenerator, data_reader
+from EQTransformer.core.EqT_utils import DataGenerator, _lr_schedule, cred2, PreLoadGenerator, data_reader
 import datetime
 from tqdm import tqdm
 from tensorflow.python.util import deprecation
+from keras.models import load_model
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 
@@ -274,7 +275,8 @@ def trainer(input_hdf5=None,
         save_dir, save_models=_make_dir(args['output_name'])
         training, validation=_split(args, save_dir)
         callbacks=_make_callback(args, save_models)
-        model=_build_model(args)
+        #model=_build_model(args)
+        model = load_model("EQTransformer/ModelsAndSampleData/EqT_model.h5")
         
         if args['gpuid']:           
             os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
