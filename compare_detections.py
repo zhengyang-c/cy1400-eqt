@@ -1,5 +1,7 @@
-# this will compare two lists:
-# how many items are unique to each list?
+# this will compare n lists, building a global list
+# used for comparing no. of detections across different runs
+# written to compare preproced/ not preprocessed, but can be used to
+# compare multiple runs as well
 
 import glob
 import os
