@@ -98,4 +98,4 @@ parser.add_argument("station_file") #station_info.dat
 args = parser.parse_args()
 
 #print(args.input_folder, args.csv_file, args.station_file)
-main(, args.csv_file, args.output_file, args.station_file)
+main(args.csv_file, args.output_file, args.station_file)
