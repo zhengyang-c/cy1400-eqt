@@ -21,7 +21,7 @@ def get_utc(x):
 		try: # this is pretty bad
 			return UTCDateTime(x) 
 		except: # checks for NaN
-			print(x)
+			#sprint(x)
 			return -1
 def get_day(x):
 	#print(x)

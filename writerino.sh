@@ -9,7 +9,7 @@ c=1
 #format_date
 for f in ${sac_files[@]} # f is a file name to read
 do 
-	echo "$1/sac_picks/${f%.EHZ.SAC}.*.SAC" # the file to read from sac
+	echo "$1/sac_picks/$f" # the file to read from sac
 
 	# 
 	p_time=$(cat $2 | awk -F "," '{print $3}' | sed -n "${c}p")
