@@ -99,4 +99,4 @@ parser.add_argument('output_folder')
 
 args = parser.parse_args()
 
-convert(args.station_info, args.json_output, args.input_folder, args.output_folder)
+convert(args.input_folder, args.output_folder)
