@@ -49,7 +49,9 @@ def convert(input_folder):
 
 	for _station, _all_days in all_files:
 
-		valid_days = _all_days
+		valid_days = []
+		for day in _all_days:
+			valid_days.append(day)
 
 		valid_days.sort(key = lambda x: (x.split("_")[0], x.split("_")[1]))
 
