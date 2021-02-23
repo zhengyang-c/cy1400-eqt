@@ -25,6 +25,8 @@ import os
 import shutil
 import multiprocessing
 from EQTransformer.core.EqT_utils import DataGenerator, _lr_schedule, cred2, PreLoadGenerator, data_reader
+from EQTransformer.core.EqT_utils import SeqSelfAttention, LayerNormalization, FeedForward, f1
+
 import datetime
 from tqdm import tqdm
 from tensorflow.python.util import deprecation
@@ -275,9 +277,12 @@ def trainer(input_hdf5=None,
         save_dir, save_models=_make_dir(args['output_name'])
         training, validation=_split(args, save_dir)
         callbacks=_make_callback(args, save_models)
-        #model=_build_model(args)
-        model = load_model("EQTransformer/ModelsAndSampleData/EqT_model.h5")
-        
+        ##model=_build_model(args)
+        #model = load_model("/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5")
+        _dependencies = {'SeqSelfAttention': SeqSelfAttention, 'LayerNormalization': LayerNormalization, 'FeedForward': FeedForward, 'f1':f1}
+        model = load_model('/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5', custom_objects = _dependencies)
+
+       
         if args['gpuid']:           
             os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
             tf.Session(config=tf.ConfigProto(log_device_placement=True))
