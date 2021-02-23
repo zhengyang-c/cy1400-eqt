@@ -281,7 +281,14 @@ def trainer(input_hdf5=None,
         #model = load_model("/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5")
         _dependencies = {'SeqSelfAttention': SeqSelfAttention, 'LayerNormalization': LayerNormalization, 'FeedForward': FeedForward, 'f1':f1}
         model = load_model('/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5', custom_objects = _dependencies)
+
+        model.compile(loss = args['loss_types'],
+                  loss_weights =  args['loss_weights'],           
+                  optimizer = Adam(lr = 0.001),
+                  metrics = [f1])
         model.summary()
+
+
        
         if args['gpuid']:           
             os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
