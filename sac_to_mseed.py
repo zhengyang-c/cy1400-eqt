@@ -20,7 +20,9 @@ def convert(input_folder):
 	"""
 	by default, the mseed folder will be mseed_input_folder
 	"""
-	mseed_folder = os.path.join(os.path.dirname(input_folder), "mseed_" + os.path.basename(input_folder))
+	mseed_folder = "mseed_" + os.path.basename(input_folder)
+
+	print(mseed_folder)
 
 	if not os.path.exists(mseed_folder):
 		os.makedirs(mseed_folder)
