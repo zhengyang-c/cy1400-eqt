@@ -16,7 +16,7 @@ import glob
 import copy
 
 
-def convert(input_folder, output_folder):
+def convert(input_folder):
 	"""
 	by default, the mseed folder will be mseed_input_folder
 	"""
@@ -95,8 +95,8 @@ parser = argparse.ArgumentParser()
 #parser.add_argument('station_info')
 #parser.add_argument('json_output', help = "this is an intermediate file needed by EqT")
 parser.add_argument('input_folder')
-parser.add_argument('output_folder')
+#parser.add_argument('output_folder')
 
 args = parser.parse_args()
 
-convert(args.input_folder, args.output_folder)
+convert(args.input_folder)
