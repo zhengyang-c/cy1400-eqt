@@ -28,7 +28,7 @@ def convert(input_folder):
 		os.makedirs(mseed_folder)
 
 	folders = [x[0] for x in os.walk(input_folder)]
-	folders = list(filter(lambda x: re.match(r"\D{2,3}\d{2,3}", x.split("/")[-1]), folders))
+	folders = list(filter(lambda x: re.match(r"/\D{2,3}\d{2,3}", x.split("/")[-1]), folders))
 	all_files = []
 
 	for folder in folders:
