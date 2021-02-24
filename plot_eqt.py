@@ -2,6 +2,7 @@ import argparse
 import pandas as pd
 import obspy
 from obspy import read
+import glob
 
 
 def plot(data_parent_folder_name, detection_folder_name):

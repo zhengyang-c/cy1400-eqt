@@ -23,4 +23,4 @@ parser.add_argument('output_folder')
 args = parser.parse_args()
 
 
-run(hdf_folder, model_path, output_folder)
+run(args.hdf_folder, args.model_path, args.output_folder)
