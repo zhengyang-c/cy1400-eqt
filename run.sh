@@ -10,5 +10,5 @@ STA=TA19
 python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
 python header_writer.py "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
 
-#./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv"
+./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv"
 
