@@ -1,5 +1,9 @@
 # i hate bash
 
+#$1 : path to sac_picks
+
+#$2: csv file
+
 mapfile -t sac_files < <( ls $1/sac_picks | grep .SAC | sed -n '0~3p') 
 
 # echo ${sac_files[@]} # the array reference (@ --> the whole array)
