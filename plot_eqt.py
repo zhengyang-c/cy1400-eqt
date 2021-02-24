@@ -79,9 +79,8 @@ def plot(data_parent_folder_name, detection_folder_name):
 
 parser = argparse.ArgumentParser()
 
-
-parser.add_argument('input_folder')
 parser.add_argument('sac_folder')
+parser.add_argument('input_folder')
 
 args = parser.parse_args()
 
