@@ -8,7 +8,7 @@ STA=TA19
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 #python run_eqt.py "mseed_${SAC_FOLDER}_processed_hdfs" $MODEL $OUTPUT_FOLDER
 python plot_eqt.py $SAC_FOLDER $OUTPUT_FOLDER
-python header_writer.py "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
+python header_writer.py "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" $STA "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
 
 ./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv"
 

@@ -6,14 +6,14 @@ import glob
 import os
 import datetime
 
-def plot(data_parent_folder_name, detection_folder_name):
+def plot(data_parent_folder_name, sta, detection_folder_name):
 
 	for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
 
 		print(csv_file)
 		df = pd.read_csv(csv_file)
 
-		sta = csv_file.split("/")[1].split("_")[0]
+		
 
 		csv_dir = "/".join(csv_file.split("/")[:-1])
 
@@ -73,9 +73,10 @@ def plot(data_parent_folder_name, detection_folder_name):
 parser = argparse.ArgumentParser()
 
 parser.add_argument('sac_folder')
+parser.add_argument('sta')
 parser.add_argument('input_folder')
 
 args = parser.parse_args()
 
-plot(args.sac_folder, args.input_folder)
+plot(args.sac_folder, args.sta, args.input_folder)
 
