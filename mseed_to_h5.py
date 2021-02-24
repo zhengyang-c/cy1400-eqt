@@ -46,7 +46,7 @@ def convert(input_folder, station_info_file, station_name, n_processor = 4):
 
 		_i = coordinates.index(station_name)
 
-	pre_json["coords"] = [100, float(coordinates[_i + 1]), float(coordinates[_i + 2])]
+	pre_json[station_name]["coords"] = [100, float(coordinates[_i + 1]), float(coordinates[_i + 2])]
 
 	with open(station_json_output, 'w') as f:
 		json.dump(pre_json, f)
