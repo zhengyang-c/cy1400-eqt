@@ -28,13 +28,18 @@ def convert(input_folder):
 		os.makedirs(mseed_folder)
 
 	folders = [x[0] for x in os.walk(input_folder)]
-	folders = list(filter(lambda x: re.match(r"/\D{2,3}\d{2,3}", x.split("/")[-1]), folders))
-	all_files = []
+
+	folders = list(filter(lambda x: re.search(r"\/\D{2,3}\d{2,3}", x), folders))
+	#all_files = []
+
+	#print(folders)
+
 
 	for folder in folders:
 		files = {}
 
 		for _file in os.listdir(folder):
+			print(_file)
 			net = _file.split(".")[0]
 			sta = _file.split(".")[1]
 			_ = _file.split(".")[2] #idk dude
