@@ -8,6 +8,8 @@ import glob
 def plot(data_parent_folder_name, detection_folder_name):
 
 	for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
+
+		print(csv_file)
 		df = pd.read_csv(csv_file)
 
 		sta = csv_file.split("/")[1].split("_")[0]
