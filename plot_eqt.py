@@ -56,7 +56,7 @@ def plot(data_parent_folder_name, sta, detection_folder_name):
 			for tr in _st:
 				if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, p_arrival.strftime("%H%M%S"), tr.stats.channel))):
 
-					tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, tr.stats.channel, p_arrival.strftime("%H%M%S"))), format = "SAC")
+					tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, p_arrival.strftime("%H%M%S"),  tr.stats.channel),), format = "SAC")
 
 			# trim a bit more then plot ?
 			_st.trim(start_UTC_time + delta_t - 5, start_UTC_time + delta_t + 10)
