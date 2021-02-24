@@ -44,7 +44,7 @@ def convert(input_folder, station_info_file, station_name, n_processor = 4):
 		
 		coordinates = [y.strip() for x in coordinates if len(x) > 0 for y in x.strip().split("\t") if len(y) > 0 ]
 
-		_i = coordinates.index(station)
+		_i = coordinates.index(station_name)
 
 	pre_json["coords"] = [100, float(coordinates[_i + 1]), float(coordinates[_i + 2])]
 
