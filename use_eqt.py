@@ -1,3 +1,9 @@
+# original script (jan 2021) to run eqt, later broken up in feb 2021 into
+# sac_to_mseed
+# mseed_to_h5
+# run_eqt
+# plot_eqt
+
 import matplotlib
 #matplotlib.use('TkAgg')
 from EQTransformer.core.predictor import predictor
