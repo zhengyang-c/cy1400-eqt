@@ -69,4 +69,4 @@ parser.add_argument('--n_processor', type = int)
 
 args = parser.parse_args()
 
-convert(args.input_folder, args.station_info_file, args.start_yearday, args.end_yearday, args.station_name, args.n_processor)
+convert(args.input_folder, args.station_info_file, args.station_name, args.n_processor)
