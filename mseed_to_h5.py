@@ -1,6 +1,6 @@
 import matplotlib
-#matplotlib.use('TkAgg')
-#from EQTransformer.utils.hdf5_maker import preprocessor
+matplotlib.use('TkAgg')
+from EQTransformer.utils.hdf5_maker import preprocessor
 
 import numpy as np
 import os
@@ -52,7 +52,7 @@ def convert(input_folder, station_info_file, station_name, n_processor = 4):
 		json.dump(pre_json, f)
 
 	print(input_folder)
-	
+
 	preprocessor(mseed_dir=input_folder, stations_json= station_json_output, overlap=0.3, n_processor=n_processor)
 
 
