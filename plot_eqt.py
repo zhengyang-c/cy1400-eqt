@@ -29,12 +29,6 @@ def plot(data_parent_folder_name, detection_folder_name):
 
 		#for p_arrival in pick_date_times:
 
-		for _sta, _sta_details in all_files:
-			if _sta == sta:
-				sta_details = copy.deepcopy(_sta_details)
-				break
-
-		assert sta_details
 
 		for c, p_arrival in enumerate(pick_date_times):
 			# get year and julian day
@@ -42,8 +36,6 @@ def plot(data_parent_folder_name, detection_folder_name):
 			_year = p_arrival.strftime("%Y")
 			_day = p_arrival.strftime("%j")
 			pick_year_day =  _year + "_" + _day
-
-			print(sta_details[pick_year_day])
 
 			if c == 0:
 				st = read(os.path.join(data_parent_folder_name, sta,"*{}.{}.*".format(_year, _day))) 
