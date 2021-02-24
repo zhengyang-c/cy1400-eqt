@@ -55,9 +55,7 @@ def plot(data_parent_folder_name, sta, detection_folder_name):
 			# write SAC file 
 			for tr in _st:
 				if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, p_arrival.strftime("%H%M%S"), tr.stats.channel))):
-					tr.stats.stla, tr.stats.stlo = station_list[sta]["coords"][1], station_list[sta]["coords"][2], 
-					#print(tr.stats.stla)
-					#print(tr.stats.stlo)
+
 					tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, tr.stats.channel, p_arrival.strftime("%H%M%S"))), format = "SAC")
 
 			# trim a bit more then plot ?
