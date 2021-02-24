@@ -1,4 +1,4 @@
-from EQTransformer.utils.hdf5_maker import preprocessor
+from EQTransformer.utils.hdf5_maker import predictor
 import argparse
 import os
 
