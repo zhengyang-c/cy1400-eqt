@@ -24,6 +24,7 @@ import time
 import os
 import shutil
 import multiprocessing
+from keras.optimizers import Adam
 from EQTransformer.core.EqT_utils import DataGenerator, _lr_schedule, cred2, PreLoadGenerator, data_reader
 from EQTransformer.core.EqT_utils import SeqSelfAttention, LayerNormalization, FeedForward, f1
 
