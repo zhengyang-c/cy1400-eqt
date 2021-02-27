@@ -1,9 +1,9 @@
 from own_trainer import trainer
 
 for c,i in enumerate([1e-2, 1e-3, 1e-4, 1e-5]):
-	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/models/STEAD_1000_noise.hdf5',
-		input_csv='/home/zchoong001/cy1400/cy1400-eqt/models/STEAD_1000_noise.csv',
-		output_name='1000samples_noiseonly_LR{}'.format(i),      
+	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/STEAD_1000_noise.hdf5',
+		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/STEAD_1000_noise.csv',
+		output_name='models/1000samples_noiseonly_LR{}'.format(i),      
 		# i suspect the output_name cannot have / or it will confuse the saving     
 		cnn_blocks=5,
 		lstm_blocks=2,
