@@ -34,6 +34,21 @@ from tensorflow.python.util import deprecation
 from keras.models import load_model
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
+def _my_lr_schedule(epoch):
+    ' Learning rate is scheduled to be reduced after 40, 60, 80, 90 epochs.'
+    
+    lr = 1e-9
+    if epoch > 90:
+        lr *= 0.5e-3
+    elif epoch > 60:
+        lr *= 1e-3
+    elif epoch > 40:
+        lr *= 1e-2
+    elif epoch > 20:
+        lr *= 1e-1
+    print('Learning rate: ', lr)
+    return lr
+
 
 def trainer(input_hdf5=None,
             input_csv=None,
@@ -514,7 +529,7 @@ def _make_callback(args, save_models):
                                  mode='auto',
                                  verbose=1,
                                  save_best_only=True)  
-    lr_scheduler=LearningRateScheduler(_lr_schedule)
+    lr_scheduler=LearningRateScheduler(_my_lr_schedule)
 
     lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                    cooldown=0,
