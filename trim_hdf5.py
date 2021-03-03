@@ -84,4 +84,4 @@ parser.add_argument('output_name', type = str)
 
 args = parser.parse_args()
 
-plot(args.output_name)
+trim(args.output_name)
