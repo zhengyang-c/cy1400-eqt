@@ -2,8 +2,8 @@ from own_trainer import trainer
 
 for i in range(1,19):
 	print(i,'1000samples_withnoise_LR1e-{}'.format(i), 10**(-i))
-	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/STEAD_1000_noise.hdf5',
-		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/STEAD_1000_noise.csv',
+	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.hdf5',
+		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.csv',
 		output_name='1000samples_withnoise_LR1e-{}'.format(i),      
 		# i suspect the output_name cannot have / or it will confuse the saving     
 		cnn_blocks=5,
