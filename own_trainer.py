@@ -34,10 +34,10 @@ from tensorflow.python.util import deprecation
 from keras.models import load_model
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
-def _my_lr_schedule(epoch):
+def _my_lr_schedule(epoch, __lr):
     ' Learning rate is scheduled to be reduced after 40, 60, 80, 90 epochs.'
     
-    lr = 1e-9
+    lr = __lr
     if epoch > 90:
         lr *= 0.5e-3
     elif epoch > 60:
@@ -83,7 +83,7 @@ def trainer(input_hdf5=None,
             gpuid=None,
             gpu_limit=None,
             use_multiprocessing=True,
-            _learning_rate = 0.001):
+            __lr = 1e-3):
         
     """
     
@@ -249,7 +249,8 @@ def trainer(input_hdf5=None,
     "number_of_gpus": number_of_gpus,           
     "gpuid": gpuid,
     "gpu_limit": gpu_limit,
-    "use_multiprocessing": use_multiprocessing
+    "use_multiprocessing": use_multiprocessing,
+    "__lr": __lr,
     }
                        
     def train(args):
@@ -293,7 +294,7 @@ def trainer(input_hdf5=None,
         
         save_dir, save_models=_make_dir(args['output_name'])
         training, validation=_split(args, save_dir)
-        callbacks=_make_callback(args, save_models)
+        callbacks=_make_callback(args, save_models, args['__lr'])
         ##model=_build_model(args)
         #model = load_model("/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5")
         _dependencies = {'SeqSelfAttention': SeqSelfAttention, 'LayerNormalization': LayerNormalization, 'FeedForward': FeedForward, 'f1':f1}
@@ -498,7 +499,7 @@ def _split(args, save_dir):
 
 
 
-def _make_callback(args, save_models):
+def _make_callback(args, save_models, __lr):
     
     """ 
     
@@ -529,7 +530,7 @@ def _make_callback(args, save_models):
                                  mode='auto',
                                  verbose=1,
                                  save_best_only=True)  
-    lr_scheduler=LearningRateScheduler(_my_lr_schedule)
+    lr_scheduler=LearningRateScheduler(_my_lr_schedule, __lr)
 
     lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                    cooldown=0,
