@@ -36,7 +36,8 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 def _my_lr_schedule(epoch, __lr):
     ' Learning rate is scheduled to be reduced after 40, 60, 80, 90 epochs.'
-    
+    print("#########################")
+    print(__lr)
     lr = __lr
     if epoch > 90:
         lr *= 0.5e-3
@@ -302,7 +303,7 @@ def trainer(input_hdf5=None,
 
         model.compile(loss = args['loss_types'],
                   loss_weights =  args['loss_weights'],           
-                  optimizer = Adam(),
+                  optimizer = Adam(lr = __lr),
                   metrics = [f1])
         model.summary()
 
