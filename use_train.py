@@ -1,6 +1,7 @@
 from own_trainer import trainer
+import argparse
 
-for i in range(3,19):
+def main(i):
 	print(i,'1000samples_withnoise_LR1e-{}'.format(i), 10**(-i))
 	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.hdf5',
 		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.csv',
@@ -27,3 +28,10 @@ for i in range(3,19):
 		gpu_limit=None,
 		__lr = 10**(-i)
 		)
+
+parser = argparse.ArgumentParser()
+parser.add_argument('i', type = int)
+
+args = parser.parse_args()
+
+plot(args.i)
