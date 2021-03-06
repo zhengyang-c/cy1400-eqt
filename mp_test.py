@@ -95,6 +95,6 @@ def test_lock():
 		return True
 	main()
 
-test_lock()
-test_process()
+#test_lock()
+#test_process()
 test_queue()

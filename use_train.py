@@ -1,6 +1,6 @@
 from own_trainer import trainer
 
-for i in range(1,19):
+for i in range(3,19):
 	print(i,'1000samples_withnoise_LR1e-{}'.format(i), 10**(-i))
 	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.hdf5',
 		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.csv',
