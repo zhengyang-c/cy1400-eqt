@@ -1,5 +1,19 @@
-# plot a lot of pngs to compare traces between processed and not preprocessed,
-# to qualitatively understand what counts as a detection
+# this exists in a pipeline
+
+# compare_detection.py --> plot_compare.py
+
+# the output of compare_detection.py goes into this
+
+# input:
+# input file: basically a log file as printed above, with one header row
+# along with 4 columns, {$n, $timestamp.png, (1/0), (1/0) ... }
+
+
+# output:
+#
+#
+#
+
 
 import glob
 import os
@@ -16,8 +30,6 @@ import random
 
 def main(input_file):
 
-	# input file: basically a log file as printed above, with one header row
-	# along with 4 columns, {$n, $timestamp.png, (1/0), (1/0) ... }
 
 	print(input_file)
 
@@ -58,9 +70,6 @@ def main(input_file):
 
 	print(len(only_timestamps))
 
-	# when condensed, there are 1508 events 
-	#  before, there are 1934, so 426 were kind of repeats 
-
 	# (2) get no. of common events per detection (histogram)
 
 	# find agreement:
@@ -74,10 +83,17 @@ def main(input_file):
 	plt.xlabel("No. of runs in agreement")
 	plt.ylabel("No. of events")
 	#plt.show()
-	plt.savefig("plots/TA19_085-108_agreement_multiple_runs.png", dpi = 300)
+
+	### CHANGE PLOT NAME ###
+
+	plt.savefig("plots/", dpi = 300)
+
+	### change plot name ###
 
 
 	# (3) sample, picking N random columns where N is from 1 to no.(stations). find number of unique events 
+
+	# sampling is only needed for like checking multiple runs with the same model
 
 	# pick from the collapsed list
 
@@ -120,6 +136,8 @@ def main(input_file):
 	# 	for z in range(len(means)):
 	# 		f.write("{}\t{}\t{}\n".format(z+1, means[z], stds[z]))
 
+# the following code is for writing out the SAC files for comparison
+# but i stopped writing it cos there wasn't a point 
 
 """	for line in global_list:
 		event = line[1].split(".")

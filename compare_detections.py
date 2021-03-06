@@ -3,6 +3,19 @@
 # written to compare preproced/ not preprocessed, but can be used to
 # compare multiple runs as well
 
+# input: list of input folders which contain TA19_outputs/sac_picks/*.png
+# so the folder above TA19_outputs
+
+# output :
+# lookup table: 
+# column: all possible files | folder name | folder name 
+# TA001XXXX.png | 1 | 1
+# image: just to visually see the difference
+
+# i think the purpose is to be able to cut / compare the diff? idk 
+
+
+
 import glob
 import os
 import argparse
@@ -52,20 +65,7 @@ def main(output_file, *input_folder):
 				to_write += "\t" + str(int(i))
 			to_write += "\n"
 			f.write(to_write)
-
-	# for every event in global_list (which is a year month day hour minute second timestamp)
-	# load 2 x 3 SAC files (for some specified folders)	
-
-
 	
-# output :
-# lookup table: 
-# column: all possible files | folder name | folder name 
-# TA001XXXX.png | 1 | 1
-# image: just to visually see the difference
-
-# i think the purpose is to be able to cut / compare the diff? idk 
-
 
 
 parser = argparse.ArgumentParser()
