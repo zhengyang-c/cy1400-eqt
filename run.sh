@@ -1,6 +1,6 @@
 SAC_FOLDER=single_day_test
 MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/30000_70000_STEAD_LR1e-3_outputs/final_model.h5
-MODEL2=/home/zchoong001/cy1400/cy1400-eqt/models/30000_70000_STEAD_LR1e-3_outputs/final_model.h5
+MODEL2=/home/zchoong001/cy1400/cy1400-eqt/models/3000_7000_STEAD_LR1e-3_outputs/final_model.h5
 STATION_DATA=station_info.dat
 OUTPUT_FOLDER="detections/1e5model_LR1e-3_TA19.085"
 OUTPUT_FOLDER2="detections/1e4model_LR1e-3_TA19.085"
