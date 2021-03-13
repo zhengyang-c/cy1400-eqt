@@ -1,0 +1,197 @@
+'''
+has a proper datetime merger uknow
+
+1) identify timestamps to use that are signals
+
+use 65 - 5 seconds before the signal
+
+take timestamps from csv file picks
+
+2) and output to hdf5 file, write to csv file too	
+
+after this,
+
+3) start adding detections that were actually noise
+
+this will keep the number of noise waveforms manageable
+
+can feed the noise through the detection because that would be interesting to know the false positive rate
+
+
+after that, start randomly sampling from the 
+'''
+
+
+import glob
+import os
+import argparse
+import numpy as np
+#import matplotlib
+#matplotlib.use("TkAgg")
+#import matplotlib.pyplot as plt
+import random
+import datetime
+#import obspy
+#from obspy import read
+import pandas as pd
+
+from pathlib import Path
+# recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
+# glob is slower 
+def str_to_datetime(x):
+	try:
+		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
+	except:
+		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f")
+
+def datetime_to_str(x, dx):
+	return datetime.datetime.strftime(x  + datetime.timedelta(seconds = dx), "%Y-%m-%d %H:%M:%S")
+
+
+# https://stackoverflow.com/questions/10048249/how-do-i-determine-if-current-time-is-within-a-specified-range-using-pythons-da
+
+
+def is_time_between(begin_time, end_time, check_time=None):
+    # If check time is not given, default to current UTC time
+    check_time = check_time
+    if begin_time < end_time:
+        return check_time >= begin_time and check_time <= end_time
+    else: # crosses midnight
+        return check_time >= begin_time or check_time <= end_time
+
+
+def collate_timestamps():
+	csv_parent_folder = "/home/zy/windows/aceh/imported_figures/generate_noise"
+
+	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
+
+
+	# read 
+
+	global_list = []
+
+	for csv_file in csv_files:
+		df = pd.read_csv(csv_file)
+		_detections = df['event_start_time']
+
+		global_list.extend(_detections)
+
+	#print(global_list[:5])
+	print(len(global_list))
+
+	global_list = [str_to_datetime(x) for x in global_list]
+
+	
+
+	filtered_datestrings = [] # rounded to seconds
+
+	for entry in global_list:
+		time_deltas = [-2, -1, 0, 1, 2]
+
+		# round the timestamp to the nearest second, then take +/- 2 seconds
+		# if none of those are in filtered datestrings, then add to filtered datestrings
+		# this is meant to filter out duplicate detections since sometimes the detection can be quite off / bad
+
+		if (all(not(x in filtered_datestrings) for x in ([datetime_to_str(entry, dx) for dx in time_deltas]))):
+			filtered_datestrings.append(datetime_to_str(entry, 0))
+
+	print(len(filtered_datestrings))
+
+	filtered_datestrings.sort()
+
+
+	noise_periods = [] # a list of tuples, start and end datetime objects, 
+
+	blacklist = []
+
+	for i, event_time in enumerate(filtered_datestrings):
+		_event_time = str_to_datetime(event_time)
+
+		start_time = _event_time - datetime.timedelta(seconds = 65)
+		end_time = _event_time - datetime.timedelta(seconds = 5)
+		event_start = _event_time - datetime.timedelta(seconds = 5)
+		event_end_time = _event_time + datetime.timedelta(seconds = 60)
+
+		# using this in case there are like a lot of tremors or w/e 
+		# even though i could use the event_end time from EQT
+
+		if not (is_time_between(start_time, end_time, str_to_datetime(filtered_datestrings[i - 1]))):
+			noise_periods.append((start_time, end_time))
+
+		if i == len(filtered_datestrings) - 1:
+			blacklist.append((event_start, event_end_time))
+		else:
+			next_event_start = str_to_datetime(filtered_datestrings[i + 1]) - datetime.timedelta(seconds = 5)
+			next_event_end = str_to_datetime(filtered_datestrings[i + 1]) + datetime.timedelta(seconds = 60)		
+
+			if not is_time_between(next_event_start, next_event_end, event_end_time):
+				blacklist.append((event_start, event_end_time))
+
+			#print(is_time_between(next_event_start, next_event_end,event_end_time))
+	#print(blacklist[:5])
+	#print(blacklist[-5:])
+
+	cut_sac_file(["TA19"], [noise_periods])
+
+	# actually just get all noise waveforms in between events, block out 5 seconds before event starts and 60 s after event ends
+
+''' timestamps: a list of tuples, for noise start and end periods''' 
+
+def cut_sac_file(stations, timestamps):
+
+
+	sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
+
+	sac_files = [str(path) for path in Path(sac_parent_folder).rglob('*.SAC')]
+
+	output_root = "training_files/aceh_noise_13mar"
+	output_h5 = output_root + ".hdf5"
+	output_csv = output_root + ".csv"
+
+	#_outhf = h5.File(output_h5, "w")
+
+	#_outgrp = _outhf.create_group("data")
+
+	binned_timestamps = {}
+
+	for s_n, station_set in enumerate(timestamps):
+
+		for x in station_set:
+			_year_day = datetime.datetime.strftime(x[0], "%Y.%j")
+			if not _year_day in binned_timestamps:
+				binned_timestamps[_year_day] = [x]
+			else:
+				binned_timestamps[_year_day].append(x)
+
+		#print(binned_timestamps)
+
+		''' for every year_day combination, load the corresponding sac file, it should (in the future) fail gracefully when it cannot find the sac file
+
+		but that's low priority atm 
+
+		this is also SPECIFIC to the station; to extend, i would have to create a new noise data set for every station (?) and then later merge the hdf5 files together'''
+
+		for year_day in binned_timestamps:
+			print(year_day)
+			print(stations[s_n])
+
+
+
+
+
+	# bin the timestamps into days
+
+	# then for every day, load the corresponding sac file
+
+
+	# i guess i s
+
+	# try passing in noise periods first to get ~ a few hundred waveforms
+	# then write them to a hdf5 file along with the csv info
+
+	# noise info needed:
+
+	# trace_category
+	# trace_name
+
+collate_timestamps()

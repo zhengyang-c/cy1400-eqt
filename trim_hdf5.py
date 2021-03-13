@@ -1,3 +1,6 @@
+# this will load hdf5 files and use only a subset of them, 
+# merging them into one new hdf5 file
+
 import h5py as h5
 import numpy as np
 import os
