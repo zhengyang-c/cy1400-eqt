@@ -198,9 +198,7 @@ def cut_sac_file(stations, timestamps, fill_gaps = False, overlap = 0.3):
 
 		# and convert these to 1 minute timestamps with 0.3 second overlaps based on every large interval given
 
-		not_binned_timestamps = binned_timestamps.deepcopy()
-
-		for _bin in not_binned_timestamps:
+		for _bin in binned_timestamps:
 			print(_bin[1] - _bin[0])
 
 		'''for year_day in binned_timestamps:
