@@ -182,7 +182,7 @@ def cut_sac_file(stations, timestamps):
 
 	print(sac_files)
 
-	output_root = "training_files/aceh_noise_13mar_wholeday"
+	output_root = "training_files/aceh_noise_13mar_wholeday/aceh_noise_13mar_wholeday"
 	output_h5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
@@ -248,6 +248,7 @@ def cut_sac_file(stations, timestamps):
 
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				_g.attrs['trace_category'] = "noise"
+				_g.attrs['trace_name'] = _tracename
 
 			st.clear()
 	_outhf.close()
