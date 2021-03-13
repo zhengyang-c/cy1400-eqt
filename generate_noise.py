@@ -153,10 +153,8 @@ def collate_timestamps():
 		# cut the waveforms before feeding it in
 
 		new_cut_noise_ts = []
-
-		for _i in reravelled_blacklist:
-			#print(_i)
-			print(_i[1] - _i[0])
+		
+		for _i in reravelled_blacklist:			
 			n_cuts = ((_i[1] - i[0]).seconds - (overlap * 60))/((1 - overlap)*60)
 			if n_cuts >= 1:
 				print(n_cuts)
