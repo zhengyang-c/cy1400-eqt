@@ -255,7 +255,7 @@ def cut_sac_file(stations, timestamps):
 				_g.attrs["receiver_latitude"] = ""
 				_g.attrs["receiver_longitude"] = ""
 				_g.attrs["receiver_elevation_m"] = ""
-				_g.attrs["trace_start_name"] = datetime.datetime.strftime(timestamp[0], "%Y-%m-%d %H%M%S")
+				_g.attrs["trace_start_time"] = datetime.datetime.strftime(timestamp[0], "%Y-%m-%d %H%M%S")
 
 			st.clear()
 	_outhf.close()
