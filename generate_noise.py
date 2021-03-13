@@ -154,6 +154,7 @@ def collate_timestamps():
 		new_cut_noise_ts = []
 
 		for _i in reravelled_blacklist:
+			print(_i)
 			if (_i[1] - _i[0]).seconds() > 60:
 				print("long enough")
 			else:
