@@ -214,7 +214,7 @@ def cut_sac_file(stations, timestamps):
 					datum[:,j] = stt[j].data[:6000]
 
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
-				_g.attrs('trace_category' = "noise")
+				_g.attrs['trace_category'] = "noise"
 
 			st.clear()
 	_outhf.close()
