@@ -133,6 +133,7 @@ def collate_timestamps():
 	#print(blacklist[:5])
 	#print(blacklist[-5:])
 	def handle_blacklist():
+		overlap = 0.3
 		unravelled_blacklist = []
 
 		start_of_first_day = datetime.datetime.combine(blacklist[0][0].date(), datetime.time.min)
