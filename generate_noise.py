@@ -249,6 +249,9 @@ def cut_sac_file(stations, timestamps):
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				_g.attrs['trace_category'] = "noise"
 				_g.attrs['trace_name'] = _tracename
+				_g.attrs['receiver_code'] = stations[s_n]
+				_g.attrs['receiver_type'] = "EH"
+				_g.attrs['network_code'] = "AC"
 
 			st.clear()
 	_outhf.close()
