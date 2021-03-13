@@ -158,7 +158,7 @@ def collate_timestamps():
 		for _i in reravelled_blacklist:
 			n_cuts = ((_i[1] - _i[0]).seconds - (overlap * 60))/((1 - overlap)*60)
 			if math.floor(n_cuts) >= 1:
-				print(n_cuts)
+				pass
 			else:
 				continue
 			for j in range(math.floor(n_cuts)):
@@ -166,7 +166,7 @@ def collate_timestamps():
 				new_end = new_start + datetime.timedelta(seconds = 60)
 				new_cut_noise_ts.append((new_start, new_end))
 
-		print(new_cut_noise_ts[:5])
+		#print(new_cut_noise_ts[:5])
 		cut_sac_file(["TA19"], [new_cut_noise_ts])
 		
 	handle_blacklist()
@@ -238,8 +238,8 @@ def cut_sac_file(stations, timestamps):
 				#print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
 
-				csv_output_data["trace_category"] = "noise"
-				csv_output_data["trace_name"] = _tracename
+				csv_output_data["trace_category"].append("noise")
+				csv_output_data["trace_name"].append(_tracename)
 
 				datum = np.zeros((6000, 3))
 
