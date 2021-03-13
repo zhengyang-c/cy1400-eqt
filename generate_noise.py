@@ -144,6 +144,8 @@ def cut_sac_file(stations, timestamps):
 
 	sac_files = [str(path) for path in Path(sac_parent_folder).rglob('*.SAC')]
 
+	print(sac_files)
+
 	output_root = "training_files/aceh_noise_13mar"
 	output_h5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
@@ -175,7 +177,11 @@ def cut_sac_file(stations, timestamps):
 			print(year_day)
 			print(stations[s_n])
 
+			st = read(sac_parent_folder + "*{}*.SAC".format(year_day))
 
+			print(st.stats['station'])
+
+			st.clear()
 
 
 
