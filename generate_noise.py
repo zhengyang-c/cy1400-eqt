@@ -231,7 +231,7 @@ def cut_sac_file(stations, timestamps):
 			st.resample(100.0)			
 
 			for timestamp in binned_timestamps[year_day]:
-				_tracename = "{}.{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
+				_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
 				print(_tracename)
 				stt = st.copy()
