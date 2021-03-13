@@ -166,7 +166,7 @@ def collate_timestamps():
 				new_end = new_start + datetime.timedelta(seconds = 60)
 				new_cut_noise_ts.append((new_start, new_end))
 
-		print(len(new_cut_noise_ts))
+		print(new_cut_noise_ts[:5])
 		cut_sac_file(["TA19"], [new_cut_noise_ts])
 		
 	handle_blacklist()
@@ -235,7 +235,7 @@ def cut_sac_file(stations, timestamps):
 
 				print(_tracename)
 				stt = st.copy()
-				print(stt[0].stats.starttime)
+				#print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
 
 				csv_output_data["trace_category"] = "noise"
