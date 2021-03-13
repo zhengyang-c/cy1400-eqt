@@ -21,7 +21,7 @@ can feed the noise through the detection because that would be interesting to kn
 after that, start randomly sampling from the 
 '''
 
-import h5py
+import h5py as h5
 import glob
 import os
 import argparse
