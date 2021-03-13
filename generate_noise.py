@@ -34,6 +34,7 @@ import datetime
 import obspy
 from obspy import read
 import pandas as pd
+from obspy import UTCDateTime
 
 from pathlib import Path
 # recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
@@ -150,9 +151,24 @@ def cut_sac_file(stations, timestamps):
 	output_h5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
-	#_outhf = h5.File(output_h5, "w")
+	csv_output_data = {
+		#"network_code":[], 
+		#"receiver_code":[],
+		#"receiver_type":[],
+		#"receiver_latitude":[],
+		#"receiver_longitude":[],
+		#"receiver_elevation_m":[],
+		#"p_arrival_sample": [],
+		#"s_arrival_sample": [],
+		#"snr_db":[], 
+		#"coda_end_sample":[],
+		"trace_category":[],
+		"trace_name":[],
+	}
 
-	#_outgrp = _outhf.create_group("data")
+	_outhf = h5.File(output_h5, "w")
+
+	_outgrp = _outhf.create_group("data")
 
 	binned_timestamps = {}
 
@@ -178,17 +194,30 @@ def cut_sac_file(stations, timestamps):
 			print(stations[s_n])
 
 			st = read(sac_parent_folder + "*{}*.SAC".format(year_day))
+			st.resample(100.0)
+
+			print(stt[0].stats.starttime)
 
 			for timestamp in binned_timestamps[year_day]:
-				print(timestamp)
-			#stt = st.copy()
+				_tracename = "{}.{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S"))
 
-			print(st.stats['station'])
+				print(_tracename)
+				stt = st.copy()
+				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
+
+				csv_output_data["trace_category"] = "noise"
+				csv_output_data["trace_name"] = _tracename
+
+				datum = np.zeros((6000, 3))
+
+				for j in range(3):
+					datum[:,j] = stt[j].data[:6000]
+
+				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
+				_g.attrs('trace_category' = "noise")
 
 			st.clear()
-
-
-
+	_outhf.close()
 	# bin the timestamps into days
 
 	# then for every day, load the corresponding sac file
