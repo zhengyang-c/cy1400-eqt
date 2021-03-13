@@ -167,13 +167,14 @@ def collate_timestamps():
 				new_cut_noise_ts.append((new_start, new_end))
 
 		print(len(new_cut_noise_ts))
+		cut_sac_file(["TA19"], [new_cut_noise_ts])
 		
 	handle_blacklist()
-	#cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
+	#
 	#cut_sac_file(["TA19"], [noise_periods])
 
 ''' timestamps: a list of tuples, for noise start and end periods''' 
-def cut_sac_file(stations, timestamps, fill_gaps = False):
+def cut_sac_file(stations, timestamps):
 
 	sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
 
@@ -190,16 +191,13 @@ def cut_sac_file(stations, timestamps, fill_gaps = False):
 		"trace_name":[],
 	}
 
-	#_outhf = h5.File(output_h5, "w")
+	_outhf = h5.File(output_h5, "w")
 
-	#_outgrp = _outhf.create_group("data")
+	_outgrp = _outhf.create_group("data")
 
 	binned_timestamps = {}
 
 	for s_n, station_set in enumerate(timestamps):
-
-
-
 		# binned based on year.day
 		for x in station_set:
 			_year_day = datetime.datetime.strftime(x[0], "%Y.%j")
@@ -225,7 +223,7 @@ def cut_sac_file(stations, timestamps, fill_gaps = False):
 		# and convert these to 1 minute timestamps with 0.3 second overlaps based on every large interval given
 
 
-		'''for year_day in binned_timestamps:
+		for year_day in binned_timestamps:
 			print(year_day)
 			print(stations[s_n])
 
@@ -256,7 +254,7 @@ def cut_sac_file(stations, timestamps, fill_gaps = False):
 
 	d_csv = pd.DataFrame.from_dict(csv_output_data)
 	d_csv.to_csv(output_csv, index = False)
-'''
+
 	# bin the timestamps into days
 
 	# then for every day, load the corresponding sac file
