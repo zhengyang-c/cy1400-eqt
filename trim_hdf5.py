@@ -15,7 +15,7 @@ def trim(output_name):
 	"/home/zchoong001/Downloads/chunk2.hdf5",]
 	# "/mnt/e/2020/chunk2/chunk2.hdf5"
 
-	n = [50000, 50000]
+	n = [30000, 70000]
 
 	csv_output_data = {
 	"p_arrival_sample": [],

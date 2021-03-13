@@ -2,10 +2,10 @@ from own_trainer import trainer
 import argparse
 
 def main(i):
-	print(i,'1000samples_withnoise_LR1e-{}'.format(i), 10**(-i))
-	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.hdf5',
-		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/1e4model.csv',
-		output_name='1000samples_withnoise_LR1e-{}'.format(i),      
+	print(i,'1e4samples_LR1e-{}'.format(i), 10**(-i))
+	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/30000_70000_STEAD.hdf5',
+		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/30000_70000_STEAD.csv',
+		output_name='30000_70000_STEAD_LR1e-{}'.format(i),      
 		# i suspect the output_name cannot have / or it will confuse the saving     
 		cnn_blocks=5,
 		lstm_blocks=2,
@@ -34,4 +34,4 @@ parser.add_argument('i', type = int)
 
 args = parser.parse_args()
 
-plot(args.i)
+main(args.i)
