@@ -166,7 +166,7 @@ def collate_timestamps():
 				new_end = new_start + datetime.timedelta(seconds = 60)
 				new_cut_noise_ts.append((new_start, new_end))
 
-		print(new_cut_noise_ts)		
+		print(len(new_cut_noise_ts))
 		
 	handle_blacklist()
 	#cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
