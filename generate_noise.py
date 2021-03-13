@@ -252,6 +252,9 @@ def cut_sac_file(stations, timestamps):
 				_g.attrs['receiver_code'] = stations[s_n]
 				_g.attrs['receiver_type'] = "EH"
 				_g.attrs['network_code'] = "AC"
+				_g.attrs["receiver_latitude"] = ""
+				_g.attrs["receiver_longitude"] = ""
+				_g.attrs["receiver_elevation_m"] = ""
 
 			st.clear()
 	_outhf.close()
