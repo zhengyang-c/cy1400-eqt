@@ -143,8 +143,14 @@ def collate_timestamps():
 		unravelled_blacklist.append(_j)
 
 	unravelled_blacklist.append(end_of_last_day)
+
+	reravelled_blacklist = []
+
+	for _i in range(len(unravelled_blacklist)/2):
+		reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
+
 	#cut_sac_file(["TA19"], [noise_periods])
-	cut_sac_file(["TA19"], [unravelled_blacklist], fill_gaps = True)
+	cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
 
 	# actually just get all noise waveforms in between events, block out 5 seconds before event starts and 60 s after event ends
 
