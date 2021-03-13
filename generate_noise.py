@@ -164,7 +164,7 @@ def collate_timestamps():
 			for j in range(math.floor(n_cuts)):
 				new_start = _i[1] + datetime.timedelta(seconds = overlap * 60) * j
 				new_end = new_start + datetime.timedelta(seconds = 60)
-			new_cut_noise_ts.append((new_start, new_end))
+				new_cut_noise_ts.append((new_start, new_end))
 
 		print(new_cut_noise_ts)		
 		
