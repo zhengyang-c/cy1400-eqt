@@ -31,8 +31,8 @@ import numpy as np
 #import matplotlib.pyplot as plt
 import random
 import datetime
-#import obspy
-#from obspy import read
+import obspy
+from obspy import read
 import pandas as pd
 
 from pathlib import Path
@@ -178,6 +178,10 @@ def cut_sac_file(stations, timestamps):
 			print(stations[s_n])
 
 			st = read(sac_parent_folder + "*{}*.SAC".format(year_day))
+
+			for timestamp in binned_timestamps[year_day]:
+				print(timestamp)
+			#stt = st.copy()
 
 			print(st.stats['station'])
 
