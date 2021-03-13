@@ -196,13 +196,14 @@ def cut_sac_file(stations, timestamps):
 			st = read(sac_parent_folder + "*{}*.SAC".format(year_day))
 			st.resample(100.0)
 
-			print(stt[0].stats.starttime)
+			
 
 			for timestamp in binned_timestamps[year_day]:
 				_tracename = "{}.{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S"))
 
 				print(_tracename)
 				stt = st.copy()
+				print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
 
 				csv_output_data["trace_category"] = "noise"
