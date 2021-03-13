@@ -146,7 +146,7 @@ def collate_timestamps():
 
 	reravelled_blacklist = []
 
-	for _i in range(len(unravelled_blacklist)/2):
+	for _i in range(int(len(unravelled_blacklist)/2)):
 		reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
 
 	#cut_sac_file(["TA19"], [noise_periods])
