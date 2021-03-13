@@ -61,7 +61,7 @@ def is_time_between(begin_time, end_time, check_time=None):
 
 
 def collate_timestamps():
-	csv_parent_folder = "/home/zy/windows/aceh/imported_figures/generate_noise"
+	csv_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/training_files/generate_noise_13mar"
 
 	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
 
