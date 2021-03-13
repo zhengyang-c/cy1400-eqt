@@ -131,31 +131,42 @@ def collate_timestamps():
 			#print(is_time_between(next_event_start, next_event_end,event_end_time))
 	#print(blacklist[:5])
 	#print(blacklist[-5:])
+	def handle_blacklist():
+		unravelled_blacklist = []
 
-	unravelled_blacklist = []
+		start_of_first_day = datetime.datetime.combine(blacklist[0][0].date(), datetime.time.min)
+		end_of_last_day = datetime.datetime.combine(blacklist[-1][1].date(), datetime.time.max)
+		unravelled_blacklist.append(start_of_first_day)
 
-	start_of_first_day = datetime.datetime.combine(blacklist[0][0].date(), datetime.time.min)
-	end_of_last_day = datetime.datetime.combine(blacklist[-1][1].date(), datetime.time.max)
-	unravelled_blacklist.append(start_of_first_day)
+		for _i, _j in blacklist:
+			unravelled_blacklist.append(_i)
+			unravelled_blacklist.append(_j)
 
-	for _i, _j in blacklist:
-		unravelled_blacklist.append(_i)
-		unravelled_blacklist.append(_j)
+		unravelled_blacklist.append(end_of_last_day)
 
-	unravelled_blacklist.append(end_of_last_day)
+		reravelled_blacklist = []
 
-	reravelled_blacklist = []
+		for _i in range(int(len(unravelled_blacklist)/2)):
+			reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
 
-	for _i in range(int(len(unravelled_blacklist)/2)):
-		reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
+		# cut the waveforms before feeding it in
 
+		new_cut_noise_ts = []
+
+		for _i in reravelled_blacklist:
+			if (_i[1] - _i[0]).seconds() > 60:
+				print("long enough")
+			else:
+				print(":(")
+
+		overlap = 0.3
+		
+	handle_blacklist()
+	#cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
 	#cut_sac_file(["TA19"], [noise_periods])
-	cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
-
-	# actually just get all noise waveforms in between events, block out 5 seconds before event starts and 60 s after event ends
 
 ''' timestamps: a list of tuples, for noise start and end periods''' 
-def cut_sac_file(stations, timestamps, fill_gaps = False, overlap = 0.3):
+def cut_sac_file(stations, timestamps, fill_gaps = False):
 
 	sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
 
@@ -180,6 +191,8 @@ def cut_sac_file(stations, timestamps, fill_gaps = False, overlap = 0.3):
 
 	for s_n, station_set in enumerate(timestamps):
 
+
+
 		# binned based on year.day
 		for x in station_set:
 			_year_day = datetime.datetime.strftime(x[0], "%Y.%j")
@@ -198,9 +211,6 @@ def cut_sac_file(stations, timestamps, fill_gaps = False, overlap = 0.3):
 
 		# and convert these to 1 minute timestamps with 0.3 second overlaps based on every large interval given
 
-		for year_day in binned_timestamps:
-			for _timestamps in binned_timestamps[year_day] :
-				print(_timestamps)
 
 		'''for year_day in binned_timestamps:
 			print(year_day)
