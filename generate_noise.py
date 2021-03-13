@@ -156,7 +156,7 @@ def collate_timestamps():
 		for _i in reravelled_blacklist:
 			#print(_i)
 			print(_i[1] - _i[0])
-			if (_i[1] - _i[0]).seconds() > 60:
+			if (_i[1] - _i[0]).seconds > 60:
 				print("long enough")
 			else:
 				print(":(")
