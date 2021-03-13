@@ -29,6 +29,7 @@ import numpy as np
 #import matplotlib
 #matplotlib.use("TkAgg")
 #import matplotlib.pyplot as plt
+import math
 import random
 import datetime
 import obspy
@@ -156,12 +157,15 @@ def collate_timestamps():
 		for _i in reravelled_blacklist:
 			#print(_i)
 			print(_i[1] - _i[0])
-			if (_i[1] - _i[0]).seconds > 60:
-				print("long enough")
+			n_cuts = ((_i[1] - i[0]).seconds - (overlap * 60))/((1 - overlap)*60)
+			if n_cuts >= 1:
+				print(n_cuts)
 			else:
-				print(":(")
+				continue
 
-		overlap = 0.3
+			
+
+			
 		
 	handle_blacklist()
 	#cut_sac_file(["TA19"], [reravelled_blacklist], fill_gaps = True)
@@ -198,6 +202,12 @@ def cut_sac_file(stations, timestamps, fill_gaps = False):
 		# binned based on year.day
 		for x in station_set:
 			_year_day = datetime.datetime.strftime(x[0], "%Y.%j")
+			_year_day_2 = datetime.datetime.strftime(x[1], "%Y.%j")
+
+			# reject the edge case of timestamp crossing a day...
+			if not _year_day == _year_day_2:
+				continue
+
 			if not _year_day in binned_timestamps:
 				binned_timestamps[_year_day] = [x]
 			else:
