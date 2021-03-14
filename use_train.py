@@ -1,11 +1,11 @@
 from own_trainer import trainer
 import argparse
 
-def main(i):
+def main(output, i):
 	print(i,'1e4samples_LR1e-{}'.format(i), 10**(-i))
-	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/30000_70000_STEAD.hdf5',
-		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/30000_70000_STEAD.csv',
-		output_name='30000_70000_STEAD_LR1e-{}'.format(i),      
+	trainer(input_hdf5='/home/zchoong001/cy1400/cy1400-eqt/training_files/14mar_aceh_with_noise.hdf5',
+		input_csv='/home/zchoong001/cy1400/cy1400-eqt/training_files/14mar_aceh_with_noise.csv',
+		output_name='{}_LR1e-{}'.format(output, i),      
 		# i suspect the output_name cannot have / or it will confuse the saving     
 		cnn_blocks=5,
 		lstm_blocks=2,
@@ -31,7 +31,8 @@ def main(i):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('i', type = int)
+parser.add_argument('output', type = str)
 
 args = parser.parse_args()
 
-main(args.i)
+main(args.output, args.i)
