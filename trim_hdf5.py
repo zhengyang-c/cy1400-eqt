@@ -14,11 +14,13 @@ def trim(output_name):
 	#hdfs = ["EQTransformer/ModelsAndSampleData/100samples.hdf5"]
 	#csv = ["EQTransformer/ModelsAndSampleData/100samples.csv"]
 
-	hdfs = ["/home/zchoong001/Downloads/chunk1.hdf5",
-	"/home/zchoong001/Downloads/chunk2.hdf5",]
+	hdfs = ["/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday/aceh_noise_13mar_wholeday.hdf5", "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday/14_mar_ta19_085-109_goodpicks.h5", ]
+
+	#hdfs = ["/home/zchoong001/Downloads/chunk1.hdf5",
+	#"/home/zchoong001/Downloads/chunk2.hdf5",]
 	# "/mnt/e/2020/chunk2/chunk2.hdf5"
 
-	n = [30000, 70000]
+	n = [1823, 429]
 
 	csv_output_data = {
 	"p_arrival_sample": [],
