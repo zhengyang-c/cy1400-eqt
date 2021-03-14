@@ -191,6 +191,8 @@ def cut_sac_file(stations, timestamps):
 		"trace_name":[],
 	}
 
+	empty_headers = ["p_arrival_sample", "s_arrival_sample", "snr_db", "coda_end_sample", "receiver_latitude", "receiver_longitude", "receiver_elevation_m"]
+
 	_outhf = h5.File(output_h5, "w")
 
 	_outgrp = _outhf.create_group("data")
@@ -252,9 +254,10 @@ def cut_sac_file(stations, timestamps):
 				_g.attrs['receiver_code'] = stations[s_n]
 				_g.attrs['receiver_type'] = "EH"
 				_g.attrs['network_code'] = "AC"
-				_g.attrs["receiver_latitude"] = ""
-				_g.attrs["receiver_longitude"] = ""
-				_g.attrs["receiver_elevation_m"] = ""
+
+				for _header in empty_headers:
+					_g.attrs[_header] = ""
+	
 				_g.attrs["trace_start_time"] = datetime.datetime.strftime(timestamp[0], "%Y-%m-%d %H:%M:%S")
 
 			st.clear()
