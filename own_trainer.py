@@ -489,9 +489,9 @@ def trainer(input_hdf5=None,
 
         print("hello")
 
-        for layer in model.layers:
+        for c, layer in enumerate(model.layers):
             print(layer.name)
-            print(layer)
+            #print(layer)
 
 
 
