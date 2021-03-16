@@ -481,24 +481,25 @@ def trainer(input_hdf5=None,
         _dependencies = {'SeqSelfAttention': SeqSelfAttention, 'LayerNormalization': LayerNormalization, 'FeedForward': FeedForward, 'f1':f1}
         model = load_model('/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5', custom_objects = _dependencies)
 
-        model.compile(loss = args['loss_types'],
-                  loss_weights =  args['loss_weights'],           
-                  optimizer = Adam(lr = __lr),
-                  metrics = [f1])
         #model.summary()
 
         print("hello")
 
         for c, layer in enumerate(model.layers):
             print(c, layer.name)
-            #print(layer)
+            if c < 87: # this is the attentionD0 layer which is where the transformer is
+                layer.trainable = False
 
-
+        model.summary()
 
         sys.exit(0)
 
+        model.compile(loss = args['loss_types'],
+                  loss_weights =  args['loss_weights'],           
+                  optimizer = Adam(lr = __lr),
+                  metrics = [f1])
 
-       
+
         if args['gpuid']:           
             os.environ['CUDA_VISIBLE_DEVICES'] = '{}'.format(gpuid)
             tf.Session(config=tf.ConfigProto(log_device_placement=True))
