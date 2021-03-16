@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import h5py
+import sys
 import time
 import os
 import shutil
@@ -490,6 +491,7 @@ def trainer(input_hdf5=None,
 
         for layer in model.layers:
             print(layer.name)
+            print(layer)
 
 
 
