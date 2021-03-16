@@ -490,7 +490,7 @@ def trainer(input_hdf5=None,
         print("hello")
 
         for c, layer in enumerate(model.layers):
-            print(layer.name)
+            print(c, layer.name)
             #print(layer)
 
 
