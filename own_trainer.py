@@ -494,7 +494,7 @@ def trainer(input_hdf5=None,
 
         model.compile(loss = args['loss_types'],
                   loss_weights =  args['loss_weights'],           
-                  optimizer = Adam(),
+                  optimizer = Adam(lr = args["__lr"]),
                   metrics = [f1])
 
 
