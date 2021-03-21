@@ -11,14 +11,14 @@ STA=TA19
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 monorun () {
 	OUTPUT_FOLDER="detections/21mar_default/multi_${1}"
-	echo python run_eqt.py $HDF_FOLDER $DEFAULT_MODEL $OUTPUT_FOLDER
+	python run_eqt.py $HDF_FOLDER $DEFAULT_MODEL $OUTPUT_FOLDER
 	#python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
 
-	echo python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
+	python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
 
-	echo python header_writer.py "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
+	python header_writer.py "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
 
-	echo ./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
+	./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
 }
 
 for f in {1..50}; do
