@@ -1,7 +1,7 @@
-SAC_FOLDER=TA19_no_preproc
+SAC_FOLDER=no_preproc
 DEFAULT_MODEL=/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5
 MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/17mar_freezetoplayers_acehtrainingset_LR1e-6_outputs/final_model.h5
-
+HDF_FOLDER="mseed_TA19_no_preproc_processed_hdfs"
 STATION_DATA=station_info.dat
 
 #OUTPUT_FOLDER2="detections/1e4model_LR1e-3_TA19.085"
@@ -11,7 +11,7 @@ STA=TA19
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 monorun () {
 	OUTPUT_FOLDER="detections/21mar_default/multi_${1}"
-	echo python run_eqt.py "mseed_${SAC_FOLDER}_processed_hdfs" $DEFAULT_MODEL $OUTPUT_FOLDER
+	echo python run_eqt.py $HDF_FOLDER $DEFAULT_MODEL $OUTPUT_FOLDER
 	#python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
 
 	echo python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
@@ -21,7 +21,7 @@ monorun () {
 	echo ./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
 }
 
-for f in {1..50} do
+for f in {1..50}; do
 	echo $f
 	monorun $f
 done
