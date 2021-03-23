@@ -205,6 +205,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 			else:
 				if dry_run:
+					pass
 					#print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
 				else:
 					copyfile(source_path, dest_path)
