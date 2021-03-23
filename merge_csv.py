@@ -200,43 +200,9 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 			if not os.path.exists(source_path):
 				print("Warning! not found: {}".format(source_path))
-				print("event_datetime", row["event_datetime"])
-				print("event_start_time", row["event_start_time"])
+				#print("event_datetime", row["event_datetime"])
+				#print("event_start_time", row["event_start_time"])
 				failed.append((index, source_path))
-
-			else:
-				if dry_run:
-					pass
-					#print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
-				else:
-					copyfile(source_path, dest_path)
-
-	print("{} events missing".format(len(failed)))
-
-
-	'''
-	for fi in failed:
-		row = df_filtered.loc(index)
-
-		_timestamp = row['event_datetime'].strftime("%H%M%S")
-		_year = row['event_datetime'].strftime("%Y")
-		_day = row['event_datetime'].strftime("%j") # julian day
-
-		_filenames = []
-
-		for cha in ["EHE", "EHN", "EHZ"]:
-			_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _timestamp, cha)
-			_filenames.append(_filename)
-
-		_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _timestamp))
-
-		for c, _filename in enumerate(_filenames):
-			source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _filename)
-			dest_path = os.path.join(merge_folder, "sac_picks", _filename)
-
-			if not os.path.exists(source_path):
-				print("Warning! not found: {}".format(source_path))
-				failed.append(index)
 
 			else:
 				if dry_run:
@@ -244,8 +210,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 				else:
 					copyfile(source_path, dest_path)
 
-	'''
-# works recursively
+	print("{} events missing".format(len(failed)))
 
 if __name__ == '__main__':
 
