@@ -34,12 +34,20 @@ import argparse
 
 
 
-#parser = argparse.ArgumentParser(description = "For multiple EQT runs and output csv files, merge the detections, filtering duplicates. Then, copy the filtered files to a new folder.It also creates two new columns, one for the coincidence time (current event - previous event), and another for the no. of folders reporting that event.The time window used is 2 seconds, so if the present event is 2 seconds of the previous one, they are grouped together.")
-#parser.add_argument('csv_folder', type = str, help = "Parent folder containing detection folders from use_eqt.py. Usually it should contain more than one detection folder.")
-#parser.add_argument('output_csv_name', type = str, help = "File name to create filtered and raw merged csv. This is NOT a file path, just the root name.")
+parser = argparse.ArgumentParser(description = "One station csv merger for multiple EQT outputs, filtering duplicates. Then, copy the filtered files to a new folder. It also creates two new columns, one for the coincidence time (current event - previous event), and another for the no. of folders reporting that event.The time window used is 2 seconds, so if the present event is within 2 seconds of the previous one, they are grouped together.")
+
+parser.add_argument('station', type = str, help = "station name e.g. TA19. This is for single station multi runs only.")
+
+parser.add_argument('csv_folder', type = str, help = "Parent folder containing detection folders from use_eqt.py. Usually it should contain more than one detection folder.")
+
+parser.add_argument('output_csv_name', type = str, help = "File name to create filtered and raw merged csv. This is NOT a file path, just the root name.")
+
+parser.add_argument('merge_folder', type = str, help = "The new folder to put all the merged files in.")
+
 #parser.add_argument('merge_folder', type = str, help = "folder in which to copy the filtered .SAC and .png files")
-#parser.add_argument('-d', '--dry-run', action='store_true', help = "Does not perform any file writing operations, prints wherever possible")
-#args = parser.parse_args()
+parser.add_argument('-d', action='store_true', help = "Flag for DRY RUN. Does not perform any file writing operations, prints wherever possible")
+
+args = parser.parse_args()
 #print(args)
 
 
@@ -201,7 +209,8 @@ def merge_csv(station, csv_parent_folder, output_csv_name, merge_folder, dry_run
 
 if __name__ == '__main__':
 
-	merge_csv("TA19", "imported_figures/mergetest", "17mar_aceh_LR1e-6_testmerge", "imported_figures/17mar_aceh_LR1e-6_multi", dry_run = False)
+	#merge_csv("TA19", "imported_figures/mergetest", "17mar_aceh_LR1e-6_testmerge", "imported_figures/17mar_aceh_LR1e-6_multi", dry_run = False)
+	merge_csv(args.station, args.csv_folder, args.output_csv_name, args.merge_folder, args.d)
 
 
 #merge_csv(args.csv_folder, args.output_csv)
