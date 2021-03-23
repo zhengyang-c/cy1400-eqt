@@ -100,8 +100,9 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 	# drop any row with no p or s arrival pick!!
 	df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
-	df['p_datetime'] = pd.to_datetime(df.p_arrival_time.str[:-3])
-	df['event_datetime'] = pd.to_datetime(df.event_start_time.str[:-3])
+	df['p_datetime'] = pd.to_datetime(df.p_arrival_time)
+
+	df['event_datetime'] = pd.to_datetime(df.event_start_time)
 
 	#print(df['p_datetime'])
 	df.sort_values(by='p_datetime', inplace = True)
@@ -248,7 +249,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 if __name__ == '__main__':
 
-	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = False)
+	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = True)
 	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d)
 
 
