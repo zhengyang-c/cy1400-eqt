@@ -208,7 +208,12 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 					copyfile(source_path, dest_path)
 
 	print("{} events missing".format(len(failed)))
-	print(failed)
+	
+
+	for _f in failed:
+		row = (df_filtered.loc(_f[0]))
+		print("event_datetime", row["event_datetime"])
+		print("event_start_time", row["event_start_time"])
 
 	'''
 	for fi in failed:
