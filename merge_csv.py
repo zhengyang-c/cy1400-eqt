@@ -199,7 +199,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 			if not os.path.exists(source_path):
 				print("Warning! not found: {}".format(source_path))
-				failed.append((index, _filename))
+				failed.append((index, source_path))
 
 			else:
 				if dry_run:
