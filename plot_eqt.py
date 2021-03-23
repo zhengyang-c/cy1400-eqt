@@ -6,6 +6,13 @@ import glob
 import os
 import datetime
 
+
+def str_to_datetime(x):
+	try:
+		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
+	except:
+		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f")
+
 def plot(data_parent_folder_name, sta, detection_folder_name):
 
 	for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
@@ -24,8 +31,10 @@ def plot(data_parent_folder_name, sta, detection_folder_name):
 			
 		pick_date_times = []
 
+		# not actually the p_arrival but i switched gears while writing this so
+
 		for p_arrival in df['event_start_time']:
-			pick_date_times.append(datetime.datetime.strptime(p_arrival.split(".")[0], "%Y-%m-%d %H:%M:%S"))
+			pick_date_times.append(str_to_datetime(p_arrival))
 
 		#for p_arrival in pick_date_times:
 

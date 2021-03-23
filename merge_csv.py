@@ -181,23 +181,40 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 		pass
 		# copy the sac files, and then the png files
 		_timestamp = row['event_datetime'].strftime("%H%M%S")
+
+		#ugly fix to local problem, shouldn't happen again in the future.
+		#legacy purposes yada yada
+		_aux_timestamp = row['event_datetime'].strftime("%H%M") + "00" 
+
 		_year = row['event_datetime'].strftime("%Y")
 		_day = row['event_datetime'].strftime("%j") # julian day
 
 		_filenames = []
-		
+		_aux_filenames = []
+
 		for cha in ["EHE", "EHN", "EHZ"]:
 			_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _timestamp, cha)
 			_filenames.append(_filename)
+			_aux_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _aux_timestamp, cha)
+			_aux_filenames.append(_aux_filename)
 
 		_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _timestamp))
+		_aux_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _aux_timestamp))
 
-		for _filename in _filenames:
+		for c, _filename in enumerate(_filenames):
 			source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _filename)
 			dest_path = os.path.join(merge_folder, "sac_picks", _filename)
 
+			aux_source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _aux_filenames[c])
+
 			if not os.path.exists(source_path):
 				print("Warning! not found: {}".format(source_path))
+
+				# try to drop the seconds bc i think i did an oopsie whoopsie
+				if os.path.exists(aux_source_path):
+					print("Falling back to: {}".format(aux_source_path))
+					copyfile(source_path, dest_path)
+
 			else:
 				if dry_run:
 					print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
@@ -209,7 +226,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 if __name__ == '__main__':
 
-	#merge_csv("TA19", "imported_figures/mergetest", "17mar_aceh_LR1e-6_testmerge", "imported_figures/17mar_aceh_LR1e-6_multi", dry_run = False)
+	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = False)
 	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d)
 
 
