@@ -199,21 +199,18 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 			if not os.path.exists(source_path):
 				print("Warning! not found: {}".format(source_path))
+				print("event_datetime", row["event_datetime"])
+				print("event_start_time", row["event_start_time"])
 				failed.append((index, source_path))
 
 			else:
 				if dry_run:
-					print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
+					#print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
 				else:
 					copyfile(source_path, dest_path)
 
 	print("{} events missing".format(len(failed)))
-	
 
-	for _f in failed:
-		row = (df_filtered.iloc(_f[0]))
-		print("event_datetime", row["event_datetime"])
-		print("event_start_time", row["event_start_time"])
 
 	'''
 	for fi in failed:
