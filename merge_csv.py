@@ -105,12 +105,17 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 	df['event_datetime'] = pd.to_datetime(df.event_start_time)
 
 	#print(df['p_datetime'])
-	df.sort_values(by='p_datetime', inplace = True)
+	df.sort_values(by='event_datetime', inplace = True)
 
 
 	df = df.reset_index(drop=True) # after concatenating, the index is messed up 
 
-	''' now loop through and look at the coincidence timings. if it's within 2 seconds, then discard '''
+	''' now loop through and look at the coincidence timings. if it's within 2 seconds, then discard 
+
+	standardise to using event time for file names because the files are saved using event_times
+	and this is because sometimes the EQT pick won't have p arrival
+	tbh this could be fixed upstream but this is probably fine
+	'''
 
 	COINCIDENCE_TIME_RANGE = 2
 
@@ -120,7 +125,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 	for index, row in df.iterrows():
 
-		curr_time = row["p_datetime"]
+		curr_time = row["event_datetime"]
 
 		if index == 0:
 			prev_time = curr_time
