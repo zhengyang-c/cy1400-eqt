@@ -137,7 +137,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 		#print(_dt, curr_time, prev_time)
 
 		if not index == 0:
-			if _dt < COINCIDENCE_TIME_RANGE:
+			if _dt < COINCIDENCE_TIME_RANGE and _dt > 0:
 				_tempgroup.append(index)
 
 			else: # new event group, dump the previous temp_group
