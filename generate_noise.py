@@ -43,11 +43,13 @@ parser = argparse.ArgumentParser(description = "Generate noise from single stati
 
 parser.add_argument('sta', type = str, help = "station name")
 parser.add_argument('csv_folder', type = str, help = "folder containing csvs to merge (assuming they aren't, but they should)")
+parser.add_argument('sac_parent_folder', type = str, help = "")
+parser.add_argument('output_root', type = str, help = "")
 
 #parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
 
 #parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
-
+args = parser.parse_args()
 
 # recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
 # glob is slower 
