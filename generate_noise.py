@@ -185,7 +185,7 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 				new_cut_noise_ts.append((new_start, new_end))
 
 		#print(new_cut_noise_ts[:5])
-		cut_sac_file([sta], [new_cut_noise_ts], sac_parent_folder = sac_parent_folder, output_root = output_root)
+		cut_sac_file([sta], [new_cut_noise_ts], sac_parent_folder, output_root)
 		
 	handle_blacklist()
 	#
@@ -195,7 +195,7 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 
 stations is a list for future extensibility
 ''' 
-def cut_sac_file(stations, timestamps, **kwargs):
+def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 
 	#sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
 
