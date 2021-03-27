@@ -38,6 +38,17 @@ import pandas as pd
 from obspy import UTCDateTime
 
 from pathlib import Path
+
+parser = argparse.ArgumentParser(description = "Generate noise from single station 3C waveforms using a blacklist method by blacklisting known good picks.")
+
+parser.add_argument('sta', type = str, help = "station name")
+parser.add_argument('csv_folder', type = str, help = "folder containing csvs to merge (assuming they aren't, but they should)")
+
+#parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
+
+#parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
+
+
 # recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
 # glob is slower 
 def str_to_datetime(x):
@@ -62,13 +73,17 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin_time or check_time <= end_time
 
 
-def collate_timestamps():
-	csv_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/training_files/generate_noise_13mar"
+def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
+	#csv_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/training_files/generate_noise_27mar"
 
 	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
 
+	# so from multiple .csv files (because i didn't write merging yet, collate all the picks
+	# to make a blacklist
 
-	# read 
+	# so i want to feed it all the events i tagged as A/B
+
+	# which means i want to filter/add a column to the csv file
 
 	global_list = []
 
@@ -84,7 +99,7 @@ def collate_timestamps():
 	global_list = [str_to_datetime(x) for x in global_list]
 
 	
-
+	
 	filtered_datestrings = [] # rounded to seconds
 
 	for entry in global_list:
@@ -100,7 +115,6 @@ def collate_timestamps():
 	print(len(filtered_datestrings))
 
 	filtered_datestrings.sort()
-
 
 	noise_periods = [] # a list of tuples, start and end datetime objects, 
 
@@ -132,6 +146,8 @@ def collate_timestamps():
 			#print(is_time_between(next_event_start, next_event_end,event_end_time))
 	#print(blacklist[:5])
 	#print(blacklist[-5:])
+
+
 	def handle_blacklist():
 		overlap = 0.3
 		unravelled_blacklist = []
@@ -144,7 +160,7 @@ def collate_timestamps():
 			unravelled_blacklist.append(_i)
 			unravelled_blacklist.append(_j)
 
-		unravelled_blacklist.append(end_of_last_day)
+		unravelled_blacklist.append(end_of_last_day) # this is so that it's bounded
 
 		reravelled_blacklist = []
 
@@ -167,22 +183,25 @@ def collate_timestamps():
 				new_cut_noise_ts.append((new_start, new_end))
 
 		#print(new_cut_noise_ts[:5])
-		cut_sac_file(["TA19"], [new_cut_noise_ts])
+		cut_sac_file([sta], [new_cut_noise_ts], sac_parent_folder = sac_parent_folder, output_root = output_root)
 		
 	handle_blacklist()
 	#
 	#cut_sac_file(["TA19"], [noise_periods])
 
-''' timestamps: a list of tuples, for noise start and end periods''' 
-def cut_sac_file(stations, timestamps):
+''' timestamps: a list of tuples, for noise start and end periods
 
-	sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
+stations is a list for future extensibility
+''' 
+def cut_sac_file(stations, timestamps, **kwargs):
+
+	#sac_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/no_preproc/TA19/"
 
 	sac_files = [str(path) for path in Path(sac_parent_folder).rglob('*.SAC')]
 
 	print(sac_files)
 
-	output_root = "training_files/aceh_noise_13mar_wholeday/aceh_noise_13mar_wholeday"
+	#output_root = "training_files/aceh_noise_13mar_wholeday/aceh_noise_13mar_wholeday"
 	output_h5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
@@ -281,4 +300,4 @@ def cut_sac_file(stations, timestamps):
 	# trace_category
 	# trace_name
 
-collate_timestamps()
+collate_timestamps(args.sta, args.csv_folder, args.sac_parent_folder, args.output_root)
