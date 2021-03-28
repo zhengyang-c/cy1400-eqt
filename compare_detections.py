@@ -1,77 +1,55 @@
-# this will compare n lists, building a global list
-# used for comparing no. of detections across different runs
-# written to compare preproced/ not preprocessed, but can be used to
-# compare multiple runs as well
-
-# input: list of input folders which contain TA19_outputs/sac_picks/*.png
-# so the folder above TA19_outputs
-
-# output :
-# lookup table: 
-# column: all possible files | folder name | folder name 
-# TA001XXXX.png | 1 | 1
-# image: just to visually see the difference
-
-# i think the purpose is to be able to cut / compare the diff? idk 
-
-
-
-import glob
 import os
 import argparse
 import numpy as np
 
-def main(output_file, *input_folder):
-	# use the png to get the date time station since the channels are not impt for this
-	
-	print(output_file)
-	global_list = set()
-	indiv_list = []
+import math
+import random
 
-	for f in input_folder[0]:
-		_indiv_set = set()
-		for event_name in glob.glob(os.path.join(f,"TA19_outputs","sac_picks", "*.png")):
-			name = event_name.split("/")[-1].split(".")
-			_name = event_name.split("/")[-1]
-			# check +/- 1 second
-			name1 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) + 1)
-			name2 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) - 1)
-			name3 = "{}.{}.{}.{}.png".format(name[0], name[1], name[2], int(name[3]) - 2)
-			#print(name1)
-			#print(name2)
-#			if all([x not in global_list for x in [name1, name2, _name, name3]]):
-			global_list.add(_name)
-			_indiv_set.add(_name)
-		indiv_list.append(_indiv_set)
+import datetime
+import pandas as pd
+
+from pathlib import Path
 
 
-	image = np.zeros((len(global_list), len(indiv_list)))
+def main(known_picks, unknown_sac_folder):
 
-	for b, i in enumerate(global_list):
-		for c, j in enumerate(indiv_list):
-			if i in j:
-				image[b][c] = 1
-	#print(image)
+	sac_tracename = [str(path).split("/")[-1].split(".png")[0] for path in Path(unknown_sac_folder).rglob('*.png')]
 
-	headers = ["n", "file_name"]
-	headers.extend(input_folder[0])
+	print(sac_tracename)
 
-	#print(headers)
-	with open(output_file, 'w') as f:
-		f.write("\t".join(headers) + "\n")
-		for c, file_name in enumerate(sorted(list(global_list))):
-			to_write = "{}\t{}".format(c, file_name)
-			for i in image[c]:
-				to_write += "\t" + str(int(i))
-			to_write += "\n"
-			f.write(to_write)
-	
+	graded_traces = []
+	grades = []
+
+	with open(known_picks, "r") as f:
+		for line in f:
+			_x = line.strip().split(",")
+			graded_traces.append(_x[0])
+			grades.append(_x[1])
+
+	#print(graded_traces)
+
+	matched_indices = []
+	matched_grades = []
+
+	# i know this is stupid but like i'm not bothered enough?? to use a pandas dataframe
+
+	for unknown_sac in sac_tracename:
+		if unknown_sac in graded_traces:
+			_index = graded_traces.index(unknown_sac)
+			matched_indices.append(_index)
+
+			matched_grades.append(grades[_index])
+
+	grade_counter = {}
+
+	for _g in matched_grades:
+		if _g not in grade_counter:
+			grade_counter[_g] = 1
+		else:
+			grade_counter[_g] += 1
+
+	print(grade_counter)
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('output_file', type = str)
-parser.add_argument('input_folder', type = str, nargs='*')
+main("manual/21mar_default_multi_repicked.txt", "imported_figures/27mar_wholemonth_aceh1e-6frozen/TA19_outputs/sac_picks")
 
-args = parser.parse_args()
-
-main(args.output_file, args.input_folder)
