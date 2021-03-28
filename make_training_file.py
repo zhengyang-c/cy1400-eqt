@@ -101,7 +101,7 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 	indices_actual_picks = []
 
 	##
-	## MATCHING, indices_actual_picks has list [c,d] where c: index of the chosen waveform, d: index inside the csv file
+	## MATCHING, append indices that point to the csv data (also because i dno't like pandas)
 	##
 	##
 	## there are probably issues for extensibility i.e. more csv file inputs because what i did with noise was to merge the hdf5s
@@ -114,10 +114,10 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 		for d, _pick in enumerate(list_of_start_picks): # this is not very efficient heh
 			if -2 <= (_pick - _event_time) <= 2:
 							
-				try: # verify that p and s picks are valid (probably because i'm not alive long enough to pick all the times)
+				try: # should not be an issue with multi run and merging, but just to be sure
 					assert UTCDateTime(list_of_p_arrival[d])
 					assert UTCDateTime(list_of_s_arrival[d])
-					indices_actual_picks.append((c,d)) 
+					indices_actual_picks.append(d)
 				except:	
 					continue
 
@@ -150,9 +150,19 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 
 	binned_indices = {}
 
-	for i_pick, i_source in indices_actual_picks:
+	
+	# i pick is not really used / is the filename
+	# 
+	for i_source in indices_actual_picks:
 		# collate year_day
 		_year_day = datetime.datetime.strftime(list_of_start_picks[i_source], "%Y.%j")
+
+		if _year_day not in binned_indices:
+			binned_indices[_year_day] = [i_source]
+		else:
+			binned_indices[_year_day].append(i_source)
+
+	print(binned_indices)
 '''
 	if not dry_run:
 		for i in indices_actual_picks:
