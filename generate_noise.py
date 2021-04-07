@@ -163,11 +163,14 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 			unravelled_blacklist.append(_j)
 
 		unravelled_blacklist.append(end_of_last_day) # this is so that it's bounded
+		# later i'll re group it so it's a group of two timestamps
 
 		reravelled_blacklist = []
 
 		for _i in range(int(len(unravelled_blacklist)/2)):
 			reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
+
+
 
 		# cut the waveforms before feeding it in
 
@@ -254,12 +257,18 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 			st.resample(100.0)			
 
 			for timestamp in binned_timestamps[year_day]:
+				
 				_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
 				print(_tracename)
 				stt = st.copy()
 				#print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
+
+				try:
+					assert stt[0].data.shape == (6000,3)
+				except:
+					continue
 
 				csv_output_data["trace_category"].append("noise")
 				csv_output_data["trace_name"].append(_tracename)
