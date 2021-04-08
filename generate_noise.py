@@ -264,20 +264,21 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				stt = st.copy()
 				#print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
+				print(len(stt[0].data))
 
-				try:
-					assert len(stt[0].data) == 6000
-				except:
-					print("length of array is only: {}".format(stt[0].data))
-					continue
+
 
 				csv_output_data["trace_category"].append("noise")
 				csv_output_data["trace_name"].append(_tracename)
 
 				datum = np.zeros((6000, 3))
+				try:
 
-				for j in range(3):
-					datum[:,j] = stt[j].data[:6000]
+					for j in range(3):
+						datum[:,j] = stt[j].data[:6000]
+				except:
+					print("@@@@")
+					continue
 
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				_g.attrs['trace_category'] = "noise"
