@@ -266,8 +266,9 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
 
 				try:
-					assert stt[0].data.shape == (6000,3)
+					assert len(stt[0].data) == 6000
 				except:
+					print("length of array is only: {}".format(stt[0].data))
 					continue
 
 				csv_output_data["trace_category"].append("noise")
