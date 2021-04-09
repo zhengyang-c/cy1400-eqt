@@ -264,7 +264,7 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				stt = st.copy()
 				#print(stt[0].stats.starttime)
 				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
-				print(len(stt[0].data))
+				#print(len(stt[0].data))
 
 
 
