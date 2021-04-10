@@ -18,7 +18,15 @@ this will keep the number of noise waveforms manageable
 can feed the noise through the detection because that would be interesting to know the false positive rate
 
 
-after that, start randomly sampling from the 
+after that, start randomly sampling from the
+
+
+NAME YOUR FILES {STA}.hdf5 and so on 
+
+future multi station noise: 
+predict separately; the .csv and hdf5 can be merged for training purposes anyway
+
+
 '''
 
 import h5py as h5
@@ -90,10 +98,13 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 	global_list = []
 
 	for csv_file in csv_files:
-		df = pd.read_csv(csv_file)
-		_detections = df['event_start_time']
+		try: #dirty
+			df = pd.read_csv(csv_file)
+			_detections = df['event_start_time']
 
-		global_list.extend(_detections)
+			global_list.extend(_detections)
+		except:
+			continue
 
 	#print(global_list[:5])
 	print(len(global_list))

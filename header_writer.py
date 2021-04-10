@@ -32,7 +32,7 @@ def get_day(x):
 
 	return UTCDateTime(year = __year, month = __month, day = __day)
 
-def main(csv_file, output_file, station_file):
+def main(sta, csv_file, output_file, station_file):
 
 
 	# load the csv file and match 
@@ -91,6 +91,7 @@ def main(csv_file, output_file, station_file):
 	# match to the .csv file
 
 parser = argparse.ArgumentParser()
+parser.add_argument("sta") # csv
 parser.add_argument("csv_file") # csv
 parser.add_argument("output_file") # next to .csv
 parser.add_argument("station_file") #station_info.dat
@@ -98,4 +99,4 @@ parser.add_argument("station_file") #station_info.dat
 args = parser.parse_args()
 
 #print(args.input_folder, args.csv_file, args.station_file)
-main(args.csv_file, args.output_file, args.station_file)
+main(args.sta, args.csv_file, args.output_file, args.station_file)
