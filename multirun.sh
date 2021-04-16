@@ -1,6 +1,6 @@
 SAC_FOLDER=no_preproc
 DEFAULT_MODEL=/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5
-MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/22mar_freezetoplayers_acehtrainingset_LR1e-6_outputs/final_model.h5
+MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/22mar_frozenlayers_LR1e-6_outputs/final_model.h5
 #HDF_FOLDER="/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_noise"
 HDF_FOLDER="/home/zchoong001/cy1400/cy1400-eqt/mseed_TA19_no_preproc_processed_hdfs"
 STATION_DATA=station_info.dat
