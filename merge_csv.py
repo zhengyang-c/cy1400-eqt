@@ -33,21 +33,6 @@ but i'll leave it in just in case
 import argparse
 
 
-
-parser = argparse.ArgumentParser(description = "One station csv merger for multiple EQT outputs, filtering duplicates. Then, copy the filtered files to a new folder. It also creates two new columns, one for the coincidence time (current event - previous event), and another for the no. of folders reporting that event.The time window used is 2 seconds, so if the present event is within 2 seconds of the previous one, they are grouped together.")
-
-parser.add_argument('station', type = str, help = "station name e.g. TA19. This is for single station multi runs only.")
-
-parser.add_argument('csv_folder', type = str, help = "Parent folder containing detection folders from use_eqt.py. Usually it should contain more than one detection folder.")
-
-parser.add_argument('merge_folder', type = str, help = "The new folder to put all the merged files in.")
-
-parser.add_argument('output_csv_name', type = str, help = "File name to create filtered and raw merged csv. This is NOT a file path, just the root name.")
-
-#parser.add_argument('merge_folder', type = str, help = "folder in which to copy the filtered .SAC and .png files")
-parser.add_argument('-d', action='store_true', help = "Flag for DRY RUN. Does not perform any file writing operations, prints wherever possible")
-
-args = parser.parse_args()
 #print(args)
 
 
@@ -73,30 +58,7 @@ def str_to_datetime(x):
 def datetime_to_str(x, dx):
 	return datetime.datetime.strftime(x  + datetime.timedelta(seconds = dx), "%Y-%m-%d %H:%M:%S")
 
-def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run = False):
-
-	# just merge csv files can alr
-	# then use bash to mv 
-	#output_csv = "imported_figures/detections/TA19_nopp_multirun.csv"
-	# the output csv shouldn't be in the same directory as the merged stuff
-
-	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
-
-	parent_of_parent = os.path.dirname(csv_parent_folder)
-
-	#print(csv_files)
-
-	df_objects = []
-	for csv_file in csv_files:
-		_tempdf = pd.read_csv(csv_file)
-		_relpath = '/'.join(csv_file.split("/")[-3:-1])
-
-		_tempdf['relpath'] = _relpath
-
-		df_objects.append(_tempdf)
-
-	df = pd.concat(df_objects)
-
+def preprocess(df):
 	# drop any row with no p or s arrival pick!!
 	df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
@@ -108,14 +70,25 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 	df.sort_values(by='event_datetime', inplace = True)
 
 
-	df = df.reset_index(drop=True) # after concatenating, the index is messed up 
+	df = df.reset_index(drop=True)
 
-	''' now loop through and look at the coincidence timings. if it's within 2 seconds, then discard 
+	return df
 
-	standardise to using event time for file names because the files are saved using event_times
-	and this is because sometimes the EQT pick won't have p arrival
-	tbh this could be fixed upstream but this is probably fine
-	'''
+def concat_df(list_of_csvs):
+	df_objects = []
+	
+	for csv_file in list_of_csvs:
+		_tempdf = pd.read_csv(csv_file)
+		_relpath = '/'.join(csv_file.split("/")[-3:-1])
+
+		_tempdf['relpath'] = _relpath
+
+		df_objects.append(_tempdf)
+
+	df = pd.concat(df_objects)
+	return df
+
+def merging_df(df):
 
 	COINCIDENCE_TIME_RANGE = 2
 
@@ -160,6 +133,36 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 		prev_time = curr_time
 
 	df_filtered = df[df['use_or_not'] == 1]
+
+	return df_filtered
+
+def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run = False):
+
+	# just merge csv files can alr
+	# then use bash to mv 
+	#output_csv = "imported_figures/detections/TA19_nopp_multirun.csv"
+	# the output csv shouldn't be in the same directory as the merged stuff
+
+	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
+
+	parent_of_parent = os.path.dirname(csv_parent_folder)
+
+	#print(csv_files)
+
+	df = concat_df(csv_files)
+	
+	df = preprocess(df)
+
+	 # after concatenating, the index is messed up 
+
+	''' now loop through and look at the coincidence timings. if it's within 2 seconds, then discard 
+
+	standardise to using event time for file names because the files are saved using event_times
+	and this is because sometimes the EQT pick won't have p arrival
+	tbh this could be fixed upstream but this is probably fine
+	'''
+
+	df_filtered = merging_df(df)
 
 
 
@@ -218,6 +221,21 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 	print("{} events missing".format(len(failed)))
 
 if __name__ == '__main__':
+
+	parser = argparse.ArgumentParser(description = "One station csv merger for multiple EQT outputs, filtering duplicates. Then, copy the filtered files to a new folder. It also creates two new columns, one for the coincidence time (current event - previous event), and another for the no. of folders reporting that event.The time window used is 2 seconds, so if the present event is within 2 seconds of the previous one, they are grouped together.")
+
+	parser.add_argument('station', type = str, help = "station name e.g. TA19. This is for single station multi runs only.")
+
+	parser.add_argument('csv_folder', type = str, help = "Parent folder containing detection folders from use_eqt.py. Usually it should contain more than one detection folder.")
+
+	parser.add_argument('merge_folder', type = str, help = "The new folder to put all the merged files in.")
+
+	parser.add_argument('output_csv_name', type = str, help = "File name to create filtered and raw merged csv. This is NOT a file path, just the root name.")
+
+	#parser.add_argument('merge_folder', type = str, help = "folder in which to copy the filtered .SAC and .png files")
+	parser.add_argument('-d', action='store_true', help = "Flag for DRY RUN. Does not perform any file writing operations, prints wherever possible")
+
+	args = parser.parse_args()
 
 	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = True)
 	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d)
