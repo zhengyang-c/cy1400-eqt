@@ -13,7 +13,7 @@ STA=TA19
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 monorun () {
 	OUTPUT_FOLDER="${OUTPUT_ROOT}_${1}"
-	python run_eqt.py $HDF_FOLDER $DEFAULT_MODEL $OUTPUT_FOLDER
+	python run_eqt.py $HDF_FOLDER $MODEL $OUTPUT_FOLDER
 	#python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
 
 	python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
