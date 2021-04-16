@@ -17,7 +17,7 @@ parser.add_argument('csv_output', type = str, help = "Path to new csv file with 
 
 #parser.add_argument('-z', action='store', help = "Flag to indicate new noise string. Converted to lower case.")
 
-#args = parser.parse_args()
+args = parser.parse_args()
 
 def main(csv_input, manual_picks, csv_output ):
 	df = pd.read_csv(csv_input)
@@ -54,5 +54,5 @@ def main(csv_input, manual_picks, csv_output ):
 	df.to_csv(csv_output, index = False,)
 	
 
-main("imported_figures/21mar_default_merge/21mar_default_filtered.csv", "manual/21mar_default_multi_repicked.txt", "imported_figures/21mar_default_merge/27mar_no_z.csv") # these are the A and B events
-#main(args.csv_input, args.manual_picks, args.csv_output)
+#main("imported_figures/21mar_default_merge/21mar_default_filtered.csv", "manual/21mar_default_multi_repicked.txt", "imported_figures/21mar_default_merge/27mar_no_z.csv") # these are the A and B events
+main(args.csv_input, args.manual_picks, args.csv_output)

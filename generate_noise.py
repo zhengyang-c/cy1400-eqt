@@ -86,7 +86,7 @@ def is_time_between(begin_time, end_time, check_time=None):
 def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 	#csv_parent_folder = "/home/zchoong001/cy1400/cy1400-eqt/training_files/generate_noise_27mar"
 
-	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
+	csv_files = [str(path) for path in Path(csv_parent_folder).glob('*.csv')]
 
 	# so from multiple .csv files (because i didn't write merging yet, collate all the picks
 	# to make a blacklist
