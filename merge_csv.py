@@ -110,7 +110,7 @@ def merging_df(df):
 		#print(_dt, curr_time, prev_time)
 
 		if not index == 0:
-			if _dt < COINCIDENCE_TIME_RANGE:
+			if _dt < COINCIDENCE_TIME_RANGE:				
 				_tempgroup.append(index)
 
 			else: # new event group, dump the previous temp_group

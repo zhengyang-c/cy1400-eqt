@@ -47,20 +47,24 @@ from obspy import UTCDateTime
 
 from pathlib import Path
 
-parser = argparse.ArgumentParser(description = "Generate noise from single station 3C waveforms using a blacklist method by blacklisting known good picks.")
+from merge_csv import merging_df
 
-parser.add_argument('sta', type = str, help = "station name")
-parser.add_argument('csv_folder', type = str, help = "folder containing csvs to merge (assuming they aren't, but they should)")
-parser.add_argument('sac_parent_folder', type = str, help = "")
-parser.add_argument('output_root', type = str, help = "")
+if __name__ == "__main__":
 
-#parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
+	parser = argparse.ArgumentParser(description = "Generate noise from single station 3C waveforms using a blacklist method by blacklisting known good picks.")
 
-#parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
-args = parser.parse_args()
+	parser.add_argument('sta', type = str, help = "station name")
+	parser.add_argument('csv_folder', type = str, help = "folder containing csvs to merge (assuming they aren't, but they should)")
+	parser.add_argument('sac_parent_folder', type = str, help = "")
+	parser.add_argument('output_root', type = str, help = "")
 
-# recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
-# glob is slower 
+	#parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
+
+	#parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
+	args = parser.parse_args()
+
+	# recommended by https://stackoverflow.com/questions/2186525/how-to-use-glob-to-find-files-recursively
+	# glob is slower 
 def str_to_datetime(x):
 	try:
 		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
@@ -97,97 +101,66 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 
 	global_list = []
 
-	for csv_file in csv_files:
-		try: #dirty
-			df = pd.read_csv(csv_file)
-			_detections = df['event_start_time']
+	df = pd.concat((pd.read_csv(f) for f in csv_files), ignore_index = True)
 
-			global_list.extend(_detections)
-		except:
-			continue
+	#print(df)
 
-	#print(global_list[:5])
-	print(len(global_list))
+	#
 
-	global_list = [str_to_datetime(x) for x in global_list]
+	df.event_datetime = pd.to_datetime(df.event_datetime) # this assumes that they've already been processed before
+	# which is reasonable since when generating a noise data set you'll have a multirun --> requires merging --> event_Datetime column should be present
+
+	df.sort_values(by='event_datetime', inplace = True)
+	df = df.reset_index(drop=True)
 
 	
+	df = df.assign(use_or_not=0)
+	df = df.assign(dt=0)
+	df = df.assign(agreement=0)
+	df = merging_df(df) # it's more of a formality? to remove duplicate events 
+
+	# take the timestamps, have list of (start end points) that are - 10 seconds before and 60 seconds after each timestamp
+	# these are the event blacklists
+	# 
+	# what you want to do next is the merge the blacklists
 	
-	filtered_datestrings = [] # rounded to seconds
 
-	for entry in global_list:
-		time_deltas = [-2, -1, 0, 1, 2]
+	blacklists = []
 
-		# round the timestamp to the nearest second, then take +/- 2 seconds
-		# if none of those are in filtered datestrings, then add to filtered datestrings
-		# this is meant to filter out duplicate detections since sometimes the detection can be quite off / bad
+	for timestamp in list(df.event_datetime):
+		_start = timestamp - datetime.timedelta(seconds = 10) # 10 because sometimes there are bad picks so
+		_end = timestamp + datetime.timedelta(seconds = 60)
 
-		if (all(not(x in filtered_datestrings) for x in ([datetime_to_str(entry, dx) for dx in time_deltas]))):
-			filtered_datestrings.append(datetime_to_str(entry, 0))
+		if len(blacklists) > 0:
+			if _start < blacklists[-1]:
+				blacklists[-1] = _end # merge
 
-	print(len(filtered_datestrings))
+			else:
+				blacklists.append(_start)
+				blacklists.append(_end)
+		else: # sorry for writing ugly code
+			blacklists.append(_start) 
+			blacklists.append(_end)
 
-	filtered_datestrings.sort()
-
-	noise_periods = [] # a list of tuples, start and end datetime objects, 
-
-	blacklist = []
-
-	for i, event_time in enumerate(filtered_datestrings):
-		_event_time = str_to_datetime(event_time)
-
-		start_time = _event_time - datetime.timedelta(seconds = 65)
-		end_time = _event_time - datetime.timedelta(seconds = 5)
-		event_start = _event_time - datetime.timedelta(seconds = 5)
-		event_end_time = _event_time + datetime.timedelta(seconds = 60)
-
-		# using this in case there are like a lot of tremors or w/e 
-		# even though i could use the event_end time from EQT
-
-		if not (is_time_between(start_time, end_time, str_to_datetime(filtered_datestrings[i - 1]))):
-			noise_periods.append((start_time, end_time))
-
-		if i == len(filtered_datestrings) - 1:
-			blacklist.append((event_start, event_end_time))
-		else:
-			next_event_start = str_to_datetime(filtered_datestrings[i + 1]) - datetime.timedelta(seconds = 5)
-			next_event_end = str_to_datetime(filtered_datestrings[i + 1]) + datetime.timedelta(seconds = 60)		
-
-			if not is_time_between(next_event_start, next_event_end, event_end_time):
-				blacklist.append((event_start, event_end_time))
-
-			#print(is_time_between(next_event_start, next_event_end,event_end_time))
-	#print(blacklist[:5])
-	#print(blacklist[-5:])
-
-
-	def handle_blacklist():
+	def handle_blacklist(blacklist):
 		overlap = 0.3
 		unravelled_blacklist = []
 
-		start_of_first_day = datetime.datetime.combine(blacklist[0][0].date(), datetime.time.min)
-		end_of_last_day = datetime.datetime.combine(blacklist[-1][1].date(), datetime.time.max)
+		start_of_first_day = datetime.datetime.combine(blacklist[0].date(), datetime.time.min)
+		end_of_last_day = datetime.datetime.combine(blacklist[-1].date(), datetime.time.max)
 		unravelled_blacklist.append(start_of_first_day)
 
-		for _i, _j in blacklist:
-			unravelled_blacklist.append(_i)
-			unravelled_blacklist.append(_j)
+		unravelled_blacklist.extend(blacklist)
 
-		unravelled_blacklist.append(end_of_last_day) # this is so that it's bounded
-		# later i'll re group it so it's a group of two timestamps
+		unravelled_blacklist.append(end_of_last_day)
 
-		reravelled_blacklist = []
-
+		new_blacklist = []
 		for _i in range(int(len(unravelled_blacklist)/2)):
-			reravelled_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
-
-
-
-		# cut the waveforms before feeding it in
+			new_blacklist.append((unravelled_blacklist[2 * _i], unravelled_blacklist[2 * _i + 1]))
 
 		new_cut_noise_ts = []
 
-		for _i in reravelled_blacklist:
+		for _i in new_blacklist:
 			n_cuts = ((_i[1] - _i[0]).seconds - (overlap * 60))/((1 - overlap)*60)
 			if math.floor(n_cuts) >= 1:
 				pass
@@ -201,9 +174,10 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 		#print(new_cut_noise_ts[:5])
 		cut_sac_file([sta], [new_cut_noise_ts], sac_parent_folder, output_root)
 		
-	handle_blacklist()
-	#
-	#cut_sac_file(["TA19"], [noise_periods])
+		#print(len(new_cut_noise_ts))
+
+
+	handle_blacklist(blacklists)
 
 ''' timestamps: a list of tuples, for noise start and end periods
 
@@ -215,7 +189,7 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 
 	sac_files = [str(path) for path in Path(sac_parent_folder).rglob('*.SAC')]
 
-	print(sac_files)
+	#print(sac_files)
 
 	#output_root = "training_files/aceh_noise_13mar_wholeday/aceh_noise_13mar_wholeday"
 	output_h5 = output_root + ".hdf5"

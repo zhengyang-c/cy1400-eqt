@@ -126,5 +126,5 @@ if __name__ == "__main__":
 
 	# args = parser.parse_args()
 
-	main("manual/21mar_default_multi_repicked.txt", "imported_figures/27mar_wholemonth_aceh1e-6frozen/TA19_outputs/sac_picks", dry_run = False)
+	main("manual/21mar_default_multi_repicked.txt", "imported_figures/16apr_merged_1e-6_22marmodel/sac_picks", dry_run = False)
 
