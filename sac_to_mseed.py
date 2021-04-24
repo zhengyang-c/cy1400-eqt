@@ -30,7 +30,7 @@ def convert(input_folder, mseed_folder):
 	folders = [x[0] for x in os.walk(input_folder)]
 
 	folders = list(filter(lambda x: re.search(r"\/\D{2,3}\d{2,3}", x), folders))
-	#all_files = []
+	all_files = []
 
 	#print(folders)
 
