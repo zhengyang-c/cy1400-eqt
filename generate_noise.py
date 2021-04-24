@@ -238,7 +238,7 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 			print(year_day)
 			print(stations[s_n])
 
-			st = read(sac_parent_folder + "*{}*.SAC".format(year_day))
+			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
 			st.resample(100.0)			
 
 			for timestamp in binned_timestamps[year_day]:

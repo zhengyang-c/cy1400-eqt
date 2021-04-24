@@ -7,7 +7,7 @@ OUTPUT_FOLDER="detections/22mar_frozenlayers_aceh_LR1e-${1}"
 #OUTPUT_FOLDER2="detections/1e4model_LR1e-3_TA19.085"
 STA=TA19
 
-#python sac_to_mseed.py $SAC_FOLDER
+#python sac_to_mseed.py 
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 python run_eqt.py "mseed_${SAC_FOLDER}_processed_hdfs" $MODEL $OUTPUT_FOLDER
 #python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
