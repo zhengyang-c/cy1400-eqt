@@ -18,6 +18,7 @@ from pathlib import Path
 from obspy import read
 import datetime
 import os
+import math
 import h5py
 import numpy as np
 import csv
@@ -112,6 +113,16 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.max)
 
 			print(start_of_day, end_of_day)
+
+			n_cuts = ((start_of_day - end_of_day).seconds - (overlap * 60))/((1 - overlap)*60)
+
+			print(n_cuts)
+
+			timestamps = [start_of_day + datetime.timedelta(seconds = overlap * 60) * j for j in range(math.floor(n_cuts))]
+
+			print(timestamps[:5])
+
+
 		
 		# for year_day in files:
 		# 	st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
