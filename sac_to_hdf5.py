@@ -16,6 +16,7 @@ last update: 06-21-2020
 
 from pathlib import Path
 from obspy import read
+import datetime
 import os
 import h5py
 import numpy as np
