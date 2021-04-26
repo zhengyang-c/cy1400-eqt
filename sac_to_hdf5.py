@@ -80,7 +80,30 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		sac_files = [str(path) for path in Path(station_info["path"]).glob('*.SAC')]
 
-		print(sac_files)
+
+		# group sac_files into days in increasing order
+		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
+		# 
+		
+		files = {}
+		
+		for _file in sac_files:
+			print(_file)
+			net = _file.split(".")[0]
+			sta = _file.split(".")[1]
+			_ = _file.split(".")[2] #idk dude
+			cha = _file.split(".")[3]
+			_ = _file.split(".")[4]
+			year_day = _file.split(".")[5] + "_" + _file.split(".")[6]
+			
+			if year_day not in files:
+				files[year_day] = [_file]
+			elif year_day in files:
+				files[year_day].append(_file)
+
+		print(files)
+		
+
 
 		# load sac file, detrend mean and resample
 
