@@ -78,9 +78,9 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		# csv output: trace_name, start_time
 
-		#_outhf = h5.File(output_h5, "w")
+		_outhf = h5.File(hdf5_output_path, "w")
 
-		#_outgrp = _outhf.create_group("data")
+		_outgrp = _outhf.create_group("data")
 
 		sac_files = [str(path) for path in Path(station_info["path"]).glob('*.SAC')]
 
@@ -132,7 +132,8 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			st.detrend('demean')
 
 			for timestamp in timestamps:
-				stt = st.copy() # this is pretty dumb ngl
+				print(timestamp)
+				"""stt = st.copy() # this is pretty dumb ngl
 
 				stt.trim(UTCDateTime(timestamp), UTCDateTime(timestamp + datetime.timedelta(seconds = 60)), nearest_sample = False)
 
@@ -147,7 +148,22 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 				print(_tracename, _start_time)
 
-				break
+				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
+				
+				_g.attrs['trace_name'] = _tracename
+				_g.attrs['receiver_code'] = sta
+				_g.attrs['receiver_type'] = "EH"
+				_g.attrs['network_code'] = "AC"
+				_g.attrs["receiver_longitude"] = stations_[sta]['coords'][0]
+				_g.attrs["receiver_latitude"] = stations_[sta]['coords'][1]				
+				_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][2]
+				_g.attrs["trace_start_time"] = _start_time
+
+				csv_output["trace_name"].append(_tracename)
+				csv_output["start_time"].append(_start_time)"""
+
+
+
 
 				# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
 
@@ -156,20 +172,9 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 
 			#_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
-
-
-		
-		# for year_day in files:
-		# 	st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
-		# 	st.resample(100.0)
-		# 	st.detrend('demean')
-
-
-		# load sac file, detrend mean and resample (in the order: E N Z)
-
-
-
-		# edge case: between the day, just ignore lol
+		_outhf.close()
+		d_csv = pd.DataFrame.from_dict(csv_output)
+		d_csv.to_csv(csv_output_path, index = False)
 
 
 
