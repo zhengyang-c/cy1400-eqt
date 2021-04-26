@@ -53,7 +53,6 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 	#repfile = open(os.path.join(preproc_dir,"X_preprocessor_report.txt"), 'w')
 
-	station_list = [join(mseed_dir, ev) for ev in listdir(mseed_dir) if ev.split('/')[-1] != '.DS_Store'];
 	station_list = [os.path.join(sac_folder, _sta) for _sta in os.listdir(sac_folder)]
 
 	def process(station):
