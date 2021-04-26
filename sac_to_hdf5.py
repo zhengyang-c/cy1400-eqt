@@ -133,7 +133,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 			for timestamp in timestamps:
 				print(timestamp)
-				"""stt = st.copy() # this is pretty dumb ngl
+				stt = st.copy() # this is pretty dumb ngl
 
 				stt.trim(UTCDateTime(timestamp), UTCDateTime(timestamp + datetime.timedelta(seconds = 60)), nearest_sample = False)
 
@@ -160,7 +160,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 				_g.attrs["trace_start_time"] = _start_time
 
 				csv_output["trace_name"].append(_tracename)
-				csv_output["start_time"].append(_start_time)"""
+				csv_output["start_time"].append(_start_time)
 
 
 
