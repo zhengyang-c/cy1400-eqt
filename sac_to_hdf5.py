@@ -122,7 +122,8 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 			n_cuts = math.floor(n_cuts)
 
-			timestamps = [((1 - overlap) * 60) * j for j in range(n_cuts)]
+			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
+			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
 
 			#print(timestamps[:5])
 
@@ -131,15 +132,12 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			st.resample(100.0)
 			st.detrend('demean')
 
-			for timestamp in timestamps:
+			for c, timestamp in enumerate(timestamps):
 				print(timestamp)
-				#stt = st.copy() # this is pretty dumb ngl
 
-				#stt.trim(UTCDateTime(timestamp), UTCDateTime(timestamp + datetime.timedelta(seconds = 60)), nearest_sample = False)
-
-
-				start_index = int(timestamp * 100)
 				datum = np.zeros((6000, 3))
+
+				start_index = int(dt[c] * 100)
 				try:
 					for j in range(3):
 						datum[:,j] = st[j].data[start_index : start_index + 6000]
