@@ -53,10 +53,40 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 	#repfile = open(os.path.join(preproc_dir,"X_preprocessor_report.txt"), 'w')
 
-	station_list = [os.path.join(sac_folder, _sta) for _sta in os.listdir(sac_folder)]
+	station_list = [{"path":os.path.join(sac_folder, _sta), "sta": _sta} for _sta in os.listdir(sac_folder)]
 
-	def process(station):
-		print(station)
+	def process(station_info):
+		print(station_info)
+
+		sta = station_info["sta"]
+
+		_output_folder = os.path.join(output_folder, sta)
+		if not os.path.exists(_output_folder):
+			os.makedirs(_output_folder)
+
+		csv_output_path = os.path.join(output_folder, sta, "{}.csv".format(sta))
+		hdf5_output_path = os.path.join(output_folder, sta, "{}.hdf5".format(sta))
+
+
+		# create hdf5 file and csv object with all the required headers
+
+		# csv output: trace_name, start_time
+
+		#_outhf = h5.File(output_h5, "w")
+
+		#_outgrp = _outhf.create_group("data")
+
+		sac_files = [str(path) for path in Path(station_list["path"]).glob('*.SAC')]
+
+		print(sac_files)
+
+		# load sac file, detrend mean and resample
+
+
+
+		# edge case: between the day, just ignore lol
+
+
 
 	with ThreadPool(n_processor) as p:
 		p.map(process, station_list) 
