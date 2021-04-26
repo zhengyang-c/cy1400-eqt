@@ -39,7 +39,7 @@ multiprocessing is added for multiple station processing
 
 """
 
-def preproc(sac_folder, output_folder, stations_json, overlap = 0.3, n_processor = None):
+def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None):
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
@@ -110,7 +110,12 @@ def preproc(sac_folder, output_folder, stations_json, overlap = 0.3, n_processor
 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
-		for year_day in files:
+		for c, year_day in enumerate(files):
+
+			if not n_days == None:
+				if c > n_days:
+					break
+
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
 			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
@@ -178,10 +183,11 @@ if __name__ == "__main__":
 	parser.add_argument('sac_folder')
 	parser.add_argument('output_folder')
 	parser.add_argument('station_json')
+	parser.add_argument('-n', '--n_days', type = int)
 
 
 	args = parser.parse_args()
 
-	preproc(args.sac_folder, args.output_folder, args.station_json)
+	preproc(args.sac_folder, args.output_folder, args.station_json, args.n_days)
 
 
