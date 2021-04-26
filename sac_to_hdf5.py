@@ -102,10 +102,20 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 				files[year_day].append(_file)
 
 		print(files)
-		
+
+		# get time stamps first using the overlap since the time stamps are just a delta
+
 		for year_day in files:
-			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
-			st.resample(100.0)	
+			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.min)
+
+			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.max)
+
+			print(start_of_day, end_of_day)
+		
+		# for year_day in files:
+		# 	st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
+		# 	st.resample(100.0)
+		# 	st.detrend('demean')
 
 
 		# load sac file, detrend mean and resample (in the order: E N Z)
