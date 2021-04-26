@@ -123,7 +123,9 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			n_cuts = math.floor(n_cuts)
 
 			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
+			timestamps.append(start_of_day + datetime.timedelta(seconds = 1430))
 			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
+			dt.append(1430)
 
 			#print(timestamps[:5])
 
