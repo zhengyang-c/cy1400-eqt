@@ -82,7 +82,7 @@ def preproc(sac_folder, output_folder, stations_json, overlap = 0.3, n_processor
 		_outgrp = _outhf.create_group("data")
 
 		sac_files = [str(path) for path in Path(station_info["path"]).glob('*.SAC')]
-
+		sac_files.sort()
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
