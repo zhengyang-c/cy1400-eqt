@@ -145,6 +145,8 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
 				_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
 
+				print(_tracename, _start_time)
+
 				break
 
 				# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
