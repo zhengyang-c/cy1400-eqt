@@ -134,7 +134,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			#for timestamp in timestamps:
 			stt = st.copy()
 
-			stt.trim(UTCDateTime(timestamps[0]), UTCDateTime(timestamps[0] + datetime.datetime.timedelta(seconds = 60)), nearest_sample = False)
+			stt.trim(UTCDateTime(timestamps[0]), UTCDateTime(timestamps[0] + datetime.timedelta(seconds = 60)), nearest_sample = False)
 			print(len(stt[0].data))
 
 			# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
