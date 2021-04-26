@@ -96,7 +96,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			_ = _file.split(".")[2] #idk dude
 			cha = _file.split(".")[3]
 			_ = _file.split(".")[4]
-			year_day = _file.split(".")[5] + "_" + _file.split(".")[6]
+			year_day = _file.split(".")[5] + "." + _file.split(".")[6]
 			
 			if year_day not in files:
 				files[year_day] = [_file]
@@ -110,9 +110,9 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 		# get time stamps first using the overlap since the time stamps are just a delta
 
 		for year_day in files:
-			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.min)
+			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
-			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.max)
+			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
 
 			print(start_of_day, end_of_day)
 
