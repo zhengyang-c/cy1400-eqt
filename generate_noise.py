@@ -167,7 +167,7 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 			else:
 				continue
 			for j in range(math.floor(n_cuts)):
-				new_start = _i[0] + datetime.timedelta(seconds = overlap * 60) * j
+				new_start = _i[0] + datetime.timedelta(seconds = (1 -overlap) * 60) * j # ah
 				new_end = new_start + datetime.timedelta(seconds = 60)
 				new_cut_noise_ts.append((new_start, new_end))
 
