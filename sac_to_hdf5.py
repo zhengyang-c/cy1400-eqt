@@ -13,7 +13,7 @@ last update: 06-21-2020
 	
 """
 
-
+import h5py
 from pathlib import Path
 from obspy import read
 import obspy
@@ -78,7 +78,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		# csv output: trace_name, start_time
 
-		_outhf = h5.File(hdf5_output_path, "w")
+		_outhf = h5py.File(hdf5_output_path, "w")
 
 		_outgrp = _outhf.create_group("data")
 
