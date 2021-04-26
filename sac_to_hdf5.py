@@ -118,13 +118,14 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
 
-			print(n_cuts)
+			n_cuts = math.floor(n_cuts)
 
-			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(math.floor(n_cuts))]
+			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
 
-			print(timestamps[:5])
+			#print(timestamps[:5])
 
-			st = read(os.path.join(sac_folder,"*{}*.SAC".format(year_day)))
+			st = read(os.path.join(station_info["path"], "*{}*SAC".format(year_day)))
+			print(st)
 			st.resample(100.0)
 			st.detrend('demean')
 
