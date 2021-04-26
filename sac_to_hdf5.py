@@ -131,15 +131,25 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			st.resample(100.0)
 			st.detrend('demean')
 
-			#for timestamp in timestamps:
-			stt = st.copy()
+			for timestamp in timestamps:
+				stt = st.copy() # this is pretty dumb ngl
 
-			stt.trim(UTCDateTime(timestamps[0]), UTCDateTime(timestamps[0] + datetime.timedelta(seconds = 60)), nearest_sample = False)
-			print(len(stt[0].data))
+				stt.trim(UTCDateTime(timestamp), UTCDateTime(timestamp + datetime.timedelta(seconds = 60)), nearest_sample = False)
 
-			# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
+				datum = np.zeros((6000, 3))
+				try:
+					for j in range(3):
+						datum[:,j] = stt[j].data[:6000]
+				except:
+					continue
+				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
+				_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
 
-			# STA_AC_EH_Y-M-DTH:M:S.f, 
+				break
+
+				# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
+
+				# STA_AC_EH_Y-M-DTH:M:S.f, 
 
 
 
