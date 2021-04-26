@@ -16,6 +16,8 @@ last update: 06-21-2020
 
 from pathlib import Path
 from obspy import read
+import obspy
+from obspy import UTCDateTime
 import datetime
 import os
 import math
