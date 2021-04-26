@@ -114,7 +114,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 			print(start_of_day, end_of_day)
 
-			n_cuts = ((start_of_day - end_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
+			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
 
 			print(n_cuts)
 
