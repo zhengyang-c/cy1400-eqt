@@ -79,6 +79,8 @@ def convert(input_folder, mseed_folder):
 						_st = read(os.path.join(input_folder, _station, _file_name))
 					else:
 						_st += read(os.path.join(input_folder, _station, _file_name))
+
+						# segfault... how?
 						#print("yes but ", _file_name)
 
 				_st.merge(method = 1) 

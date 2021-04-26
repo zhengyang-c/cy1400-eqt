@@ -43,8 +43,8 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 	# a hdf5 and csv file pair with the station name is created for each station
 
-
-	stations_ = json.load(stations_json)
+	with open(station_json, "r") as f:
+		stations_ = json.load(f)
 
 
 	

@@ -122,7 +122,7 @@ def merging_df(df):
 				_tempgroup = [index]
 
 		if index == len(df.index) - 1:
-
+			print("last")
 			for ti in _tempgroup:
 				df.at[ti, 'agreement'] = len(_tempgroup)
 			df.at[_tempgroup[len(_tempgroup)//2], 'use_or_not'] = 1 # keep the middle of the pack
@@ -133,6 +133,11 @@ def merging_df(df):
 		prev_time = curr_time
 
 	df_filtered = df[df['use_or_not'] == 1]
+
+	for index, row in df_filtered.iterrows():
+		df_filtered.at[index, 'datetime_str'] = "{}.{}".format(row.station, datetime.datetime.strftime(row.event_datetime, "%Y.%j.%H%M%S"))
+
+	df_filtered = df_filtered[df_filtered.duplicated(subset = ['datetime_str']) == False]
 
 	return df_filtered
 
