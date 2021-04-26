@@ -122,7 +122,6 @@ def merging_df(df):
 				_tempgroup = [index]
 
 		if index == len(df.index) - 1:
-			print("last")
 			for ti in _tempgroup:
 				df.at[ti, 'agreement'] = len(_tempgroup)
 			df.at[_tempgroup[len(_tempgroup)//2], 'use_or_not'] = 1 # keep the middle of the pack
