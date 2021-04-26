@@ -12,7 +12,7 @@ last update: 06-21-2020
 	using multiprocessors, try using only a single cpu. 
 	
 """
-
+import argparse
 import h5py
 from pathlib import Path
 from obspy import read
@@ -23,14 +23,13 @@ import os
 import math
 import h5py
 import numpy as np
-import csv
-#from tqdm import tqdm
+
 import shutil
 import json
 import pandas as pd
 from multiprocessing.pool import ThreadPool
 import multiprocessing
-import pickle
+
 import faulthandler; faulthandler.enable()
 
 
