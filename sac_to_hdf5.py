@@ -78,7 +78,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		#_outgrp = _outhf.create_group("data")
 
-		sac_files = [str(path) for path in Path(station_list["path"]).glob('*.SAC')]
+		sac_files = [str(path) for path in Path(station_info["path"]).glob('*.SAC')]
 
 		print(sac_files)
 
