@@ -124,7 +124,7 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 			print(timestamps[:5])
 
-			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
+			st = read(os.path.join(sac_folder,"*{}*.SAC".format(year_day)))
 			st.resample(100.0)
 			st.detrend('demean')
 
