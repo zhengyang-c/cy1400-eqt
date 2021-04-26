@@ -103,9 +103,12 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		print(files)
 		
+		for year_day in files:
+			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
+			st.resample(100.0)	
 
 
-		# load sac file, detrend mean and resample
+		# load sac file, detrend mean and resample (in the order: E N Z)
 
 
 
