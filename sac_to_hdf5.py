@@ -105,6 +105,8 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 
 		print(files)
 
+		csv_output = {"trace_name": [], "start_time": []}
+
 		# get time stamps first using the overlap since the time stamps are just a delta
 
 		for year_day in files:
@@ -121,6 +123,24 @@ def preproc(sac_folder, station_list, output_folder, stations_json, overlap = 0.
 			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(math.floor(n_cuts))]
 
 			print(timestamps[:5])
+
+			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
+			st.resample(100.0)
+			st.detrend('demean')
+
+			#for timestamp in timestamps:
+			stt = st.copy()
+
+			stt.trim(UTCDateTime(timestamps[0]), UTCDateTime(timestamps[0] + datetime.datetime.timedelta(seconds = 60)), nearest_sample = False)
+			print(len(stt[0].data))
+
+			# TA01_AC_EH_2020-03-25T00:00:00.000000Z,2020-03-25 00:00:00.000000
+
+			# STA_AC_EH_Y-M-DTH:M:S.f, 
+
+
+
+			#_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
 
 		
