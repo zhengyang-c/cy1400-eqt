@@ -15,10 +15,11 @@ import pandas as pd
 
 parser = argparse.ArgumentParser(description = "take EQT picks from single station data and make a hdf5 training file")
 
-parser.add_argument('input_selection_csv', type = str, help = "The manual picks / gradings")
+parser.add_argument('sta', type = str, help = "Station name")
 parser.add_argument('input_eqt_csv', type = str, help = "CSV file with all the metadata from EQT")
-parser.add_argument('input_sac_folder', type = str, help = "original SAC files")
+parser.add_argument('input_sac_folder', type = str, help = "original SAC files to slice from")
 parser.add_argument('output_root', type = str, help = "filepath to root without file extension at the back")
+parser.add_argument('-d', '--dry', action = "store_true", help = "dry run")
 
 #parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
 
@@ -26,20 +27,22 @@ parser.add_argument('output_root', type = str, help = "filepath to root without 
 args = parser.parse_args()
 
 
-def main(sta, input_selection_csv, output_root, dry_run = False):
+
+
+def main(sta, input_selection_csv, input_sac_folder, output_root, dry_run = False):
 	#input_selection_csv = "ta19_nopp.csv" 
 	# manually picked, the files/traces you want to train on
 	# technically my text file is comma separated, so...
 
 	#input_eqt_csv = "imported_figures/detections_TA19_no_preproc/TA19_outputs/X_prediction_results.csv"
 	
-	input_eqt_csv = "detections/21mar_default_merged/21mar_default_filtered.csv"
+	#input_eqt_csv = "detections/21mar_default_merged/21mar_default_filtered.csv"
 	# eqt output, need the event times and metadata from here
 
-	input_sac_folder = "no_preproc/TA19"
+	#input_sac_folder = "no_preproc/TA19"
 	# sac trimming, just take sac data from here lol
 
-	station_file = "station_info.dat"
+	station_file = "station_info.dat" # ok this is hard coded
 
 
 	#output_root = "training_files/27mar_AOnly"
@@ -93,6 +96,8 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 
 	list_of_p_snr = list(pick_info['p_snr'])
 	list_of_s_snr = list(pick_info['s_snr'])
+
+	# tempted to rewrite using pandas
 
 	# coda_end: use the event_end_time u dum dum
 
@@ -164,7 +169,7 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 			binned_indices[_year_day].append(i_source)
 
 	print(binned_indices)
-'''
+
 	if not dry_run:
 		for i in indices_actual_picks:
 			# calculate coda, snrs 
@@ -251,9 +256,9 @@ def main(sta, input_selection_csv, output_root, dry_run = False):
 			print(i)
 
 
-'''
-
-main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)
+#main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)
+if __name__ == "__main__":
+	main(args.sta, args.input_eqt_csv, args.input_sac_folder, args.output_root, args.dry)
 
 # shift p_arrival time to sample 500
 
