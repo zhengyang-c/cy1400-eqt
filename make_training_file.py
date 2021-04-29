@@ -78,7 +78,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 		year_day = datetime.datetime.strftime(row.dt_start, "%Y_%j")
 
-		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.min)
 		
 		pick_info.at[index, "year_day"] = year_day
 
