@@ -132,7 +132,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		#	datum = np.zeros((6000, 3))
 
 	print(pick_info)
-			"""
+	"""
 			# calculate coda, snrs 
 			# 
 			#print(list_of_chosen_waveforms[i[0]])	
@@ -215,7 +215,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 	else:
 		for i in indices_actual_picks:
 			print(i)
-"""
+	"""
 
 
 #main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)

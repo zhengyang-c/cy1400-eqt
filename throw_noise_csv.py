@@ -28,7 +28,7 @@ def main(csv_input, manual_picks, csv_output ):
 
 	with open(manual_picks, "r") as f:
 		for line in f:
-			if line.strip().split(",")[1].lower() == noise_str:
+			if line.strip().split(",")[1].lower() == "z" or line.strip().split(",")[1].lower() == "b":
 				noise_labels.append(line.strip().split(",")[0])
 
 

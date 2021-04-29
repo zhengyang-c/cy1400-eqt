@@ -113,7 +113,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 		for c, year_day in enumerate(files):
 
 			if not n_days == None:
-				if c > n_days:
+				if c >= n_days:
 					break
 
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
