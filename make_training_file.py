@@ -59,10 +59,10 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 	pick_info = pd.read_csv(input_eqt_csv)
 
-	pick_info['dt_start'] = pd.to_datetime(pd.event_start_time)
-	pick_info['dt_end'] = pd.to_datetime(pd.event_end_time)
-	pick_info['dt_p'] = pd.to_datetime(pd.p_arrival_time)
-	pick_info['dt_s'] = pd.to_datetime(pd.s_arrival_time)
+	pick_info['dt_start'] = pd.to_datetime(pick_info.event_start_time)
+	pick_info['dt_end'] = pd.to_datetime(pick_info.event_end_time)
+	pick_info['dt_p'] = pd.to_datetime(pick_info.p_arrival_time)
+	pick_info['dt_s'] = pd.to_datetime(pick_info.s_arrival_time)
 
 	# sort by event time 
 
