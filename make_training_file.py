@@ -101,7 +101,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 
 		trace_start_time = UTCDateTime(row.dt_p - datetime.timedelta(seconds = -5))
-		pick_info.at[index, "trace_name"] = "{}_{}_EV".format(sta, datetime.datetime.strftime(trace_start_time, "%Y_%j.%H%M%S.%f"))
+		pick_info.at[index, "trace_name"] = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.dt_start, "%Y_%j.%H%M%S.%f"))
 		pick_info.at[index, "trace_start_time"] = str(trace_start_time)
 
 
