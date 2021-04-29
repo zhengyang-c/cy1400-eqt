@@ -1,4 +1,9 @@
-# this is meant to be run on EQT
+# this is meant to be run on the gekko server
+"""
+input: csv file with only the waveforms you want to use 
+"""
+
+
 
 import h5py
 import numpy as np
@@ -18,7 +23,7 @@ parser = argparse.ArgumentParser(description = "take EQT picks from single stati
 parser.add_argument('sta', type = str, help = "Station name")
 parser.add_argument('input_eqt_csv', type = str, help = "CSV file with all the metadata from EQT")
 parser.add_argument('input_sac_folder', type = str, help = "original SAC files to slice from")
-parser.add_argument('output_root', type = str, help = "filepath to root without file extension at the back")
+parser.add_argument('output_root', type = str, help = "filepath to file root without file extension at the back")
 parser.add_argument('-d', '--dry', action = "store_true", help = "dry run")
 
 #parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
@@ -29,7 +34,7 @@ args = parser.parse_args()
 
 
 
-def main(sta, input_selection_csv, input_sac_folder, output_root, dry_run = False):
+def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 	#input_selection_csv = "ta19_nopp.csv" 
 	# manually picked, the files/traces you want to train on
 	# technically my text file is comma separated, so...
@@ -49,95 +54,53 @@ def main(sta, input_selection_csv, input_sac_folder, output_root, dry_run = Fals
 	output_filename = "{}.hdf5".format(output_root)
 	output_csv_file = "{}.csv".format(output_root)
 
-	list_of_chosen_waveforms = []
-
-	grading_structure  = {"a": {"max": 514, "current": 0}, "b": {"max": 0, "current":0}}
-
-	# i can set no. of WF to use. if -1, then use all available
-
-	with open(input_selection_csv, "r") as f:
-		for line in f:
-			[_a, _b] = line.strip().split(",")
-			_b = _b.lower()
-			#_b: grade
-			#_a: event label
-			
-			if _b in grading_structure.keys():
-				grading_structure[_b]["current"] += 1
-
-				if grading_structure[_b]["current"] <= grading_structure[_b]["max"]:
-					list_of_chosen_waveforms.append(_a)
-
-	# load pick file
+	# load csv file with all the metadata (my use case: picks that were already made by EQT)
 
 
 	pick_info = pd.read_csv(input_eqt_csv)
 
-	#print(pick_info.head())
+	pick_info['dt_start'] = pd.to_datetime(pd.event_start_time)
+	pick_info['dt_end'] = pd.to_datetime(pd.event_end_time)
+	pick_info['dt_p'] = pd.to_datetime(pd.p_arrival_time)
+	pick_info['dt_s'] = pd.to_datetime(pd.s_arrival_time)
 
-	def get_utc(x):
-		try:
-			return UTCDateTime(datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
-		except:
-			return UTCDateTime(datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f"))
+	# sort by event time 
 
-	#list_of_end_picks = [get_utc(x) for x in list(pick_info['event_end_time'])] # for coda
-
-	#list_of_p_arrival = [get_utc(x) for x in list(pick_info['p_arrival_time'])]
-	#list_of_s_arrival = [get_utc(x) for x in list(pick_info['s_arrival_time'])]
-
-	list_of_start_picks = [get_utc(x) for x in list(pick_info['event_start_time'])]
-	list_of_end_picks =   [get_utc(x) for x in list(pick_info['event_end_time'])]
-	list_of_p_arrival = list(pick_info['p_arrival_time'])
-	list_of_s_arrival = list(pick_info['s_arrival_time'])
-
-	list_of_s_prob = list(pick_info['s_probability'])
-	list_of_p_prob = list(pick_info['p_probability'])
-
-	list_of_p_snr = list(pick_info['p_snr'])
-	list_of_s_snr = list(pick_info['s_snr'])
-
-	# tempted to rewrite using pandas
-
-	# coda_end: use the event_end_time u dum dum
-
-	# snr_db: looks like SNR for all 3 channels? just try and put 20 for everything??
-	# or use geometric mean of P_SNR and S_SNR
-
-	indices_actual_picks = []
-
-	##
-	## MATCHING, append indices that point to the csv data (also because i dno't like pandas)
-	##
-	##
-	## there are probably issues for extensibility i.e. more csv file inputs because what i did with noise was to merge the hdf5s
-
-	for c, pick in enumerate(list_of_chosen_waveforms):
-		#print(pick)
-		[_sta, _year, _day, _time, _] = pick.split(".")
-		_event_time = UTCDateTime("{},{},{}".format(_year,_day,_time))
-
-		for d, _pick in enumerate(list_of_start_picks): # this is not very efficient heh
-			if -2 <= (_pick - _event_time) <= 2:
-							
-				try: # should not be an issue with multi run and merging, but just to be sure
-					assert UTCDateTime(list_of_p_arrival[d])
-					assert UTCDateTime(list_of_s_arrival[d])
-					indices_actual_picks.append(d)
-				except:	
-					continue
+	pick_info.sort_values(by='dt_start', inplace = True)
+	pick_info = pick_info.reset_index(drop=True)
 
 
-	#print(indices_actual_picks)
-	#print(len(indices_actual_picks))
+	# get year_day, calculate the sample index for p_arrival_sample, coda_end_sample, s_arrival sample
+	# train on -15 seconds and 55 seconds from p arrival
+	# also calculate the start_index and end_index (-10s and +50s from p arrival)
 
-	# TODO add check if the file exists
+	for index, row in pick_info.iterrows():
 
-	if not dry_run:
-		hf = h5py.File(output_filename, 'w')
-		grp = hf.create_group("data")
-	#dset = grp.create_dataset("TA19_test", (6000, 3), dtype = 'i')
+		year_day = datetime.datetime.strftime(row.event_start_time, "%Y_%j")
 
+		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+		
+		pick_info.at[index, "year_day"] = year_day
+
+		# these samples are wrt to the start of the waveform, so it's 100 by defn
+		pick_info.at[index, "p_arrival_sample"] = 500
+		pick_info.at[index, "s_arrival_sample"] = int((row.dt_s - row.dt_p).total_seconds() * 100) + 500
+		pick_info.at[index, "coda_end_sample"] = int((row.dt_end - row.dt_p).total_seconds() * 100) + 500
+
+		# snr calculation is not really correct, will want to fix in the future
+		pick_info.at[index, "snr_db"] = [(row.p_snr + row.s_snr)/2 for j in range(3)]
+
+		dt = (row.dt_p - start_of_day).total_seconds()
+
+		# i can do this because each SAC file is for one day only
+
+		pick_info.at[index, "abs_start_index"] = int(dt * 100) - 500
+		pick_info.at[index, "trace_category"] = "earthquake_local"
+		pick_info.at[index, "trace_name"] = 
+		pick_info.at[index, "trace_start_time"] = str(UTCDateTime(row.dt_p - datetime.timedelta(seconds = -5)))
+
+
+	# could just reuse the existing csv file.. 
 	csv_output_data = {
 		#"network_code":[], 
 		#"receiver_code":[],
@@ -147,31 +110,26 @@ def main(sta, input_selection_csv, input_sac_folder, output_root, dry_run = Fals
 		#"receiver_elevation_m":[],
 		"p_arrival_sample": [],
 		"s_arrival_sample": [],
-		"snr_db":[], 
+		"snr_db":[], # i use the AM of p_snr and s_snr since sometimes the snr can be uh negative
 		"coda_end_sample":[],
 		"trace_category":[],
 		#"trace_start_time":[],
 		"trace_name":[],
 	}
 
-	binned_indices = {}
 
-	
-	# i pick is not really used / is the filename
-	# 
-	for i_source in indices_actual_picks:
-		# collate year_day
-		_year_day = datetime.datetime.strftime(list_of_start_picks[i_source], "%Y.%j")
+		#hf = h5py.File(output_filename, 'w')
+		#grp = hf.create_group("data")
+		#for index, row in pick_info.iterrows():
+		#	pass
 
-		if _year_day not in binned_indices:
-			binned_indices[_year_day] = [i_source]
-		else:
-			binned_indices[_year_day].append(i_source)
+			# for each year_day, load the corresponding sac file
+			# load the data into datum
+			
+		#	datum = np.zeros((6000, 3))
 
-	print(binned_indices)
-
-	if not dry_run:
-		for i in indices_actual_picks:
+	print(pick_info)
+			"""
 			# calculate coda, snrs 
 			# 
 			#print(list_of_chosen_waveforms[i[0]])	
@@ -254,6 +212,7 @@ def main(sta, input_selection_csv, input_sac_folder, output_root, dry_run = Fals
 	else:
 		for i in indices_actual_picks:
 			print(i)
+"""
 
 
 #main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)
