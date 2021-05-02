@@ -18,18 +18,6 @@ import argparse
 import pandas as pd
 
 
-parser = argparse.ArgumentParser(description = "take EQT picks from single station data and make a hdf5 training file")
-
-parser.add_argument('sta', type = str, help = "Station name")
-parser.add_argument('input_eqt_csv', type = str, help = "CSV file with all the metadata from EQT")
-parser.add_argument('input_sac_folder', type = str, help = "original SAC files to slice from")
-parser.add_argument('output_root', type = str, help = "filepath to file root without file extension at the back")
-parser.add_argument('-d', '--dry', action = "store_true", help = "dry run")
-
-#parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
-
-#parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
-args = parser.parse_args()
 
 
 
@@ -78,9 +66,9 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 	for index, row in pick_info.iterrows():
 
-		year_day = datetime.datetime.strftime(row.dt_start, "%Y_%j")
+		year_day = datetime.datetime.strftime(row.dt_start, "%Y.%j")
 
-		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y_%j"), datetime.time.min)
+		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 		
 		pick_info.at[index, "year_day"] = year_day
 
@@ -123,104 +111,86 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 	}
 
 
-		#hf = h5py.File(output_filename, 'w')
-		#grp = hf.create_group("data")
-		#for index, row in pick_info.iterrows():
+		# add a dry run option
+
+	if not dry_run:
+
+
+		hf = h5py.File(output_filename, 'w')
+		grp = hf.create_group("data")
+		
+		prev_year_day = ""
+		for index, row in pick_info.iterrows():
 		#	pass
 
 			# for each year_day, load the corresponding sac file
 			# load the data into datum
 			
-		#	datum = np.zeros((6000, 3))
-
-	print(pick_info)
-	"""
-			# calculate coda, snrs 
-			# 
-			#print(list_of_chosen_waveforms[i[0]])	
-			[_sta, _year, _day, _time, _] = list_of_chosen_waveforms[i[0]].split(".")
-			length_of_event = list_of_end_picks[i[1]] - list_of_start_picks[i[1]]
-
-			#print(length_of_event)
-
-			# modify generate_noise.py
-
-
-			# change this to load one year day, and then trim from there
-			#st = obspy.read(os.path.join(input_sac_folder, "{}.{}.{}.{}.*.SAC".format(_sta, _year, _day, _time)))
-			stt = st.copy()
-
-			stt.resample(100.0)
-
-			_start = stt[0].stats.starttime
-
-			#print(_start)
-
-
-			intended_start_time = get_utc(list_of_p_arrival[i[1]]) - 5
-			intended_end_time = get_utc(list_of_p_arrival[i[1]]) + 55
-
-			#print(intended_start_time)
-			#print(intended_end_time)
-			#print(stt[0].stats.endtime)
-
-			stt.trim(intended_start_time, intended_end_time, nearest_sample = False)
-
-			_p_sample = 500 # well it could be off by 1 sample
-			_s_sample = int(_p_sample + 100 * (get_utc(list_of_s_arrival[i[1]]) - get_utc(list_of_p_arrival[i[1]])))
-
-			_coda = int(_p_sample + 100 * (list_of_end_picks[i[1]] - get_utc(list_of_p_arrival[i[1]])))
-			
-
-			snrs = [(float(list_of_p_snr[i[1]]) + float(list_of_s_snr[i[1]]))/2 for j in range(3)] # should use the snr calculation used by them ufgh
-			
-			
 			datum = np.zeros((6000, 3))
-			for j in range(3):
-				datum[:,j] = stt[j].data[:6000]
 
-			#print(datum)
-			ds_name = "{}_{}.{}.{}_EV".format(_sta, _year, _day, _time)
-			print(ds_name)
-			csv_output_data["coda_end_sample"].append(_coda)
-			csv_output_data["trace_name"].append(ds_name)
-			csv_output_data["p_arrival_sample"].append(_p_sample)
-			csv_output_data["s_arrival_sample"].append(_s_sample)
-			csv_output_data["trace_category"].append("earthquake_local")
-			csv_output_data["snr_db"].append(snrs)
-			#csv_output_data["trace_name"].append(ds_name)
+			if prev_year_day != row.year_day:
+				st = obspy.read("{}/*{}*C".format(input_sac_folder, row.year_day))
+				st.resample(100.0)
+				st.detrend('demean')
 
-			_g = grp.create_dataset(ds_name, (6000, 3), data = datum)
-			_g.attrs['p_arrival_sample'] = _p_sample
-			_g.attrs['s_arrival_sample'] = _s_sample
-			_g.attrs['snr_db'] = snrs
-			_g.attrs['coda_end_sample'] = _coda
-			_g.attrs['trace_category'] = "earthquake_local"
-			_g.attrs['trace_start_time'] = str(UTCDateTime(intended_start_time))
-			_g.attrs['receiver_type'] = "EH"
-			_g.attrs['network_code'] = "AC"
-			_g.attrs["receiver_latitude"] = ""
-			_g.attrs["receiver_longitude"] = ""
-			_g.attrs["receiver_elevation_m"] = ""
-			_g.attrs['receiver_code'] = _sta
-			_g.attrs['trace_name'] = ds_name
+			elif prev_year_day == row.year_day:
+				pass
 
+			try:
+				for j in range(3):
+					datum[:,j] = st[j].data[row.abs_start_index : row.abs_start_index + 6000] 
+					# could break if the event is within the 1st four seconds of the day
+					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
+			except:
+				continue
 
-			#print(stt)	
+				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
 
-			# sampling rate --> 250
-			# sampling rate --> 100
+				print(_tracename)
+
+				_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
+				_g.attrs['p_arrival_sample'] = row.p_arrival_sample
+				_g.attrs['s_arrival_sample'] = row.s_arrival_sample
+				_g.attrs['snr_db'] = row.snr_db
+				_g.attrs['coda_end_sample'] = row.coda_end_sample
+				_g.attrs['trace_category'] = "earthquake_local"
+				_g.attrs['trace_start_time'] = row.trace_start_time
+				_g.attrs['receiver_type'] = "EH"
+				_g.attrs['network_code'] = "AC"
+				_g.attrs["receiver_latitude"] = ""
+				_g.attrs["receiver_longitude"] = ""
+				_g.attrs["receiver_elevation_m"] = ""
+				_g.attrs['receiver_code'] = row.station
+				_g.attrs['trace_name'] = _tracename
+
 		hf.close()
 
 		d_csv = pd.DataFrame.from_dict(csv_output_data)
 		d_csv.to_csv(output_csv_file, index = False)
 	else:
-		for i in indices_actual_picks:
-			print(i)
-	"""
+		for index, row in pick_info.iterrows():
+			print("start_time:", rows.trace_start_time)
+			print("p_arrival_sample:", rows.p_arrival_sample)
+			print("s_arrival_sample:", rows.s_arrival_sample)
 
 
 #main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)
+
+
+parser = argparse.ArgumentParser(description = "take EQT picks from single station data and make a hdf5 training file")
+
+
+# def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
+parser.add_argument('sta', type = str, help = "Station name")
+parser.add_argument('input_eqt_csv', type = str, help = "CSV file with all the metadata from EQT")
+parser.add_argument('input_sac_folder', type = str, help = "original SAC files to slice from")
+parser.add_argument('output_root', type = str, help = "filepath to file root without file extension at the back")
+parser.add_argument('-d', '--dry', action = "store_true", help = "dry run")
+
+#parser.add_argument('manual_picks', type = str, help = "Path to txt file of manual picks (this should not require any processing)")
+
+#parser.add_argument('csv_output', type = str, help = "Path to new csv file with all noise removed")
+args = parser.parse_args()
 if __name__ == "__main__":
 	main(args.sta, args.input_eqt_csv, args.input_sac_folder, args.output_root, args.dry)
 
@@ -275,20 +245,3 @@ if __name__ == "__main__":
 # V trace_category (noise, earthquake_local)
 # V trace_name (for the hdf5)
 
-
-
-
-"""
-1) get list of traces 
-
-2) for each trace, 
-- trim the file to 6000 samples exactly, with p arrival at 5s
---> get p arrival time from the .csv file
---> get s arrival time from the .csv file
---> compute the no. of samples / (where it is) relative to the start of the trim
-
-- resample to 100Hz 
-
-
-
-"""
