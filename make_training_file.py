@@ -169,9 +169,9 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		d_csv.to_csv(output_csv_file, index = False)
 	else:
 		for index, row in pick_info.iterrows():
-			print("start_time:", rows.trace_start_time)
-			print("p_arrival_sample:", rows.p_arrival_sample)
-			print("s_arrival_sample:", rows.s_arrival_sample)
+			print("start_time:", row.trace_start_time)
+			print("p_arrival_sample:", row.p_arrival_sample)
+			print("s_arrival_sample:", row.s_arrival_sample)
 
 
 #main("TA19", "training_files/aceh_27mar_EV/21mar_default_multi_repicked.txt", "training_files/aceh_27mar_EV/A_only_default1month", dry_run = True)
