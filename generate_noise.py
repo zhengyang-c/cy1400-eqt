@@ -239,16 +239,23 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 			print(stations[s_n])
 
 			st = read(os.path.join(sac_parent_folder,"*{}*.SAC".format(year_day)))
-			st.resample(100.0)			
+			st.resample(100.0)
+			st.detrend('demean')
+
+			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
 			for timestamp in binned_timestamps[year_day]:
+
+				# timestamp is a list containing [start_time, end_time]
 				
 				_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
+				dt = int((timestamp[0] - start_of_day).total_seconds() * 100)
+
 				print(_tracename)
-				stt = st.copy()
+				#stt = st.copy()
 				#print(stt[0].stats.starttime)
-				stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
+				#stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
 				#print(len(stt[0].data))
 
 
@@ -260,7 +267,7 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				try:
 
 					for j in range(3):
-						datum[:,j] = stt[j].data[:6000]
+						datum[:,j] = st[j].data[dt : dt + 6000]
 				except:
 					print("@@@@")
 					continue
