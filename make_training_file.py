@@ -137,6 +137,8 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			elif prev_year_day == row.year_day:
 				pass
 
+			prev_year_day = row.year_day
+
 			try:
 				for j in range(3):
 					datum[:,j] = st[j].data[int(row.abs_start_index) : int(row.abs_start_index) + 6000] 
