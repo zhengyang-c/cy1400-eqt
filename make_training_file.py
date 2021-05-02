@@ -138,7 +138,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 			try:
 				for j in range(3):
-					datum[:,j] = st[j].data[row.abs_start_index : row.abs_start_index + 6000] 
+					datum[:,j] = st[j].data[int(row.abs_start_index) : int(row.abs_start_index) + 6000] 
 					# could break if the event is within the 1st four seconds of the day
 					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
 			except:
@@ -163,7 +163,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				_g.attrs['receiver_code'] = row.station
 				_g.attrs['trace_name'] = _tracename
 
-		hf.close()
+		hf.close()	
 
 		d_csv = pd.DataFrame.from_dict(csv_output_data)
 		d_csv.to_csv(output_csv_file, index = False)
