@@ -121,6 +121,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		
 		prev_year_day = ""
 		for index, row in pick_info.iterrows():
+			print(index)
 		#	pass
 
 			# for each year_day, load the corresponding sac file
