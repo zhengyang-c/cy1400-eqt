@@ -142,6 +142,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 					# could break if the event is within the 1st four seconds of the day
 					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
 			except:
+				print("help")
 				continue
 
 				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
