@@ -110,7 +110,7 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 	df.event_datetime = pd.to_datetime(df.event_datetime) # this assumes that they've already been processed before
 	# which is reasonable since when generating a noise data set you'll have a multirun --> requires merging --> event_Datetime column should be present
 
-	df.sort_values(by='event_datetime', inplace = True)
+	df.sort_values(by=['event_datetime'], inplace = True)
 	df = df.reset_index(drop=True)
 
 	

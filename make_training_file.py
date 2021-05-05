@@ -56,7 +56,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 	# sort by event time 
 
-	pick_info.sort_values(by='dt_start', inplace = True)
+	pick_info.sort_values(by=['dt_start'], inplace = True)
 	pick_info = pick_info.reset_index(drop=True)
 
 
