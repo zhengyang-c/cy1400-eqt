@@ -67,7 +67,7 @@ def preprocess(df):
 	df['event_datetime'] = pd.to_datetime(df.event_start_time)
 
 	#print(df['p_datetime'])
-	df.sort_values(by='event_datetime', inplace = True)
+	df.sort_values(by=['event_datetime'], inplace = True)
 
 
 	df = df.reset_index(drop=True)
