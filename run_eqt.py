@@ -7,7 +7,7 @@ def run(hdf_folder, model_path, output_folder):
 	hdf_folder is ${mseed_folder}_processed_hdfs
 	'''
 
-	predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time_frequency')
+	predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time_frequency', output_probabilities = True)
 
 
 parser = argparse.ArgumentParser()
