@@ -40,6 +40,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 	#output_root = "training_files/27mar_AOnly"
 	output_filename = "{}.hdf5".format(output_root)
+	print(output_filename)
 	output_csv_file = "{}.csv".format(output_root)
 
 	# load csv file with all the metadata (my use case: picks that were already made by EQT)
@@ -151,6 +152,9 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
 
 				print(_tracename)
+
+				csv_output_data["trace_category"].append("earthquake_local")
+				csv_output_data["trace_name"].append(_tracename)
 
 				_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
 				_g.attrs['p_arrival_sample'] = row.p_arrival_sample
