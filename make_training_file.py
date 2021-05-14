@@ -143,34 +143,34 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			try:
 				for j in range(3):
 					datum[:,j] = st[j].data[int(row.abs_start_index) : int(row.abs_start_index) + 6000] 
-					print(datum)
+					
 					# could break if the event is within the 1st four seconds of the day
 					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
 			except:
 				print("help")
 				continue
 
-				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
+			_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
 
-				print(_tracename)
+			print(_tracename)
 
-				csv_output_data["trace_category"].append("earthquake_local")
-				csv_output_data["trace_name"].append(_tracename)
+			csv_output_data["trace_category"].append("earthquake_local")
+			csv_output_data["trace_name"].append(_tracename)
 
-				_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
-				_g.attrs['p_arrival_sample'] = row.p_arrival_sample
-				_g.attrs['s_arrival_sample'] = row.s_arrival_sample
-				_g.attrs['snr_db'] = row.snr_db
-				_g.attrs['coda_end_sample'] = row.coda_end_sample
-				_g.attrs['trace_category'] = "earthquake_local"
-				_g.attrs['trace_start_time'] = row.trace_start_time
-				_g.attrs['receiver_type'] = "EH"
-				_g.attrs['network_code'] = "AC"
-				_g.attrs["receiver_latitude"] = ""
-				_g.attrs["receiver_longitude"] = ""
-				_g.attrs["receiver_elevation_m"] = ""
-				_g.attrs['receiver_code'] = row.station
-				_g.attrs['trace_name'] = _tracename
+			_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
+			_g.attrs['p_arrival_sample'] = row.p_arrival_sample
+			_g.attrs['s_arrival_sample'] = row.s_arrival_sample
+			_g.attrs['snr_db'] = row.snr_db
+			_g.attrs['coda_end_sample'] = row.coda_end_sample
+			_g.attrs['trace_category'] = "earthquake_local"
+			_g.attrs['trace_start_time'] = row.trace_start_time
+			_g.attrs['receiver_type'] = "EH"
+			_g.attrs['network_code'] = "AC"
+			_g.attrs["receiver_latitude"] = ""
+			_g.attrs["receiver_longitude"] = ""
+			_g.attrs["receiver_elevation_m"] = ""
+			_g.attrs['receiver_code'] = row.station
+			_g.attrs['trace_name'] = _tracename
 
 		hf.close()	
 
