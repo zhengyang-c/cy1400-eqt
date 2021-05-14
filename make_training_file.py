@@ -143,6 +143,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			try:
 				for j in range(3):
 					datum[:,j] = st[j].data[int(row.abs_start_index) : int(row.abs_start_index) + 6000] 
+					print(datum)
 					# could break if the event is within the 1st four seconds of the day
 					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
 			except:
