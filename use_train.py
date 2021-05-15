@@ -10,6 +10,8 @@ import argparse
 
 
 def main(input_root, lr, output_folder):
+
+	print(input_root + ".hdf5")
 	trainer(input_hdf5=input_root + ".hdf5",
 		input_csv=input_root + '.csv',
 		output_name='{}_LR1e-{}'.format(output_folder, lr),      
@@ -33,7 +35,7 @@ def main(input_root, lr, output_folder):
 		patience=10,
 		gpuid=None,
 		gpu_limit=None,
-		__lr = 10**(-lr)
+		__lr = 1e-6
 		)
 
 parser = argparse.ArgumentParser()

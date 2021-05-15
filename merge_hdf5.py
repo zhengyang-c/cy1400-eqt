@@ -59,6 +59,7 @@ def main(input_dir, output_root):
 
 			for header in headers:
 				try:
+					print(x.attrs[header])
 					dsF.attrs[header] = x.attrs[header]
 				except:
 					print("missing header: {}".format(header))
