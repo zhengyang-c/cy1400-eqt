@@ -52,8 +52,8 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 	pick_info['dt_end'] = pd.to_datetime(pick_info.event_end_time)
 	pick_info['dt_p'] = pd.to_datetime(pick_info.p_arrival_time)
 	pick_info['dt_s'] = pd.to_datetime(pick_info.s_arrival_time)
-	pick_info['snr_db'] = "" 
-	pick_info['snr_db'] = pick_info['snr_db'].astype('object')
+	
+	#pick_info['snr_db'] = pick_info['snr_db'].astype('object')
 
 	# sort by event time 
 
@@ -79,7 +79,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		pick_info.at[index, "coda_end_sample"] = int((row.dt_end - row.dt_p).total_seconds() * 100) + 500
 
 		# snr calculation is not really correct, will want to fix in the future
-		pick_info.at[index, "snr_db"] = [(row.p_snr + row.s_snr)/2 for j in range(3)] # arithmetic mean
+		pick_info.at[index, "snr_db"] = (row.p_snr + row.s_snr)/2  # arithmetic mean
 
 		dt = (row.dt_p - start_of_day).total_seconds()
 
