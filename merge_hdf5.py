@@ -14,14 +14,16 @@ from pathlib import Path
 def main():
 	headers = ['p_arrival_sample', 's_arrival_sample', 'snr_db', 'coda_end_sample', 'trace_category', 'trace_start_time', 'receiver_type', 'network_code', 'receiver_latitude', 'receiver_longitude', 'receiver_elevation_m', 'receiver_code', 'trace_name']
 
-	output_root = ""
+	output_root = "training_files/aceh_27mar_EV/may15_test"
 	output_hdf5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
-	#hf = h5py.File(output_hdf5, 'w')
-	#grp = hf.create_group("data")
+	write_hf = h5py.File(output_hdf5, 'a')
+	grp = hf.create_group("data")
 
-	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/may14_compiled"
+	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_EV"
+
+
 
 	# get list of roots 
 
@@ -31,10 +33,23 @@ def main():
 
 	for file in files:
 		# merge hdf5 first since it's harder
-		temp_hf = h5py.File(file + ".hdf5", "r")
+		read_hf = h5py.File(file + ".hdf5", "r")
 
-		for row in temp_hf['data']:
-			print(row)
+		for row in read_hf['data']:
+			
+			x = read_hf.get('data/' + row)
+			data = np.array(x)
+
+			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float32)
+
+			for header in headers:
+				dsF.attrs[header] = x.attrs[header]
+
+			write_hf.flush()
+			
+		read_hf.close()
+
+
 
 
 	# merge csv
