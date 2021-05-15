@@ -91,7 +91,8 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 		trace_start_time = row.dt_p - datetime.timedelta(seconds = -5)
 		pick_info.at[index, "trace_name"] = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.dt_start, "%Y_%j.%H%M%S.%f"))
-		pick_info.at[index, "trace_start_time"] = trace_start_time
+		pick_info.at[index, "trace_start_time_dt"] = trace_start_time
+		pick_info.at[index, "trace_start_time"] = str(UTCDateTime(trace_start_time))
 
 
 	# could just reuse the existing csv file.. 
@@ -181,7 +182,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
 
 			for header in _metadata:
-				print(header)
+				#print(header)
 				csv_output_data[header].append(_metadata[header])
 				_g.attrs[header] = _metadata[header]
 
