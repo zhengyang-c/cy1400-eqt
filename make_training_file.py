@@ -152,7 +152,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				print("help")
 				continue
 
-			_tracename = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.trace_start_time, "%Y_%j.%H%M%S%f"))
+			_tracename = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.trace_start_time_dt, "%Y_%j.%H%M%S%f"))
 			#_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
 			print(_tracename)
