@@ -35,7 +35,7 @@ def main():
 		# merge hdf5 first since it's harder
 		read_hf = h5py.File(file + ".hdf5", "r")
 
-		print(len(read_hdf['data']))
+		print(len(read_hf['data']))
 
 		for row in read_hf['data']:
 			
