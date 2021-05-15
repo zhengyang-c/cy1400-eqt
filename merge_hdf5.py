@@ -74,4 +74,4 @@ def main(input_dir, output_root):
 	write_hf.close()
 	df.to_csv(output_csv, index = False)
 
-main(args.input_dir, output_root)
+main(args.input_dir, args.output_root)
