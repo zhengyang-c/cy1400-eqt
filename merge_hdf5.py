@@ -25,7 +25,7 @@ def main():
 
 	# get list of roots 
 
-	files = [".".join(str(x).split(".")[:-1]) for x in Path().glob("*csv")]
+	files = [".".join(str(x).split(".")[:-1]) for x in Path(input_dir).glob("*csv")]
 
 	print(files)
 
