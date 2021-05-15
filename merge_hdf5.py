@@ -34,7 +34,7 @@ def main():
 		temp_hf = h5py.File(file + ".hdf5", "r")
 
 		for row in temp_hf['data']:
-			print(evi)
+			print(row)
 
 
 	# merge csv
