@@ -2,7 +2,14 @@ import h5py
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import argparse
 
+parser = argparse.ArgumentParser(description = "search in a folder for .csv files and merge hdf5 files and the corresponding csv file")
+
+parser.add_argument('input_dir', type = str, help = "folder to look in")
+parser.add_argument('output_root', type = str, help = "output root (path without file ext)")
+
+args = parser.parse_args()
 
 # input:
 # folder with hdf5 files to merge (put them together), assuming that the file root of the .csv and .hdf5 are the same
@@ -11,10 +18,11 @@ from pathlib import Path
 # output:
 # merged hdf5 file and .csv file at the new path root 
 
-def main():
+def main(input_dir, output_root):
 	headers = ['p_arrival_sample', 's_arrival_sample', 'snr_db', 'coda_end_sample', 'trace_category', 'trace_start_time', 'receiver_type', 'network_code', 'receiver_latitude', 'receiver_longitude', 'receiver_elevation_m', 'receiver_code', 'trace_name']
 
-	output_root = "training_files/aceh_27mar_EV/may15_test"
+	#output_root = "training_files/aceh_27mar_EV/may15_test"
+	#input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_EV"
 	output_hdf5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
@@ -27,7 +35,7 @@ def main():
 	except:
 		print("group already exists")
 
-	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_EV"
+	
 
 
 	# get list of roots 
@@ -66,4 +74,4 @@ def main():
 	write_hf.close()
 	df.to_csv(output_csv, index = False)
 
-main()
+main(args.input_dir, output_root)
