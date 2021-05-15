@@ -35,7 +35,7 @@ def main(input_root, lr, output_folder):
 		patience=10,
 		gpuid=None,
 		gpu_limit=None,
-		__lr = 1e-6
+		__lr = 10**(-lr)
 		)
 
 parser = argparse.ArgumentParser()

@@ -79,7 +79,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		pick_info.at[index, "coda_end_sample"] = int((row.dt_end - row.dt_p).total_seconds() * 100) + 500
 
 		# snr calculation is not really correct, will want to fix in the future
-		pick_info.at[index, "snr_db"] = (row.p_snr + row.s_snr)/2  # arithmetic mean
+		#pick_info.at[index, "snr_db"] = (row.p_snr + row.s_snr)/2  # arithmetic mean
 
 		dt = (row.dt_p - start_of_day).total_seconds()
 
@@ -163,7 +163,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			_metadata['trace_name'] = _tracename
 			_metadata['p_arrival_sample'] = row.p_arrival_sample
 			_metadata['s_arrival_sample'] = row.s_arrival_sample
-			_metadata['snr_db'] = row.snr_db
+			_metadata['snr_db'] = [(row.p_snr + row.s_snr)/2 for __j in range(3)]
 			_metadata['coda_end_sample'] = row.coda_end_sample
 			_metadata['trace_start_time'] = row.trace_start_time
 			_metadata['receiver_type'] = "EH"
