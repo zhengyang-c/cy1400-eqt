@@ -18,6 +18,8 @@ def main():
 	output_hdf5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
+	df = pd.DataFrame()
+
 
 
 	write_hf = h5py.File(output_hdf5, 'a')
@@ -47,7 +49,7 @@ def main():
 			x = read_hf.get('data/' + row)
 			data = np.array(x)
 
-			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float64)
+			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float32)
 
 			for header in headers:
 				dsF.attrs[header] = x.attrs[header]
@@ -55,6 +57,12 @@ def main():
 			write_hf.flush()
 			
 		read_hf.close()
+
+		_df = pd.read_csv(file  + ".csv")
+
+		df = pd.concat([df, _df])
+
+		print(df)
 
 
 
