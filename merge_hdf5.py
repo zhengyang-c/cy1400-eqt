@@ -20,8 +20,6 @@ def main():
 
 	df = pd.DataFrame()
 
-
-
 	write_hf = h5py.File(output_hdf5, 'a')
 
 	try:
@@ -52,7 +50,10 @@ def main():
 			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float32)
 
 			for header in headers:
-				dsF.attrs[header] = x.attrs[header]
+				try:
+					dsF.attrs[header] = x.attrs[header]
+				except:
+					print("missing header: {}".format(header))
 
 			write_hf.flush()
 			
@@ -62,18 +63,7 @@ def main():
 
 		df = pd.concat([df, _df])
 
-		print(df)
-
-
-
-
-	# merge csv
-
-	# merge the hdf5 with the newly created one
-
-
-
-
-	# just use try / except to handle empty headers
+	write_hf.close()
+	df.to_csv(output_csv, index = False)
 
 main()
