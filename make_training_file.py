@@ -89,9 +89,9 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		pick_info.at[index, "trace_category"] = "earthquake_local"
 
 
-		trace_start_time = UTCDateTime(row.dt_p - datetime.timedelta(seconds = -5))
+		trace_start_time = row.dt_p - datetime.timedelta(seconds = -5)
 		pick_info.at[index, "trace_name"] = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.dt_start, "%Y_%j.%H%M%S.%f"))
-		pick_info.at[index, "trace_start_time"] = str(trace_start_time)
+		pick_info.at[index, "trace_start_time"] = trace_start_time
 
 
 	# could just reuse the existing csv file.. 
