@@ -181,8 +181,8 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
 
 			for header in _metadata:
+				print(header)
 				csv_output_data[header].append(_metadata[header])
-
 				_g.attrs[header] = _metadata[header]
 
 
