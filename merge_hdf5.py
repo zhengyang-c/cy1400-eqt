@@ -21,7 +21,7 @@ def main():
 	#hf = h5py.File(output_hdf5, 'w')
 	#grp = hf.create_group("data")
 
-	input_dir = ""
+	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/may14_compiled"
 
 	# get list of roots 
 
@@ -31,6 +31,10 @@ def main():
 
 	for file in files:
 		# merge hdf5 first since it's harder
+		temp_hf = h5py.File(file + ".hdf5", "r")
+
+		for row in temp_hf['data']:
+			print(evi)
 
 
 	# merge csv
