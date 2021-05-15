@@ -253,12 +253,6 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				dt = int((timestamp[0] - start_of_day).total_seconds() * 100)
 
 				print(_tracename)
-				#stt = st.copy()
-				#print(stt[0].stats.starttime)
-				#stt.trim(UTCDateTime(timestamp[0]), UTCDateTime(timestamp[1]) ,nearest_sample = False)
-				#print(len(stt[0].data))
-
-
 
 				csv_output_data["trace_category"].append("noise")
 				csv_output_data["trace_name"].append(_tracename)

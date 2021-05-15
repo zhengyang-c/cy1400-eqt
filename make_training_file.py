@@ -79,7 +79,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		pick_info.at[index, "coda_end_sample"] = int((row.dt_end - row.dt_p).total_seconds() * 100) + 500
 
 		# snr calculation is not really correct, will want to fix in the future
-		pick_info.at[index, "snr_db"] = [(row.p_snr + row.s_snr)/2 for j in range(3)]
+		pick_info.at[index, "snr_db"] = [(row.p_snr + row.s_snr)/2 for j in range(3)] # arithmetic mean
 
 		dt = (row.dt_p - start_of_day).total_seconds()
 
@@ -96,18 +96,18 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 	# could just reuse the existing csv file.. 
 	csv_output_data = {
-		#"network_code":[], 
-		#"receiver_code":[],
-		#"receiver_type":[],
-		#"receiver_latitude":[],
-		#"receiver_longitude":[],
-		#"receiver_elevation_m":[],
+		"network_code":[], 
+		"receiver_code":[],
+		"receiver_type":[],
+		"receiver_latitude":[],
+		"receiver_longitude":[],
+		"receiver_elevation_m":[],
 		"p_arrival_sample": [],
 		"s_arrival_sample": [],
-		"snr_db":[], # i use the AM of p_snr and s_snr since sometimes the snr can be uh negative
+		"snr_db":[], 
 		"coda_end_sample":[],
 		"trace_category":[],
-		#"trace_start_time":[],
+		"trace_start_time":[],
 		"trace_name":[],
 	}
 
@@ -183,7 +183,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				csv_output_data[header].append(_metadata[header])
 
 				_g.attrs[header] = _metadata[header]
-				
+
 			# _g.attrs['p_arrival_sample'] = row.p_arrival_sample
 			# _g.attrs['s_arrival_sample'] = row.s_arrival_sample
 			# _g.attrs['snr_db'] = row.snr_db
