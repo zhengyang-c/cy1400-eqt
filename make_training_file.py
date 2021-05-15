@@ -151,7 +151,8 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				print("help")
 				continue
 
-			_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(row.trace_start_time)))
+			_tracename = "{}_{}_EV".format(sta, datetime.datetime.strftime(row.trace_start_time, "%Y_%j.%H%M%S%f"))
+			#_tracename = "{}_{}.{}_NO".format(stations[s_n], year_day, datetime.datetime.strftime(timestamp[0], "%H%M%S%f"))
 
 			print(_tracename)
 
@@ -183,20 +184,6 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 				csv_output_data[header].append(_metadata[header])
 
 				_g.attrs[header] = _metadata[header]
-
-			# _g.attrs['p_arrival_sample'] = row.p_arrival_sample
-			# _g.attrs['s_arrival_sample'] = row.s_arrival_sample
-			# _g.attrs['snr_db'] = row.snr_db
-			# _g.attrs['coda_end_sample'] = row.coda_end_sample
-			# _g.attrs['trace_category'] = "earthquake_local"
-			# _g.attrs['trace_start_time'] = row.trace_start_time
-			# _g.attrs['receiver_type'] = "EH"
-			# _g.attrs['network_code'] = "AC"
-			# _g.attrs["receiver_latitude"] = ""
-			# _g.attrs["receiver_longitude"] = ""
-			# _g.attrs["receiver_elevation_m"] = ""
-			# _g.attrs['receiver_code'] = row.station
-			# _g.attrs['trace_name'] = _tracename
 
 
 		hf.close()	
