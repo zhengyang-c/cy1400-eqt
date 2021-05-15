@@ -18,11 +18,16 @@ def main():
 	output_hdf5 = output_root + ".hdf5"
 	output_csv = output_root + ".csv"
 
+
+
 	write_hf = h5py.File(output_hdf5, 'a')
-	grp = write_hf.create_group("data")
+
+	try:
+		grp = write_hf.create_group("data")
+	except:
+		print("group already exists")
 
 	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_EV"
-
 
 
 	# get list of roots 
@@ -42,7 +47,7 @@ def main():
 			x = read_hf.get('data/' + row)
 			data = np.array(x)
 
-			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float32)
+			dsF = write_hf.create_dataset("data/"+row, data.shape, data = data, dtype = np.float64)
 
 			for header in headers:
 				dsF.attrs[header] = x.attrs[header]
