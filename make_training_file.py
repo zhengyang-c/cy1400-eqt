@@ -111,6 +111,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 		"trace_name":[],
 	}
 
+	headers = ['p_arrival_sample', 's_arrival_sample', 'snr_db', 'coda_end_sample', 'trace_category', 'trace_start_time', 'receiver_type', 'network_code', 'receiver_latitude', 'receiver_longitude', 'receiver_elevation_m', 'receiver_code', 'trace_name']
 
 		# add a dry run option
 
@@ -143,7 +144,7 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 			try:
 				for j in range(3):
 					datum[:,j] = st[j].data[int(row.abs_start_index) : int(row.abs_start_index) + 6000] 
-					
+
 					# could break if the event is within the 1st four seconds of the day
 					# or if the sac file doesn't start from 000000 but that's unlikely so that's ok
 			except:
@@ -154,23 +155,49 @@ def main(sta, input_eqt_csv, input_sac_folder, output_root, dry_run = False):
 
 			print(_tracename)
 
-			csv_output_data["trace_category"].append("earthquake_local")
-			csv_output_data["trace_name"].append(_tracename)
+			_metadata = {}
+
+			_metadata['trace_category'] = "earthquake_local"
+			_metadata['trace_name'] = _tracename
+			_metadata['p_arrival_sample'] = row.p_arrival_sample
+			_metadata['s_arrival_sample'] = row.s_arrival_sample
+			_metadata['snr_db'] = row.snr_db
+			_metadata['coda_end_sample'] = row.coda_end_sample
+			_metadata['trace_start_time'] = row.trace_start_time
+			_metadata['receiver_type'] = "EH"
+			_metadata['network_code'] = "AC"
+			_metadata["receiver_latitude"] = ""
+			_metadata["receiver_longitude"] = ""
+			_metadata["receiver_elevation_m"] = ""
+			_metadata['receiver_code'] = row.station
+
+			# save metadata in temporary dictionary, then write to both the hdf5 dataset and csv file while looping through the headers
+
+
+			#csv_output_data["trace_category"].append("earthquake_local")
+			#csv_output_data["trace_name"].append(_tracename)
 
 			_g = grp.create_dataset(_tracename, (6000, 3), data = datum)
-			_g.attrs['p_arrival_sample'] = row.p_arrival_sample
-			_g.attrs['s_arrival_sample'] = row.s_arrival_sample
-			_g.attrs['snr_db'] = row.snr_db
-			_g.attrs['coda_end_sample'] = row.coda_end_sample
-			_g.attrs['trace_category'] = "earthquake_local"
-			_g.attrs['trace_start_time'] = row.trace_start_time
-			_g.attrs['receiver_type'] = "EH"
-			_g.attrs['network_code'] = "AC"
-			_g.attrs["receiver_latitude"] = ""
-			_g.attrs["receiver_longitude"] = ""
-			_g.attrs["receiver_elevation_m"] = ""
-			_g.attrs['receiver_code'] = row.station
-			_g.attrs['trace_name'] = _tracename
+
+			for header in _metadata:
+				csv_output_data[header].append(_metadata[header])
+
+				_g.attrs[header] = _metadata[header]
+				
+			# _g.attrs['p_arrival_sample'] = row.p_arrival_sample
+			# _g.attrs['s_arrival_sample'] = row.s_arrival_sample
+			# _g.attrs['snr_db'] = row.snr_db
+			# _g.attrs['coda_end_sample'] = row.coda_end_sample
+			# _g.attrs['trace_category'] = "earthquake_local"
+			# _g.attrs['trace_start_time'] = row.trace_start_time
+			# _g.attrs['receiver_type'] = "EH"
+			# _g.attrs['network_code'] = "AC"
+			# _g.attrs["receiver_latitude"] = ""
+			# _g.attrs["receiver_longitude"] = ""
+			# _g.attrs["receiver_elevation_m"] = ""
+			# _g.attrs['receiver_code'] = row.station
+			# _g.attrs['trace_name'] = _tracename
+
 
 		hf.close()	
 

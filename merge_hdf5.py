@@ -29,7 +29,12 @@ def main():
 
 	print(files)
 
-	# for each file root, load csv and hdf5
+	for file in files:
+		# merge hdf5 first since it's harder
+
+
+	# merge csv
+
 	# merge the hdf5 with the newly created one
 
 
