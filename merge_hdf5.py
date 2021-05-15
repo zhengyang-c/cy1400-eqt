@@ -19,7 +19,7 @@ def main():
 	output_csv = output_root + ".csv"
 
 	write_hf = h5py.File(output_hdf5, 'a')
-	grp = hf.create_group("data")
+	grp = write_hf.create_group("data")
 
 	input_dir = "/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_EV"
 
