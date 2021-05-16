@@ -261,8 +261,6 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 
 				print(_tracename)
 
-				csv_output_data["trace_category"].append("noise")
-				csv_output_data["trace_name"].append(_tracename)
 
 				datum = np.zeros((6000, 3))
 				try:
@@ -272,6 +270,9 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 				except:
 					print("@@@@")
 					continue
+
+				csv_output_data["trace_category"].append("noise")
+				csv_output_data["trace_name"].append(_tracename)
 
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				_g.attrs['trace_category'] = "noise"
