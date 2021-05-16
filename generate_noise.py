@@ -101,6 +101,13 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 
 	global_list = []
 
+	_path = Path(output_root)
+
+	_outputparent = _path.parent.absolute()
+
+	if not os.exists(_outputparent):
+		os.makedirs(_outputparent)
+
 	df = pd.concat((pd.read_csv(f) for f in csv_files), ignore_index = True)
 
 	#print(df)
@@ -281,7 +288,7 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 
 
 			st.clear()
-	
+
 	_outhf.close()
 
 	d_csv = pd.DataFrame.from_dict(csv_output_data)
