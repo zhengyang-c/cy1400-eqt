@@ -278,7 +278,10 @@ def cut_sac_file(stations, timestamps, sac_parent_folder, output_root):
 	
 				_g.attrs["trace_start_time"] = datetime.datetime.strftime(timestamp[0], "%Y-%m-%d %H:%M:%S")
 
+
+
 			st.clear()
+			break
 	_outhf.close()
 
 	d_csv = pd.DataFrame.from_dict(csv_output_data)
