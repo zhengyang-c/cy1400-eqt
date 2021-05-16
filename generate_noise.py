@@ -105,7 +105,7 @@ def collate_timestamps(sta, csv_parent_folder, sac_parent_folder, output_root):
 
 	_outputparent = _path.parent.absolute()
 
-	if not os.exists(_outputparent):
+	if not os.path.exists(_outputparent):
 		os.makedirs(_outputparent)
 
 	df = pd.concat((pd.read_csv(f) for f in csv_files), ignore_index = True)
