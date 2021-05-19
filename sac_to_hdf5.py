@@ -121,6 +121,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 					break
 
 			if not start_day == None:
+				print(start_day, year_day)
 				if datetime.datetime.strptime(start_day, "%Y%m%d") > datetime.datetime.strptime(year_day, "%Y.%j"):
 					continue
 
