@@ -191,7 +191,7 @@ if __name__ == "__main__":
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
 	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
 
-	parser.add_argument('-s', '--startday', type = int, help = "YYMMDD to start counting from")
+	parser.add_argument('-s', '--startday', type = str, help = "YYMMDD to start counting from")
 
 
 	args = parser.parse_args()
