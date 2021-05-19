@@ -39,7 +39,7 @@ multiprocessing is added for multiple station processing
 
 """
 
-def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None):
+def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None, start_day = None):
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
@@ -116,6 +116,10 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 				if c >= n_days:
 					break
 
+			if not start_day == None:
+				if datetime.datetime.strptime(start_day, "%Y%m%d") > datetime.datetime.strptime(year_day, "%Y.%j"):
+					continue
+
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
 			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
@@ -182,17 +186,19 @@ if __name__ == "__main__":
 
 	parser.add_argument('sac_folder', help = "contains station-named folders with .SAC files inside")
 	parser.add_argument('output_folder', help = "folder to write the HDF5 and csv file in. station name is the filename.")
-	parser.add_argument('station_json', help = "path to station.json that is already used by EQT, which gives station coordinates")
+	parser.add_argument('station_json', help = "path to station_list.json that is already used by EQT, which gives station coordinates")
 	parser.add_argument('-n', '--n_days', type = int)
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
 	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
+
+	parser.add_argument('-s', '--startday', type = int, help = "YYMMDD to start counting from")
 
 
 	args = parser.parse_args()
 
 	start_time = datetime.datetime.now()
 
-	preproc(args.sac_folder, args.output_folder, args.station_json, n_days = args.n_days, n_processor = args.process )
+	preproc(args.sac_folder, args.output_folder, args.station_json, n_days = args.n_days, n_processor = args.process, start_day = args.startday)
 
 	end_time = datetime.datetime.now()
 
@@ -200,6 +206,6 @@ if __name__ == "__main__":
 
 	if args.time:
 		with open(args.time, "a") as f:
-			f.write("sac_to_hdf5,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
+			f.write("sac_to_hdf5,{} days,{},{}\n".format(args.n_days, datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
 
