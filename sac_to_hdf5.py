@@ -114,7 +114,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 		counter = 0
 
-		for year_day in enumerate(files):
+		for year_day in files:
 
 			if not n_days == None:
 				if counter >= n_days:
