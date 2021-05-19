@@ -106,21 +106,25 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 		print(files)
 
-		files.sort()
+
 
 		csv_output = {"trace_name": [], "start_time": []}
 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
-		for c, year_day in enumerate(files):
+		counter = 0
+
+		for year_day in enumerate(files):
 
 			if not n_days == None:
-				if c >= n_days:
+				if counter >= n_days:
 					break
 
 			if not start_day == None:
 				if datetime.datetime.strptime(start_day, "%Y%m%d") > datetime.datetime.strptime(year_day, "%Y.%j"):
 					continue
+
+			counter += 1
 
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
