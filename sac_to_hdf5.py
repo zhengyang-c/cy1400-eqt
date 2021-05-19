@@ -44,7 +44,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
 	if not n_processor:
-		n_processor = multiprocessing.cpu_count()
+		n_processor = multiprocessing.cpu_count() # honestly i don't rmbr where i took this from 
 
 	# a hdf5 and csv file pair with the station name is created for each station
 
@@ -180,14 +180,26 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('sac_folder')
-	parser.add_argument('output_folder')
-	parser.add_argument('station_json')
+	parser.add_argument('sac_folder', help = "contains station-named folders with .SAC files inside")
+	parser.add_argument('output_folder', help = "folder to write the HDF5 and csv file in. station name is the filename.")
+	parser.add_argument('station_json', help = "path to station.json that is already used by EQT, which gives station coordinates")
 	parser.add_argument('-n', '--n_days', type = int)
+	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
+	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
 
 
 	args = parser.parse_args()
 
-	preproc(args.sac_folder, args.output_folder, args.station_json, args.n_days)
+	start_time = datetime.datetime.now()
+
+	preproc(args.sac_folder, args.output_folder, args.station_json, n_days = args.n_days, n_processor = args.process )
+
+	end_time = datetime.datetime.now()
+
+	time_taken = (end_time - start_time).total_seconds()
+
+	if args.time:
+		with open(args.time, "a") as f:
+			f.write("sac_to_hdf5,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
 
