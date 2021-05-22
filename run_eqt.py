@@ -1,6 +1,7 @@
 from EQTransformer.core.predictor import predictor
 import argparse
 import os
+import datetime
 
 def run(hdf_folder, model_path, output_folder, n_cpus):
 	'''
