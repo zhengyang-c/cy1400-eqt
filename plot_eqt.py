@@ -76,14 +76,30 @@ def plot(data_parent_folder_name, sta, detection_folder_name):
 
 			prev_year_day = pick_year_day
 
+if __name__ == "__main__":
 
-parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser()
 
-parser.add_argument('sac_folder')
-parser.add_argument('sta')
-parser.add_argument('input_folder')
+	parser.add_argument('sac_folder')
+	parser.add_argument('sta')
+	parser.add_argument('input_folder')
+	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
 
-args = parser.parse_args()
+	args = parser.parse_args()
 
-plot(args.sac_folder, args.sta, args.input_folder)
+
+
+	start_time = datetime.datetime.now()
+
+	plot(args.sac_folder, args.sta, args.input_folder)
+
+	end_time = datetime.datetime.now()
+
+	time_taken = (end_time - start_time).total_seconds()
+
+	if args.time:
+		with open(args.time, "a") as f:
+			f.write("plot_eqt,{} days,{},{}\n".format(args.input_folder, datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
+
+
 
