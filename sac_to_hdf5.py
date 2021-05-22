@@ -147,6 +147,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 			st = read(os.path.join(station_info["path"], "*{}*SAC".format(year_day)))
 			print(st)
 			st.resample(100.0)
+			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 			st.detrend('demean')
 
 			for c, timestamp in enumerate(timestamps):
