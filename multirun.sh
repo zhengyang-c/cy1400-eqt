@@ -30,9 +30,9 @@ do
 	#monorun $f
 done
 
-python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged" -csv
+#python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged" -csv
 
-python plot_eqt.py $SAC_FOLDER $STA "${OUTPUT_ROOT}_merged"
+#python plot_eqt.py $SAC_FOLDER $STA "${OUTPUT_ROOT}_merged"
 
 python header_writer.py $STA "${OUTPUT_ROOT}_merged/merged.csv" "${OUTPUT_ROOT}_merged/header.txt" $STATION_DATA
 
