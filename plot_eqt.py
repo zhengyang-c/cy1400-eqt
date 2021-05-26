@@ -6,6 +6,8 @@ import glob
 import os
 import datetime
 
+from pathlib import Path
+
 
 def str_to_datetime(x):
 	try:
@@ -15,12 +17,10 @@ def str_to_datetime(x):
 
 def plot(data_parent_folder_name, sta, detection_folder_name):
 
-	for csv_file in glob.glob("{}/*/*.csv".format(detection_folder_name)):
+	for csv_file in [str(path) for path in Path(detection_folder_name).rglob("*.csv")]:
 
 		print(csv_file)
-		df = pd.read_csv(csv_file)
-
-		
+		df = pd.read_csv(csv_file)		
 
 		csv_dir = "/".join(csv_file.split("/")[:-1])
 
