@@ -26,7 +26,7 @@ monorun () {
 
 }
 
-for ((f=1; f<=$1; f++))
+for ((f=1;f<=$1;f++))
 do
 	echo $f
 	#monorun $f
