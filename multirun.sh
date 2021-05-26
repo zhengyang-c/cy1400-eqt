@@ -30,7 +30,7 @@ do
 	#monorun $f
 done
 
-python merge_csv.py $STA $OUTPUT_ROOT  "merged" -csv
+python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged" -csv
 
 python plot_eqt.py $SAC_FOLDER $STA "${OUTPUT_ROOT}_merged"
 
