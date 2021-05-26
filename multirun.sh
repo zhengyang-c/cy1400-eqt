@@ -34,7 +34,7 @@ done
 
 #python plot_eqt.py $SAC_FOLDER $STA "${OUTPUT_ROOT}_merged"
 
-python header_writer.py $STA "${OUTPUT_ROOT}_merged/merged.csv" "${OUTPUT_ROOT}_merged/header.txt" $STATION_DATA
+python header_writer.py $STA "${OUTPUT_ROOT}_merged/merged_filtered.csv" "${OUTPUT_ROOT}_merged/header.txt" $STATION_DATA
 
 ./writerino.sh "${OUTPUT_ROOT}_merged" "${OUTPUT_ROOT}_merged/header.txt"
 
