@@ -140,7 +140,7 @@ def merging_df(df):
 
 	return df_filtered
 
-def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run = False):
+def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run = False, csv_or_not = False):
 
 	# just merge csv files can alr
 	# then use bash to mv 
@@ -190,39 +190,41 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 	# move files to a new folder
 
-	failed = []
+	if not csv_or_not:
 
-	for index, row in df_filtered.iterrows():
-		# copy the sac files, and then the png files
-		_timestamp = row['event_datetime'].strftime("%H%M%S")
-		_year = row['event_datetime'].strftime("%Y")
-		_day = row['event_datetime'].strftime("%j") # julian day
+		failed = []
 
-		_filenames = []
+		for index, row in df_filtered.iterrows():
+			# copy the sac files, and then the png files
+			_timestamp = row['event_datetime'].strftime("%H%M%S")
+			_year = row['event_datetime'].strftime("%Y")
+			_day = row['event_datetime'].strftime("%j") # julian day
 
-		for cha in ["EHE", "EHN", "EHZ"]:
-			_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _timestamp, cha)
-			_filenames.append(_filename)
+			_filenames = []
 
-		_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _timestamp))
+			for cha in ["EHE", "EHN", "EHZ"]:
+				_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _timestamp, cha)
+				_filenames.append(_filename)
 
-		for c, _filename in enumerate(_filenames):
-			source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _filename)
-			dest_path = os.path.join(merge_folder, "sac_picks", _filename)
+			_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _timestamp))
 
-			if not os.path.exists(source_path):
-				print("Warning! not found: {}".format(source_path))
-				#print("event_datetime", row["event_datetime"])
-				#print("event_start_time", row["event_start_time"])
-				failed.append((index, source_path))
+			for c, _filename in enumerate(_filenames):
+				source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _filename)
+				dest_path = os.path.join(merge_folder, "sac_picks", _filename)
 
-			else:
-				if dry_run:
-					print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
+				if not os.path.exists(source_path):
+					print("Warning! not found: {}".format(source_path))
+					#print("event_datetime", row["event_datetime"])
+					#print("event_start_time", row["event_start_time"])
+					failed.append((index, source_path))
+
 				else:
-					copyfile(source_path, dest_path)
+					if dry_run:
+						print("SOURCE: {}\nDEST:{}\n".format(source_path, dest_path))
+					else:
+						copyfile(source_path, dest_path)
 
-	print("{} events missing".format(len(failed)))
+		print("{} events missing".format(len(failed)))
 
 if __name__ == '__main__':
 
@@ -238,11 +240,13 @@ if __name__ == '__main__':
 
 	#parser.add_argument('merge_folder', type = str, help = "folder in which to copy the filtered .SAC and .png files")
 	parser.add_argument('-d', action='store_true', help = "Flag for DRY RUN. Does not perform any file writing operations, prints wherever possible")
+	parser.add_argument('-csv', action='store_true', help = "Flag for csv merging only")
+
 
 	args = parser.parse_args()
 
 	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = True)
-	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d)
+	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d, args.csv)
 
 
 #merge_csv(args.csv_folder, args.output_csv)
