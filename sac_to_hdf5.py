@@ -44,7 +44,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
 	if not n_processor:
-		n_processor = multiprocessing.cpu_count() # honestly i don't rmbr where i took this from 
+		n_processor = multiprocessing.cpu_count() # taken from mousavi stead
 
 	# a hdf5 and csv file pair with the station name is created for each station
 

@@ -1,7 +1,13 @@
+# SAC folder: the original source
+# hdf5 folder: the output from sac_to_hdf5 / converted
+# model / default: model: self explanatory
+# station_data: a nice json that EQT simply needs to have
+# output root: place to store the multiple runs 
+
+
 SAC_FOLDER=no_preproc
 DEFAULT_MODEL=/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5
 MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/22mar_frozenlayers_LR1e-6_outputs/final_model.h5
-#HDF_FOLDER="/home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_27mar_noise"
 HDF_FOLDER="/home/zchoong001/cy1400/cy1400-eqt/mseed_TA19_no_preproc_processed_hdfs"
 STATION_DATA=station_info.dat
 OUTPUT_ROOT="detections/16apr_1e-6_22marmodel/multi"
@@ -16,17 +22,23 @@ monorun () {
 	python run_eqt.py $HDF_FOLDER $MODEL $OUTPUT_FOLDER
 	#python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
 
-	python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
+	#python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
 
-	python header_writer.py $STA "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
-
-	./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
 }
 
-for f in {1..50}; do
+for ((f=1; f<=$1; f++))
+do
 	echo $f
-	monorun $f
+	#monorun $f
 done
+
+#python merge_csv.py
+
+#python plot_eqt.py
+
+#python header_writer.py $STA "${OUTPUT_FOLDER}/${STA}_outputs/X_prediction_results.csv" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt" $STATION_DATA
+
+#./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
 
 #python run_eqt.py "mseed_${SAC_FOLDER}_processed_hdfs" $MODEL2 $OUTPUT_FOLDER2
 #python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER2

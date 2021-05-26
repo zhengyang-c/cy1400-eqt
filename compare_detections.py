@@ -40,7 +40,7 @@ def str_to_datetime(x):
 
 def compare_grades(graded_traces, grades, df):
 
-	THRESHOLD = 1
+	THRESHOLD = 2
 	
 	graded_traces_dt = [datetime.datetime.strptime(".".join(x.split(".")[1:]), "%Y.%j.%H%M%S") for x in graded_traces]
 
