@@ -27,10 +27,10 @@ monorun () {
 for ((f=0;f<$1;f++))
 do
 	echo $f
-	monorun $f
+	#monorun $f
 done
 
-python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged"
+python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged" -csv
 
 python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
 
