@@ -22,16 +22,12 @@ STA=TA19
 monorun () {
 	OUTPUT_FOLDER="${OUTPUT_ROOT}/multi_${1}"
 	python run_eqt.py $HDF_FOLDER $MODEL $OUTPUT_FOLDER
-	#python run_eqt.py /home/zchoong001/cy1400/cy1400-eqt/training_files/aceh_noise_13mar_wholeday $DEFAULT_MODEL $OUTPUT_FOLDER
-
-	#python plot_eqt.py $SAC_FOLDER $STA $OUTPUT_FOLDER
-
 }
 
-for ((f=1;f<=$1;f++))
+for ((f=0;f<$1;f++))
 do
 	echo $f
-	#monorun $f
+	monorun $f
 done
 
 python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged"
