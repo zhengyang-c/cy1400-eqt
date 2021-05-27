@@ -53,7 +53,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	start_time = datetime.datetime.now()
-	run(args.hdf_folder, args.model_path, args.output_folder, args.n_cpus, args.multirun)
+	run(args.hdf_folder, args.model_path, args.output_folder, args.multirun)
 	
 
 	end_time = datetime.datetime.now()
