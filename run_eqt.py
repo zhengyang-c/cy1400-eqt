@@ -62,6 +62,6 @@ if __name__ == "__main__":
 
 	if args.time:
 		with open(args.time, "a") as f:
-			f.write("run_eqt.py,{},{},{}\n".format(args.hdf_folder,datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
+			f.write("run_eqt.py,{},{},{},{}\n".format(args.hdf_folder,datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken, args.output_folder))
 
 
