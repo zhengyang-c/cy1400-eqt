@@ -5,36 +5,36 @@ import datetime
 import multiprocessing
 from multiprocessing.pool import ThreadPool
 
-def run(hdf_folder, model_path, output_folder, n_cpus, multi = 1):
+def run(hdf_folder, model_path, output_folder, multi = 1):
 	'''
 	hdf_folder is ${mseed_folder}_processed_hdfs
-	'''
+	# '''
 
 	
 
-	def wrapper(args):
-		predictor(input_dir = args["hdf_folder"], input_model = args["model_path"], output_dir=args["output_folder"], detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = 1)
+	# def wrapper(args):
+	# 	predictor(input_dir = args["hdf_folder"], input_model = args["model_path"], output_dir=args["output_folder"], detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = args["n_cpus"])
 
-	if n_cpus != multiprocessing.cpu_count():
-		n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
+	# if n_cpus != multiprocessing.cpu_count():
+	n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
 
-	if multi > 1:
+	# if multi > 1:
 
-		arglist = []
+	# 	arglist = []
 
-		for i in range(multi):
+	# 	for i in range(multi):
 
-			args = {"hdf_folder": hdf_folder, "model_path": model_path, "output_folder": output_folder + "_{}".format(i), "n_cpus": n_cpus, "multi": multi}
+	# 		args = {"hdf_folder": hdf_folder, "model_path": model_path, "output_folder": output_folder + "_{}".format(i), "n_cpus": n_cpus, "multi": multi}
 
-			print(args["output_folder"])
+	# 		print(args["output_folder"])
 
-			arglist.append(args)
+	# 		arglist.append(args)
 
 
-		with ThreadPool(n_cpus) as p:
-			p.map(wrapper, arglist) 
-	else:
-		predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus)
+	# 	with ThreadPool(n_cpus) as p:
+	# 		p.map(wrapper, arglist) 
+	# else:
+	predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus)
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 	parser.add_argument('model_path')
 	parser.add_argument('output_folder')
 	parser.add_argument('-m', '--multirun', type = int, default = 1, help = "how many repeats")
-	parser.add_argument('-n', '--n_cpus', type = int, default = 1)
+	#parser.add_argument('-n', '--n_cpus', type = int, default = 1)
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
 
 	#parser.add_argument('json_output', help = "this is an intermediate file needed by EqT")
