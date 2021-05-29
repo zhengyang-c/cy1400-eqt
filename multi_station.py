@@ -24,6 +24,7 @@ import argparse
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import os
 
 def get_uptime(sac_folder):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
