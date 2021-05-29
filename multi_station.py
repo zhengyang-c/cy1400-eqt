@@ -44,5 +44,5 @@ def get_uptime(sac_folder):
 
 	print(df)
 
-get_uptime("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ ")
+get_uptime("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
 
