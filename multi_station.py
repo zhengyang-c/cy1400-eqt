@@ -34,7 +34,19 @@ def get_uptime(sac_folder):
 	# i think have a pandas dataframe, find the station. 
 	# you want the path information for each of them
 	
-	all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
+	folder_list = ["Deployed-2019-12-MSEED",
+	"Deployed-2020-01-MSEED",
+	"Deployed-2020-02-MSEED",
+	"Deployed-2020-03-MSEED",
+	"Deployed-2020-04-MSEED",
+	"Deployed-2020-05-MSEED",
+	"Deployed-2020-07-MSEED",]
+
+	all_files = []
+
+	for _f in folder_list:
+		all_files.extend([str(p) for p in Path(os.path.join(sac_folder, _f)).rglob("*SAC")])
+
 
 	print(all_files)
 
@@ -43,6 +55,10 @@ def get_uptime(sac_folder):
 	df["filepath"] = all_files
 
 	print(df)
+
+# since the uptime information is likely to be static, might as well generate the .csv uptimes once and then load from there
+# 10^5 files monkas
+
 
 get_uptime("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
 
