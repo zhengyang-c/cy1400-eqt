@@ -75,6 +75,7 @@ def get_all_files(sac_folder):
 		df.at[index, 'station'] = _sta
 		df.at[index, 'year'] = (_year)
 		df.at[index, 'jday'] = (_jday)
+		df.at[index, 'start_time'] = _file.split(".")[7]
 
 		df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
 
