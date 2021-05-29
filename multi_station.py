@@ -36,6 +36,8 @@ def get_uptime(sac_folder):
 	
 	all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
 
+	print(all_files)
+
 	df = pd.DataFrame()
 
 	df["filepath"] = all_files
