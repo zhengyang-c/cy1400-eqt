@@ -26,7 +26,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def get_uptime(sac_folder):
+def get_all_files(sac_folder):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
 	# 
@@ -49,17 +49,48 @@ def get_uptime(sac_folder):
 		all_files.extend([str(p) for p in Path(os.path.join(sac_folder, _f)).rglob("*SAC")])
 
 
-	print(all_files)
+	#print(all_files)
 
 	df = pd.DataFrame()
 
 	df["filepath"] = all_files
 
-	print(df)
+	#print(df)
+
+	for index, row in df.iterrows():
+		_sta = row.filepath.split("/")[-2] # second last entry should be the station name
+
+		# the sac files have their channel in front and not behind so... 
+
+		# check if all 3 channels are available too?
+
+		_file = row.filepath.split("/")[-1]
+
+		_year = _file.split(".")[5]
+		_jday = _file.split(".")[6]
+
+		_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
+
+		df.at[index, 'station'] = _sta
+		df.at[index, 'year'] = int(_year)
+		df.at[index, 'jday'] = int(_jday)
+
+		df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
+
+		# fullday?
+
+	df.to_csv("station/all_aceh_sac.csv", index = False)
+
+
+
+	# get station, check full day, get year, julian day, month
+
+	# then print csv file
+
 
 # since the uptime information is likely to be static, might as well generate the .csv uptimes once and then load from there
 # 10^5 files monkas
 
 
-get_uptime("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
+get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
 
