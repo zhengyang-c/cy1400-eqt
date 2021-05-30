@@ -39,7 +39,7 @@ multiprocessing is added for multiple station processing
 
 """
 
-def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None, start_day = None):
+def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None, start_day = None, csv_paths = None):
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
@@ -50,15 +50,22 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 	with open(stations_json, "r") as f:
 		stations_ = json.load(f)
-	
-	#save_dir = os.path.join(os.getcwd(), str(mseed_dir)+'_processed_hdfs')
 
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
+	
+	#save_dir = os.path.join(os.getcwd(), str(mseed_dir)+'_processed_hdfs')
 
-	#repfile = open(os.path.join(preproc_dir,"X_preprocessor_report.txt"), 'w')
+	if csv_load:
+		sac_files = []
+		_df = pd.load_csv(csv_paths)
 
-	station_list = [{"path":os.path.join(sac_folder, _sta), "sta": _sta} for _sta in os.listdir(sac_folder)]
+	else:	
+		sac_files = [{"paths":[str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")], "sta": _sta} for _sta in os.listdir(sac_folder)]
+		
+		sac_files.sort()
+
+
 
 	def process(station_info):
 		print(station_info)
@@ -81,8 +88,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 		_outgrp = _outhf.create_group("data")
 
-		sac_files = [str(path) for path in Path(station_info["path"]).glob('*.SAC')]
-		sac_files.sort()
+
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
@@ -187,7 +193,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 
 	with ThreadPool(n_processor) as p:
-		p.map(process, station_list) 
+		p.map(process, sac_files) 
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()

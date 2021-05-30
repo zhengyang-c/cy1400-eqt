@@ -188,13 +188,13 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser(descrption = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
+	parser = argparse.ArgumentParser(description = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
 
 	parser.add_argument("--get", help = "name of parent SAC folder. get all SAC files available in a data folder, print to csv", default = None)
 	parser.add_argument("-i", "--input", help = "input file")
 	parser.add_argument("-o", "--output", help = "output file")
 
-	
+
 	parser.add_argument("-sf", "--selector", help = "txt file with linebreak separated station names, specifying stations of interest")
 
 
