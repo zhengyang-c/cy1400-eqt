@@ -206,7 +206,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	if args.selector:
-		select_files(args.selector, args.startdate, args.end_date, args.julian, args.month, args.input, args.output)
+		select_files(args.selector, args.startdate, args.enddate, args.julian, args.month, args.input, args.output)
 	elif args.get:
 		get_all_files(args.get, args.output)
 
