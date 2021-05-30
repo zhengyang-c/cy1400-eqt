@@ -146,7 +146,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 	# which should also show me the missing files
 
-	n_days = (start_date - end_date).days + 1
+	n_days = (end_date - start_date).days + 1
 	n_stations = len(station_list)
 
 	image = np.zeros((n_stations, n_days))
@@ -167,7 +167,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 		print("This shouldn't happen")
 	else:
-		print("just nice :)")
+		print("all files present, no issues :)")
 
 
 	if output_file:
