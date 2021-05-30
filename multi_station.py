@@ -27,6 +27,10 @@ import pandas as pd
 import numpy as np
 import os
 
+
+#get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
+
+
 def get_all_files(sac_folder):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
@@ -92,7 +96,48 @@ def get_all_files(sac_folder):
 
 # since the uptime information is likely to be static, might as well generate the .csv uptimes once and then load from there
 # 10^5 files monkas
+# 
 
 
-get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
+def plot_uptime():
+	pass
 
+
+def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv"):
+	
+	# start_date format = e.g. 2020_03 for month
+
+	if y_jul and y_mon:
+		print("invalid options")
+		return 0
+
+	if y_jul:
+		_parse_char = "j"
+	elif y_mon:
+		_parse_char = "m"
+
+	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
+	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
+
+	df = pd.read_csv(all_csv_path)
+
+
+	#station_list = []
+
+	with open(selector_file, 'r') as f:
+		station_list = f.read().split("\n")
+
+	print(station_list)
+
+	# generate a file list to feed into sac_to_hdf5 script
+
+	# attempt to look for complete files, all 3 C
+
+
+select_files()
+	# list of stations in some file,
+	# or pass via argument
+	# 
+	# 
+	# then start day and end day
+	# and then try to find all the sac files and then save the path somewhere ? this should feed directly to sac_Tohdf5
