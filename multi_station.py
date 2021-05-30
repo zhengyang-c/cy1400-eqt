@@ -103,7 +103,7 @@ def plot_uptime():
 	pass
 
 
-def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv"):
+def select_files(selector_file = "station/TA_all.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv"):
 	
 	# start_date format = e.g. 2020_03 for month
 
@@ -127,7 +127,12 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 	with open(selector_file, 'r') as f:
 		station_list = f.read().split("\n")
 
+	station_list = list(filter(lambda x: x != "", station_list))
+
 	print(station_list)
+
+	print(df[df["station"].isin(station_list)])
+
 
 	# generate a file list to feed into sac_to_hdf5 script
 
