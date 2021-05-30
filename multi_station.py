@@ -31,7 +31,7 @@ import os
 #get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
 
 
-def get_all_files(sac_folder):
+def get_all_files(sac_folder, output_file):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
 	# 
@@ -40,7 +40,7 @@ def get_all_files(sac_folder):
 	# i think have a pandas dataframe, find the station. 
 	# you want the path information for each of them
 	
-	folder_list = ["Deployed-2019-12-MSEED",
+	folder_list = ["Deployed-2019-12-MSEED", # this is actually hardcoded
 	"Deployed-2020-01-MSEED",
 	"Deployed-2020-02-MSEED",
 	"Deployed-2020-03-MSEED",
@@ -84,8 +84,8 @@ def get_all_files(sac_folder):
 		df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
 
 		# fullday?
-
-	df.to_csv("station/all_aceh_sac.csv", index = False)
+	# "station/all_aceh_sac.csv"
+	df.to_csv(output_file, index = False)
 
 
 
@@ -103,7 +103,7 @@ def plot_uptime():
 	pass
 
 
-def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv"):
+def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
 	
 	# start_date format = e.g. 2020_03 for month
 
@@ -142,17 +142,79 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 	_df.to_csv("station/test.csv")
 
+	# want to check if it's complete, whether it's all fulldays, if any gaps
+
+	# which should also show me the missing files
+
+	n_days = (start_date - end_date).days + 1
+	n_stations = len(station_list)
+
+	image = np.zeros((n_stations, n_days))
+
+	expected_files = n_days * 3
+
+	if len(_df.index) < expected_files:
+		print("some missing, can report on the no. of missing + flag to continue")
+
+		print("expected: ", expected_files, "actual: ", len(_df.index))
+
+		# there's no point giving this information bc i can't magic the data from thin air
+		# but gd to let the user know right hm missing
+		# 
+		# i.e. provide the uptime plot 
+	elif len(_df.index) > expected_files:
+		print("more files than expected which is odd, have to filter so that it's only 3")
+
+		print("This shouldn't happen")
+	else:
+		print("just nice :)")
+
+
+	if output_file:
+		_df.to_csv(output_file, index = False)
+
+
+
+
+	# check: all channels, all days, full day
+
+
+	# all channel
 
 
 	# generate a file list to feed into sac_to_hdf5 script
 
 	# attempt to look for complete files, all 3 C
 
+if __name__ == "__main__":
 
-select_files()
+	parser = argparse.ArgumentParser(descrption = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
+
+	parser.add_argument("--get", help = "name of parent SAC folder. get all SAC files available in a data folder, print to csv", default = None)
+	parser.add_argument("-i", "--input", help = "input file")
+	parser.add_argument("-o", "--output", help = "output file")
+
+	
+	parser.add_argument("-sf", "--selector", help = "txt file with linebreak separated station names, specifying stations of interest")
+
+
+	parser.add_argument("-s", "--startdate", help = "underscore separated year with julian day e.g. 2020_085 for start date (inclusive)")
+	parser.add_argument("-e", "--enddate", help = "underscore separated year with julian day e.g. 2020_108 for enddate (inclusive)")
+	parser.add_argument("-m", "--month", help = "flag to use month. default is Julian day. e.g. 2020_03 to represent March", action = "store_true", default = False)
+	parser.add_argument("-j", "--julian", help = "default is True, to use Julian day to specify start and end date", action = "store_true", default = True)
+
+	args = parser.parse_args()
+
+	if args.selector:
+		select_files(args.selector, args.startdate, args.end_date, args.julian, args.month, args.input, args.output)
+	elif args.get:
+		get_all_files(args.get, args.output)
+
+
 	# list of stations in some file,
 	# or pass via argument
-	# 
+	# def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
 	# 
 	# then start day and end day
 	# and then try to find all the sac files and then save the path somewhere ? this should feed directly to sac_Tohdf5
+	# 
