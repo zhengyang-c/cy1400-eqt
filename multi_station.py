@@ -136,8 +136,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 	print(station_list)
 
-	print(df[df["station"].isin(station_list) & (df["fullday"]) & (df["dt"] >= start_date) & (df["dt"] <= end_date)])
-
+	df[df["station"].isin(station_list) & (df["fullday"]) & (df["dt"] >= start_date) & (df["dt"] <= end_date)].to_csv("station/test.csv")
 
 
 
