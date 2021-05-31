@@ -174,7 +174,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 		_df.to_csv(output_file, index = False)
 
 	sac_files = []
-	#_df = pd.load_csv(csv_paths)
+	#_df = pd.read_csv(csv_paths)
 
 	for _sta in _df.station.unique():
 		print(_sta)
@@ -183,6 +183,8 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 		for index, row in _df[_df["station"] == _sta].iterrows():
 			_paths.append(_df.loc[index, "filepath"])
+
+		_paths.sort()
 
 		sac_files.append({"paths": _paths, "sta": _sta})
 

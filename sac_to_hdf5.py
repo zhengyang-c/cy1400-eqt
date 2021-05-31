@@ -56,7 +56,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 	
 	#save_dir = os.path.join(os.getcwd(), str(mseed_dir)+'_processed_hdfs')
 
-	if csv_load:
+	if csv_paths:
 		sac_files = []
 		_df = pd.read_csv(csv_paths)
 
@@ -68,19 +68,21 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 			for index, row in _df[_df["station"] == _sta].iterrows():
 				_paths.append(_df.loc[index, "filepath"])
 
+			_paths.sort()
+
 			sac_files.append({"paths": _paths, "sta": _sta})
 
 		sac_files.sort()
 
-	print(sac_files)
+
 
 
 	else:	
-		sac_files = [{"paths":[str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")], "sta": _sta} for _sta in os.listdir(sac_folder)]
+		sac_files = [{"paths":sorted([str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")]), "sta": _sta} for _sta in os.listdir(sac_folder)]
 		
 		sac_files.sort()
 
-
+	print(sac_files)
 
 	def process(station_info):
 		print(station_info)
