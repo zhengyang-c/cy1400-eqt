@@ -176,7 +176,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 	for _sta in _df.station.unique():
 		print(_sta)
 
-		print(_df.loc[df["station"] == _sta].tolist())
+		print(df[_df["station"] == _sta].loc["station"].tolist())
 
 
 
