@@ -60,6 +60,12 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 		sac_files = []
 		_df = pd.load_csv(csv_paths)
 
+		for _sta in _df.station.unique():
+			print(_sta)
+
+
+
+
 	else:	
 		sac_files = [{"paths":[str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")], "sta": _sta} for _sta in os.listdir(sac_folder)]
 		
