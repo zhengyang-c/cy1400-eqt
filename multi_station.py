@@ -87,6 +87,22 @@ def get_all_files(sac_folder, output_file):
 	# "station/all_aceh_sac.csv"
 	df.to_csv(output_file, index = False)
 
+	sac_files = []
+	#_df = pd.load_csv(csv_paths)
+
+	for _sta in _df.station.unique():
+		print(_sta)
+
+		_paths = []
+
+		for index, row in _df[_df["station"] == _sta].iterrows():
+			_paths.append(_df.loc[index, "filepath"])
+
+		sac_files.append({"paths": _paths, "sta": _sta})
+
+	sac_files.sort()
+
+	print(sac_files)
 
 
 	# get station, check full day, get year, julian day, month
@@ -173,10 +189,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 	if output_file:
 		_df.to_csv(output_file, index = False)
 
-	for _sta in _df.station.unique():
-		print(_sta)
 
-		print(_df[_df["station"] == _sta]["station"])
 
 
 

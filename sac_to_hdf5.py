@@ -63,7 +63,16 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 		for _sta in _df.station.unique():
 			print(_sta)
 
+			_paths = []
 
+			for index, row in _df[_df["station"] == _sta].iterrows():
+				_paths.append(_df.loc[index, "filepath"])
+
+			sac_files.append({"paths": _paths, "sta": _sta})
+
+		sac_files.sort()
+
+	print(sac_files)
 
 
 	else:	
