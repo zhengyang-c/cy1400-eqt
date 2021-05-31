@@ -39,6 +39,8 @@ multiprocessing is added for multiple station processing
 
 """
 
+# should remove n_days 
+
 def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0.3, n_processor = None, start_day = None, csv_paths = None):
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
@@ -57,37 +59,36 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 	#save_dir = os.path.join(os.getcwd(), str(mseed_dir)+'_processed_hdfs')
 
 	if csv_paths:
-		sac_files = []
-		_df = pd.read_csv(csv_paths)
+		sac_df = pd.read_csv(csv_paths)
 
-		for _sta in _df.station.unique():
-			print(_sta)
-
-			_paths = []
-
-			for index, row in _df[_df["station"] == _sta].iterrows():
-				_paths.append(_df.loc[index, "filepath"])
-
-			_paths.sort()
-
-			sac_files.append({"paths": _paths, "sta": _sta})
-
-		sac_files.sort()
+		sac_list = [v for k, v in sac_df.groupby('station')]
 
 
 
 
 	else:	
-		sac_files = [{"paths":sorted([str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")]), "sta": _sta} for _sta in os.listdir(sac_folder)]
+
+		pass
+
+		# need to construct df from folder, so copy code from multi_station / import some function
+		# 
+		# 
+		#sac_files = [{"paths":sorted([str(path) for path in Path(os.path.join(sac_folder, _sta)).glob("*SAC")]), "sta": _sta} for _sta in os.listdir(sac_folder)]
 		
-		sac_files.sort()
+		#sac_files.sort()
 
 	print(sac_files)
 
-	def process(station_info):
+	# split into smaller df so i can use multiprocessing?
+
+
+
+	def process(station_info): # single station
+
+		# station_info is now a split dataframe 
 		print(station_info)
 
-		sta = station_info["sta"]
+		sta = station_info.loc[0, "station"]
 
 		_output_folder = os.path.join(output_folder, sta)
 		if not os.path.exists(_output_folder):
@@ -101,54 +102,58 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 		# csv output: trace_name, start_time
 
-		_outhf = h5py.File(hdf5_output_path, "w")
+		#_outhf = h5py.File(hdf5_output_path, "w")
 
-		_outgrp = _outhf.create_group("data")
+		#_outgrp = _outhf.create_group("data")
+
+		indiv_days = [v for k, v in df.groupby('dt')]
 
 
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
 		# 
+		# 
+		# 
 		
-		files = {}
+		# could further group by the dt column
+		# and use that to load like 
 		
-		for _file in sac_files:
-			print(_file)
-			net = _file.split(".")[0]
-			sta = _file.split(".")[1]
-			_ = _file.split(".")[2] #idk dude
-			cha = _file.split(".")[3]
-			_ = _file.split(".")[4]
-			year_day = _file.split(".")[5] + "." + _file.split(".")[6]
+		# files = {}
+		
+		# for _file in sac_files:
+		# 	print(_file)
+		# 	net = _file.split(".")[0]
+		# 	sta = _file.split(".")[1]
+		# 	_ = _file.split(".")[2] #idk dude
+		# 	cha = _file.split(".")[3]
+		# 	_ = _file.split(".")[4]
+		# 	year_day = _file.split(".")[5] + "." + _file.split(".")[6]
 			
-			if year_day not in files:
-				files[year_day] = [_file]
-			elif year_day in files:
-				files[year_day].append(_file)
+		# 	if year_day not in files:
+		# 		files[year_day] = [_file]
+		# 	elif year_day in files:
+		# 		files[year_day].append(_file)
 
 		print(files)
-
-
 
 		csv_output = {"trace_name": [], "start_time": []}
 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
-		counter = 0
+		for day_df in indiv_days:
 
-		for year_day in files:
+			day_df = day_df.sort_values(by = "channel", inplace = True)
 
-			if not n_days == None:
-				if counter >= n_days:
-					break
+			year_day = day_df.loc[0, 'year'] + "_" + day_df.loc[0, 'jday']
+
+
+			#for year_day in files:
 
 			if not start_day == None:
 				print(start_day, year_day)
 				if datetime.datetime.strptime(start_day, "%Y%m%d") > datetime.datetime.strptime(year_day, "%Y.%j"):
 					continue
-
-			counter += 1
 
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
@@ -165,47 +170,49 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
 			dt.append(1430)
 
+			
+
 			#print(timestamps[:5])
 
-			st = read(os.path.join(station_info["path"], "*{}*SAC".format(year_day)))
-			print(st)
-			st.resample(100.0)
-			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
-			st.detrend('demean')
+		# 	st = read(os.path.join(station_info["path"], "*{}*SAC".format(year_day)))
+		# 	print(st)
+		# 	st.resample(100.0)
+		# 	st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
+		# 	st.detrend('demean')
 
-			for c, timestamp in enumerate(timestamps):
-				print(timestamp)
+		# 	for c, timestamp in enumerate(timestamps):
+		# 		print(timestamp)
 
-				datum = np.zeros((6000, 3))
+		# 		datum = np.zeros((6000, 3))
 
-				start_index = int(dt[c] * 100)
-				try:
-					for j in range(3):
-						datum[:,j] = st[j].data[start_index : start_index + 6000]
-				except:
-					continue
-				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
-				_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
+		# 		start_index = int(dt[c] * 100)
+		# 		try:
+		# 			for j in range(3):
+		# 				datum[:,j] = st[j].data[start_index : start_index + 6000]
+		# 		except:
+		# 			continue
+		# 		_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
+		# 		_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
 
-				print(_tracename, _start_time)
+		# 		print(_tracename, _start_time)
 
-				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
+		# 		_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				
-				_g.attrs['trace_name'] = _tracename
-				_g.attrs['receiver_code'] = sta
-				_g.attrs['receiver_type'] = "EH"
-				_g.attrs['network_code'] = "AC"
-				_g.attrs["receiver_longitude"] = stations_[sta]['coords'][0]
-				_g.attrs["receiver_latitude"] = stations_[sta]['coords'][1]				
-				_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][2]
-				_g.attrs["trace_start_time"] = _start_time
+		# 		_g.attrs['trace_name'] = _tracename
+		# 		_g.attrs['receiver_code'] = sta
+		# 		_g.attrs['receiver_type'] = "EH"
+		# 		_g.attrs['network_code'] = "AC"
+		# 		_g.attrs["receiver_longitude"] = stations_[sta]['coords'][0]
+		# 		_g.attrs["receiver_latitude"] = stations_[sta]['coords'][1]				
+		# 		_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][2]
+		# 		_g.attrs["trace_start_time"] = _start_time
 
-				csv_output["trace_name"].append(_tracename)
-				csv_output["start_time"].append(_start_time)
+		# 		csv_output["trace_name"].append(_tracename)
+		# 		csv_output["start_time"].append(_start_time)
 
-		_outhf.close()
-		d_csv = pd.DataFrame.from_dict(csv_output)
-		d_csv.to_csv(csv_output_path, index = False)
+		# _outhf.close()
+		# d_csv = pd.DataFrame.from_dict(csv_output)
+		# d_csv.to_csv(csv_output_path, index = False)
 
 
 

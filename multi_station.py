@@ -127,6 +127,11 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 		df.at[index, 'dt'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y_%j")
 
 
+		for _cha in ["EHE", "EHN", "EHZ"]:
+			if _cha in row.filepath:
+				df.at[index,'channel'] = _cha
+
+
 	#station_list = []
 
 	with open(selector_file, 'r') as f:
@@ -139,6 +144,8 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 	_df = df[df["station"].isin(station_list) & (df["fullday"]) & (df["dt"] >= start_date) & (df["dt"] <= end_date)]
 
 	_df.sort_values("jday", inplace = True)
+
+
 
 	_df.to_csv("station/test.csv")
 
@@ -173,25 +180,9 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 	if output_file:
 		_df.to_csv(output_file, index = False)
 
-	sac_files = []
-	#_df = pd.read_csv(csv_paths)
 
-	for _sta in _df.station.unique():
-		print(_sta)
-
-		_paths = []
-
-		for index, row in _df[_df["station"] == _sta].iterrows():
-			_paths.append(_df.loc[index, "filepath"])
-
-		_paths.sort()
-
-		sac_files.append({"paths": _paths, "sta": _sta})
-
-	sac_files.sort()
-
-	print(sac_files)
-
+def check_missing_dates():
+	pass
 
 
 
