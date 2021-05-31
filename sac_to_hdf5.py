@@ -58,7 +58,7 @@ def preproc(sac_folder, output_folder, stations_json, n_days = None, overlap = 0
 
 	if csv_load:
 		sac_files = []
-		_df = pd.load_csv(csv_paths)
+		_df = pd.read_csv(csv_paths)
 
 		for _sta in _df.station.unique():
 			print(_sta)

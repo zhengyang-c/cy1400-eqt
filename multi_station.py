@@ -174,7 +174,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 		_df.to_csv(output_file, index = False)
 
 	sac_files = []
-	_df = pd.load_csv(csv_paths)
+	#_df = pd.load_csv(csv_paths)
 
 	for _sta in _df.station.unique():
 		print(_sta)
