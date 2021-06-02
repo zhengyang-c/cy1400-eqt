@@ -1,0 +1,21 @@
+set key autotitle columnhead
+
+set datafile separator ","
+
+
+set term pdf font "Helvetica, 12" size 8.6cm,6cm
+
+
+plot_file=ARG1
+output_file=ARG2
+
+set output output_file
+
+set key below
+
+set xl "P SNR"
+set yl "No. of graded events"
+
+set style fill transparent solid 0.4 noborder
+
+plot plot_file u 2:1 smooth freq with boxes lc rgb "red" title "A", plot_file u 4:3 smooth freq with boxes lc rgb "blue" title "B", plot_file u 6:5 smooth freq with boxes lc rgb "black"

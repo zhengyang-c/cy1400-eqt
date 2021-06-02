@@ -1,0 +1,25 @@
+set key autotitle columnhead
+
+set datafile separator ","
+
+set term pdf font "Helvetica, 12" size 8.6cm,6cm
+
+
+plot_file="/home/zy/cy1400-eqt/plot_data/23may_montecarloABZ_21mardefaultmerge.csv"
+output_file="/home/zy/cy1400-eqt/plots/27may_maxagreement.pdf"
+
+set output output_file
+
+set y2tics 
+set xtics nomirror
+set ytics nomirror
+set y2tics nomirror
+set xr [0:50]
+
+set key below Left box 3
+
+set xl "No. of runs that all agree"
+set yl "No. of A+B events"
+set y2l "Precision"
+
+plot plot_file u 1:2:5 w yerror pt 7 ps 0.5 lc rgb "black" title "No. of good picks" axis x1y1, '' u 1:3:6 w yerror pt 7 ps 0.5 lc rgb "blue" title "Precision" axis x1y2
