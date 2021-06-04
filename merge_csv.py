@@ -101,12 +101,12 @@ def merging_df(df):
 		curr_time = row["event_datetime"]
 
 		if index == 0:
-			prev_time = curr_time
+			start_time = curr_time
 			_tempgroup.append(index)
 
 		df.at[index, 'use_or_not'] = 0
 
-		_dt = (curr_time - prev_time).total_seconds()
+		_dt = (curr_time - start_time).total_seconds()
 		#print(_dt, curr_time, prev_time)
 
 		if not index == 0:
@@ -120,8 +120,9 @@ def merging_df(df):
 				df.at[_tempgroup[len(_tempgroup)//2], 'use_or_not'] = 1 # keep the middle of the pack
 
 				_tempgroup = [index]
+				start_time = curr_time
 
-		if index == len(df.index) - 1:
+		if index == len(df.index) - 1: # last
 			for ti in _tempgroup:
 				df.at[ti, 'agreement'] = len(_tempgroup)
 			df.at[_tempgroup[len(_tempgroup)//2], 'use_or_not'] = 1 # keep the middle of the pack
@@ -129,7 +130,7 @@ def merging_df(df):
 
 		df.at[index, 'dt'] = _dt
 
-		prev_time = curr_time
+		#prev_time = curr_time
 
 	df_filtered = df[df['use_or_not'] == 1]
 
