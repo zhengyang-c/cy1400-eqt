@@ -5,8 +5,8 @@ set datafile separator ","
 set term pdf font "Helvetica, 12" size 8.6cm,6cm
 
 
-plot_file="/home/zy/cy1400-eqt/plot_data/23may_montecarloABZ_21mardefaultmerge.csv"
-output_file="/home/zy/cy1400-eqt/plots/27may_maxagreement.pdf"
+plot_file="/home/zy/cy1400-eqt/plot_data/1jun_montecarloABZ_21mardefaultmerge_SNRfilter.csv"
+output_file="/home/zy/cy1400-eqt/plots/02jun_agreement-snrfilter.pdf"
 
 set output output_file
 
