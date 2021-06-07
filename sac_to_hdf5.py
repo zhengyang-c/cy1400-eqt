@@ -116,7 +116,6 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		# 	elif year_day in files:
 		# 		files[year_day].append(_file)
 
-		print(files)
 
 		csv_output = {"trace_name": [], "start_time": []}
 
