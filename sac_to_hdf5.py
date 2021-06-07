@@ -127,7 +127,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 			#day_df = day_df.sort_values(by = ["channel"], inplace = True)
 
-			year_day = "{}.{}".format(day_df.loc[0, 'year'], day_df.loc[0, 'jday'])
+			year_day = datetime.datetime.strftime(day_df.loc[0, 'dt'], "%Y.%j")
 
 
 			# the set of timestamps are computed bc they are used to name the slices
