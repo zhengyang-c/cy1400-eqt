@@ -234,7 +234,7 @@ if __name__ == "__main__":
 	parser.add_argument("-m", "--month", help = "flag to use month. default is Julian day. e.g. 2020_03 to represent March", action = "store_true", default = False)
 	parser.add_argument("-j", "--julian", help = "default is True, to use Julian day to specify start and end date", action = "store_true", default = True)
 
-	parser.add_argument("-js", "--generate_json", help = "file with the coordinates of all the stations")
+	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
 
 	args = parser.parse_args()
 
@@ -242,8 +242,8 @@ if __name__ == "__main__":
 		select_files(args.selector, args.startdate, args.enddate, args.julian, args.month, args.input, args.output)
 	elif args.get:
 		get_all_files(args.get, args.output)
-	elif args.generate_json:
-		make_station_json(args.generate_json, args.input, args.output)
+	elif args.json:
+		make_station_json(args.json, args.input, args.output)
 
 
 	# list of stations in some file,
