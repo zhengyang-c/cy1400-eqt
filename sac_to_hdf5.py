@@ -60,6 +60,8 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 	sac_df = pd.read_csv(csv_paths)
 
+	sac_df.dt = pd.to_datetime(sac_df.dt)
+
 	sac_list = [v for k, v in sac_df.groupby('station')] 
 	# split into a list of smaller dataframes, which can be passed into the threadpool
 
