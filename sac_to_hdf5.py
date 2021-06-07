@@ -221,7 +221,7 @@ if __name__ == "__main__":
 	time_taken = (end_time - start_time).total_seconds()
 
 	if args.time:
-		with open(args.time, "a") as f:
+		with open(args.time, "a+") as f:
 			f.write("sac_to_hdf5,{} days,{},{}\n".format(args.n_days, datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
 

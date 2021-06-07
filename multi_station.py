@@ -108,7 +108,7 @@ def plot_uptime():
 	# get last day
 
 
-def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_110", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
+def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file):
 	
 	# start_date format = e.g. 2020_03 for month
 
@@ -150,9 +150,7 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 	_df.sort_values("jday", inplace = True)
 
-
-
-	_df.to_csv("station/test.csv")
+	#_df.to_csv("station/test.csv")
 
 	# want to check if it's complete, whether it's all fulldays, if any gaps
 
@@ -196,20 +194,28 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 		_df.to_csv(output_file, index = False)
 
 
-def check_missing_dates():
-	pass
+def make_station_json(station_coords, station_list, output):
+
+	station_json = {}
+
+	for _station in station_list:
+		station_json[_station] = {"network": "AC", "channels":["EHZ", "EHE", "EHN"]}
 
 
+	with open(station_coords, "r") as f:
+		coordinates = f.read().split("\n")
+		
+		coordinates = [y.strip() for x in coordinates if len(x) > 0 for y in x.strip().split("\t") if len(y) > 0 ]
 
-	# check: all channels, all days, full day
+	for station in station_json:
+		#print(station)
+		i = coordinates.index(station)
 
+		station_json[station]["coords"] = [100, float(coordinates[i + 1]), float(coordinates[i+2])] # i set elevation to 100 because that's the average height in sumatra and i'm not given this information + it's not that important 
 
-	# all channel
+	with open(output, 'w') as f:
+		json.dump(station_json, f)
 
-
-	# generate a file list to feed into sac_to_hdf5 script
-
-	# attempt to look for complete files, all 3 C
 
 if __name__ == "__main__":
 
@@ -228,12 +234,16 @@ if __name__ == "__main__":
 	parser.add_argument("-m", "--month", help = "flag to use month. default is Julian day. e.g. 2020_03 to represent March", action = "store_true", default = False)
 	parser.add_argument("-j", "--julian", help = "default is True, to use Julian day to specify start and end date", action = "store_true", default = True)
 
+	parser.add_argument("-js", "--generate_json", help = "file with the coordinates of all the stations")
+
 	args = parser.parse_args()
 
 	if args.selector:
 		select_files(args.selector, args.startdate, args.enddate, args.julian, args.month, args.input, args.output)
 	elif args.get:
 		get_all_files(args.get, args.output)
+	elif args.generate_json:
+		make_station_json(args.generate_json, args.input, args.output)
 
 
 	# list of stations in some file,
