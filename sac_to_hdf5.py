@@ -152,9 +152,9 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 			#print(timestamps[:5])
 
-		 	st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
-		 	print(st)
-		 	st.resample(100.0)
+			st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
+			print(st)
+			st.resample(100.0)
 			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 			st.detrend('demean')
 
