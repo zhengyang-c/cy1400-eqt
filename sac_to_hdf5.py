@@ -87,7 +87,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		#_outgrp = _outhf.create_group("data")
 
-		indiv_days = [v for k, v in df.groupby('dt')] # further split into days, not sure if necessary
+		indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
 
 
