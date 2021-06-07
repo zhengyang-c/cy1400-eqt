@@ -85,9 +85,9 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		# csv output: trace_name, start_time
 
-		#_outhf = h5py.File(hdf5_output_path, "w")
+		_outhf = h5py.File(hdf5_output_path, "w")
 
-		#_outgrp = _outhf.create_group("data")
+		_outgrp = _outhf.create_group("data")
 
 		indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
