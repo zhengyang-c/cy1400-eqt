@@ -28,6 +28,7 @@ import datetime
 import pandas as pd
 import numpy as np
 import os
+import json
 
 
 #get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
