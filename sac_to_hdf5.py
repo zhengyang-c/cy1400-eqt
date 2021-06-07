@@ -125,7 +125,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 			print(day_df)
 
-			day_df = day_df.sort_values(by = ["channel"], inplace = True)
+			#day_df = day_df.sort_values(by = ["channel"], inplace = True)
 
 			year_day = day_df.loc[0, 'year'] + "_" + day_df.loc[0, 'jday']
 
