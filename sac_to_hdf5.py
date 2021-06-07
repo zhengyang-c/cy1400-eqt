@@ -195,7 +195,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 
 	with ThreadPool(n_processor) as p:
-		p.map(process, sac_files) 
+		p.map(process, sac_list) 
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
