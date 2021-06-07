@@ -19,7 +19,9 @@
 # multi_station -choose sac_folders -o input.txt
 
 
+import matplotlib
 
+import matplotlib.pyplot as plt
 import argparse
 from pathlib import Path
 import datetime
@@ -102,8 +104,11 @@ def get_all_files(sac_folder, output_file):
 def plot_uptime():
 	pass
 
+	# get first day
+	# get last day
 
-def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
+
+def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_110", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
 	
 	# start_date format = e.g. 2020_03 for month
 
@@ -165,10 +170,20 @@ def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", en
 
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
-		# there's no point giving this information bc i can't magic the data from thin air
-		# but gd to let the user know right hm missing
-		# 
-		# i.e. provide the uptime plot 
+		for index, row in _df.iterrows():
+			station_index = station_list.index(row.station)
+			day_index = (row.dt - start_date).days
+
+			image[station_index, day_index] = 1
+			plt.figure(figsize=(12,6), dpi = 150)
+			plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
+			plt.xticks(np.arange(n_days) + 0.5, np.arange(0, len(n_days) + 1), fontsize = 8)
+			plt.xlabel("Days")
+			plt.ylabel("Station name")
+			plt.pcolormesh(image, edgecolors ='k', linewidth=2)
+			plt.savefig("log/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
+
+		
 	elif len(_df.index) > expected_files:
 		print("more files than expected which is odd, have to filter so that it's only 3")
 
