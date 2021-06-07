@@ -198,6 +198,9 @@ def make_station_json(station_coords, station_list, output):
 
 	station_json = {}
 
+	with open(station_list, "r") as f:
+		station_list = f.read().split("\n")[:-1]
+
 	for _station in station_list:
 		print(_station)
 		station_json[_station] = {"network": "AC", "channels":["EHZ", "EHE", "EHN"]}
