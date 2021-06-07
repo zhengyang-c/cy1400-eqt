@@ -108,7 +108,7 @@ def plot_uptime():
 	# get last day
 
 
-def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = False, all_csv_path, output_file):
+def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = ""):
 	
 	# start_date format = e.g. 2020_03 for month
 
