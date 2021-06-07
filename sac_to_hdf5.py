@@ -200,21 +200,18 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 
-	parser.add_argument('sac_folder', help = "contains station-named folders with .SAC files inside")
+	parser.add_argument('csv_path', help = "csv file with the required station metadata")
 	parser.add_argument('output_folder', help = "folder to write the HDF5 and csv file in. station name is the filename.")
 	parser.add_argument('station_json', help = "path to station_list.json that is already used by EQT, which gives station coordinates")
-	parser.add_argument('-n', '--n_days', type = int)
-	parser.add_argument('-t', '--time', type = str, help = "file path to append to to")
+	parser.add_argument('-t', '--time', type = str, help = "log timing to this filepath")
 	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
-
-	parser.add_argument('-s', '--startday', type = str, help = "YYMMDD to start counting from")
 
 
 	args = parser.parse_args()
 
 	start_time = datetime.datetime.now()
 
-	preproc(args.sac_folder, args.output_folder, args.station_json, n_days = args.n_days, n_processor = args.process, start_day = args.startday)
+	preproc(args.csv_path, args.output_folder, args.station_json, n_processor = args.process)
 
 	end_time = datetime.datetime.now()
 
