@@ -89,7 +89,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
-
+		print(indiv_days)
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
@@ -122,6 +122,8 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
 		for day_df in indiv_days:
+
+			print(day_df)
 
 			day_df = day_df.sort_values(by = "channel", inplace = True)
 
