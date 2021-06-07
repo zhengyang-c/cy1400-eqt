@@ -91,17 +91,6 @@ def get_all_files(sac_folder, output_file):
 	df.to_csv(output_file, index = False)
 
 
-
-	# get station, check full day, get year, julian day, month
-
-	# then print csv file
-
-
-# since the uptime information is likely to be static, might as well generate the .csv uptimes once and then load from there
-# 10^5 files monkas
-# 
-
-
 def plot_uptime():
 	pass
 
@@ -162,7 +151,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 	image = np.zeros((n_stations, n_days))
 
-	expected_files = n_days * 3
+	expected_files = n_days * 3 * n_stations
 
 	if len(_df.index) < expected_files:
 		print("some missing, can report on the no. of missing + flag to continue")
