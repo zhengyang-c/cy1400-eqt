@@ -158,7 +158,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 			#print(timestamps[:5])
 
 			st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
-			print(st)
+			#print(st)
 			st.resample(100.0)
 			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 			st.detrend('demean')
@@ -177,7 +177,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
 				_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
 
-				print(_tracename, _start_time)
+				#print(_tracename, _start_time)
 
 				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 				
