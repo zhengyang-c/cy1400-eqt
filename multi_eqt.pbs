@@ -38,5 +38,5 @@ inputfile=node_distributor.py
 ## Run mpi program i have a feeling this will be a bash script for make hdf5 -> predict (x 15) -> merge -> plot
 python $inputfile -id $PBS_ARRAY_INDEX >& log/pbs/$PBS_JOBID.log 2>&1
 
-python $inputfile -id $PBS_ARRAY_INDEX >& log/pbs/$PBS_JOBID.log 2>&1
+python $inputfile -id $PBS_ARRAY_INDEX >>& log/pbs/$PBS_JOBID.log 2>>&1
 
