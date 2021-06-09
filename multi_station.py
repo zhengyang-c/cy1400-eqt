@@ -132,6 +132,9 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 			day_index = (row.datetime - start_date).days
 
 			image[station_index, day_index] = 1
+
+			print(station_index, day_index)
+
 	plt.figure(figsize=(12,6), dpi = 150)
 	plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
 	plt.xticks(np.arange(n_days) + 0.5, np.arange(0, (n_days)), fontsize = 8)
