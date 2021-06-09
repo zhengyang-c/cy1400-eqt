@@ -253,6 +253,26 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
+def encode_multirun():
+
+	# encode everything (sac to hdf5, prediction
+	# node distributor will decode according/modify a main() function in one script to control what you want to do
+	# 
+	# also, since eqt assumes that you join all the hdf5 files together and mash them, but i'm keeping them in
+	# station-named folders, so that allows me to open one node per station
+	# it also means that i'll need to keep everything in an additional layer of folder 
+	# it could be DDMMM_experiment/TA19/TA19/TA19.csv and TA19.hdf5
+	# 
+	# which sounds kind of stupid but it'll work fine
+	
+	# need to know how many nodes i'm using
+	# plus other arguments 
+	# could it be a json file so i can store other args?
+	# 
+	# what about sac writing? Will you need that many nodes as well?
+
+	pass
+
 
 if __name__ == "__main__":
 
