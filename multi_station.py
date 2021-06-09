@@ -110,16 +110,17 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	n_days = (end_date - start_date).days + 1
 	
 	image = np.zeros((n_stations, n_days))
+	print(len(image))
 
 	df = pd.read_csv(all_csv_path)
 
 
-	for index, row in df.iterrows():
-		df.at[index, 'datetime'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y_%j")
+	# for index, row in df.iterrows():
+	# 	df.at[index, 'datetime'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y_%j")
 
-		for _cha in ["EHE", "EHN", "EHZ"]:
-			if _cha in row.filepath:
-				df.at[index,'channel'] = _cha
+	# 	for _cha in ["EHE", "EHN", "EHZ"]:
+	# 		if _cha in row.filepath:
+	# 			df.at[index,'channel'] = _cha
 	df.datetime = pd.to_datetime(df.datetime)
 
 	#print(df.datetime)
@@ -210,7 +211,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
-		plot_all_uptime(selector_file, _startdate, _enddate)
+		#plot_all_uptime(selector_file, _startdate, _enddate)
 		
 	elif len(_df.index) > expected_files:
 		print("more files than expected which is odd, have to filter so that it's only 3")
