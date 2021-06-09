@@ -123,7 +123,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 		plt.xlabel("Days")
 		plt.ylabel("Station name")
 		plt.pcolormesh(image, edgecolors ='k', linewidth=2)
-		plt.savefig("log/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
+		plt.savefig("log/uptime/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
 
 
 
@@ -139,6 +139,8 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 		_parse_char = "j"
 	elif y_mon:
 		_parse_char = "m"
+
+	_startdate, _enddate = start_date, end_date
 
 	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
 	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
@@ -187,19 +189,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
-		for index, row in _df.iterrows():
-			station_index = station_list.index(row.station)
-			day_index = (row.dt - start_date).days
-
-			image[station_index, day_index] = 1
-			plt.figure(figsize=(12,6), dpi = 150)
-			plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
-			plt.xticks(np.arange(n_days) + 0.5, np.arange(0, len(n_days) + 1), fontsize = 8)
-			plt.xlabel("Days")
-			plt.ylabel("Station name")
-			plt.pcolormesh(image, edgecolors ='k', linewidth=2)
-			plt.savefig("log/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
-
+		plot_all_uptime(selector_file, _startdate, _enddate)
 		
 	elif len(_df.index) > expected_files:
 		print("more files than expected which is odd, have to filter so that it's only 3")
@@ -259,14 +249,19 @@ if __name__ == "__main__":
 
 	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
 
+	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date")
+
 	args = parser.parse_args()
 
 	if args.selector:
 		select_files(args.selector, args.startdate, args.enddate, args.julian, args.month, args.input, args.output)
-	elif args.get:
+	elif args.get and not args.plot:
 		get_all_files(args.get, args.output)
 	elif args.json:
 		make_station_json(args.json, args.input, args.output)
+
+	elif args.plot:
+		plot_all_uptime(args.selector, args.startdate, args.enddate)
 
 
 	# list of stations in some file,
