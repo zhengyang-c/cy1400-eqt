@@ -74,10 +74,10 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		#print(station_info)
 		
-		try:
-			sta = station_info.at[0, "station"]
-		except:
-			print(station_info)
+		station_info.reset_index(inplace = True)
+		sta = station_info.at[0, "station"]
+
+		print(station_info)
 
 		_output_folder = os.path.join(output_folder, sta)
 		if not os.path.exists(_output_folder):
@@ -130,6 +130,8 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
 		for day_df in indiv_days:
+
+			day_df.reset_index(inplace = True)
 
 			#print(day_df)
 
