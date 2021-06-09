@@ -12,7 +12,7 @@ DEFAULT_MODEL=/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleDa
 MODEL=/home/zchoong001/cy1400/cy1400-eqt/models/22mar_frozenlayers_LR1e-6_outputs/final_model.h5
 HDF_FOLDER="/home/zchoong001/cy1400/cy1400-eqt/mseed_TA19_no_preproc_processed_hdfs"
 STATION_DATA=station_info.dat
-OUTPUT_ROOT="detections/26may_default_1month"
+OUTPUT_ROOT=$2
 
 #OUTPUT_FOLDER2="detections/1e4model_LR1e-3_TA19.085"
 STA=TA19
@@ -21,21 +21,20 @@ STA=TA19
 #python mseed_to_h5.py "mseed_${SAC_FOLDER}" $STATION_DATA $STA
 monorun () {
 	OUTPUT_FOLDER="${OUTPUT_ROOT}/multi_${1}"
-	python run_eqt.py $HDF_FOLDER $MODEL $OUTPUT_FOLDER
+	#python run_eqt.py $HDF_FOLDER $DEFAULT_MODEL $OUTPUT_FOLDER -t timing_log.txt
 }
 
 for ((f=0;f<$1;f++))
 do
 	echo $f
-	#monorun $f
+	monorun $f
 done
 
 #python merge_csv.py $STA $OUTPUT_ROOT "${OUTPUT_ROOT}_merged" "merged" -csv
 
 #python plot_eqt.py $SAC_FOLDER $STA "${OUTPUT_ROOT}_merged"
 
-python header_writer.py $STA "${OUTPUT_ROOT}_merged/merged_filtered.csv" "${OUTPUT_ROOT}_merged/header.txt" $STATION_DATA
-
+#python header_writer.py $STA "${OUTPUT_ROOT}_merged/merged_filtered.csv" "${OUTPUT_ROOT}_merged/header.txt" $STATION_DATA
 ./writerino.sh "${OUTPUT_ROOT}_merged" "${OUTPUT_ROOT}_merged/header.txt"
 
 #./writerino.sh "$OUTPUT_FOLDER/${STA}_outputs" "${OUTPUT_FOLDER}/${STA}_outputs/header.txt"
