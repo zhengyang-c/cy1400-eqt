@@ -72,7 +72,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		# station_info is now a split dataframe with only station
 
-		print(station_info)
+		#print(station_info)
 		
 
 		sta = station_info.at[0, "station"]
