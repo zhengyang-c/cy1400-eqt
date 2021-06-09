@@ -132,7 +132,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 			station_index = station_list.index(row.station)
 			print(row["dt"])
 			print(start_date)
-			day_index = (row.dt - start_date).days
+			day_index = (row["dt"] - start_date).days
 
 			image[station_index, day_index] = 1
 
