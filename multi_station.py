@@ -107,7 +107,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
 	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
 
-	n_days = (end_date - start_date).days() + 1
+	n_days = (end_date - start_date).days + 1
 	
 	image = np.zeros((n_stations, n_days))
 
