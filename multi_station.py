@@ -122,7 +122,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 				df.at[index,'channel'] = _cha
 	df.datetime = pd.to_datetime(df.datetime)
 
-	print(df.datetime)
+	#print(df.datetime)
 
 
 	for index, row in df.iterrows():
@@ -134,6 +134,9 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 			image[station_index, day_index] = 1
 
 			print(station_index, day_index)
+
+
+	#print()
 
 	plt.figure(figsize=(12,6), dpi = 150)
 	plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
