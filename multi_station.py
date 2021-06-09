@@ -111,11 +111,19 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	
 	image = np.zeros((n_stations, n_days))
 
-	_df = pd.read_csv(all_csv_path)
-	_df.dt = pd.to_datetime(_df.dt)
+	df = pd.read_csv(all_csv_path)
 
 
-	for index, row in _df.iterrows():
+	for index, row in df.iterrows():
+		df.at[index, 'dt'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y_%j")
+
+		for _cha in ["EHE", "EHN", "EHZ"]:
+			if _cha in row.filepath:
+				df.at[index,'channel'] = _cha
+	df.dt = pd.to_datetime(df.dt)
+
+
+	for index, row in df.iterrows():
 		station_index = station_list.index(row.station)
 		day_index = (row.dt - start_date).days
 
