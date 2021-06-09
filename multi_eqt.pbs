@@ -9,7 +9,7 @@
 #PBS -P eos_shjwei
 
 ## Queue  Name
-#PBS -q q64
+#PBS -q q32
 
 ## By default error and output files are in format  <job_name>.e<JOB_ID> and <job_name>.o<JOB_ID>.
 ## If you don't want in this format, you can change it as follows
