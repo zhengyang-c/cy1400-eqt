@@ -121,7 +121,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	# 	for _cha in ["EHE", "EHN", "EHZ"]:
 	# 		if _cha in row.filepath:
 	# 			df.at[index,'channel'] = _cha
-	df.datetime = pd.to_datetime(df.datetime)
+	df.dt = pd.to_datetime(df.dt)
 
 	#print(df.datetime)
 
@@ -130,7 +130,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 		if row.station in station_list:
 			station_index = station_list.index(row.station)
-			day_index = (row.datetime - start_date).days
+			day_index = (row.dt - start_date).days
 
 			image[station_index, day_index] = 1
 
