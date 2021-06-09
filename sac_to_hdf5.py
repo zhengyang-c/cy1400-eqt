@@ -74,8 +74,10 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		#print(station_info)
 		
-
-		sta = station_info.at[0, "station"]
+		try:
+			sta = station_info.at[0, "station"]
+		except:
+			print(station_info)
 
 		_output_folder = os.path.join(output_folder, sta)
 		if not os.path.exists(_output_folder):
