@@ -230,6 +230,6 @@ if __name__ == "__main__":
 
 	if args.time:
 		with open(args.time, "a+") as f:
-			f.write("sac_to_hdf5,{} days,{},{}\n".format(args.n_days, datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
+			f.write("sac_to_hdf5,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
 
