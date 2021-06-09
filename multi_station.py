@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
 
-	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date")
+	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date", action = "store_true")
 
 	args = parser.parse_args()
 
