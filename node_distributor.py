@@ -1,8 +1,5 @@
 # goal: use gekko arrays to distribute tasks
 
-
-
-
 import argparse
 import pandas as pd
 import os

@@ -36,4 +36,4 @@ nprocs=`cat $PBS_NODEFILE|wc -l`
 inputfile=node_distributor.py
 
 ## Run mpi program
-python $inputfile -id $PBS_ARRAY_INDEX >& $PBS_JOBID.log 2>&1
+python $inputfile -id $PBS_ARRAY_INDEX >& log/pbs/$PBS_JOBID.log 2>&1

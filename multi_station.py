@@ -91,11 +91,40 @@ def get_all_files(sac_folder, output_file):
 	df.to_csv(output_file, index = False)
 
 
-def plot_uptime():
-	pass
+def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station/all_aceh_sac.csv"):
 
-	# get first day
-	# get last day
+	# selector file: list of stations
+
+	with open(selector_file, 'r') as f:
+		station_list = f.read().split("\n")
+
+	station_list = list(filter(lambda x: x != "", station_list))
+
+	n_stations = len(station_list)
+
+	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
+	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
+
+	n_days = (end_date - start_date).days() + 1
+	
+	image = np.zeros((n_stations, n_days))
+
+	_df = pd.read_csv(all_csv_path)
+
+
+	for index, row in _df.iterrows():
+		station_index = station_list.index(row.station)
+		day_index = (row.dt - start_date).days
+
+		image[station_index, day_index] = 1
+		plt.figure(figsize=(12,6), dpi = 150)
+		plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
+		plt.xticks(np.arange(n_days) + 0.5, np.arange(0, len(n_days) + 1), fontsize = 8)
+		plt.xlabel("Days")
+		plt.ylabel("Station name")
+		plt.pcolormesh(image, edgecolors ='k', linewidth=2)
+		plt.savefig("log/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
+
 
 
 def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = ""):
