@@ -69,6 +69,8 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 	def process(station_info): # single station
 
 		# station_info is now a split dataframe with only station
+
+		print(station_info)
 		
 
 		sta = station_info.at[0, "station"]
@@ -91,7 +93,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
-		print(indiv_days)
+		#print(indiv_days)
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
@@ -125,7 +127,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		for day_df in indiv_days:
 
-			print(day_df)
+			#print(day_df)
 
 			#day_df = day_df.sort_values(by = ["channel"], inplace = True)
 
@@ -139,7 +141,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
 
-			print(start_of_day, end_of_day)
+			#print(start_of_day, end_of_day)
 
 			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
 
@@ -162,7 +164,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 			st.detrend('demean')
 
 			for c, timestamp in enumerate(timestamps):
-				print(timestamp)
+				#print(timestamp)
 
 				datum = np.zeros((6000, 3))
 
