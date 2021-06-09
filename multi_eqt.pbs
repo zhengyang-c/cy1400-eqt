@@ -1,7 +1,7 @@
 ## Set job parameters
 
 
-#PBS -J 1-31
+#PBS -J 1-24
 ## Job Name
 #PBS -N EQT_DISTRIBUTED
 
