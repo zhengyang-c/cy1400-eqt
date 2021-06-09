@@ -283,7 +283,7 @@ if __name__ == "__main__":
 		make_station_json(args.json, args.input, args.output)
 
 	elif args.plot:
-		plot_all_uptime(args.selector, args.startdate, args.enddate)
+		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
 
 
 	# list of stations in some file,
