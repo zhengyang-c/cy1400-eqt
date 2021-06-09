@@ -71,7 +71,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		# station_info is now a split dataframe with only station
 		
 
-		sta = station_info.loc[0, "station"]
+		sta = station_info.at[0, "station"]
 
 		_output_folder = os.path.join(output_folder, sta)
 		if not os.path.exists(_output_folder):
@@ -129,7 +129,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 			#day_df = day_df.sort_values(by = ["channel"], inplace = True)
 
-			year_day = datetime.datetime.strftime(day_df.loc[0, 'dt'], "%Y.%j")
+			year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
 
 
 			# the set of timestamps are computed bc they are used to name the slices
@@ -150,7 +150,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
 			dt.append(86340) 
 
-			filepath_root = Path(day_df.loc[0,'filepath']).parent
+			filepath_root = Path(day_df.at[0,'filepath']).parent
 			
 
 			#print(timestamps[:5])
