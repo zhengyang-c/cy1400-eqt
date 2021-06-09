@@ -130,13 +130,13 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 		day_index = (row.datetime - start_date).days
 
 		image[station_index, day_index] = 1
-		plt.figure(figsize=(12,6), dpi = 150)
-		plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
-		plt.xticks(np.arange(n_days) + 0.5, np.arange(0, (n_days)), fontsize = 8)
-		plt.xlabel("Days")
-		plt.ylabel("Station name")
-		plt.pcolormesh(image, edgecolors ='k', linewidth=2)
-		plt.savefig("log/uptime/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
+	plt.figure(figsize=(12,6), dpi = 150)
+	plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
+	plt.xticks(np.arange(n_days) + 0.5, np.arange(0, (n_days)), fontsize = 8)
+	plt.xlabel("Days")
+	plt.ylabel("Station name")
+	plt.pcolormesh(image, edgecolors ='k', linewidth=2)
+	plt.savefig("log/uptime/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
 
 
 
