@@ -21,7 +21,17 @@ def main(uid, encoded_csv):
 
 	print(md.at[uid, "sta"])
 
-	# write hdf5
+	# if write hdf5
+
+	
+	
+
+	# if prediction
+	# run prediction with multi
+
+	# also run merge and recompute snr
+
+	# if plot
 
 	
 

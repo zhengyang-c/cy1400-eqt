@@ -104,10 +104,10 @@ To encode a .csv file for multinode running, with the station list (random10.txt
 
 Sets a job name, start and end date, specifies that it will only run the prediction function (no sac writing or plotting).
 
-Will use 10 notes, and write a pbs file in the same directory.
+Will use 10 nodes, and write a pbs file in the same directory.
 
 ```
-python multi_station.py -encode -i station/random10.txt -o node_encode/10jun_random10.csv -job 10jun_random10_150-151 -s 2020_150 -e 2020_151 -runeqt -n_nodes 10 -pbs multi_eqt.pbs
+$ python multi_station.py -encode -i station/random10.txt -o node_encode/10jun_random10.csv -job 10jun_random10_150-151 -s 2020_150 -e 2020_151 -runeqt -n_nodes 10 -pbs multi_eqt.pbs
 ```
 
 ## Writing HDF5 file model input: ```sac_to_hdf5.py```
