@@ -315,11 +315,11 @@ def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES 
 	if len(station_list) > MAX_NODES:
 		raise ValueError("Does not support more than {} stations, please split.".format(MAX_NODES))
 
-	for c, i in enumerate(station_list):
+	for c, sta in enumerate(station_list):
 
-		df.at[c, "sta"] = i
+		df.at[c, "sta"] = sta
 
-		df.at[c, "hdf5_folder"] = os.path.join(hdf5_parent, sta, sta)
+		df.at[c, "hdf5_folder"] = os.path.join(hdf5_parent,sta, sta)
 
 		df.at[c, "prediction_output_folder"] = os.path.join(detection_parent, sta) # multiruns will have like multi_01 behind etc.
 
