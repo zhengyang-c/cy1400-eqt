@@ -262,7 +262,7 @@ def encode_multirun(
 	start_day = "", 
 	end_day = "", 
 	model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5", 
-	hdf_parent = "",
+	hdf5_parent = "",
 	detection_parent = "",
 	write_hdf5 = False, 
 	run_eqt = False, 
@@ -402,7 +402,7 @@ if __name__ == "__main__":
 	parser.add_argument("-ploteqt", action = "store_true", help = "flag to plot 150s sac traces and png 3C plots, default False")
 
 	parser.add_argument("-detparent", help = "parent folder to keep detection output files", default = "")
-	parser.add_argument("-hdfparent", help = "parent folder to keep hdf5 files", default = "")
+	parser.add_argument("-hdf5parent", help = "parent folder to keep hdf5 files", default = "")
 	parser.add_argument("-modelpath", help = "path to model", default = "")
 	parser.add_argument("-n_multi", type = int, help = "no. of time sto repeat prediction, default 20", default = 20)
 	parser.add_argument("-n_nodes", type = int, help = "no. of HPC nodes to use, max is 20", default = 20)
@@ -426,7 +426,7 @@ if __name__ == "__main__":
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
 	elif args.encode:
-		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf_parent = args.hdfparent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt)
+		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt)
 
 
 	# list of stations in some file,

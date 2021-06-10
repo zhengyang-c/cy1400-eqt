@@ -91,7 +91,7 @@ __Optional Args (settings, etc):__
 
 ```
   -detparent: parent folder to keep detection output files. defaults to "detection/job_name"
-  -hdfparent: parent folder to keep hdf5 files. defaults to "prediction_files/job_name"
+  -hdf5parent: parent folder to keep hdf5 files. defaults to "prediction_files/job_name"
   -modelpath: path to model, defaults to my copy of EqT default model
   -n_multi: no. of times to repeat prediction, default 20
   -n_nodes: no. of HPC nodes to use, default 20
