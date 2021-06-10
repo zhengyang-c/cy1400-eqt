@@ -1,6 +1,12 @@
 ## Set job parameters
 
 
+## EDIT THIS
+encoded_file=node_encode/10jun_random10.csv
+
+##
+
+
 #PBS -J 1-24
 ## Job Name
 #PBS -N EQT_DISTRIBUTED
@@ -36,5 +42,5 @@ nprocs=`cat $PBS_NODEFILE|wc -l`
 inputfile=node_distributor.py
 
 ## Run mpi program i have a feeling this will be a bash script for make hdf5 -> predict (x 15) -> merge -> plot
-python $inputfile -id $PBS_ARRAY_INDEX >& log/pbs/$PBS_JOBID.log 2>&1
+python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file >& log/pbs/$PBS_JOBID.log 2>&1
 
