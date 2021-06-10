@@ -1,0 +1,28 @@
+set term pdf font "Helvetica, 12" size 8.6cm,6cm
+
+# filename --> output
+# input_title --> title
+# plot_file --> data file
+
+set output "plots/22mar_precision_v_LR.pdf"
+
+plot_file="plot_data/26mar_frozenlayer_aceh_precision.txt"
+
+set xrange [-10.5:-2.5]
+set yrange [0:25]
+
+set key above box 3
+
+show key
+
+set xl "Initial learning rate exponent"
+set yl "No. of good picks"
+set y2l "Proportion of good picks"
+set y2tics 0,0.2,1
+set y2range [0:1]
+set ytics nomirror
+set xtics nomirror
+#set grid
+
+plot plot_file u 1:(($2 + $3)/($2 + $3 + $4)) w p pt 7 ps 0.5 lc rgb "red" title "Precision" axis x1y2, plot_file u 1:($2 + $3) w p ps 0.5 pt 7 lc rgb "black" title "No. of good picks" axis x1y1
+
