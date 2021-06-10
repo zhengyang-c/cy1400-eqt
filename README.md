@@ -75,7 +75,8 @@ __Important Args (need these to use):__
   -o: filepath to save a .csv file with all the required metadata
   -job: job name - a unique string identifier for your jobs, defaults to timestamp
   -s: start day in %Y_%j format (4 digit year and julian day separated by underscore)
-  -e: end day, similar format```
+  -e: end day, similar format
+```
 
 
 __Args to select functionality (without the flag, it is false)__
@@ -83,8 +84,8 @@ __Args to select functionality (without the flag, it is false)__
 ```
   -writehdf5: flag to write from sac to hdf5 folder
   -runeqt: flag to run prediction (multi-run and merge)
-  -ploteqt: flag to cut 150s SAC traces```
-
+  -ploteqt: flag to cut 150s SAC traces
+```
 
 __Optional Args (settings, etc):__
 
