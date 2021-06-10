@@ -390,6 +390,8 @@ if __name__ == "__main__":
 
 	parser.add_argument("-encode", action="store_true", help = "flag for script to encode a csv file for multinode running on HPC array")
 
+	parser.add_argument("-job", help = "unique string identifier for the job")
+
 	parser.add_argument("-writehdf5", action = "store_true", help = "flag to write from sac to hdf5 folder, default False")
 	parser.add_argument("-runeqt", action = "store_true", help = "flag to run eqt prediction and merge multiple predictions, default False")
 	parser.add_argument("-ploteqt", action = "store_true", help = "flag to plot 150s sac traces and png 3C plots, default False")
@@ -417,4 +419,6 @@ if __name__ == "__main__":
 	# 
 	# then start day and end day
 	# and then try to find all the sac files and then save the path somewhere ? this should feed directly to sac_Tohdf5
+	# 
+	# 
 	# 

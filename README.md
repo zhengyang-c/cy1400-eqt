@@ -75,16 +75,16 @@ then edit multi_eqt.pbs, would be nice to have screenshots
   -o: filepath to save a .csv file with all the required metadata
   -job: job name - a unique string identifier for your jobs, defaults to timestamp
   -s: start day in %Y_%j format (4 digit year and julian day separated by underscore)
-  -e: end day, similar format
-'''
+  -e: end day, similar format'''
+
 
 **Args to select functionality (without the flag, it is false)**
 
 ```
   -writehdf5: flag to write from sac to hdf5 folder
   -runeqt: flag to run prediction (multi-run and merge)
-  -ploteqt: flag to cut 150s SAC traces
-'''
+  -ploteqt: flag to cut 150s SAC traces'''
+
 
 **Optional Args (settings, etc):**
 ```
@@ -92,12 +92,10 @@ then edit multi_eqt.pbs, would be nice to have screenshots
   -hdfparent: parent folder to keep hdf5 files. defaults to "prediction_files/job_name"
   -modelpath: path to model, defaults to my copy of EqT default model
   -n_multi: no. of times to repeat prediction, default 20
-  -n_nodes: no. of HPC nodes to use, default 20
-
-```
+  -n_nodes: no. of HPC nodes to use, default 20'''
 
 
-## Writing HDF5 file model input: ```sac_to_hdf5.py```
+## Writing HDF5 file model input: ```sac_to_hdf5.py'''
 
 Performs bandpass filter from 1 to 45 Hz with 2 corners with zero phases, following the preprocessing by S. Mousavi. Resamples to 100 Hz, then performs a demean.
 
