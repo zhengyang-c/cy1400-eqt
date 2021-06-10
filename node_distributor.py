@@ -2,21 +2,33 @@
 
 # prepare csv files so upon receiving an ID each script can do a lookup and get the files they need
 
+# this could be a bash script but reading from csv in bash is just... i don't want to do that
+
 import argparse
 import pandas as pd
 import os
 from pathlib import Path
 
-# load station selector file
+
+# accept argument
+# load encoded file
+# look up requirement arguments
+# call python functions
+# 
+def main(id, encoded_csv):
+
+	
 
 
+if __name__ == "__main__":
 
+	parser = argparse.ArgumentParser()
 
+	parser.add_argument("-id", type = int, help = "id to access the rows in the `encoded' csv file")
+	parser.add_argument("-decode", help = "path to `encoded' csv file")
 
-parser = argparse.ArgumentParser()
+	args = parser.parse_args()
 
-parser.add_argument("-id")
+	print(args.id)
 
-args = parser.parse_args()
-
-print(args.id)
+	main(args.id, args.decode)

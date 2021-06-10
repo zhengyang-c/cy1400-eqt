@@ -141,7 +141,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 	#print()
 
-	plt.figure(figsize=(12,6), dpi = 150)
+	plt.figure(figsize=(18,12), dpi = 150)
 	plt.yticks(np.arange(n_stations) + 0.5, list(station_list), fontsize = 8)
 	plt.xticks(np.arange(n_days) + 0.5, np.arange(0, (n_days)), fontsize = 8)
 	plt.xlabel("Days")
@@ -213,7 +213,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
-		#plot_all_uptime(selector_file, _startdate, _enddate)
+		plot_all_uptime(selector_file, _startdate, _enddate)
 		
 	elif len(_df.index) > expected_files:
 		print("more files than expected which is odd, have to filter so that it's only 3")
@@ -253,7 +253,7 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
-def encode_multirun():
+def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES = 20,):
 
 	# encode everything (sac to hdf5, prediction
 	# node distributor will decode according/modify a main() function in one script to control what you want to do
@@ -268,10 +268,81 @@ def encode_multirun():
 	# need to know how many nodes i'm using
 	# plus other arguments 
 	# could it be a json file so i can store other args?
-	# 
+	#
 	# what about sac writing? Will you need that many nodes as well?
+	#
+	#
+	# i think al lthe command line arguments could be put into this file so I can control what i want at a single point  
+	
+	#MAX_NODES = 20
 
-	pass
+	#n_multi = 20
+	# assign one node to one station for now
+
+	#sac_selector = "9jun_10station.csv" # idt this is needed 
+	station_file = "station/random10.txt" # this means that i'll have to check somewhere if the station has any data for that period...
+	# might as well solve the problem at the source i.e. for each batch that you feed in (inside multi station ) check that all stations have more than 1 file
+
+	# and if not they are automatically dropped / with some error message
+	# or just throw an error? but that's kinda disruptive i wouldn't like it 
+	# 
+	
+
+	job_name = "10jun_10station_2020.150-151" #should be descriptive
+
+
+	station_json = "station/json/all_stations.json"
+
+	hdf5_parent = os.path.join("prediction_files", job_name)
+	detection_parent = os.path.join("detection", job_name)
+
+	output_csv = os.path.join("node_encode", job_name)
+
+	metadata_log = "log/metadata/"
+
+	start_day = "2020_085" # is this needed? seems redundant / i don't feel like giving that much flexibility
+	end_day = "2020_108"
+
+	model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
+
+	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
+
+	with open(station_file, 'r') as f:
+		station_list = f.read().split("\n")
+
+	station_list = list(filter(lambda x: x != "", station_list))
+
+	if len(station_list) > MAX_NODES:
+		raise ValueError("Does not support more than {} stations, please split.".format(MAX_NODES))
+
+	for c, i in enumerate(station_list):
+
+		df.at[c, "sta"] = i
+
+		df.at[c, "hdf5_folder"] = os.path.join(hdf5_parent, sta, sta)
+
+		df.at[c, "prediction_output_folder"] = os.path.join(detection_parent, sta) # multiruns will have like multi_01 behind etc.
+
+		df.at[c, "merge_output_folder"] = os.path.join(detection_parent, sta, "merged")
+
+		df.at[c, "start_day"] = start_day
+		df.at[c, "end_day"] = end_day
+
+		df.at[c, "multi"] = n_multi
+
+		df.at[c, "model_path"] =  model_path
+
+	df.to_csv(output_csv, index = False)
+		
+
+
+
+	# load station_list, see number of stations
+
+	# behind hte scenes, i will split the stations into groups of 20
+
+	# if no. of stations > n_nodes, then make a new job? or can just plan this separately
+
 
 
 if __name__ == "__main__":
@@ -295,6 +366,8 @@ if __name__ == "__main__":
 
 	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date", action = "store_true")
 
+	parser.add_argument("-encode", action="store_true")
+
 	args = parser.parse_args()
 
 	if args.selector and not args.plot:
@@ -306,6 +379,8 @@ if __name__ == "__main__":
 
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
+	elif args.encode:
+		encode_multirun(output_csv = args.output, station_file = args.input)
 
 
 	# list of stations in some file,
