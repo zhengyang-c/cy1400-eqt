@@ -68,7 +68,7 @@ use multi_station encode fn
 then edit multi_eqt.pbs, would be nice to have screenshots
 
 
-**Important Args (need these to use):**
+__Important Args (need these to use):__
 
 ```
   -i: station list text file, endline separated
@@ -78,14 +78,16 @@ then edit multi_eqt.pbs, would be nice to have screenshots
   -e: end day, similar format```
 
 
-**Args to select functionality (without the flag, it is false)**
+__Args to select functionality (without the flag, it is false)__
+
 ```
   -writehdf5: flag to write from sac to hdf5 folder
   -runeqt: flag to run prediction (multi-run and merge)
   -ploteqt: flag to cut 150s SAC traces```
 
 
-**Optional Args (settings, etc):**
+__Optional Args (settings, etc):__
+
 ```
   -detparent: parent folder to keep detection output files. defaults to "detection/job_name"
   -hdfparent: parent folder to keep hdf5 files. defaults to "prediction_files/job_name"
