@@ -426,7 +426,7 @@ if __name__ == "__main__":
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
 	elif args.encode:
-		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.jobname, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf_parent = args.hdf_parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt)
+		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf_parent = args.hdf_parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt)
 
 
 	# list of stations in some file,
