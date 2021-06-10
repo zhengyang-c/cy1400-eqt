@@ -95,6 +95,19 @@ __Optional Args (settings, etc):__
   -modelpath: path to model, defaults to my copy of EqT default model
   -n_multi: no. of times to repeat prediction, default 20
   -n_nodes: no. of HPC nodes to use, default 20
+  -pbs: location to write new pbs file to submit to 
+```
+
+### Example (also in node_master.sh)
+
+To encode a .csv file for multinode running, with the station list (random10.txt), saving the .csv data file under the node_encode folder.
+
+Sets a job name, start and end date, specifies that it will only run the prediction function (no sac writing or plotting).
+
+Will use 10 notes, and write a pbs file in the same directory.
+
+```
+python multi_station.py -encode -i station/random10.txt -o node_encode/10jun_random10.csv -job 10jun_random10_150-151 -s 2020_150 -e 2020_151 -runeqt -n_nodes 10 -pbs multi_eqt.pbs
 ```
 
 ## Writing HDF5 file model input: ```sac_to_hdf5.py```
