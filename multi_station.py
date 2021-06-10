@@ -296,7 +296,7 @@ def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES 
 	hdf5_parent = os.path.join("prediction_files", job_name)
 	detection_parent = os.path.join("detection", job_name)
 
-	output_csv = os.path.join("node_encode", job_name)
+	#output_csv = os.path.join("node_encode", job_name)
 
 	metadata_log = "log/metadata/"
 

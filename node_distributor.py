@@ -15,9 +15,11 @@ from pathlib import Path
 # look up requirement arguments
 # call python functions
 # 
-def main(id, encoded_csv):
+def main(uid, encoded_csv):
 
-	
+	md = pd.read_csv(encoded_csv) # md for metadata bc lazy
+
+	print(md.at[uid, "sta"])
 
 
 if __name__ == "__main__":
