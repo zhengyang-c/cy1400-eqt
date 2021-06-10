@@ -257,7 +257,7 @@ def encode_multirun(
 	output_csv = "", 
 	station_file = "", 
 	n_multi = 20, 
-	MAX_NODES = 20, 
+	n_nodes = 20, 
 	job_name = "", 
 	start_day = "", 
 	end_day = "", 
@@ -330,7 +330,7 @@ def encode_multirun(
 
 	station_list = list(filter(lambda x: x != "", station_list))
 
-	if len(station_list) > MAX_NODES:
+	if len(station_list) > 20:
 		raise ValueError("Does not support more than {} stations, please split.".format(MAX_NODES))
 
 	for c, sta in enumerate(station_list):
