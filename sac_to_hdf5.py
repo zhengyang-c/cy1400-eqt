@@ -41,7 +41,9 @@ multiprocessing is added for multiple station processing
 
 # should remove n_days 
 
+
 def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor = None):
+
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
 
@@ -57,6 +59,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		os.makedirs(output_folder)
 	
 	#save_dir = os.path.join(os.getcwd(), str(mseed_dir)+'_processed_hdfs')
+
 
 	sac_df = pd.read_csv(csv_paths)
 
@@ -79,6 +82,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		print(station_info)
 
+
 		_output_folder = os.path.join(output_folder, sta)
 		if not os.path.exists(_output_folder):
 			os.makedirs(_output_folder)
@@ -91,6 +95,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 		# csv output: trace_name, start_time
 
+
 		_outhf = h5py.File(hdf5_output_path, "w")
 
 		_outgrp = _outhf.create_group("data")
@@ -98,6 +103,7 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
 		#print(indiv_days)
+
 
 		# group sac_files into days in increasing order
 		# create a dictionary, entry: year_day { EHE, EHZ, EHN file paths}
@@ -125,11 +131,13 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 		# 		files[year_day].append(_file)
 
 
+
 		csv_output = {"trace_name": [], "start_time": []}
 
 		# get time stamps first using the overlap since the time stamps are just a delta
 
 		for day_df in indiv_days:
+
 
 			day_df.reset_index(inplace = True)
 
@@ -143,25 +151,28 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 			# the set of timestamps are computed bc they are used to name the slices
 
 
+
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
 			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
 
-			#print(start_of_day, end_of_day)
 
 			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
 
 			n_cuts = math.floor(n_cuts)
 
 			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
+
 			timestamps.append(start_of_day + datetime.timedelta(seconds = 86340))
 			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
 			dt.append(86340) 
 
 			filepath_root = Path(day_df.at[0,'filepath']).parent
+
 			
 
 			#print(timestamps[:5])
+
 
 			st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
 			#print(st)
@@ -206,10 +217,13 @@ def preproc(csv_paths, output_folder, stations_json, overlap = 0.3, n_processor 
 
 
 	with ThreadPool(n_processor) as p:
+
 		p.map(process, sac_list) 
+
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
+
 
 	parser.add_argument('csv_path', help = "csv file with the required station metadata")
 	parser.add_argument('output_folder', help = "folder to write the HDF5 and csv file in. station name is the filename.")
@@ -218,18 +232,21 @@ if __name__ == "__main__":
 	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
 
 
+
 	args = parser.parse_args()
 
 	start_time = datetime.datetime.now()
 
+
 	preproc(args.csv_path, args.output_folder, args.station_json, n_processor = args.process)
+
 
 	end_time = datetime.datetime.now()
 
 	time_taken = (end_time - start_time).total_seconds()
 
 	if args.time:
+
 		with open(args.time, "a+") as f:
 			f.write("sac_to_hdf5,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
-
 

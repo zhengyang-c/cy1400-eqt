@@ -19,16 +19,20 @@
 # multi_station -choose sac_folders -o input.txt
 
 
+
 import matplotlib
 
 import matplotlib.pyplot as plt
+
 import argparse
 from pathlib import Path
 import datetime
 import pandas as pd
 import numpy as np
 import os
+
 import json
+
 
 
 #get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
@@ -89,6 +93,7 @@ def get_all_files(sac_folder, output_file):
 		# fullday?
 	# "station/all_aceh_sac.csv"
 	df.to_csv(output_file, index = False)
+
 
 
 def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station/all_aceh_sac.csv"):
@@ -152,6 +157,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 
 def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = ""):
+
 	
 	# start_date format = e.g. 2020_03 for month
 
@@ -164,7 +170,9 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 	elif y_mon:
 		_parse_char = "m"
 
+
 	_startdate, _enddate = start_date, end_date
+
 
 	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
 	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
@@ -195,7 +203,9 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 	_df.sort_values("jday", inplace = True)
 
+
 	#_df.to_csv("station/test.csv")
+
 
 	# want to check if it's complete, whether it's all fulldays, if any gaps
 
@@ -206,15 +216,19 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 	image = np.zeros((n_stations, n_days))
 
+
 	expected_files = n_days * 3 * n_stations
+
 
 	if len(_df.index) < expected_files:
 		print("some missing, can report on the no. of missing + flag to continue")
 
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
+
 		plot_all_uptime(selector_file, _startdate, _enddate)
 		
+
 	elif len(_df.index) > expected_files:
 		print("more files than expected which is odd, have to filter so that it's only 3")
 
@@ -386,6 +400,7 @@ if __name__ == "__main__":
 	# i'm going to make this environment so cluttered with command line arguments
 	# even i won't know how to use it
 
+
 	parser = argparse.ArgumentParser(description = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
 
 	parser.add_argument("--get", help = "name of parent SAC folder. get all SAC files available in a data folder, print to csv", default = None)
@@ -400,6 +415,7 @@ if __name__ == "__main__":
 	parser.add_argument("-e", "--enddate", help = "underscore separated year with julian day e.g. 2020_108 for enddate (inclusive)")
 	parser.add_argument("-m", "--month", help = "flag to use month. default is Julian day. e.g. 2020_03 to represent March", action = "store_true", default = False)
 	parser.add_argument("-j", "--julian", help = "default is True, to use Julian day to specify start and end date", action = "store_true", default = True)
+
 
 	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
 
@@ -437,12 +453,10 @@ if __name__ == "__main__":
 		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt, pbs = args.pbs, n_nodes = args.n_nodes, n_multi = args.n_multi)
 
 
+
 	# list of stations in some file,
 	# or pass via argument
 	# def select_files(selector_file = "station/TA19.txt", start_date = "2020_085", end_date = "2020_108", y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "station/TA19_2020_085-108"):
 	# 
 	# then start day and end day
 	# and then try to find all the sac files and then save the path somewhere ? this should feed directly to sac_Tohdf5
-	# 
-	# 
-	# 

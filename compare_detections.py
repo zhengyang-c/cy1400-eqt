@@ -38,6 +38,7 @@ def str_to_datetime(x):
 	except:
 		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f")
 
+
 def compare_grades_df(source_df, test_df):
 	
 	pass
@@ -46,6 +47,7 @@ def compare_grades_df(source_df, test_df):
 	# use df.merge on the str column, using the keys from the left (source frame)
 
 	# iterate through the blank keys
+
 
 
 
