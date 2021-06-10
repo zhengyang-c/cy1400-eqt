@@ -253,6 +253,16 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
+def pbs_writer(pbs, n_nodes, output_csv, job_name):
+
+	with open(pbs, "w") as f:
+
+		f.write("#PBS -J 1-{}\n".format(n_nodes))
+		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32\n".format(n_nodes))
+		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=node_distributor.py\n")
+		f.write("encoded_file={}\n".format(output_csv))
+		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file >& log/pbs/{}_{}.log 2>&1".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
+
 def encode_multirun(
 	output_csv = "", 
 	station_file = "", 
@@ -266,7 +276,8 @@ def encode_multirun(
 	detection_parent = "",
 	write_hdf5 = False, 
 	run_eqt = False, 
-	plot_eqt = False):
+	plot_eqt = False, 
+	pbs = None):
 
 	# encode everything (sac to hdf5, prediction
 	# node distributor will decode according/modify a main() function in one script to control what you want to do
@@ -357,8 +368,9 @@ def encode_multirun(
 
 
 	df.to_csv(output_csv, index = False)
-		
 
+	if pbs:
+		pbs_writer(pbs, n_nodes, output_csv, job_name)
 
 
 	# load station_list, see number of stations
@@ -406,11 +418,7 @@ if __name__ == "__main__":
 	parser.add_argument("-modelpath", help = "path to model", default = "")
 	parser.add_argument("-n_multi", type = int, help = "no. of time sto repeat prediction, default 20", default = 20)
 	parser.add_argument("-n_nodes", type = int, help = "no. of HPC nodes to use, max is 20", default = 20)
-
-
-
-
-	#parser.add_argument("-pbs", help = "write pbs script here")
+	parser.add_argument("-pbs", help = "flag to set location of pbs run script for qsub", default = None)
 
 
 
@@ -426,7 +434,7 @@ if __name__ == "__main__":
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
 	elif args.encode:
-		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt)
+		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt, pbs = args.pbs)
 
 
 	# list of stations in some file,
