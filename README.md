@@ -4,6 +4,10 @@ Helper and (pre/post)-processing scripts for a data-driven seismology project. I
 
 Uses the [EQTransformer model created by S. Mousavi](https://github.com/smousavi05/EQTransformer)
 
+# Table of Contents:
+
+_insert next time_
+
 ## Selecting stations and timeframe: ```multi_station.py```
 
 Tools I use to process files from multiple stations.
@@ -50,6 +54,48 @@ Sample:
 ```
 $ python multi_station.py -sf station/test_select.txt -i station/all_aceh_sac.csv -o station_time/7jun_testselect.csv -s 2020_085 -e 2020_086
 ```
+
+### Plotting station up-time
+
+Generates a 18 by 12 inch (150dpi) image. Doesn't work well with many days because all the xtics are so squeezed together. 
+
+## Encode function to prepare for multi-station running over multiple HPC nodes
+
+Given the number of arguments, it makes sense to write a bash script to store all the needed arguments. 
+
+use multi_station encode fn
+
+then edit multi_eqt.pbs, would be nice to have screenshots
+
+
+**Important Args (need these to use):**
+
+```
+  -i: station list text file, endline separated
+  -o: filepath to save a .csv file with all the required metadata
+  -job: job name - a unique string identifier for your jobs, defaults to timestamp
+  -s: start day in %Y_%j format (4 digit year and julian day separated by underscore)
+  -e: end day, similar format
+'''
+
+**Args to select functionality (without the flag, it is false)**
+
+```
+  -writehdf5: flag to write from sac to hdf5 folder
+  -runeqt: flag to run prediction (multi-run and merge)
+  -ploteqt: flag to cut 150s SAC traces
+'''
+
+**Optional Args (settings, etc):**
+```
+  -detparent: parent folder to keep detection output files. defaults to "detection/job_name"
+  -hdfparent: parent folder to keep hdf5 files. defaults to "prediction_files/job_name"
+  -modelpath: path to model, defaults to my copy of EqT default model
+  -n_multi: no. of times to repeat prediction, default 20
+  -n_nodes: no. of HPC nodes to use, default 20
+
+```
+
 
 ## Writing HDF5 file model input: ```sac_to_hdf5.py```
 

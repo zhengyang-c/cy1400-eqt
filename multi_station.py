@@ -253,7 +253,21 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
-def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES = 20,):
+def encode_multirun(
+	output_csv = "", 
+	station_file = "", 
+	n_multi = 20, 
+	MAX_NODES = 20, 
+	job_name = "", 
+	start_day = "", 
+	end_day = "", 
+	model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5", 
+	hdf_parent = "",
+	detection_parent = "",
+	write_hdf5 = False, 
+	run_eqt = False, 
+	merge_csv = False, 
+	plot_eqt = False):
 
 	# encode everything (sac to hdf5, prediction
 	# node distributor will decode according/modify a main() function in one script to control what you want to do
@@ -280,30 +294,35 @@ def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES 
 	# assign one node to one station for now
 
 	#sac_selector = "9jun_10station.csv" # idt this is needed 
-	station_file = "station/random10.txt" # this means that i'll have to check somewhere if the station has any data for that period...
+	# station_file = "station/random10.txt" # this means that i'll have to check somewhere if the station has any data for that period...
 	# might as well solve the problem at the source i.e. for each batch that you feed in (inside multi station ) check that all stations have more than 1 file
 
 	# and if not they are automatically dropped / with some error message
 	# or just throw an error? but that's kinda disruptive i wouldn't like it 
 	# 
 	
+	if job_name == "":
+		job_name = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-	job_name = "10jun_10station_2020.150-151" #should be descriptive
+	#job_name = "10jun_10station_2020.150-151" #should be descriptive
 
 
 	station_json = "station/json/all_stations.json"
 
-	hdf5_parent = os.path.join("prediction_files", job_name)
-	detection_parent = os.path.join("detection", job_name)
+	if hdf5_parent == "":
+		hdf5_parent = os.path.join("prediction_files", job_name)
+
+	if detection_parent == "":
+		detection_parent = os.path.join("detection", job_name)
 
 	#output_csv = os.path.join("node_encode", job_name)
 
 	metadata_log = "log/metadata/"
 
-	start_day = "2020_085" # is this needed? seems redundant / i don't feel like giving that much flexibility
-	end_day = "2020_108"
+	#start_day = "2020_085" # is this needed? seems redundant / i don't feel like giving that much flexibility
+	#end_day = "2020_108"
 
-	model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
+	#model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
 
@@ -347,6 +366,9 @@ def encode_multirun(output_csv = "", station_file = "", n_multi = 20, MAX_NODES 
 
 if __name__ == "__main__":
 
+	# i'm going to make this environment so cluttered with command line arguments
+	# even i won't know how to use it
+
 	parser = argparse.ArgumentParser(description = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
 
 	parser.add_argument("--get", help = "name of parent SAC folder. get all SAC files available in a data folder, print to csv", default = None)
@@ -366,7 +388,13 @@ if __name__ == "__main__":
 
 	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date", action = "store_true")
 
-	parser.add_argument("-encode", action="store_true")
+	parser.add_argument("-encode", action="store_true", help = "flag for script to encode a csv file for multinode running on HPC array")
+
+	parser.add_argument("-writehdf5", action = "store_true", help = "flag to write from sac to hdf5 folder, default False")
+	parser.add_argument("-runeqt", action = "store_true", help = "flag to run eqt prediction and merge multiple predictions, default False")
+	parser.add_argument("-ploteqt", action = "store_true", help = "flag to plot 150s sac traces and png 3C plots, default False")
+
+
 
 	args = parser.parse_args()
 

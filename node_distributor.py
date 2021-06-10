@@ -21,6 +21,10 @@ def main(uid, encoded_csv):
 
 	print(md.at[uid, "sta"])
 
+	# write hdf5
+
+	
+
 
 if __name__ == "__main__":
 
