@@ -97,7 +97,7 @@ __Optional Args (settings, etc):__
   -n_nodes: no. of HPC nodes to use, default 20
 ```
 
-## Writing HDF5 file model input: ```sac_to_hdf5.py'''
+## Writing HDF5 file model input: ```sac_to_hdf5.py```
 
 Performs bandpass filter from 1 to 45 Hz with 2 corners with zero phases, following the preprocessing by S. Mousavi. Resamples to 100 Hz, then performs a demean.
 
@@ -118,5 +118,7 @@ Optional:
 
 Sample:
 
-``` $ python sac_to_hdf5.py station_time/TA19_085.txt prediction_files/7jun_TA19.085 station_list.json ```
+``` 
+$ python sac_to_hdf5.py station_time/TA19_085.txt prediction_files/7jun_TA19.085 station_list.json 
+```
 
