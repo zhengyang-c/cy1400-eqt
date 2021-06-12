@@ -16,7 +16,7 @@ def run(hdf_folder, model_path, output_folder, multi = 1):
 	# 	predictor(input_dir = args["hdf_folder"], input_model = args["model_path"], output_dir=args["output_folder"], detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = args["n_cpus"])
 
 	# if n_cpus != multiprocessing.cpu_count():
-	#n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
+	n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
 
 	# if multi > 1:
 
