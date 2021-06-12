@@ -274,8 +274,8 @@ def pbs_writer(pbs, n_nodes, output_csv, job_name):
 		f.write("#PBS -J 1-{}\n".format(n_nodes))
 		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(n_nodes))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=node_distributor.py\n")
-		f.write("encoded_file={}\n".format(output_csv))
-		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file >& log/pbs/{}_{}_$PBS_JOBID.log 2>&1".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
+		f.write("encoded_file={}\nmkdir log/pbs/{}\nconda activate tf2".format(output_csv, job_name))
+		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file >& log/pbs/{}/{}_$PBS_JOBID.log 2>&1".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
 
 def encode_multirun(
 	output_csv = "", 
