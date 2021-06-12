@@ -16,7 +16,7 @@ def run(hdf_folder, model_path, output_folder, multi = 1):
 	# 	predictor(input_dir = args["hdf_folder"], input_model = args["model_path"], output_dir=args["output_folder"], detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = args["n_cpus"])
 
 	# if n_cpus != multiprocessing.cpu_count():
-	n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
+	#n_cpus = multiprocessing.cpu_count() # taken from mousavi stead
 
 	# if multi > 1:
 
@@ -34,7 +34,10 @@ def run(hdf_folder, model_path, output_folder, multi = 1):
 	# 	with ThreadPool(n_cpus) as p:
 	# 		p.map(wrapper, arglist) 
 	# else:
-	predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus)
+	
+	for c in range(multi):
+		_output = os.path.join(output_folder, "multi_{:02d}")
+		predictor(input_dir = hdf_folder, input_model = model_path, output_dir=_output, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus, number_of_plots = 0)
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()

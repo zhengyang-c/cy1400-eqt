@@ -8,7 +8,17 @@ import argparse
 import pandas as pd
 import os
 from pathlib import Path
+import shutil
+import json
 
+import datetime
+import math
+import numpy as np
+
+
+import sac_to_hdf5
+import run_eqt
+import merge_csv
 
 # accept argument
 # load encoded file
@@ -20,6 +30,42 @@ def main(uid, encoded_csv):
 	md = pd.read_csv(encoded_csv) # md for metadata bc lazy
 
 	print(md.at[uid, "sta"])
+
+	if md.at[uid, "write_hdf5"]:
+
+		# csv path, output folder, station_json
+
+		print("preproc with {},{},{}".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], "station/json/all_stations.json"))
+
+		#sac_to_hdf5.preproc(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], "station/json/all_stations.json" )
+
+	if md.at[uid, "run_eqt"]:
+
+		#run_eqt.run(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], multi = md.at[uid, "multi"])
+
+		print("run with {}, {}, {}".format(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], md.at[uid, "multi"]))
+
+		#merge_csv(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"], "merge", csv_or_not = True)
+
+		#print("merge with {}, {}, {}, {}".format(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"]))
+
+		# recompute snr 
+
+
+
+		# some filtering script
+
+
+
+	if md.at[uid, "plot_eqt"]:
+
+		# sac writing and plotting 
+		pass
+
+		# header writing 
+
+
+
 
 	# if write hdf5
 

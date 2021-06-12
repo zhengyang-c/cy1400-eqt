@@ -8,11 +8,28 @@ Uses the [EQTransformer model created by S. Mousavi](https://github.com/smousavi
 
 _insert next time_
 
-## Selecting stations and timeframe: ```multi_station.py```
+
+
+# Workflow
+
+1. Decide what model to use, start date, end date, number of stations (max 20).
+2. Make a linebreak separated file with your list of stations
+3. Make a csv file using multi_station.py -sf giving the filepaths to all the SAC files for each day and station, for a specified start and end date
+4. 
+5. 
+
+## Other notes
+
+json: ```station/json/all_stations.json'''
+
+
+# Selecting stations and timeframe: ```multi_station.py```
 
 Tools I use to process files from multiple stations.
 
-### 1 What are the .SAC files already present? 
+
+
+## 1 What are the .SAC files already present? 
 
 To get all SAC files inside a data folder (recursively, should be a one-off operation). Generates a CSV (comma separated values) with the rqeuired text metadata to locate all the SAC files. 
 
@@ -23,7 +40,7 @@ Args:
   -o: Output file
 ```
 
-### 2 Choosing your stations
+## 2 Choosing your stations
 
 Subsequently, choose a set of stations using a text file, separated by linebreaks.
 
@@ -35,7 +52,7 @@ Example:
 TA01
 TA02
 ```
-### 3 Choosing a time period and generating HDF5 files
+##3 Choosing a time period and generating HDF5 files
 
 The same script can cut the generated .csv file (in Part 1) for feeding into ```sac_to_hdf5.py```. 
 
@@ -110,7 +127,7 @@ Will use 10 nodes, and write a pbs file in the same directory.
 $ python multi_station.py -encode -i station/random10.txt -o node_encode/10jun_random10.csv -job 10jun_random10_150-151 -s 2020_150 -e 2020_151 -runeqt -n_nodes 10 -pbs multi_eqt.pbs
 ```
 
-## Writing HDF5 file model input: ```sac_to_hdf5.py```
+# Writing HDF5 file model input: ```sac_to_hdf5.py```
 
 Performs bandpass filter from 1 to 45 Hz with 2 corners with zero phases, following the preprocessing by S. Mousavi. Resamples to 100 Hz, then performs a demean.
 
