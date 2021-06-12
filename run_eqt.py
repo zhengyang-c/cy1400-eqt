@@ -36,7 +36,7 @@ def run(hdf_folder, model_path, output_folder, multi = 1):
 	# else:
 	
 	for c in range(multi):
-		_output = os.path.join(output_folder, "multi_{:02d}")
+		_output = os.path.join(output_folder, "multi_{:02d}".format(c))
 		predictor(input_dir = hdf_folder, input_model = model_path, output_dir=_output, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus, number_of_plots = 0)
 
 if __name__ == "__main__":
