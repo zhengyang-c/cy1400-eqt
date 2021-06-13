@@ -42,7 +42,7 @@ def main(uid, encoded_csv):
 
 		print("run with {}, {}, {}".format(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], md.at[uid, "multi"]))
 
-		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}\ndone\n".format(md.at[uid, "multi"], md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"])
+		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}/multi_$f\ndone\n".format(md.at[uid, "multi"], md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"])
 
 
 		#merge_csv(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"], "merge", csv_or_not = True)

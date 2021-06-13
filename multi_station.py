@@ -344,7 +344,7 @@ def encode_multirun(
 		hdf5_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/prediction_files", job_name)
 
 	if detection_parent == "":
-		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detection", job_name)
+		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
 
 	#output_csv = os.path.join("node_encode", job_name)
 
