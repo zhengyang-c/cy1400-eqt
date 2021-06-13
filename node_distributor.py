@@ -24,7 +24,7 @@ def main(uid, encoded_csv):
 
 	output_bash = os.path.join(output_folder, "{}.sh".format(uid))
 
-	write_str = ""
+	write_str = "#!/bin/bash\n"
 
 	if md.at[uid, "write_hdf5"]:
 
@@ -66,6 +66,7 @@ def main(uid, encoded_csv):
 
 	with open(output_bash, 'w') as f:
 		f.write(write_str)
+	os.chmod(output_bash, 0o775)
 
 
 if __name__ == "__main__":

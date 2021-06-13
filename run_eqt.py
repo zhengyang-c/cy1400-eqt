@@ -39,8 +39,15 @@ def run(hdf_folder, model_path, output_folder):
 
 	# just don't call from node_distributor and use custom .pbs files to do what i want to achieve
 	# generate bash scripts too ig so it'll be like multirun.sh
+	#
+	
+	if not os.path.exists(hdf_folder):
+		print("Folder not found, skipping")
+	elif len(os.listdir(hdf_folder)) == 0:
+		print("Folder is empty, skipping")
 
-	predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus, number_of_plots = 0)
+	else:
+		predictor(input_dir = hdf_folder, input_model = model_path, output_dir=output_folder, detection_threshold=0.3, P_threshold=0.1, S_threshold=0.1, plot_mode='time', output_probabilities = False, number_of_cpus = n_cpus, number_of_plots = 0)
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
@@ -48,7 +55,7 @@ if __name__ == "__main__":
 	parser.add_argument('hdf_folder')
 	parser.add_argument('model_path')
 	parser.add_argument('output_folder')
-	parser.add_argument('-s', '--start', type = int, default = 1, help = "start number")
+	#parser.add_argument('-s', '--start', type = int, default = 1, help = "start number")
 	#parser.add_argument('-m', '--multirun', type = int, default = 1, help = "how many repeats")
 	#parser.add_argument('-n', '--n_cpus', type = int, default = 1)
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to")
