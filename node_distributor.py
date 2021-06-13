@@ -7,18 +7,6 @@
 import argparse
 import pandas as pd
 import os
-from pathlib import Path
-import shutil
-import json
-
-import datetime
-import math
-import numpy as np
-
-
-import sac_to_hdf5
-import run_eqt
-import merge_csv
 
 # accept argument
 # load encoded file
@@ -31,19 +19,26 @@ def main(uid, encoded_csv):
 
 	print(md.at[uid, "sta"])
 
+	write_str = ""
+
 	if md.at[uid, "write_hdf5"]:
 
 		# csv path, output folder, station_json
 
-		print("preproc with {},{},{}".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], "station/json/all_stations.json"))
+		print("preproc with {},{},{}".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"],  md.at[uid, "station_json"]))
 
-		#sac_to_hdf5.preproc(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], "station/json/all_stations.json" )
+		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {}\n".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], md.at[uid, "station_json"])
+
+
 
 	if md.at[uid, "run_eqt"]:
 
 		#run_eqt.run(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], multi = md.at[uid, "multi"])
 
 		print("run with {}, {}, {}".format(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], md.at[uid, "multi"]))
+
+		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}\ndone\n".format(md.at[uid, "multi"], md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"])
+
 
 		#merge_csv(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"], "merge", csv_or_not = True)
 

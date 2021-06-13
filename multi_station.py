@@ -269,8 +269,9 @@ def make_station_json(station_coords, station_list, output):
 
 def pbs_writer(pbs, n_nodes, output_csv, job_name):
 
-	with open(pbs, "w") as f:
+	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
 
+	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 1-{}\n".format(n_nodes))
 		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(n_nodes))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=node_distributor.py\n")
@@ -336,17 +337,17 @@ def encode_multirun(
 	#job_name = "10jun_10station_2020.150-151" #should be descriptive
 
 
-	station_json = "station/json/all_stations.json"
+	station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
 
 	if hdf5_parent == "":
-		hdf5_parent = os.path.join("prediction_files", job_name)
+		hdf5_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/prediction_files", job_name)
 
 	if detection_parent == "":
-		detection_parent = os.path.join("detection", job_name)
+		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detection", job_name)
 
 	#output_csv = os.path.join("node_encode", job_name)
 
-	metadata_log = "log/metadata/"
+	metadata_log = "/home/zchoong001/cy1400/cy1400-eqt/log/metadata/"
 
 	#start_day = "2020_085" # is this needed? seems redundant / i don't feel like giving that much flexibility
 	#end_day = "2020_108"
@@ -381,6 +382,8 @@ def encode_multirun(
 		df.at[c, "multi"] = n_multi
 		df.at[c, "nodes"] = n_nodes
 
+		df.at[c, "station_json"] = station_json
+
 		
 		df.at[c, "job_name"] = job_name
 		df.at[c, "write_hdf5"] = write_hdf5
@@ -393,7 +396,7 @@ def encode_multirun(
 	df.to_csv(output_csv, index = False)
 
 	if pbs:
-		pbs_writer(pbs, n_nodes, output_csv, job_name)
+		pbs_writer(n_nodes, output_csv, job_name)
 
 
 	# load station_list, see number of stations
