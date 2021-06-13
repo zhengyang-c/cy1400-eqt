@@ -22,7 +22,7 @@ def main(uid, encoded_csv):
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
 
-	output_folder = os.path.join(output_folder, "{}.sh".format(uid))
+	output_bash = os.path.join(output_folder, "{}.sh".format(uid))
 
 	write_str = ""
 
