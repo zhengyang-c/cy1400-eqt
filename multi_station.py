@@ -267,7 +267,7 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
-def pbs_writer(pbs, n_nodes, output_csv, job_name):
+def pbs_writer(n_nodes, output_csv, job_name):
 
 	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
 
