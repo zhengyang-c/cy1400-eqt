@@ -17,7 +17,12 @@ def main(uid, encoded_csv):
 
 	md = pd.read_csv(encoded_csv) # md for metadata bc lazy
 
-	print(md.at[uid, "sta"])
+	output_folder = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}".format(md.at[uid, "job_name"])
+
+	if not os.path.exists(output_folder):
+		os.makedirs(output_folder)
+
+	output_folder = os.path.join(output_folder, "{}.sh".format(uid))
 
 	write_str = ""
 
@@ -59,22 +64,8 @@ def main(uid, encoded_csv):
 
 		# header writing 
 
-
-
-
-	# if write hdf5
-
-	
-	
-
-	# if prediction
-	# run prediction with multi
-
-	# also run merge and recompute snr
-
-	# if plot
-
-	
+	with open(output_bash, 'w') as f:
+		f.write(write_str)
 
 
 if __name__ == "__main__":
