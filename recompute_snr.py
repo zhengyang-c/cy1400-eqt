@@ -99,11 +99,11 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 		_tracestart = st[0].stats.starttime
 
-		print(obspy.UTCDateTime(row.p_arrival_time) - _tracestart)
+		# print(obspy.UTCDateTime(row.p_arrival_time) - _tracestart)
 		
-		p_arrival_sample = int((obspy.UTCDateTime(row.p_arrival_time) - _tracestart) * 100)
+		p_arrival_sample = int((row.p_arrival_time - _tracestart.datetime).seconds * 100)
 
-		s_arrival_sample = int((obspy.UTCDateTime(row.s_arrival_time) - _tracestart) * 100)
+		s_arrival_sample = int((row.s_arrival_time - _tracestart.datetime).seconds * 100)
 
 		window = 100 # 1 second
 
@@ -125,7 +125,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 		det_df.at[index, 'p_snr_ampsq'] = p_snr_2
 		det_df.at[index, 's_snr_ampsq'] = s_snr_2
 
-
+		print(index)
 		if index > 5:
 			break
 
