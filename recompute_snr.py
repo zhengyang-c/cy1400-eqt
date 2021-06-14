@@ -69,6 +69,9 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 		if index == 0:
 
+			print(year_day)
+			print(sac_df)
+
 			# first row, load 
 
 			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == year) & (sac_df.jday == jday)])
