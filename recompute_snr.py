@@ -43,7 +43,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	sac_df = pd.read_csv(sac_select)
 
 	det_df = pd.read_csv(detection_csv)
-
+	det_df.event_start_time = pd.to_datetime(det_df.event_start_time)
 	det_df.p_arrival_time = pd.to_datetime(det_df.p_arrival_time)
 	det_df.s_arrival_time = pd.to_datetime(det_df.s_arrival_time)
 
@@ -55,6 +55,8 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	# then use wildcard to load if it's a new day / first day
 	# 
 	#
+	#
+	# write a function remove duplicate code lol
 	prev_year_day = ""
 	
 	for index, row in det_df.iterrows():
