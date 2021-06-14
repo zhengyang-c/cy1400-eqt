@@ -49,9 +49,15 @@ def plot(data_parent_folder_name, sta, detection_folder_name):
 			if c == 0:
 				st = read(os.path.join(data_parent_folder_name, sta,"*{}.{}.*".format(_year, _day))) 
 
+				# bp filter and demean and resample
+
+
+
 			elif not prev_year_day == pick_year_day: # different year_day, so reload new
 				st.clear()
 				st = read(os.path.join(data_parent_folder_name, sta,"*{}.{}.*".format(_year, _day))) 
+
+				# bp filter and demean and resample
 
 			# else, it's already loaded, can start trimming
 			_st = st.copy()

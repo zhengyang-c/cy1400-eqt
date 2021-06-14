@@ -44,7 +44,8 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 	det_df = pd.read_csv(detection_csv)
 
-	det_df.event_start_time = pd.to_datetime(det_df.event_start_time)
+	det_df.p_arrival_time = pd.to_datetime(det_df.p_arrival_time)
+	det_df.s_arrival_time = pd.to_datetime(det_df.s_arrival_time)
 
 	# this is such a pain
 
@@ -54,7 +55,6 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	# then use wildcard to load if it's a new day / first day
 	# 
 	#
-	
 	prev_year_day = ""
 	
 	for index, row in det_df.iterrows():
@@ -62,41 +62,68 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 		event_dt = row.event_start_time
 
-		year = datetime.datetime.strftime(event_dt, "%Y")
-		jday = datetime.datetime.strftime(event_dt, "%j")
+		year = (datetime.datetime.strftime(event_dt, "%Y"))
+		jday = (datetime.datetime.strftime(event_dt, "%j"))
 
-		year_day = year + "."+ jday
+		year_day = year + "."+ jday # need string representation
 
-		if index == 0:
+		year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
-			print(year_day)
-			print(sac_df)
+		prev_year_day = ""
+
+		if index == 0 or year_day != prev_year_day:
+
+			#print(year_day)
+			#print(sac_df)
 
 			# first row, load 
 
-			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
+			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == (year)) & (sac_df.jday == (jday))])
 			_df.reset_index(inplace = True)
 
-			print(_df)
+			# load routine
+			file_root = os.path.join(fp.split("/")[:-1], "*{}*.SAC".format(yd))
 
-			print(_df.at[0, "filepath"])
+			st = obspy.read(file_root)
 
-		else:
+			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
+			st.resample(100.0)		
+			st.detrend('demean')
 
-			if year_day == prev_year_day:
-				pass
-			else:
-				_df = (sac_df[(sac_df.station == sta) & (sac_df.year == year) & (sac_df.jday == jday)])
-				_df.reset_index(inplace = True)
+			#print(_df.at[0, "filepath"])
 
-				print(_df)
+		_tracestart = st[0].stats.starttime
+		
+		p_arrival_sample = int((obspy.UTCDateTime(row.p_arrival_time) - _tracestart) * 100)
 
-				print(_df.at[0, "filepath"])
+		s_arrival_sample = int((obspy.UTCDateTime(row.s_arrival_time) - _tracestart) * 100)
+
+		window = 100 # 1 second
+
+		p_snr = (np.percentile(st[2].data[p_arrival_sample : p_arrival_sample + 100], 95) / np.percentile(st[2].data[p_arrival_sample - 100: p_arrival_sample], 95))
+
+
+		horizontal_S = np.concatenate((st[0].data[s_arrival_sample : s_arrival_sample + window], (st[1].data[s_arrival_sample : s_arrival_sample + window])))
+		horizontal_N = np.concatenate((st[0].data[s_arrival_sample - window : s_arrival_sample], (st[1].data[s_arrival_sample - window : s_arrival_sample])))
+
+		s_snr = (np.percentile(horizontal_S, 95) / np.percentile(horizontal_N, 95))**2
+
+		det_df.at[index, 'p_snr_percentileratio'] = p_snr
+		det_df.at[index, 's_snr_percentileratio'] = s_snr
+
+		p_snr_2 = np.sum(st[2].data[p_arrival_sample : p_arrival_sample + window]**2) / np.sum(st[2].data[p_arrival_sample - window: p_arrival_sample]**2)
+
+		s_snr_2 = np.sum(horizontal_S**2)/np.sum(horizontal_N**2)
+
+		det_df.at[index, 'p_snr_ampsq'] = p_snr_2
+		det_df.at[index, 's_snr_ampsq'] = s_snr_2
+
 
 		if index > 5:
 			break
 
 		prev_year_day = year_day
+	print(det_df.p_snr_ampsq)
 
 
 
@@ -123,6 +150,7 @@ def recompute_from_cut_sac(source_folder, csv_file, save_csv):
 		st = obspy.read(row.pathname[:-4] + "*C")
 		st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 		st.resample(100.0)		
+		st.detrend('demean')
 		
 
 		_tracestart = st[0].stats.starttime

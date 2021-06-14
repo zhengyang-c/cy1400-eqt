@@ -84,7 +84,7 @@ def get_all_files(sac_folder, output_file):
 		_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
 
 		df.at[index, 'station'] = _sta
-		df.at[index, 'year'] = (_year)
+		df.at[index, 'year'] = (_year) # it's saved as a string; so pandas probably inferred that it's an int
 		df.at[index, 'jday'] = (_jday)
 		df.at[index, 'start_time'] = _file.split(".")[7]
 
