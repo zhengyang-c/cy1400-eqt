@@ -76,8 +76,6 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 		year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
-		prev_year_day = ""
-
 		if index == 0 or year_day != prev_year_day:
 
 			#print(year_day)
