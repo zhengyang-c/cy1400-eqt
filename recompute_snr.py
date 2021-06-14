@@ -63,6 +63,8 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	prev_year_day = ""
 	
 	for index, row in det_df.iterrows():
+
+		# will fail if either p or s time is unavailable
 		sta = row.station
 
 		event_dt = row.event_start_time
@@ -98,36 +100,43 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 			#print(_df.at[0, "filepath"])
 
 		_tracestart = st[0].stats.starttime
-
-		# print(obspy.UTCDateTime(row.p_arrival_time) - _tracestart)
-		
-		p_arrival_sample = int((row.p_arrival_time - _tracestart.datetime).seconds * 100)
-
-		s_arrival_sample = int((row.s_arrival_time - _tracestart.datetime).seconds * 100)
-
 		window = 100 # 1 second
 
-		p_snr = (np.percentile(st[2].data[p_arrival_sample : p_arrival_sample + 100], 95) / np.percentile(st[2].data[p_arrival_sample - 100: p_arrival_sample], 95))
+		# print(obspy.UTCDateTime(row.p_arrival_time) - _tracestart)
+		try:
+		
+			p_arrival_sample = int((row.p_arrival_time - _tracestart.datetime).seconds * 100)
+
+			p_snr = (np.percentile(st[2].data[p_arrival_sample : p_arrival_sample + 100], 95) / np.percentile(st[2].data[p_arrival_sample - 100: p_arrival_sample], 95))			
+
+			p_snr_2 = np.sum(st[2].data[p_arrival_sample : p_arrival_sample + window]**2) / np.sum(st[2].data[p_arrival_sample - window: p_arrival_sample]**2)
+
+			det_df.at[index, 'p_snr_percentileratio'] = p_snr
+			det_df.at[index, 'p_snr_ampsq'] = p_snr_2
+
+		except:
+
+			det_df.at[index, 'p_snr_percentileratio'] = 0
+			det_df.at[index, 'p_snr_ampsq'] = 0
 
 
-		horizontal_S = np.concatenate((st[0].data[s_arrival_sample : s_arrival_sample + window], (st[1].data[s_arrival_sample : s_arrival_sample + window])))
-		horizontal_N = np.concatenate((st[0].data[s_arrival_sample - window : s_arrival_sample], (st[1].data[s_arrival_sample - window : s_arrival_sample])))
+		try:
 
-		s_snr = (np.percentile(horizontal_S, 95) / np.percentile(horizontal_N, 95))**2
+			s_arrival_sample = int((row.s_arrival_time - _tracestart.datetime).seconds * 100)
+			horizontal_S = np.concatenate((st[0].data[s_arrival_sample : s_arrival_sample + window], (st[1].data[s_arrival_sample : s_arrival_sample + window])))
+			horizontal_N = np.concatenate((st[0].data[s_arrival_sample - window : s_arrival_sample], (st[1].data[s_arrival_sample - window : s_arrival_sample])))
 
-		det_df.at[index, 'p_snr_percentileratio'] = p_snr
-		det_df.at[index, 's_snr_percentileratio'] = s_snr
+			s_snr = (np.percentile(horizontal_S, 95) / np.percentile(horizontal_N, 95))**2
 
-		p_snr_2 = np.sum(st[2].data[p_arrival_sample : p_arrival_sample + window]**2) / np.sum(st[2].data[p_arrival_sample - window: p_arrival_sample]**2)
+			s_snr_2 = np.sum(horizontal_S**2)/np.sum(horizontal_N**2)
 
-		s_snr_2 = np.sum(horizontal_S**2)/np.sum(horizontal_N**2)
+			det_df.at[index, 's_snr_percentileratio'] = s_snr
+			det_df.at[index, 's_snr_ampsq'] = s_snr_2
 
-		det_df.at[index, 'p_snr_ampsq'] = p_snr_2
-		det_df.at[index, 's_snr_ampsq'] = s_snr_2
+		except:
+			det_df.at[index, 's_snr_percentileratio'] = 0
+			det_df.at[index, 's_snr_ampsq'] = 0
 
-		print(index)
-		if index > 5:
-			break
 
 		prev_year_day = year_day
 	print(det_df.p_snr_ampsq)
