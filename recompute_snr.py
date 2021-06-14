@@ -136,10 +136,10 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 		prev_year_day = year_day
 	
-	det_df.p_snr_percentileratio_db = 10*np.log10(det_df.p_snr_percentileratio)
-	det_df.s_snr_percentileratio_db = 10*np.log10(det_df.s_snr_percentileratio)
-	det_df.p_snr_ampsq_db = 10*np.log10(det_df.p_snr_ampsq)
-	det_df.p_snr_ampsq_db = 10*np.log10(det_df.s_snr_ampsq)
+	det_df["p_snr_percentileratio_db"] = 10*np.log10(det_df.p_snr_percentileratio)
+	det_df["s_snr_percentileratio_db"] = 10*np.log10(det_df.s_snr_percentileratio)
+	det_df["p_snr_ampsq_db"] = 10*np.log10(det_df.p_snr_ampsq)
+	det_df["p_snr_ampsq_db"] = 10*np.log10(det_df.s_snr_ampsq)
 
 	det_df.to_csv(output_csv, index = False)
 
