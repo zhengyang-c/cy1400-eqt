@@ -36,6 +36,9 @@ def load_with_path_and_grade(csv_file, source_folder):
 
 	return new_df
 
+def compute_snr():
+	pass
+
 def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 	# load sac_select
@@ -84,7 +87,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 			_df.reset_index(inplace = True)
 
 			# load routine
-			file_root = os.path.join(fp.split("/")[:-1], "*{}*.SAC".format(yd))
+			file_root = os.path.join(_df.at[0, "filepath"].split("/")[:-1], "*{}*.SAC".format(year_day))
 
 			st = obspy.read(file_root)
 
