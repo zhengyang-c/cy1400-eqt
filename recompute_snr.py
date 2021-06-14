@@ -87,7 +87,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 			_df.reset_index(inplace = True)
 
 			# load routine
-			file_root = os.path.join(_df.at[0, "filepath"].split("/")[:-1], "*{}*.SAC".format(year_day))
+			file_root = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
 
 			st = obspy.read(file_root)
 
