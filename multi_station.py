@@ -273,10 +273,10 @@ def pbs_writer(n_nodes, output_csv, job_name):
 
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select=1:ncpus=1:mpiprocs=32\n#PBS -e log/pbs/error.log\n#PBS -o log/pbs/output.log\n")
+		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select=1:ncpus=1:mpiprocs=32\n#PBS -e log/pbs/{0}/{1}_$PBS_ARRAY_INDEX\n#PBS -o log/pbs/{0}/{1}_$PBS_ARRAY_INDEX.log\n".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=node_distributor.py\n")
 		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate tf2\n".format(output_csv, job_name))
-		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file >& log/pbs/{}/{}_$PBS_JOBID.log 2>&1\n".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
+		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
 		f.write("./pbs/runtime_scripts/{}/${{PBS_ARRAY_INDEX}}.sh".format(job_name))
 
 def encode_multirun(

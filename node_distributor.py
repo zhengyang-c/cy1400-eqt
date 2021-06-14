@@ -45,13 +45,9 @@ def main(uid, encoded_csv):
 		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}/multi_$f\ndone\n".format(md.at[uid, "multi"], md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"])
 
 
-		#merge_csv(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"], "merge", csv_or_not = True)
+		write_str += "#merge csv\npython /home/zchoong001/cy1400/cy1400-eqt/merge_csv.py {} {} {} merge -csv\n".format(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"])
 
-		#print("merge with {}, {}, {}, {}".format(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"]))
-
-		# recompute snr 
-
-
+		# recompute snr
 
 		# some filtering script
 
@@ -63,6 +59,8 @@ def main(uid, encoded_csv):
 		pass
 
 		# header writing 
+
+		# writerino
 
 	with open(output_bash, 'w') as f:
 		f.write(write_str)
