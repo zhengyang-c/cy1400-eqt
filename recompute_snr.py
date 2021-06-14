@@ -74,7 +74,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 			# first row, load 
 
-			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == year) & (sac_df.jday == jday)])
+			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
 			_df.reset_index(inplace = True)
 
 			print(_df)
