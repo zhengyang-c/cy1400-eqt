@@ -44,7 +44,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 	det_df = pd.read_csv(detection_csv)
 
-	det_df = pd.to_datetime(det_df.event_start_time)
+	det_df.event_start_time = pd.to_datetime(det_df.event_start_time)
 
 	# this is such a pain
 
