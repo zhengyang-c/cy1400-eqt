@@ -98,6 +98,8 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 			#print(_df.at[0, "filepath"])
 
 		_tracestart = st[0].stats.starttime
+
+		print(obspy.UTCDateTime(row.p_arrival_time - _tracestart))
 		
 		p_arrival_sample = int((obspy.UTCDateTime(row.p_arrival_time) - _tracestart) * 100)
 
