@@ -98,6 +98,8 @@ def merging_df(df):
 
 	for index, row in df.iterrows():
 
+		df.at[index, 'station'] = row.station.strip()
+
 		curr_time = row["event_datetime"]
 
 		if index == 0:

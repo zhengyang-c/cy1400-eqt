@@ -69,7 +69,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	for index, row in det_df.iterrows():
 
 		# will fail if either p or s time is unavailable
-		sta = row.station
+		sta = row.station.strip() 
 
 		event_dt = row.event_start_time
 
