@@ -486,6 +486,6 @@ if __name__ == "__main__":
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startdate, args.enddate, args.input)
 	elif args.encode:
-		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt, pbs = args.pbs, n_nodes = args.n_nodes, n_multi = args.n_multi, sac_select = args.sacselect, make_sac_csv = args.makesaccsv, merge_csv = args.mergecsv, recomputesnr = args.recomputesnr, filter_csv = args.filtercsv, write_headers = args.writeheaders)
+		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.startdate, end_day = args.enddate, model_path = args.modelpath, hdf5_parent = args.hdf5parent, detection_parent = args.detparent, write_hdf5 = args.writehdf5, run_eqt = args.runeqt, plot_eqt = args.ploteqt, pbs = args.pbs, n_nodes = args.n_nodes, n_multi = args.n_multi, sac_select = args.sacselect, make_sac_csv = args.makesaccsv, merge_csv = args.mergecsv, recompute_snr = args.recomputesnr, filter_csv = args.filtercsv, write_headers = args.writeheaders)
 
 
