@@ -35,6 +35,7 @@ def main(uid, encoded_csv):
 		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {}\n".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], md.at[uid, "station_json"])
 
 
+	# i kind of like the modularity so i'll make each script its own argument
 
 	if md.at[uid, "run_eqt"]:
 
@@ -44,14 +45,22 @@ def main(uid, encoded_csv):
 
 		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}/multi_$f\ndone\n".format(md.at[uid, "multi"], md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"])
 
+	if md.at[uid, "merge_csv"]:
+
 
 		write_str += "#merge csv\npython /home/zchoong001/cy1400/cy1400-eqt/merge_csv.py {} {} {} merge -csv\n".format(md.at[uid, "sta"], md.at[uid, "prediction_output_folder"], md.at[uid, "merge_output_folder"])
+
+	if md.at[uid, "recompute_snr"]:
+
+		write_str += "#recompute snr\n"
+
+	if md.at[uid, "filter"]:
+
+		write_str += "#filter csv\n"
 
 		# recompute snr
 
 		# some filtering script
-
-
 
 	if md.at[uid, "plot_eqt"]:
 
