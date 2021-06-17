@@ -52,7 +52,7 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "recompute_snr"]:
 
-		write_str += "#recompute snr\n"
+		write_str += "#recompute snr\npython /home/zchoong001/cy1400/cy1400-eqt/recompute_snr.py {} {} {}".format(md.at[uid, "sac_select"], os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered.csv"), os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"))
 
 	if md.at[uid, "filter_csv"]:
 
