@@ -54,7 +54,7 @@ def main(uid, encoded_csv):
 
 		write_str += "#recompute snr\n"
 
-	if md.at[uid, "filter"]:
+	if md.at[uid, "filter_csv"]:
 
 		write_str += "#filter csv\n"
 
@@ -65,6 +65,8 @@ def main(uid, encoded_csv):
 	if md.at[uid, "plot_eqt"]:
 
 		# sac writing and plotting 
+		pass
+	if md.at[uid, "write_headers"]:
 		pass
 
 		# header writing 
