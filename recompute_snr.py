@@ -83,7 +83,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 		if index == 0 or year_day != prev_year_day:
 
 			#print(year_day)
-			#print(sac_df)
+			print(sac_df)
 
 			# first row, load 
 			# technically i could use the csv file with all the stations and all the days but like uhh that's not really the point right
