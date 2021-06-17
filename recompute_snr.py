@@ -84,7 +84,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 
 			#print(year_day)
 			#print(sac_df)
-			print(sta, year, jday)
+			#print(sta, year, jday)
 
 			# first row, load 
 			# technically i could use the csv file with all the stations and all the days but like uhh that's not really the point right
@@ -93,7 +93,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == (year)) & (sac_df.jday == (jday))])
 			_df.reset_index(inplace = True)
 
-			print(_df)
+			#print(_df)
 			# load routine
 			file_root = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
 
