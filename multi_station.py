@@ -387,7 +387,7 @@ def encode_multirun(
 
 		df.at[c, "prediction_output_folder"] = os.path.join(detection_parent, sta) # multiruns will have like multi_01 behind etc.
 		df.at[c, "model_path"] =  model_path
-		df.at[c, "merge_output_folder"] = os.path.join(detection_parent, sta, "merged")
+		df.at[c, "merge_output_folder"] = os.path.join(detection_parent, "{}_merged".format(sta))
 
 		df.at[c, "start_day"] = start_day
 		df.at[c, "end_day"] = end_day
