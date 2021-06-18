@@ -35,5 +35,5 @@ if __name__ == "__main__":
 	parser.add_argument('multi', help = "no. of repeats that were performed", type = float)
 	
 
-	args = parser.parse_args(args.input_file, args.output_file, args.s_snr_threshold, args.multi)
-	use_filter()
+	args = parser.parse_args()
+	use_filter(args.input_file, args.output_file, args.s_snr_threshold, args.multi)
