@@ -159,7 +159,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
 
 	if len(csv_files) == 0:
-		print("no files found, skipping")
+		print("merge_csv.py: no files found, skipping")
 		return 0
 
 	parent_of_parent = os.path.dirname(csv_parent_folder)

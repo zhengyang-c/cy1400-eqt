@@ -46,7 +46,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 		det_df = pd.read_csv(detection_csv)
 
 	except FileNotFoundError:
-		print("File not found, skipping")
+		print("recompute_snr.py: files not found, skipping")
 		return 0
 
 
@@ -149,7 +149,7 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv):
 	det_df["p_snr_percentileratio_db"] = 10*np.log10(det_df.p_snr_percentileratio)
 	det_df["s_snr_percentileratio_db"] = 10*np.log10(det_df.s_snr_percentileratio)
 	det_df["p_snr_ampsq_db"] = 10*np.log10(det_df.p_snr_ampsq)
-	det_df["p_snr_ampsq_db"] = 10*np.log10(det_df.s_snr_ampsq)
+	det_df["s_snr_ampsq_db"] = 10*np.log10(det_df.s_snr_ampsq)
 
 
 	# at this point i should just filter because everything is loaded and like writing another script to filter is just?? 

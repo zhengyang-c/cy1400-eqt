@@ -56,7 +56,7 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "filter_csv"]:
 
-		write_str += "#filter csv\n"
+		write_str += "#filter csv\npython /home/zchoong001/cy1400/cy1400-eqt/filter_csv.py {} {} {}\n".format(os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"), os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"), md.at[uid, "multi"])
 
 		# recompute snr
 
