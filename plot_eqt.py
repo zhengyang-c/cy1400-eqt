@@ -56,7 +56,7 @@ def plot(sac_csv, csv_file):
 		#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
 
-		_df = (sac_df[(sac_df.station == sta) & (sac_df.year == (year)) & (sac_df.jday == (jday))])
+		_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
 		_df.reset_index(inplace = True)
 
 		# load routine
