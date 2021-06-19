@@ -87,7 +87,7 @@ def sac_plotter(sac_csv, csv_file):
 			
 			write_str = ""
 
-			write_str += "printf \"cut {:.2f} {:.2f}\\nr {}/*{}*SAC\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, pick_year_day, f1, f2, f3)
+			write_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 			write_str += "printf \"sgf DIRECTORY /home/zchoong001/cy1400/cy1400-eqt/temp OVERWRITE ON\\nqdp off\\nr {} {} {}\\nbp p 2 n 4 c 1 45\\nq\\n\" | sac\n".format(f1,f2,f3)
 
 			f.write(write_str)
