@@ -27,7 +27,7 @@ def plot(sac_csv, csv_file):
 		print("plot eqt: no files found")	
 		return 0
 
-	print(sac_df)
+	#print(sac_df)
 
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
@@ -44,8 +44,8 @@ def plot(sac_csv, csv_file):
 
 		sta = row.station
 
-		print(sta)
-		print(sac_df[sac_df.station == sta])
+		#print(sta)
+		#print(sac_df[sac_df.station == sta])
 		event_dt = row.event_start_time
 
 		year = (datetime.datetime.strftime(event_dt, "%Y"))
@@ -90,7 +90,7 @@ def plot(sac_csv, csv_file):
 
 		# trim a bit more then plot ?
 		_st.trim(start_UTC_time + delta_t - 10, start_UTC_time + delta_t + 50)
-		png_file = "{}.{}.{}.{}.png".format(sta, _year, _day, event_dt.strftime("%H%M%S"))
+		png_file = "{}.{}.{}.{}.png".format(sta, year, jday, event_dt.strftime("%H%M%S"))
 		if not os.path.exists(os.path.join(csv_dir, save_dir, png_file)):
 			_st.plot(outfile = os.path.join(csv_dir, save_dir, png_file), size = (800, 600))
 
