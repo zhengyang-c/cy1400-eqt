@@ -57,7 +57,7 @@ def plot(sac_csv, csv_file):
 			st = read(os.path.join(sac_source)) 
 
 			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
-			st.resample(100.0)		
+			st.resample(100.0)
 			st.detrend('demean')
 
 
@@ -75,9 +75,9 @@ def plot(sac_csv, csv_file):
 
 		# write SAC file 
 		for tr in _st:
-			if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, year, _day, event_dt.strftime("%H%M%S"), tr.stats.channel))):
+			if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, year, jday, event_dt.strftime("%H%M%S"), tr.stats.channel))):
 
-				tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, event_dt.strftime("%H%M%S"),  tr.stats.channel),), format = "SAC")
+				tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, year, jday, event_dt.strftime("%H%M%S"),  tr.stats.channel),), format = "SAC")
 
 		# trim a bit more then plot ?
 		_st.trim(start_UTC_time + delta_t - 10, start_UTC_time + delta_t + 50)

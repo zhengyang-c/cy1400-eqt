@@ -65,10 +65,10 @@ def main(uid, encoded_csv):
 	if md.at[uid, "plot_eqt"]:
 
 		# sac writing and plotting 
-		writer += "#plot eqt \npython /home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {}\n".format(md.at[uid, "sac_select"], os.path.join(md.at[uid, "merge_output_folder"]))
+		write_str += "#plot eqt \npython /home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {}\n".format(md.at[uid, "sac_select"], os.path.join(md.at[uid, "merge_output_folder"]))
 
 	if md.at[uid, "write_headers"]:
-		pass
+		write_str += "#write headers\n/home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {}\n".format(os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"), os.path.join(md.at[uid, "merge_output_folder"], "header.txt"))
 
 		# header writing 
 
