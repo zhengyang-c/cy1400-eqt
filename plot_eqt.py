@@ -62,7 +62,7 @@ def plot(sac_csv, csv_file):
 		# load routine
 		sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
 
-		if c == 0 or not prev_year_day == pick_year_day:
+		if prev_year_day == "" or not prev_year_day == pick_year_day:
 			st = read(os.path.join(sac_source)) 
 
 			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
