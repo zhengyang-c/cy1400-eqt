@@ -45,47 +45,47 @@ def sac_plotter(sac_csv, csv_file):
 
 	with open(os.path.join(csv_dir, "cut_and_plot.sh"), "w") as f:
 
-	for index, row in df.iterrows():
+		for index, row in df.iterrows():
 
-		sta = row.station
+			sta = row.station
 
-		event_dt = row.event_start_time
+			event_dt = row.event_start_time
 
-		year = (datetime.datetime.strftime(event_dt, "%Y"))
-		jday = (datetime.datetime.strftime(event_dt, "%j"))
+			year = (datetime.datetime.strftime(event_dt, "%Y"))
+			jday = (datetime.datetime.strftime(event_dt, "%j"))
 
-		pick_year_day = year + "."+ jday # need string representation
+			pick_year_day = year + "."+ jday # need string representation
 
-		#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
+			#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
-		_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
-		_df.reset_index(inplace = True)
+			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
+			_df.reset_index(inplace = True)
 
-		# load routine
-		sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
+			# load routine
+			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
 
-		timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
+			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
-		event_id = "{}.{}.{}.{}".format(sta, year, jday, timestamp)
+			event_id = "{}.{}.{}.{}".format(sta, year, jday, timestamp)
 
-		f1 = os.path.join(csv_dir, save_dir, event_id + ".EHE.SAC")
-		f2 = os.path.join(csv_dir, save_dir, event_id + ".EHN.SAC")
-		f3 = os.path.join(csv_dir, save_dir, event_id + ".EHZ.SAC")
+			f1 = os.path.join(csv_dir, save_dir, event_id + ".EHE.SAC")
+			f2 = os.path.join(csv_dir, save_dir, event_id + ".EHN.SAC")
+			f3 = os.path.join(csv_dir, save_dir, event_id + ".EHZ.SAC")
 
-		png_id = event_id + ".png"
+			png_id = event_id + ".png"
 
-		#printf "cut $start_time $end_time\nr $fp/*$sac_id*SAC\nwrite SAC $f1 $f2 $f3\nq\n"
-		#printf "sgf DIRECTORY /home/zchoong001/cy1400/cy1400-eqt/temp OVERWRITE ON\nqdp off\nr $f1 $f2 $f3\nbp p 2 n 4 c 1 45\nq\n"
-		#
-		# one printf to cut sac file, another to plot
-		# 
-		
-		write_str = ""
+			#printf "cut $start_time $end_time\nr $fp/*$sac_id*SAC\nwrite SAC $f1 $f2 $f3\nq\n"
+			#printf "sgf DIRECTORY /home/zchoong001/cy1400/cy1400-eqt/temp OVERWRITE ON\nqdp off\nr $f1 $f2 $f3\nbp p 2 n 4 c 1 45\nq\n"
+			#
+			# one printf to cut sac file, another to plot
+			# 
+			
+			write_str = ""
 
-		write_str += "printf \"cut {} {}\\nr {}/*{}*SAC\\nwrite SAC {} {} {}\\n\\q\\n\"\n".format(start_time, end_time, sac_source, pick_year_day, f1, f2, f3)
-		write_str += "sgf DIRECTORY /home/zchoong001/cy1400/cy1400-eqt/temp OVERWRITE ON\\nqdp off\\nr {} {} {}\\nbp p 2 n 4 c 1 45\\nq\\n\n".format(f1,f2,f3)
+			write_str += "printf \"cut {} {}\\nr {}/*{}*SAC\\nwrite SAC {} {} {}\\n\\q\\n\"\n".format(start_time, end_time, sac_source, pick_year_day, f1, f2, f3)
+			write_str += "sgf DIRECTORY /home/zchoong001/cy1400/cy1400-eqt/temp OVERWRITE ON\\nqdp off\\nr {} {} {}\\nbp p 2 n 4 c 1 45\\nq\\n\n".format(f1,f2,f3)
 
-		f.write(write_str)
+			f.write(write_str)
 
 	# call subprocess
 
