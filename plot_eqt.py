@@ -24,7 +24,7 @@ def plot(sac_csv, csv_file):
 	df = pd.read_csv(csv_file)		
 
 	csv_dir = "/".join(csv_file.split("/")[:-1])
-	
+
 	save_dir = "sac_picks"
 
 	if not os.path.exists(os.path.join(csv_dir, save_dir)):
@@ -44,7 +44,7 @@ def plot(sac_csv, csv_file):
 
 		pick_year_day = year + "."+ jday # need string representation
 
-		year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
+		#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
 
 		_df = (sac_df[(sac_df.station == sta) & (sac_df.year == (year)) & (sac_df.jday == (jday))])
@@ -75,7 +75,7 @@ def plot(sac_csv, csv_file):
 
 		# write SAC file 
 		for tr in _st:
-			if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, event_dt.strftime("%H%M%S"), tr.stats.channel))):
+			if not os.path.exists(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, year, _day, event_dt.strftime("%H%M%S"), tr.stats.channel))):
 
 				tr.write(os.path.join(csv_dir, save_dir, "{}.{}.{}.{}.{}.SAC".format(sta, _year, _day, event_dt.strftime("%H%M%S"),  tr.stats.channel),), format = "SAC")
 
