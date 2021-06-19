@@ -101,7 +101,9 @@ def sac_plotter(sac_csv, csv_file):
 
 	print(os.path.exists(os.path.join(csv_dir, "cut_and_plot.sh")))
 
-	subprocess.Popen([".{}".format(os.path.join(csv_dir, "cut_and_plot.sh"))])			
+	print("@@@@@@@@@@@@@@@@@@@@@@")
+
+	subprocess.call([".{}".format(os.path.join(csv_dir, "cut_and_plot.sh"))])			
 
 def plot(sac_csv, csv_file):
 
