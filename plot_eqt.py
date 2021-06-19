@@ -40,7 +40,7 @@ def plot(sac_csv, csv_file):
 	prev_year_day = ""
 	for index, row in df.iterrows():
 
-		sta = row.station.strip()
+		sta = row.station
 		event_dt = row.event_start_time
 
 		year = (datetime.datetime.strftime(event_dt, "%Y"))
