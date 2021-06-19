@@ -5,7 +5,9 @@ import pandas as pd
 import glob
 from obspy import UTCDateTime
 import argparse
+import subprocess
 
+# just call writerino from here...
 
 
 def header_writer(csv_file, output_file):
