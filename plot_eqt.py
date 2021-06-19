@@ -86,7 +86,7 @@ def sac_plotter(sac_csv, csv_file):
 			# one printf to cut sac file, another to plot
 			# 
 			
-			write_str = "#!/bin/sh"
+			write_str = "#!/bin/sh\n"
 
 			write_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 			
@@ -97,7 +97,7 @@ def sac_plotter(sac_csv, csv_file):
 	# call subprocess
 
 	os.chmod(os.path.join(csv_dir, "cut_and_plot.sh"), 0o775)
-	subprocess.Popen(["{}".format(os.path.join(csv_dir, "cut_and_plot.sh"))])			
+	subprocess.call(["{}".format(os.path.join(csv_dir, "cut_and_plot.sh"))])			
 
 def plot(sac_csv, csv_file):
 
