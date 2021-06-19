@@ -19,9 +19,13 @@ def str_to_datetime(x):
 
 def plot(sac_csv, csv_file):
 
-	sac_df = pd.read_csv(sac_csv)
+	try:
+		sac_df = pd.read_csv(sac_csv)
 
-	df = pd.read_csv(csv_file)		
+		df = pd.read_csv(csv_file)	
+	except FileNotFoundError:
+		print("plot eqt: no files found")	
+		return 0
 
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
