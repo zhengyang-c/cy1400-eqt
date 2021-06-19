@@ -1,7 +1,6 @@
 import argparse
 import pandas as pd
-import obspy
-from obspy import read
+
 import glob
 import os
 import datetime
@@ -99,6 +98,8 @@ def sac_plotter(sac_csv, csv_file):
 
 def plot(sac_csv, csv_file):
 
+	import obspy
+	from obspy import read
 	try:
 		sac_df = pd.read_csv(sac_csv)
 
