@@ -27,6 +27,8 @@ def plot(sac_csv, csv_file):
 		print("plot eqt: no files found")	
 		return 0
 
+	print(sac_df)
+
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
 	save_dir = "sac_picks"
@@ -41,6 +43,9 @@ def plot(sac_csv, csv_file):
 	for index, row in df.iterrows():
 
 		sta = row.station
+
+		print(sta)
+		print(sac_df[sac_df.station == sta])
 		event_dt = row.event_start_time
 
 		year = (datetime.datetime.strftime(event_dt, "%Y"))
