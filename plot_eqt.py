@@ -7,6 +7,8 @@ import datetime
 import subprocess
 import matplotlib.pyplot as plt
 
+import time
+
 from pathlib import Path
 
 
@@ -95,6 +97,7 @@ def sac_plotter(sac_csv, csv_file):
 	# call subprocess
 
 	os.chmod(os.path.join(csv_dir, "cut_and_plot.sh"), 0o775)
+	time.sleep(1)
 
 	subprocess.Popen([".{}".format(os.path.join(csv_dir, "cut_and_plot.sh"))])			
 
