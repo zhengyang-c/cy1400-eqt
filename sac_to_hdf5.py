@@ -67,7 +67,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 	sac_df = sac_df[sac_df.station == station]
 
-	indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
+	indiv_days = [v for k, v in sac_df.groupby('dt')] # further split into days, not sure if necessary
 
 	if (len(indiv_days)) == 0:
 		print("===========================================\n")
