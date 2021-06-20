@@ -50,7 +50,7 @@ def header_writer(csv_file):
 				end_diff = (row.event_end_time - start_of_day).total_seconds()
 
 
-			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n\"".format(
+			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n\"\n".format(
 				os.path.join(csv_dir, 'sac_picks', "*{}*SAC").format(year_day),
 				p_diff,
 				s_diff,
