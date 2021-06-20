@@ -129,7 +129,9 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	# 			
 	
 	if not 'dt' in df.columns:
-		df['dt'] = datetime.datetime.strptime("{}.{}".format(df['year'], df['jday']), "%Y.%j")
+		
+		for index, row in df.iterrows():
+			df.at[index, 'dt'] = datetime.datetime.strptime("{}.{}".format(row['year'], row['jday']), "%Y.%j")
 
 	#print(df.datetime)
 
