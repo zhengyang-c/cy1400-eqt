@@ -126,7 +126,10 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	# 	for _cha in ["EHE", "EHN", "EHZ"]:
 	# 		if _cha in row.filepath:
 	# 			df.at[index,'channel'] = _cha
-	df.dt = pd.to_datetime(df.dt, errors = 'coerce')
+	# 			
+	
+	if not 'dt' in df.columns:
+		df['dt'] = datetime.datetime.strptime("{}.{}".format(df['year'], df['jday']), "%Y.%j")
 
 	#print(df.datetime)
 
