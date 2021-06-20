@@ -13,7 +13,7 @@ def header_writer(csv_file):
 		df = pd.read_csv(csv_file)
 	except FileNotFoundError:
 		print("header_writer: file not found")
-		break
+		return 0
 
 	sta = df.at[0, "station"]
 
@@ -60,6 +60,11 @@ def header_writer(csv_file):
 				end_diff
 				))
 
+	time.sleep(1)
+
+	os.chmod(output_file, 0o775)
+	time.sleep(1)
+	subprocess.call(["{}".format(output_file)])	
 
 
 
