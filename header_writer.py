@@ -14,6 +14,7 @@ def header_writer(csv_file):
 		print("header_writer: file not found")
 		return 0
 
+	print(df)
 	df = df.reset_index(inplace = True)
 	sta = df.at[0, "station"]
 
