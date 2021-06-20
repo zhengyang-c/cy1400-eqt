@@ -4,6 +4,7 @@ import glob
 import argparse
 import subprocess
 import time
+import datetime
 
 def header_writer(csv_file):
 
