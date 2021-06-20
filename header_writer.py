@@ -14,8 +14,9 @@ def header_writer(csv_file):
 		print("header_writer: file not found")
 		return 0
 
-	print(df)
+	
 	df = df.reset_index(inplace = True)
+	print(df)
 	sta = df.at[0, "station"]
 
 	df['event_start_time'] = pd.to_datetime(df['p_arrival_time'])
@@ -54,7 +55,7 @@ def header_writer(csv_file):
 				end_diff = (row.event_end_time - start_of_day).total_seconds()
 
 
-			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n".format(
+			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n\"".format(
 				os.path.join(csv_dir, 'sac_picks', "*{}*SAC").format(year_day),
 				p_diff,
 				s_diff,
