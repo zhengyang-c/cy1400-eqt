@@ -495,6 +495,28 @@ if __name__ == "__main__":
 	elif args.plot:
 		plot_all_uptime(args.selector, args.startd_ate, args.end_date, args.input)
 	elif args.encode:
-		encode_multirun(output_csv = args.output, station_file = args.input, job_name = args.job, start_day = args.start_date, end_day = args.end_date, model_path = args.model_path, hdf5_parent = args.hdf5_parent, detection_parent = args.det_parent, write_hdf5 = args.write_hdf5, run_eqt = args.run_eqt, plot_eqt = args.plot_eqt, pbs = args.pbs, n_nodes = args.n_nodes, n_multi = args.n_multi, sac_select = args.sac_select, make_sac_csv = args.make_sac_csv, merge_csv = args.merge_csv, recompute_snr = args.recompute_snr, filter_csv = args.filter_csv, write_headers = args.write_headers, no_execute = args.no_execute, snr_threshold = args.snr_threshold)
+		encode_multirun(
+			output_csv = args.output, 
+			station_file = args.input, 
+			job_name = args.job, 
+			start_day = args.start_date, 
+			end_day = args.end_date, 
+			model_path = args.model_path, 
+			hdf5_parent = args.hdf5_parent, 
+			detection_parent = args.det_parent, 
+			write_hdf5 = args.write_hdf5, 
+			run_eqt = args.run_eqt, 
+			plot_eqt = args.plot_eqt, 
+			pbs = args.pbs, 
+			n_nodes = args.n_nodes, 
+			n_multi = args.n_multi, 
+			sac_select = args.sac_select, 
+			make_sac_csv = args.make_sac_csv, 
+			merge_csv = args.merge_csv, 
+			recompute_snr = args.recompute_snr, 
+			filter_csv = args.filter_csv, 
+			write_headers = args.write_headers, 
+			no_execute = args.no_execute, 
+			snr_threshold = args.snr_threshold)
 
 
