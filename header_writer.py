@@ -49,7 +49,7 @@ def header_writer(csv_file):
 				end_diff = "-12345"
 
 			else: 
-				end_diff = (row.event_end_Time - start_of_day).total_seconds()
+				end_diff = (row.event_end_time - start_of_day).total_seconds()
 
 
 			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n".format(
