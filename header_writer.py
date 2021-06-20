@@ -60,7 +60,7 @@ def header_writer(csv_file):
 
 	time.sleep(1)
 	os.chmod(output_file, 0o775)
-	
+
 	time.sleep(1)
 	subprocess.call(["{}".format(output_file)])	
 
@@ -71,9 +71,8 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("csv_file") # csv
-	parser.add_argument("output_file") # next to .csv
 
 	args = parser.parse_args()
 
 
-	header_writer(args.csv_file, args.output_file)
+	header_writer(args.csv_file)
