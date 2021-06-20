@@ -355,7 +355,7 @@ def encode_multirun(
 	station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
 
 	if hdf5_parent == "":
-		hdf5_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/prediction_files", job_name)
+		hdf5_parent = os.path.join("/scratch/zchoong001", job_name)
 
 	if detection_parent == "":
 		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)

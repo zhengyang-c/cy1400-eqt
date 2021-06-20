@@ -32,7 +32,7 @@ def main(uid, encoded_csv):
 
 		print("preproc with {},{},{}".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"],  md.at[uid, "station_json"]))
 
-		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {}\n".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"], md.at[uid, "station_json"])
+		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {}\n".format(md.at[uid, "sac_select"], md.at[uid, "sta"], md.at[uid, "hdf5_folder"], md.at[uid, "station_json"])
 
 
 	# i kind of like the modularity so i'll make each script its own argument
