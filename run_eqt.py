@@ -75,7 +75,7 @@ if __name__ == "__main__":
 	time_taken = (end_time - start_time).total_seconds()
 
 	if args.time:
-		with open(args.time, "a") as f:
-			f.write("run_eqt.py,{},{},{},{}\n".format(args.hdf_folder,datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken, args.output_folder))
+		with open(args.time, "a+") as f:
+			f.write("run_eqt.py,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
 

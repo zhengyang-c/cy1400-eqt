@@ -83,7 +83,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 	station_info = sac_df
 	sta = station
 
-	print(station_info)
+	#print(station_info)
 
 
 	_output_folder = os.path.join(output_folder, sta)
@@ -212,7 +212,6 @@ if __name__ == "__main__":
 	time_taken = (end_time - start_time).total_seconds()
 
 	if args.time:
-
 		with open(args.time, "a+") as f:
 			f.write("sac_to_hdf5,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
 
