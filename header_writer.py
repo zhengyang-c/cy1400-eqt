@@ -16,8 +16,6 @@ def header_writer(csv_file):
 
 	print(csv_file)
 	print(df)
-	df = df.reset_index(inplace = True)
-	print(df)
 	sta = df.at[0, "station"]
 
 	df['event_start_time'] = pd.to_datetime(df['p_arrival_time'])
