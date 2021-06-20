@@ -3,9 +3,7 @@ import pandas as pd
 import glob
 import argparse
 import subprocess
-
-# just call writerino from here... even better, generate a bash file...
-
+import time
 
 def header_writer(csv_file):
 
@@ -61,8 +59,8 @@ def header_writer(csv_file):
 				))
 
 	time.sleep(1)
-
 	os.chmod(output_file, 0o775)
+	
 	time.sleep(1)
 	subprocess.call(["{}".format(output_file)])	
 
