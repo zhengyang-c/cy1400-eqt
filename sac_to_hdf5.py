@@ -67,9 +67,9 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 	sac_df = sac_df[sac_df.station == station]
 
-	#sac_list = [v for k, v in sac_df.groupby('dt')] 
+	indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
 
-	if (len(sac_list)) == 0:
+	if (len(indiv_days)) == 0:
 		print("===========================================\n")
 		print("sac to hdf5: no SAC files found for station: {}".format(station))
 		print("\n===========================================")
@@ -103,7 +103,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 	_outgrp = _outhf.create_group("data")
 
-	indiv_days = [v for k, v in station_info.groupby('dt')] # further split into days, not sure if necessary
+
 
 
 	csv_output = {"trace_name": [], "start_time": []}
