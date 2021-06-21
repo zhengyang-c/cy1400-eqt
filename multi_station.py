@@ -157,7 +157,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 	plt.xlabel("Days")
 	plt.ylabel("Station name")
 	plt.pcolormesh(image, edgecolors ='k', linewidth=2)
-	plt.savefig("log/uptime/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y_%j"), datetime.datetime.strftime(end_date, "%Y_%j")))
+	plt.savefig("log/uptime/uptime_{}_{}-{}.png".format(datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d-%H%M%S"), datetime.datetime.strftime(start_date, "%Y.%j"), datetime.datetime.strftime(end_date, "%Y.%j")))
 
 
 
@@ -187,7 +187,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 	# kinda inefficient bc 10^5 rows but it's fine bc it won't be used very often
 
 	for index, row in df.iterrows():
-		df.at[index, 'dt'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y_%j")
+		df.at[index, 'dt'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y.%j")
 
 
 		for _cha in ["EHE", "EHN", "EHZ"]:
