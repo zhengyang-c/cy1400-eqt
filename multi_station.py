@@ -141,7 +141,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 	for index, row in df.iterrows():
 
-		if row.station in station_list:
+		if row.station in station_list and row.dt >= start_date and row.dt <= end_date:
 			station_index = station_list.index(row.station)
 			# print(row["dt"])
 			# print(start_date)
