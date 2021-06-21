@@ -151,6 +151,10 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 			#print(station_index, day_index)
 
+	print("##########################################\n")			
+	for i in range(n_stations):	
+		print(station_list[i],np.sum(image[i, :])/n_days)
+	print("\n##########################################")
 
 	#print()
 
