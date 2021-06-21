@@ -114,11 +114,11 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 	n_days = (end_date - start_date).days + 1
 
-	print(n_stations)
-	print(n_days)
+	#print(n_stations)
+	#print(n_days)
 	
 	image = np.zeros((n_stations, n_days))
-	print(image.shape)
+	#print(image.shape)
 
 	df = pd.read_csv(all_csv_path)
 
@@ -149,7 +149,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 			image[station_index, day_index] = 1
 
-			print(station_index, day_index)
+			#print(station_index, day_index)
 
 
 	#print()
