@@ -90,8 +90,8 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 	if not os.path.exists(_output_folder):
 		os.makedirs(_output_folder)
 
-	csv_output_path = os.path.join(output_folder, sta, "{}.csv".format(sta))
-	hdf5_output_path = os.path.join(output_folder, sta, "{}.hdf5".format(sta))
+	csv_output_path = os.path.join(output_folder, "{}.csv".format(sta))
+	hdf5_output_path = os.path.join(output_folder, "{}.hdf5".format(sta))
 
 
 	# create hdf5 file and csv object with all the required headers
