@@ -187,7 +187,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 	# kinda inefficient bc 10^5 rows but it's fine bc it won't be used very often
 
 	for index, row in df.iterrows():
-		df.at[index, 'dt'] = datetime.datetime.strptime("{}_{}".format(row.year, row.jday), "%Y.%j")
+		df.at[index, 'dt'] = datetime.datetime.strptime("{}.{}".format(row.year, row.jday), "%Y.%j")
 
 
 		for _cha in ["EHE", "EHN", "EHZ"]:
