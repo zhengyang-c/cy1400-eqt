@@ -179,8 +179,8 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 	_startdate, _enddate = start_date, end_date
 
 
-	start_date = datetime.datetime.strptime(start_date, "%Y_%{}".format(_parse_char))
-	end_date = datetime.datetime.strptime(end_date, "%Y_%{}".format(_parse_char))
+	start_date = datetime.datetime.strptime(start_date, "%Y.%{}".format(_parse_char))
+	end_date = datetime.datetime.strptime(end_date, "%Y.%{}".format(_parse_char))
 
 	df = pd.read_csv(all_csv_path)
 
