@@ -32,6 +32,8 @@ def header_writer(csv_file):
 			year_day = datetime.datetime.strftime(row.event_start_time, "%Y.%j")
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
+			timestamp = datetime.datetime.strftime(row.event_start_time, '%H%M%S')
+
 			if not row.p_arrival_time: # NaN
 				p_diff = "-12345"
 
@@ -52,7 +54,7 @@ def header_writer(csv_file):
 
 
 			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n\" | sac\n".format(
-				os.path.join(csv_dir, 'sac_picks', "*{}*SAC").format(year_day),
+				os.path.join(csv_dir, 'sac_picks', "*{}.{}*SAC").format(year_day, timestamp),
 				p_diff,
 				s_diff,
 				end_diff
