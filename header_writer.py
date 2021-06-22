@@ -73,8 +73,19 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("csv_file") # csv
+	parser.add_argument('-t', '--time', type = str, help = "file path to append to")
 
+
+	start_time = datetime.datetime.now()
 	args = parser.parse_args()
 
 
 	header_writer(args.csv_file)
+
+	end_time = datetime.datetime.now()
+
+	time_taken = (end_time - start_time).total_seconds()
+
+	if args.time:
+		with open(args.time, "a+") as f:
+			f.write("header_writer,{},{}\n".format(datetime.datetime.strftime(start_time, "%Y%m%d %H%M%S"),time_taken))
