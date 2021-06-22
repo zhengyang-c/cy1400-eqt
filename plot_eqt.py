@@ -74,6 +74,9 @@ def sac_plotter(sac_csv, csv_file):
 			f3 = os.path.join(csv_dir, save_dir, event_id + ".EHZ.SAC")
 
 			png_id = event_id + ".png"
+			ps_id = event_id + ".ps"
+
+
 
 			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(pick_year_day, "%Y.%j"), datetime.time.min)
 			start_time = (event_dt - start_of_day).total_seconds() - 30
@@ -90,7 +93,9 @@ def sac_plotter(sac_csv, csv_file):
 
 			write_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 			
-			write_str += "printf \"sgf DIRECTORY {} OVERWRITE ON\\nqdp off\\nr {} {} {}\\nbp p 2 n 4 c 1 45\\nq\\n\" | sac\n".format(csv_dir, f1,f2,f3)
+			write_str += "printf \"sgf DIRECTORY {0} OVERWRITE ON\\nqdp off\\nr {1} {2} {3}\\nbp p 2 n 4 c 1 45\\nbd sgf\\np1\\nsgftops {0}/f001.sgf {0}/f001.png q\\n\" | sac\n".format(csv_dir, f1,f2,f3)
+
+			write_str += "convert {0}/f001.png {0}/sac_picks/{1}".format(csv_dir, png_id)
 
 			f.write(write_str)
 
