@@ -43,8 +43,9 @@ def sac_plotter(sac_csv, csv_file):
 
 	df['event_start_time'] = pd.to_datetime(df['event_start_time'])
 
-
+	write_str = "#!/bin/sh\n"
 	with open(os.path.join(csv_dir, "cut_and_plot.sh"), "w") as f:
+		
 
 		for index, row in df.iterrows():
 
@@ -89,13 +90,13 @@ def sac_plotter(sac_csv, csv_file):
 			# one printf to cut sac file, another to plot
 			# 
 			
-			write_str = "#!/bin/sh\n"
+			
 
 			write_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 			
 			write_str += "printf \"sgf DIRECTORY {0} OVERWRITE ON\\nqdp off\\nr {1} {2} {3}\\nbp p 2 n 4 c 1 45\\nbd sgf\\np1\\nsgftops {0}/f001.sgf {0}/f001.png q\\n\" | sac\n".format(csv_dir, f1,f2,f3)
 
-			write_str += "convert {0}/f001.png {0}/sac_picks/{1}".format(csv_dir, png_id)
+			write_str += "convert {0}/f001.png {0}/sac_picks/{1}\n".format(csv_dir, png_id)
 
 			f.write(write_str)
 

@@ -296,7 +296,7 @@ def pbs_writer(n_nodes, output_csv, job_name, no_execute = False):
 		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
 
 		if not no_execute:
-			f.write("./pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}.sh >& log/pbs/{0}/$PBS_JOBID.log 2>&1\n".format(job_name))
+			f.write("/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}.sh >& log/pbs/{0}/$PBS_JOBID.log 2>&1\n".format(job_name))
 
 def encode_multirun(
 	output_csv = "", 
