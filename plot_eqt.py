@@ -48,8 +48,7 @@ def sac_plotter(sac_csv, csv_file):
 
 	cut_file = os.path.join(csv_dir, "cut.sh")
 	plot_file = os.path.join(csv_dir, "plot.sh")
-	with open(cut_file, "w") as f:
-		
+	with open(cut_file, "w") as f:		
 
 		for index, row in df.iterrows():
 
@@ -104,12 +103,13 @@ def sac_plotter(sac_csv, csv_file):
 
 		f.write(write_str)
 
-	with open(plot_file, 'w') as f::
+	with open(plot_file, 'w') as f:
 		f.write(plot_str)
 
 	# call subprocess
 	time.sleep(1)
 	os.chmod(cut_file, 0o775)
+	time.sleep(1)
 	os.chmod(plot_file, 0o775)
 	time.sleep(1)
 	subprocess.call(["{}".format(cut_file)])			
