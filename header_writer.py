@@ -22,6 +22,7 @@ def header_writer(csv_file):
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
 	output_file = os.path.join(csv_dir, "write_headers.sh")
+	plot_file = os.path.join(csv_dir, "plot.sh")
 
 	with open(output_file, 'w') as f:
 		f.write("#!/bin/sh\n")
@@ -62,6 +63,8 @@ def header_writer(csv_file):
 
 	time.sleep(1)
 	subprocess.call(["{}".format(output_file)])	
+	time.sleep(1)
+	subprocess.call(["{}".format(plot_file)])
 
 
 
