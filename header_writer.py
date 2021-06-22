@@ -14,7 +14,7 @@ def header_writer(csv_file):
 		print("header_writer: file not found")
 		return 0
 
-	df['event_start_time'] = pd.to_datetime(df['p_arrival_time'])
+	df['event_start_time'] = pd.to_datetime(df['event_start_time'])
 	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
 	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
 	df['event_end_time'] = pd.to_datetime(df['event_end_time'])
