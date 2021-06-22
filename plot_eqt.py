@@ -99,7 +99,7 @@ def sac_plotter(sac_csv, csv_file):
 			
 			plot_str += "printf \"sgf DIRECTORY {0} OVERWRITE ON\\nqdp off\\nr {1} {2} {3}\\nbp p 2 n 4 c 1 45\\nbd sgf\\np1\\nsgftops {0}/f001.sgf {0}/f001.ps\\nq\\n\" | sac\n".format(csv_dir, f1,f2,f3)
 
-			plot_str += "convert {0}/f001.ps -rotate 90 {0}/sac_picks/{1}\n".format(csv_dir, png_id)
+			plot_str += "convert {0}/f001.ps -rotate 90 -density 300 {0}/sac_picks/{1}\n".format(csv_dir, png_id)
 
 			plot_str += "convert {0}/sac_picks/{1} -background white -alpha remove -alpha off {0}/sac_picks/{1}\n".format(csv_dir, png_id)
 
