@@ -372,7 +372,7 @@ def encode_multirun(
 	if detection_parent == "":
 		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
 
-	if output_csv:
+	if not output_csv:
 		output_csv = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/node_encode", job_name)
 
 	if make_sac_csv:
