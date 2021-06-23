@@ -290,7 +290,7 @@ def pbs_writer(n_nodes, output_csv, job_name, no_execute = False):
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
 		f.write("#PBS -N EQT_DISTRIBUTED_ZCHOONG001\n#PBS -P eos_shjwei\n#PBS -q q32\n#PBS -l select=1:ncpus=1:mpiprocs=32\n")
-		f.write("#PBS -e log/pbs/{0}/${{PBS_JOBID}}_${{PBS_ARRAY}}.err \n#PBS -o log/pbs/{0}/${{PBS_JOBID_error}}_${{PBS_ARRAY_INDEX}}.out\n".format(job_name, datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")))
+		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=node_distributor.py\n")
 		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate tf2\n".format(output_csv, job_name))
 		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
@@ -302,7 +302,7 @@ def encode_multirun(
 	output_csv = "", 
 	station_file = "", 
 	n_multi = 20, 
-	n_nodes = 20, 
+	n_nodes = None, 
 	job_name = "", 
 	start_day = "", 
 	end_day = "", 
@@ -372,12 +372,15 @@ def encode_multirun(
 	if detection_parent == "":
 		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
 
-	#output_csv = os.path.join("node_encode", job_name)
+	if output_csv:
+		output_csv = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/node_encode", job_name)
 
 	if make_sac_csv:
+		if not sac_select:
+			sac_select = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/station_time", job_name)
+
 		select_files(station_file, start_day, end_day, output_file = sac_select)
 
-	#metadata_log = "/home/zchoong001/cy1400/cy1400-eqt/log/metadata/"
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
 
@@ -386,8 +389,11 @@ def encode_multirun(
 
 	station_list = list(filter(lambda x: x != "", station_list))
 
-	if len(station_list) > 20:
-		raise ValueError("Does not support more than {} stations, please split.".format(MAX_NODES))
+	if not n_nodes:
+		n_nodes = len(station_list)
+
+	# if len(station_list) > 20:
+	# 	raise ValueError("Does not support more than {} stations, please split.".format(MAX_NODES))
 
 	for c, sta in enumerate(station_list):
 
@@ -449,7 +455,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("--get", help = "name of parent SAC folder. get all SAC files available in a data folder, print to csv", default = None)
 	parser.add_argument("-i", "--input", help = "input file")
-	parser.add_argument("-o", "--output", help = "output file")
+	parser.add_argument("-o", "--output", help = "output file", default = "")
 
 
 	parser.add_argument("-sf", "--selector", help = "txt file with linebreak separated station names, specifying stations of interest")
@@ -484,7 +490,7 @@ if __name__ == "__main__":
 	parser.add_argument("-hdf5_parent", help = "parent folder to keep hdf5 files", default = "")
 	parser.add_argument("-model_path", help = "path to model", default = "")
 	parser.add_argument("-n_multi", type = int, help = "no. of time sto repeat prediction, default 20", default = 20)
-	parser.add_argument("-n_nodes", type = int, help = "no. of HPC nodes to use, max is 20", default = 20)
+	parser.add_argument("-n_nodes", type = int, help = "no. of HPC nodes to use, max is 20", default = None)
 
 
 	parser.add_argument("-pbs", help = "flag to generate pbs script", default = False, action = "store_true")
