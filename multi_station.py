@@ -375,10 +375,11 @@ def encode_multirun(
 	if not output_csv:
 		output_csv = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/node_encode", job_name + ".csv")
 
-	if make_sac_csv:
-		if not sac_select:
-			sac_select = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/station_time", job_name + ".csv")
+	if not sac_select:
+		sac_select = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/station_time", job_name + ".csv")
 
+
+	if make_sac_csv:
 		select_files(station_file, start_day, end_day, output_file = sac_select)
 
 
