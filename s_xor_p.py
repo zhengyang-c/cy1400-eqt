@@ -47,7 +47,7 @@ def find_sp(search_path, output_csv, multi = 20):
 
 	df = merging_df(df)
 
-	df = df[df['agreement'] == multi]
+	#df = df[df['agreement'] == multi]
 
 	df.to_csv(output_csv, index = False)
 
