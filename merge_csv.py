@@ -48,16 +48,6 @@ from pathlib import Path
 import pandas as pd
 
 
-
-def str_to_datetime(x):
-	try:
-		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S")
-	except:
-		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f")
-
-def datetime_to_str(x, dx):
-	return datetime.datetime.strftime(x  + datetime.timedelta(seconds = dx), "%Y-%m-%d %H:%M:%S")
-
 def preprocess(df):
 	# drop any row with no p or s arrival pick!!
 	df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
