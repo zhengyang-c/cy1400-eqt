@@ -53,7 +53,7 @@ def header_writer(csv_file):
 				end_diff = (row.event_end_time - start_of_day).total_seconds()
 
 
-			f.write("printf \"r {}\\nch A {}\\nch T0 {}\\nch F {}\\nwh\\nq\\n\" | sac\n".format(
+			f.write("printf \"r {}\\nch A {:.2f}\\nch T0 {:.2f}\\nch F {:.2f}\\nwh\\nq\\n\" | sac\n".format(
 				os.path.join(csv_dir, 'sac_picks', "*{}.{}*SAC").format(year_day, timestamp),
 				p_diff,
 				s_diff,
