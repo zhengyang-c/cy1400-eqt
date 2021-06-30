@@ -17,12 +17,24 @@
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Jul-Sep -s 2020.184 -e 2020.275 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Oct-Dec -s 2020.276 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Apr1 -s 2020.092 -e 2020.107 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Jan -s 2020.001 -e 2020.031 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Apr2 -s 2020.108 -e 2020.123 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Feb -s 2020.032 -e 2020.060 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May1 -s 2020.124 -e 2020.139 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Mar -s 2020.061 -e 2020.091 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May2 -s 2020.140 -e 2020.155 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
+
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun1 -s 2020.156 -e 2020.171 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
+
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun2 -s 2020.172 -e 2020.183 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
+
+
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Jan -s 2020.001 -e 2020.031 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
+
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Feb -s 2020.032 -e 2020.060 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
+
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Mar -s 2020.061 -e 2020.091 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Jan-Mar -s 2020.001 -e 2020.091 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Apr-May -s 2020.092 -e 2020.183 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
