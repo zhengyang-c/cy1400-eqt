@@ -18,9 +18,9 @@
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Oct-Dec -s 2020.276 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Jan -s 2020.001 -e 2020.031 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
+#python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Jan -s 2020.001 -e 2020.031 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Feb -s 2020.032 -e 2020.060 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
+#python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Feb -s 2020.032 -e 2020.060 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
 python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun_GE0203.txt -job 30jun_rerun_GE0203_Mar -s 2020.061 -e 2020.091 -pbs -make_sac_csv -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -no_execute
 
