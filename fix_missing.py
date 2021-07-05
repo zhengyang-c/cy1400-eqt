@@ -95,4 +95,4 @@ def check_duplicate():
 
 	# about 200 duplicates which... are probably duplicates... with the -1 at the back? 
 
-#check_duplicate()
+check_duplicate()
