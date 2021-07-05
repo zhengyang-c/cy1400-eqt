@@ -58,10 +58,10 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 	print(m_df)
 
-	m_df.to_csv("missing_sac_5jul.csv")
+	m_df.to_csv("missing_sac_5jul.csv", index = False)
 
 
-#select_files("imported_figures/all_stations.txt", "2020.001", "2020.366", all_csv_path = "imported_figures/all_aceh_sac.csv")
+select_files("station/all_stations.txt", "2020.001", "2020.366")
 
 
 def remove_duplicate():
@@ -85,7 +85,7 @@ def check_duplicate():
 
 		if not (filecmp.cmp(original, to_test)):
 			print(original, "duplicate not the same")
-	
+
 
 	# write them to a file
 
@@ -95,4 +95,4 @@ def check_duplicate():
 
 	# about 200 duplicates which... are probably duplicates... with the -1 at the back? 
 
-remove_duplicate()
+#check_duplicate()
