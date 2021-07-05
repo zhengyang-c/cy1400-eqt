@@ -113,6 +113,10 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 	# get time stamps first using the overlap since the time stamps are just a delta
 
+	if partial_day_file != "":
+		p_df = pd.read_csv(partial_day_file)
+		exclude_list = [int(x) for x in p_df[station].tolist() if x == x] # NaN is != NaN 
+
 	for day_df in indiv_days:
 
 
@@ -123,8 +127,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 		filepath_root = Path(day_df.at[0,'filepath']).parent
 
 
-
-		st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
+		st = read(os.path.join(filepath_root, "*{}.{}.SAC".format(year_day, day_df.at[0, "start_time"])))
 		#print(st)
 		st.resample(100.0)
 		st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
@@ -134,9 +137,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 		# if using partial day file. could just submit a blank file in the future but still need a file anyway hmmm
 		if partial_day_file != "":
 
-			p_df = pd.read_csv(partial_day_file)
 
-			exclude_list = [int(x) for x in p_df[station].tolist() if x == x] # NaN is != NaN 
 
 			start_time = st[0].stats.starttime # UTCDateTime object
 			end_time = st[0].stats.endtime
