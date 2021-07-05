@@ -37,7 +37,11 @@ def main(uid, encoded_csv):
 
 		print("preproc with {},{},{}".format(md.at[uid, "sac_select"], md.at[uid, "hdf5_folder"],  md.at[uid, "station_json"]))
 
-		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {} -t {}\n".format(
+		#
+		# remember to remove the partial day file after i'm done rip
+		#
+
+		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {} -t {} -partial_day_file /home/zchoong001/cy1400/cy1400-eqt/all_aceh_sac_2020uptime_1jul.csv\n".format(
 			md.at[uid, "sac_select"], 
 			md.at[uid, "sta"], 
 			md.at[uid, "hdf5_folder"], 

@@ -61,8 +61,9 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 	m_df.to_csv("missing_sac_5jul.csv", index = False)
 
 
-select_files("station/all_stations.txt", "2020.001", "2020.366")
+#select_files("station/all_stations.txt", "2020.001", "2020.366")
 
+def 
 
 def remove_duplicate():
 
@@ -72,6 +73,17 @@ def remove_duplicate():
 
 	print(df)
 
+	unique_sta = (df["station"].unique())
+
+	unique_sta = sorted(unique_sta)
+
+	print(unique_sta)
+	print(len(unique_sta))
+
+
+remove_duplicate()
+
+# all duplicates are the same and can be dropped
 def check_duplicate():
 
 	df = pd.read_csv("missing_sac_5jul.csv")
@@ -85,8 +97,6 @@ def check_duplicate():
 
 		if not (filecmp.cmp(original, to_test)):
 			print(original, "duplicate not the same")
-
-
 	# write them to a file
 
 	# make a bash script that outputs to a file
@@ -94,5 +104,3 @@ def check_duplicate():
 	# call the bash script 
 
 	# about 200 duplicates which... are probably duplicates... with the -1 at the back? 
-
-check_duplicate()

@@ -42,7 +42,7 @@ multiprocessing is added for multiple station processing
 # should remove n_days 
 
 
-def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_processor = None):
+def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_processor = None, partial_day_file = "" ):
 
 
 	# sac_folder should contain folders named with station data. inside will be .SAC files and presumably no other junk 
@@ -104,7 +104,10 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 	_outgrp = _outhf.create_group("data")
 
 
-
+	# if partial_day_file is given, load from partial_day_file (the list of datetimes for that station to exclude)
+	# which has station name as the header bc i am big lazy
+	# then if this is so,
+	# then when generating timestamps, use a different routine:
 
 	csv_output = {"trace_name": [], "start_time": []}
 
@@ -115,34 +118,10 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 		day_df.reset_index(inplace = True)
 
-		#print(day_df)
-
-		#day_df = day_df.sort_values(by = ["channel"], inplace = True)
-
 		year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
-
-
-
-		start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
-
-		end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
-
-
-		n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
-
-		n_cuts = math.floor(n_cuts)
-
-		timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
-
-		timestamps.append(start_of_day + datetime.timedelta(seconds = 86340))
-		dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
-		dt.append(86340) 
 
 		filepath_root = Path(day_df.at[0,'filepath']).parent
 
-		
-
-		#print(timestamps[:5])
 
 
 		st = read(os.path.join(filepath_root, "*{}*SAC".format(year_day)))
@@ -150,6 +129,63 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 		st.resample(100.0)
 		st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 		st.detrend('demean')
+
+
+		# if using partial day file. could just submit a blank file in the future but still need a file anyway hmmm
+		if partial_day_file != "":
+
+			p_df = pd.read_csv(partial_day_file)
+
+			exclude_list = [int(x) for x in p_df[station].tolist() if x == x] # NaN is != NaN 
+
+			start_time = st[0].stats.starttime # UTCDateTime object
+			end_time = st[0].stats.endtime
+
+			# get jday of 
+			# tbh this should be extended to year-jday but that can... wait??
+			# 
+			
+			n_cuts = ((end_time - start_time) - (overlap * 60))/((1 - overlap)*60)
+
+			n_cuts = math.floor(n_cuts)
+
+			timestamps = []
+			dt = [] 
+
+			for i in range(n_cuts):
+
+				_start_time = (start_time + i * (1 - overlap) * 60).datetime
+
+				_dt = (1 - overlap) * 60 * i
+
+				if int(datetime.datetime.strftime(_start_time, "%j")) in exclude_list:
+					continue
+
+				timestamps.append(_start_time)
+				dt.append(_dt)
+
+			
+			# get the B E and KZTIME from the SAC header.
+			# generate timestamps as per usual, but for every time stamp check against the partial day file list
+			# if the dt is inside, skip (this can't be that expensive computationally)
+			
+		# default full day 
+		else:
+			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+
+			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
+
+
+			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
+
+			n_cuts = math.floor(n_cuts)
+
+			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
+
+			timestamps.append(start_of_day + datetime.timedelta(seconds = 86340))
+			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
+			dt.append(86340) 			
+
 
 		for c, timestamp in enumerate(timestamps):
 			#print(timestamp)
@@ -194,6 +230,7 @@ if __name__ == "__main__":
 	parser.add_argument('station', help = "")
 	parser.add_argument('output_folder', help = "folder to write the HDF5 and csv file in. station name is the filename.")
 	parser.add_argument('station_json', help = "path to station_list.json that is already used by EQT, which gives station coordinates")
+	parser.add_argument('-partial_day_file', help = "path to uptime (used for fixing", default = "")
 	parser.add_argument('-t', '--time', type = str, help = "log timing to this filepath")
 	parser.add_argument('-p', '--process', type = int, help = "number of processors (one per station)")
 
@@ -204,7 +241,7 @@ if __name__ == "__main__":
 	start_time = datetime.datetime.now()
 
 
-	preproc(args.csv_path, args.station, args.output_folder, args.station_json, n_processor = args.process)
+	preproc(args.csv_path, args.station, args.output_folder, args.station_json, n_processor = args.process, partial_day_file = args.partial_day_file)
 
 
 	end_time = datetime.datetime.now()
