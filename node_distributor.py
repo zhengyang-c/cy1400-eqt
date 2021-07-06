@@ -72,10 +72,12 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "recompute_snr"]:
 
-		write_str += "#recompute snr\npython /home/zchoong001/cy1400/cy1400-eqt/recompute_snr.py {} {} {} -t {}\n".format(
+		write_str += "#recompute snr\npython /home/zchoong001/cy1400/cy1400-eqt/recompute_snr.py {} {} {} {} {} -t {}\n".format(
 			md.at[uid, "sac_select"], 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered.csv"), 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"),
+			md.at[uid, "sta"],
+			md.at[uid, "hdf5_folder"],
 			log_file_name)
 
 	if md.at[uid, "filter_csv"]:
