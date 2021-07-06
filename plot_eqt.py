@@ -48,6 +48,14 @@ def sac_plotter(sac_csv, csv_file, hdf5_folder):
 
 	cut_file = os.path.join(csv_dir, "cut.sh")
 	plot_file = os.path.join(csv_dir, "plot.sh")
+
+	hdf = pd.read_csv(hdf5_folder)
+	hdf.rename(columns = {"trace_name": "file_name"})
+
+	df.merge(on = "file_name")
+
+	# merge using timestamps
+
 	with open(cut_file, "w") as f:		
 
 		for index, row in df.iterrows():
@@ -63,11 +71,13 @@ def sac_plotter(sac_csv, csv_file, hdf5_folder):
 
 			#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
-			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
-			_df.reset_index(inplace = True)
+			#_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
+			#_df.reset_index(inplace = True)
 
 			# load routine
-			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
+			#sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
+			
+			sac_source = row["source_file"]
 
 			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
