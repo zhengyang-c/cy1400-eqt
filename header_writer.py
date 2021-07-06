@@ -95,7 +95,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 
-	header_writer(args.csv_file)
+	header_writer(args.csv_file, args.station, args.hdf5_folder)
 
 	end_time = datetime.datetime.now()
 
