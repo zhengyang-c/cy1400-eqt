@@ -218,7 +218,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 			csv_output["trace_name"].append(_tracename)
 			csv_output["start_time"].append(_start_time)
-			csv_output["source_file"].append()
+			csv_output["source_file"].append(file_name_str)
 
 	_outhf.close()
 	d_csv = pd.DataFrame.from_dict(csv_output)
