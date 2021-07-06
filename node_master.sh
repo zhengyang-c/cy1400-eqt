@@ -12,15 +12,13 @@
 
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 06jul_leftover_BBCBMA_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv -no_execute
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 06jul_leftover_BBCBMA_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 06jul_leftover_GE-GM_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv -no_execute
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 06jul_leftover_GE-GM_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 06jul_leftover_TG-TS_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 06jul_leftover_TG-TS_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv -no_execute
-
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 06jul_leftover_TA_all_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv -no_execute
-
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 06jul_leftover_TA_all_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Jan-Mar -s 2020.001 -e 2020.091 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Apr-May -s 2020.092 -e 2020.183 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Jul-Sep -s 2020.184 -e 2020.275 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers
