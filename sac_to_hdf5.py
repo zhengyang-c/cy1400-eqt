@@ -109,7 +109,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 	# then if this is so,
 	# then when generating timestamps, use a different routine:
 
-	csv_output = {"trace_name": [], "start_time": []}
+	csv_output = {"trace_name": [], "start_time": [], "source_file": []}
 
 	# get time stamps first using the overlap since the time stamps are just a delta
 
@@ -126,9 +126,10 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 		filepath_root = Path(day_df.at[0,'filepath']).parent
 
+		file_name_str = os.path.join(filepath_root, "*{}.{}.SAC".format(year_day, day_df.at[0, "start_time"]))
 
-		st = read(os.path.join(filepath_root, "*{}.{}.SAC".format(year_day, day_df.at[0, "start_time"])))
-		#print(st)
+		st = read(file_name_str)
+
 		st.resample(100.0)
 		st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
 		st.detrend('demean')
@@ -217,6 +218,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 			csv_output["trace_name"].append(_tracename)
 			csv_output["start_time"].append(_start_time)
+			csv_output["source_file"].append()
 
 	_outhf.close()
 	d_csv = pd.DataFrame.from_dict(csv_output)
