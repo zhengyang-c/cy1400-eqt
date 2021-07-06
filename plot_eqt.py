@@ -54,6 +54,8 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 
 	df = df.merge(hdf, on = "file_name")
 
+	print(df.columns)
+
 	# merge using timestamps
 
 	with open(cut_file, "w") as f:		
