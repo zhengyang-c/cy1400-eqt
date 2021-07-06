@@ -49,12 +49,12 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 	cut_file = os.path.join(csv_dir, "cut.sh")
 	plot_file = os.path.join(csv_dir, "plot.sh")
 
-	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
-	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
+	# hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
+	# hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
 
-	df = df.merge(hdf, on = "file_name")
+	# df = df.merge(hdf, on = "file_name")
 
-	print(df.columns)
+	# print(df.columns)
 
 	# merge using timestamps
 

@@ -21,10 +21,10 @@ def header_writer(csv_file, station, hdf5_folder):
 	df['event_end_time'] = pd.to_datetime(df['event_end_time'])
 
 
-	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
-	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
+	# hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
+	# hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
 
-	df = df.merge(hdf, on = "file_name")
+	# df = df.merge(hdf, on = "file_name")
 
 
 	csv_dir = "/".join(csv_file.split("/")[:-1])
