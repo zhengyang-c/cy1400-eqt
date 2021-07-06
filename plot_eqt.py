@@ -52,7 +52,7 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
 	hdf.rename(columns = {"trace_name": "file_name"})
 
-	df.merge(on = "file_name")
+	df.merge(hdf, on = "file_name")
 
 	# merge using timestamps
 
