@@ -12,7 +12,7 @@
 
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -run_eqt -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A01A02.txt -job 06jul_test_hdf5 -s 2020.001 -e 2020.366 -pbs -write_hdf5 /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A01A02.txt -job 06jul_test_hdf5 -s 2020.001 -e 2020.366 -pbs -write_hdf5 /home/zchoong001/cy1400/cy1400-eqt/ -sac_select missing_sac_5jul.csv
 
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 06jul_leftover_BBCBMA_2020 -s 2020.001 -e 2020.366 -pbs -merge_csv -recompute_snr -filter_csv -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
