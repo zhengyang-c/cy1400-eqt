@@ -7,6 +7,8 @@ import datetime
 import subprocess
 import matplotlib.pyplot as plt
 import obspy
+
+import obspy
 import time
 
 from pathlib import Path

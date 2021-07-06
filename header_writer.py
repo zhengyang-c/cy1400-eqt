@@ -5,6 +5,7 @@ import argparse
 import subprocess
 import time
 import datetime
+import obspy
 
 def header_writer(csv_file, station, hdf5_folder):
 
