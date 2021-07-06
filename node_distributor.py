@@ -93,9 +93,10 @@ def main(uid, encoded_csv):
 	if md.at[uid, "plot_eqt"]:
 
 		# sac writing and plotting 
-		write_str += "#plot eqt \npython /home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {} {} -t {}\n".format(
+		write_str += "#plot eqt \npython /home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {} {} {} -t {}\n".format(
 			md.at[uid, "sac_select"], 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"),
+			md.at[uid, "sta"],
 			md.at[uid, "hdf5_folder"],
 			log_file_name)
 
