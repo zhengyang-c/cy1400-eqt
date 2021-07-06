@@ -222,7 +222,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	start_time = datetime.datetime.now()
-	sac_plotter(args.sac_csv, args.csv_file, args.station, args.hdf5_folder)
+	sac_plotter(args.sac_csv, args.csv_file)
 
 
 	# plot(args.sac_csv, args.output_folder)
