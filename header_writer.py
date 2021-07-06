@@ -7,7 +7,7 @@ import time
 import datetime
 import obspy
 
-def header_writer(csv_file, station, hdf5_folder):
+def header_writer(csv_file):
 
 	try:
 		df = pd.read_csv(csv_file)
@@ -87,8 +87,6 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("csv_file") # csv
-	parser.add_argument('station', help = "station name")
-	parser.add_argument('hdf5_folder', help = "hdf5 folder")
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to")
 
 
@@ -96,7 +94,7 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 
-	header_writer(args.csv_file, args.station, args.hdf5_folder)
+	header_writer(args.csv_file)
 
 	end_time = datetime.datetime.now()
 
