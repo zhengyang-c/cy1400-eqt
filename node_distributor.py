@@ -101,8 +101,10 @@ def main(uid, encoded_csv):
 			log_file_name)
 
 	if md.at[uid, "write_headers"]:
-		write_str += "#write headers\npython /home/zchoong001/cy1400/cy1400-eqt/header_writer.py {} -t {}\n".format(
+		write_str += "#write headers\npython /home/zchoong001/cy1400/cy1400-eqt/header_writer.py {} {} {} -t {}\n".format(
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"),
+			md.at[uid, "sta"],
+			md.at[uid, "hdf5_folder"],
 			log_file_name)
 
 		# header writing 

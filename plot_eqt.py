@@ -6,7 +6,7 @@ import os
 import datetime
 import subprocess
 import matplotlib.pyplot as plt
-
+import obspy
 import time
 
 from pathlib import Path
@@ -52,8 +52,6 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
 	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
 
-	print(hdf)
-
 	df = df.merge(hdf, on = "file_name")
 
 	# merge using timestamps
@@ -80,6 +78,7 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 			#sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
 			
 			sac_source = row["source_file"]
+			sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
 
 			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
@@ -94,7 +93,7 @@ def sac_plotter(sac_csv, csv_file, station, hdf5_folder):
 
 
 
-			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(pick_year_day, "%Y.%j"), datetime.time.min)
+			start_of_day = sac_start_time.datetime
 			start_time = (event_dt - start_of_day).total_seconds() - 30
 			end_time = (event_dt - start_of_day).total_seconds() + 120
 

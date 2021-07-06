@@ -6,7 +6,7 @@ import subprocess
 import time
 import datetime
 
-def header_writer(csv_file):
+def header_writer(csv_file, station, hdf5_folder):
 
 	try:
 		df = pd.read_csv(csv_file)
@@ -19,6 +19,13 @@ def header_writer(csv_file):
 	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
 	df['event_end_time'] = pd.to_datetime(df['event_end_time'])
 
+
+	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
+	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
+
+	df = df.merge(hdf, on = "file_name")
+
+
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
 	output_file = os.path.join(csv_dir, "write_headers.sh")
@@ -30,7 +37,11 @@ def header_writer(csv_file):
 		for index, row in df.iterrows():
 
 			year_day = datetime.datetime.strftime(row.event_start_time, "%Y.%j")
-			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+			#start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+
+			sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
+
+			start_of_day = sac_start_time.datetime
 
 			timestamp = datetime.datetime.strftime(row.event_start_time, '%H%M%S')
 
@@ -75,6 +86,8 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("csv_file") # csv
+	parser.add_argument('station', help = "station name")
+	parser.add_argument('hdf5_folder', help = "hdf5 folder")
 	parser.add_argument('-t', '--time', type = str, help = "file path to append to")
 
 
