@@ -84,9 +84,8 @@ def sac_plotter(sac_csv, csv_file):
 			png_id = event_id + ".png"
 			ps_id = event_id + ".ps"
 
-
-
-			start_of_day = sac_start_time.datetime
+			#start_of_day = sac_start_time.datetime
+			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 			start_time = (event_dt - start_of_day).total_seconds() - 30
 			end_time = (event_dt - start_of_day).total_seconds() + 120
 
