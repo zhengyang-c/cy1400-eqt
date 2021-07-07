@@ -30,7 +30,7 @@ for index, row in df.iterrows():
 	flags = {
 	"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, sta + ".csv")),
 	"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, sta + ".hdf5")),
-	"n_merged": len([str(x) for x in Path(row.prediction_output_folder).glob("*_merged")])
+	"n_merged": len([str(x) for x in Path(row.prediction_output_folder).glob("*_merged")]),
 	"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
 	"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
 	"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
