@@ -66,7 +66,7 @@ def sac_plotter(sac_csv, csv_file):
 			_df.reset_index(inplace = True)
 
 			# load routine
-			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
+			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*000000.SAC".format(year_day))
 			
 			#sac_source = row["source_file"]
 			#sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
