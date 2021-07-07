@@ -60,7 +60,7 @@ def sac_plotter(sac_csv, csv_file):
 			year = (datetime.datetime.strftime(event_dt, "%Y"))
 			jday = (datetime.datetime.strftime(event_dt, "%j"))
 
-			pick_year_day = year + "."+ jday # need string representation
+			year_day = year + "."+ jday # need string representation
 
 			year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
@@ -68,7 +68,7 @@ def sac_plotter(sac_csv, csv_file):
 			_df.reset_index(inplace = True)
 
 			# load routine
-			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
+			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
 			
 			#sac_source = row["source_file"]
 			#sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
