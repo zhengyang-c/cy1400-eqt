@@ -46,10 +46,13 @@ for index, row in df.iterrows():
 
 		"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
 
-		"n_lines": int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1,
+		"n_lines": 0,
 
 		"sac_pick_files":len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
 	}
+
+	if flags["merge_filtered_snr_customfilter"]:
+		flags["n_lines"] = int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1
 
 	checks = {
 		"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
