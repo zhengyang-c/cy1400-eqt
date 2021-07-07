@@ -38,7 +38,7 @@ for index, row in df.iterrows():
 
 		"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
 
-		"n_runs": len(os.listdir(row.prediction_output_folder)),
+		"prediction_made": os.path.exists(row.prediction_output_folder),
 
 		"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
 
