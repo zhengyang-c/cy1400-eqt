@@ -49,15 +49,6 @@ def sac_plotter(sac_csv, csv_file):
 	cut_file = os.path.join(csv_dir, "cut.sh")
 	plot_file = os.path.join(csv_dir, "plot.sh")
 
-	# hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
-	# hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
-
-	# df = df.merge(hdf, on = "file_name")
-
-	# print(df.columns)
-
-	# merge using timestamps
-
 	with open(cut_file, "w") as f:		
 
 		for index, row in df.iterrows():
@@ -71,16 +62,16 @@ def sac_plotter(sac_csv, csv_file):
 
 			pick_year_day = year + "."+ jday # need string representation
 
-			#year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
+			year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
 
-			#_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
-			#_df.reset_index(inplace = True)
+			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
+			_df.reset_index(inplace = True)
 
 			# load routine
-			#sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
+			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(pick_year_day))
 			
-			sac_source = row["source_file"]
-			sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
+			#sac_source = row["source_file"]
+			#sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
 
 			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
