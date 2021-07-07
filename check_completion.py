@@ -23,25 +23,46 @@ print(df)
 
 # look for the node encode files
 
+summary_df = pd.DataFrame()
+
 for index, row in df.iterrows():
 
 	# check hdf5 folder for sta.csv and sta.hdf5
 
 	flags = {
-	"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
-	"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
-	"n_merged": len([str(x) for x in Path(row.prediction_output_folder).glob("*_merged")]),
-	"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
-	"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
-	"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
-	"n_lines": int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1,
-	"sac_pick_files":len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
+		"sta": row.sta,
+
+		"job_name":row.job_name,
+
+		"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
+
+		"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
+
+		"n_runs": len(os.listdir(row.prediction_output_folder)),
+
+		"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
+
+		"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
+
+		"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
+
+		"n_lines": int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1,
+
+		"sac_pick_files":len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
 	}
 
-	print(flags)
+	checks = {
+		"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
+		"all_plotted": flags["n_lines"] * 4 == flags["sac_pick_files"],
+	}
 
-	if index > 2:
-		break
+	for k,v in flags.items():
+		summary_df.at[index, k] = v
+
+	for k,v in checks.items():
+		summary_df.at[index, k] = v
+
+summary_df.to_csv("07july_summary.csv", index = False)
 
 	# 
 
