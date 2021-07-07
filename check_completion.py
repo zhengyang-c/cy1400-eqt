@@ -16,7 +16,7 @@ for job_name in job_list:
 	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
 	df_list.append(df)
 
-df = pd.concat(df_list, reset_index = True)
+df = pd.concat(df_list, ignore_index = True)
 
 print(df)
 # hdf5 dir:
