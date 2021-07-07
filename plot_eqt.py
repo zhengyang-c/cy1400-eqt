@@ -62,8 +62,6 @@ def sac_plotter(sac_csv, csv_file):
 
 			year_day = year + "."+ jday # need string representation
 
-			year, jday = int(year), int(jday) # the julian is saved as integer so need to convert (085 vs 85)
-
 			_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
 			_df.reset_index(inplace = True)
 
@@ -75,7 +73,7 @@ def sac_plotter(sac_csv, csv_file):
 
 			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
-			event_id = "{}.{}.{}.{}".format(sta, year, jday, timestamp)
+			event_id = "{}.{}.{}".format(sta, year_day, timestamp)
 
 			f1 = os.path.join(csv_dir, save_dir, event_id + ".EHE.SAC")
 			f2 = os.path.join(csv_dir, save_dir, event_id + ".EHN.SAC")
