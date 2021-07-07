@@ -28,8 +28,8 @@ for index, row in df.iterrows():
 	# check hdf5 folder for sta.csv and sta.hdf5
 
 	flags = {
-	"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, sta + ".csv")),
-	"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, sta + ".hdf5")),
+	"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
+	"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
 	"n_merged": len([str(x) for x in Path(row.prediction_output_folder).glob("*_merged")]),
 	"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
 	"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
