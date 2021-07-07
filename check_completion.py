@@ -66,7 +66,7 @@ for index, row in df.iterrows():
 	for k,v in checks.items():
 		summary_df.at[index, k] = v
 
-summary_df.to_csv("07july_summary_1.csv", index = False)
+summary_df.to_csv("07july_summary_2.csv", index = False)
 
 	# 
 
