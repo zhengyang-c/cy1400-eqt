@@ -15,7 +15,8 @@
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A01A02.txt -job 06jul_test_hdf5 -s 2020.001 -e 2020.366 -pbs -write_hdf5 -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -pbs -plot_eqt -write_headers
+
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -pbs -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
 python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Apr -pbs -plot_eqt -write_headers
 
