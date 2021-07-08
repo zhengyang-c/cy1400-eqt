@@ -3,6 +3,9 @@ import os
 import subprocess
 from pathlib import Path
 import numpy as np
+import datetime
+
+
 job_list = []
 with open("joblist.txt", "r") as f:
 	for line in f:
@@ -74,6 +77,7 @@ def infer_actual_uptime():
 		station_list = [line.strip() for line in f if line.strip != ""]
 
 	station_dict = {station: {} for station in station_list}
+
 	for index, row in df.iterrows():
 		pass
 		# open the .csv file with aLL the trace names
@@ -82,9 +86,60 @@ def infer_actual_uptime():
 			_df = pd.read_csv(csv_path)
 			_df["hours"] = _df["start_time"].str.slice(stop = 13)
 
-			print(_df["hours"].unique())
+			unique_hours = _df["hours"].unique()
 
-		break
+			for dayhr in unique_hours:
+				day = datetime.datetime.strftime(datetime.datetime.strptime(dayhr[:10], "%Y-%m-%d"), "%j")
+				hr = dayhr[-2:]
+
+				if day not in station_dict[row.sta]:
+					station_dict[row.sta] = {day: [hr]}
+				else:
+					station_dict[row.sta][day].append(hr)
+
+	# then summarise findings
+
+	df_list = []
+
+	summary_df = pd.DataFrame()
+
+	for sta in station_dict:
+
+		_df = pd.DataFrame()
+		# structure: {
+		# day: []
+		# day: []
+		# }
+		# 
+		# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
+		fday_counter = 0
+		hr_counter = 0
+
+		for c, day in enumerate(station_dict[sta]):
+			_df.at[c, row.sta + "_days"] = day
+			_df.at[c, row.sta + "_hrs"] = len(station_dict[sta][day])
+
+			if len(station_dict[sta][day]) == 24:
+				fday_counter += 1
+			hr_counter += len(station_dict[sta][day])
+
+		summary_df.at[row.sta, "full_days"] = fday_counter
+		summary_df.at[row.sta, "total_days"] = hr_counter / 24
+
+		df_list.append(_df)
+
+	# write text summary
+
+	big_df = pd.concat(df_list, axis = 1)
+
+	big_df.to_csv("08jul_aceh_full_uptime.csv")
+	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+
+
+	# for each station, find the number of full days, number of partial days (hrs / 24)
+
+
+
 
 
 infer_actual_uptime()
