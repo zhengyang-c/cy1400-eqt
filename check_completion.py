@@ -96,52 +96,54 @@ def infer_actual_uptime():
 				else:
 					station_dict[row.sta][day].append(hr)
 
-		#print(station_dict)
-	# then summarise findings
-
-	df_list = []
-
-	summary_df = pd.DataFrame()
-
-	for sta in station_dict:
-
-		_df = pd.DataFrame()
-		# structure: {
-		# day: []
-		# day: []
-		# }
-		# 
-		# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
-		fday_counter = 0
-		hr_counter = 0
-		c = 0
-		for day in station_dict[sta]:
-			#print(day)
-			#print(station_dict[sta][day])
-			_df.at[c, sta + "_days"] = day
-			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
-
-			if len(station_dict[sta][day]) == 24:
-				print("ASDFSFDSF")
-				fday_counter += 1
-			hr_counter += len(station_dict[sta][day])
-
-			c += 1
-
-		summary_df.at[sta, "full_days"] = fday_counter
-		summary_df.at[sta, "total_days"] = hr_counter / 24
-
-		df_list.append(_df)
-
-	# write text summary
-
-	big_df = pd.concat(df_list)
-
-	big_df.to_csv("08jul_aceh_full_uptime.csv")
-	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
-
 	with open('08jul_aceh.json', 'w') as f:
 		json.dump(station_dict,f)
+
+
+	# 	#print(station_dict)
+	# # then summarise findings
+
+	# df_list = []
+
+	# summary_df = pd.DataFrame()
+
+	# for sta in station_dict:
+
+	# 	_df = pd.DataFrame()
+	# 	# structure: {
+	# 	# day: []
+	# 	# day: []
+	# 	# }
+	# 	# 
+	# 	# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
+	# 	fday_counter = 0
+	# 	hr_counter = 0
+	# 	c = 0
+	# 	for day in station_dict[sta]:
+	# 		#print(day)
+	# 		#print(station_dict[sta][day])
+	# 		_df.at[c, sta + "_days"] = day
+	# 		_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
+
+	# 		if len(station_dict[sta][day]) == 24:
+	# 			print("ASDFSFDSF")
+	# 			fday_counter += 1
+	# 		hr_counter += len(station_dict[sta][day])
+
+	# 		c += 1
+
+	# 	summary_df.at[sta, "full_days"] = fday_counter
+	# 	summary_df.at[sta, "total_days"] = hr_counter / 24
+
+	# 	df_list.append(_df)
+
+	# # write text summary
+
+	# big_df = pd.concat(df_list)
+
+	# big_df.to_csv("08jul_aceh_full_uptime.csv")
+	# summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+
 
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
