@@ -137,7 +137,7 @@ def infer_actual_uptime():
 
 	big_df = pd.concat(df_list)
 
-	#big_df.to_csv("08jul_aceh_full_uptime.csv")
+	big_df.to_csv("08jul_aceh_full_uptime.csv")
 	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
 
 
