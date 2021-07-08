@@ -6,23 +6,23 @@ import numpy as np
 import datetime
 import json
 
-job_list = []
-with open("joblist.txt", "r") as f:
-	for line in f:
-		job_list.append(line.strip().split(".")[0])
+# job_list = []
+# with open("joblist.txt", "r") as f:
+# 	for line in f:
+# 		job_list.append(line.strip().split(".")[0])
 
-print(job_list)
+# print(job_list)
 
-df_list = []
+# df_list = []
 
-for job_name in job_list:
-	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
-	df_list.append(df)
+# for job_name in job_list:
+# 	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
+# 	df_list.append(df)
 
-df = pd.concat(df_list, ignore_index = True)
+# df = pd.concat(df_list, ignore_index = True)
 
-print(df)
-# hdf5 dir:
+# print(df)
+# # hdf5 dir:
 
 # look for the node encode files
 def summary_of_files():
@@ -92,7 +92,7 @@ def infer_actual_uptime():
 				hr = dayhr[-2:]
 
 				if day not in station_dict[row.sta]:
-					station_dict[row.sta] = {day: [hr]}
+					station_dict[row.sta][day] = [hr]
 				else:
 					station_dict[row.sta][day].append(hr)
 
@@ -100,59 +100,57 @@ def infer_actual_uptime():
 		json.dump(station_dict,f)
 
 
-	# 	#print(station_dict)
-	# # then summarise findings
+		#print(station_dict)
+	# then summarise findings
 
-	# df_list = []
+	df_list = []
 
-	# summary_df = pd.DataFrame()
+	summary_df = pd.DataFrame()
 
-	# for sta in station_dict:
+	for sta in station_dict:
 
-	# 	_df = pd.DataFrame()
-	# 	# structure: {
-	# 	# day: []
-	# 	# day: []
-	# 	# }
-	# 	# 
-	# 	# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
-	# 	fday_counter = 0
-	# 	hr_counter = 0
-	# 	c = 0
-	# 	for day in station_dict[sta]:
-	# 		#print(day)
-	# 		#print(station_dict[sta][day])
-	# 		_df.at[c, sta + "_days"] = day
-	# 		_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
+		_df = pd.DataFrame()
+		# structure: {
+		# day: []
+		# day: []
+		# }
+		# 
+		# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
+		fday_counter = 0
+		hr_counter = 0
+		c = 0
+		for day in station_dict[sta]:
+			#print(day)
+			#print(station_dict[sta][day])
+			_df.at[c, sta + "_days"] = day
+			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
 
-	# 		if len(station_dict[sta][day]) == 24:
-	# 			print("ASDFSFDSF")
-	# 			fday_counter += 1
-	# 		hr_counter += len(station_dict[sta][day])
+			if len(station_dict[sta][day]) == 24:
+				print("ASDFSFDSF")
+				fday_counter += 1
+			hr_counter += len(station_dict[sta][day])
 
-	# 		c += 1
+			c += 1
 
-	# 	summary_df.at[sta, "full_days"] = fday_counter
-	# 	summary_df.at[sta, "total_days"] = hr_counter / 24
+		summary_df.at[sta, "full_days"] = fday_counter
+		summary_df.at[sta, "total_days"] = hr_counter / 24
 
-	# 	df_list.append(_df)
+		df_list.append(_df)
 
-	# # write text summary
+	# write text summary
 
-	# big_df = pd.concat(df_list)
+	big_df = pd.concat(df_list)
 
-	# big_df.to_csv("08jul_aceh_full_uptime.csv")
-	# summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+	big_df.to_csv("08jul_aceh_full_uptime.csv")
+	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
 
 
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
 
-
-
-
-
 infer_actual_uptime()
+
+#infer_actual_uptime()
 
 # check all hdf5 files and csv files generated
 
