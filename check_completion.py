@@ -97,10 +97,6 @@ def infer_actual_uptime():
 					station_dict[row.sta][day].append(hr)
 
 		print(station_dict)
-
-		if index > 2:
-			break
-
 	# then summarise findings
 
 	df_list = []
@@ -126,21 +122,18 @@ def infer_actual_uptime():
 			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
 
 			if len(station_dict[sta][day]) == 24:
+				print("ASDFSFDSF")
 				fday_counter += 1
 			hr_counter += len(station_dict[sta][day])
-
-		print(sta)
-		print(fday_counter)
-		print(hr_counter)
 
 		summary_df.at[sta, "full_days"] = fday_counter
 		summary_df.at[sta, "total_days"] = hr_counter / 24
 
-		df_list.append(_df)
+		#df_list.append(_df)
 
 	# write text summary
 
-	big_df = pd.concat(df_list, axis = 1)
+	#big_df = pd.concat(df_list, axis = 1)
 
 	#big_df.to_csv("08jul_aceh_full_uptime.csv")
 	#summary_df.to_csv("08jul_aceh_summary_uptime.csv")
