@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 import numpy as np
 import datetime
-
+import json
 
 job_list = []
 with open("joblist.txt", "r") as f:
@@ -139,6 +139,9 @@ def infer_actual_uptime():
 
 	big_df.to_csv("08jul_aceh_full_uptime.csv")
 	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+
+	with open('08jul_aceh.json', 'w') as f:
+		json.dump(station_dict,f)
 
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
