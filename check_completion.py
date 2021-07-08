@@ -6,23 +6,23 @@ import numpy as np
 import datetime
 import json
 
-# job_list = []
-# with open("joblist.txt", "r") as f:
-# 	for line in f:
-# 		job_list.append(line.strip().split(".")[0])
+job_list = []
+with open("joblist.txt", "r") as f:
+	for line in f:
+		job_list.append(line.strip().split(".")[0])
 
-# print(job_list)
+print(job_list)
 
-# df_list = []
+df_list = []
 
-# for job_name in job_list:
-# 	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
-# 	df_list.append(df)
+for job_name in job_list:
+	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
+	df_list.append(df)
 
-# df = pd.concat(df_list, ignore_index = True)
+df = pd.concat(df_list, ignore_index = True)
 
-# print(df)
-# # hdf5 dir:
+print(df)
+# hdf5 dir:
 
 # look for the node encode files
 def summary_of_files():
