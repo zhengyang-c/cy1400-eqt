@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import subprocess
 from pathlib import Path
-
+import numpy as np
 job_list = []
 with open("joblist.txt", "r") as f:
 	for line in f:
@@ -22,54 +22,72 @@ print(df)
 # hdf5 dir:
 
 # look for the node encode files
+def summary_of_files():
+	summary_df = pd.DataFrame()
 
-summary_df = pd.DataFrame()
+	for index, row in df.iterrows():
 
-for index, row in df.iterrows():
+		# check hdf5 folder for sta.csv and sta.hdf5
 
-	# check hdf5 folder for sta.csv and sta.hdf5
+		flags = {
+			"sta": row.sta,
 
-	flags = {
-		"sta": row.sta,
+			"job_name":row.job_name,
 
-		"job_name":row.job_name,
+			"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
 
-		"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
+			"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
 
-		"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
+			"prediction_made": os.path.exists(row.prediction_output_folder),
 
-		"prediction_made": os.path.exists(row.prediction_output_folder),
+			"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
 
-		"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
+			"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
 
-		"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
+			"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
 
-		"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
+			"n_lines": 0,
 
-		"n_lines": 0,
+			"sac_pick_files":0,
+		}
 
-		"sac_pick_files":0,
-	}
+		if flags["merge_filtered_snr_customfilter"]:
+			flags["n_lines"] = int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1
+			flags["sac_pick_files"] = len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
 
-	if flags["merge_filtered_snr_customfilter"]:
-		flags["n_lines"] = int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1
-		flags["sac_pick_files"] = len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
+		checks = {
+			"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
+			"all_plotted": flags["n_lines"] * 4 == flags["sac_pick_files"],
+		}
 
-	checks = {
-		"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
-		"all_plotted": flags["n_lines"] * 4 == flags["sac_pick_files"],
-	}
+		for k,v in flags.items():
+			summary_df.at[index, k] = v
 
-	for k,v in flags.items():
-		summary_df.at[index, k] = v
+		for k,v in checks.items():
+			summary_df.at[index, k] = v
 
-	for k,v in checks.items():
-		summary_df.at[index, k] = v
+	summary_df.to_csv("07july_summary_3.csv", index = False)
 
-summary_df.to_csv("07july_summary_3.csv", index = False)
+def infer_actual_uptime():
+	# read through all the generated .csv files and like parse them
+	with open("imported_figures/all_stations.txt", "r") as f:
+		station_list = [line.strip() for line in f if line.strip != ""]
 
-	# 
+	station_dict = {station: {} for station in station_list}
+	for index, row in df.iterrows():
+		pass
+		# open the .csv file with aLL the trace names
+		csv_path = os.path.join(row.hdf5_folder, row.sta + ".csv")
+		if os.path.exists(csv_path):
+			_df = pd.read_csv(csv_path)
+			_df["hours"] = _df["start_time"].str.slice(stop = 13)
 
+			print(_df["hours"].unique())
+
+		break
+
+
+infer_actual_uptime()
 
 # check all hdf5 files and csv files generated
 
