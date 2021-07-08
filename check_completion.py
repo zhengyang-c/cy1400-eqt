@@ -116,15 +116,15 @@ def infer_actual_uptime():
 		hr_counter = 0
 
 		for c, day in enumerate(station_dict[sta]):
-			_df.at[c, row.sta + "_days"] = day
-			_df.at[c, row.sta + "_hrs"] = len(station_dict[sta][day])
+			_df.at[c, sta + "_days"] = day
+			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
 
 			if len(station_dict[sta][day]) == 24:
 				fday_counter += 1
 			hr_counter += len(station_dict[sta][day])
 
-		summary_df.at[row.sta, "full_days"] = fday_counter
-		summary_df.at[row.sta, "total_days"] = hr_counter / 24
+		summary_df.at[sta, "full_days"] = fday_counter
+		summary_df.at[sta, "total_days"] = hr_counter / 24
 
 		df_list.append(_df)
 
