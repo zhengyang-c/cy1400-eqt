@@ -96,7 +96,7 @@ def infer_actual_uptime():
 				else:
 					station_dict[row.sta][day].append(hr)
 
-		print(station_dict)
+		#print(station_dict)
 	# then summarise findings
 
 	df_list = []
@@ -114,10 +114,10 @@ def infer_actual_uptime():
 		# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
 		fday_counter = 0
 		hr_counter = 0
-
-		for c, day in enumerate(station_dict[sta]):
-			print(day)
-			print(station_dict[sta][day])
+		c = 0
+		for day in station_dict[sta]:
+			#print(day)
+			#print(station_dict[sta][day])
 			_df.at[c, sta + "_days"] = day
 			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
 
@@ -126,17 +126,19 @@ def infer_actual_uptime():
 				fday_counter += 1
 			hr_counter += len(station_dict[sta][day])
 
+			c += 1
+
 		summary_df.at[sta, "full_days"] = fday_counter
 		summary_df.at[sta, "total_days"] = hr_counter / 24
 
-		#df_list.append(_df)
+		df_list.append(_df)
 
 	# write text summary
 
-	#big_df = pd.concat(df_list, axis = 1)
+	big_df = pd.concat(df_list)
 
 	#big_df.to_csv("08jul_aceh_full_uptime.csv")
-	#summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
 
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
