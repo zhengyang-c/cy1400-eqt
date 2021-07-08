@@ -70,7 +70,7 @@ def summary_of_files():
 
 def infer_actual_uptime():
 	# read through all the generated .csv files and like parse them
-	with open("imported_figures/all_stations.txt", "r") as f:
+	with open("station/all_stations.txt", "r") as f:
 		station_list = [line.strip() for line in f if line.strip != ""]
 
 	station_dict = {station: {} for station in station_list}
