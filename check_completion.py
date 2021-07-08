@@ -103,45 +103,47 @@ def infer_actual_uptime():
 
 	# then summarise findings
 
-	# df_list = []
+	df_list = []
 
-	# summary_df = pd.DataFrame()
+	summary_df = pd.DataFrame()
 
-	# for sta in station_dict:
+	for sta in station_dict:
 
-	# 	_df = pd.DataFrame()
-	# 	# structure: {
-	# 	# day: []
-	# 	# day: []
-	# 	# }
-	# 	# 
-	# 	# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
-	# 	fday_counter = 0
-	# 	hr_counter = 0
+		_df = pd.DataFrame()
+		# structure: {
+		# day: []
+		# day: []
+		# }
+		# 
+		# want to find: total no. of fulldays, total duration (summed), which specific days are full, which specific days are partial
+		fday_counter = 0
+		hr_counter = 0
 
-	# 	for c, day in enumerate(station_dict[sta]):
-	# 		_df.at[c, sta + "_days"] = day
-	# 		_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
+		for c, day in enumerate(station_dict[sta]):
+			print(day)
+			print(station_dict[sta][day])
+			_df.at[c, sta + "_days"] = day
+			_df.at[c, sta + "_hrs"] = len(station_dict[sta][day])
 
-	# 		if len(station_dict[sta][day]) == 24:
-	# 			fday_counter += 1
-	# 		hr_counter += len(station_dict[sta][day])
+			if len(station_dict[sta][day]) == 24:
+				fday_counter += 1
+			hr_counter += len(station_dict[sta][day])
 
-	# 	print(sta)
-	# 	print(fday_counter)
-	# 	print(hr_counter)
+		print(sta)
+		print(fday_counter)
+		print(hr_counter)
 
-	# 	summary_df.at[sta, "full_days"] = fday_counter
-	# 	summary_df.at[sta, "total_days"] = hr_counter / 24
+		summary_df.at[sta, "full_days"] = fday_counter
+		summary_df.at[sta, "total_days"] = hr_counter / 24
 
-	# 	df_list.append(_df)
+		df_list.append(_df)
 
-	# # write text summary
+	# write text summary
 
-	# big_df = pd.concat(df_list, axis = 1)
+	big_df = pd.concat(df_list, axis = 1)
 
-	# big_df.to_csv("08jul_aceh_full_uptime.csv")
-	# summary_df.to_csv("08jul_aceh_summary_uptime.csv")
+	#big_df.to_csv("08jul_aceh_full_uptime.csv")
+	#summary_df.to_csv("08jul_aceh_summary_uptime.csv")
 
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
