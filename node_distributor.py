@@ -40,8 +40,8 @@ def main(uid, encoded_csv):
 		#
 		# remember to remove the partial day file after i'm done rip
 		#
-		# -partial_day_file /home/zchoong001/cy1400/cy1400-eqt/all_aceh_sac_2020uptime_1jul.csv
-		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {} -t {}\n".format(
+		# 
+		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {} -partial_day_file /home/zchoong001/cy1400/cy1400-eqt/all_aceh_sac_2020uptime_1jul.csv -t {}\n".format(
 			md.at[uid, "sac_select"], 
 			md.at[uid, "sta"], 
 			md.at[uid, "hdf5_folder"], 

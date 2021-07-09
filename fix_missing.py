@@ -63,8 +63,6 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 
 #select_files("station/all_stations.txt", "2020.001", "2020.366")
 
-def 
-
 def remove_duplicate():
 
 	df = pd.read_csv("missing_sac_5jul.csv")
