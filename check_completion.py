@@ -156,7 +156,7 @@ def verify_sac_files():
 			continue
 
 		plotted_sac_files = os.listdir(os.path.join(row.merge_output_folder, "sac_picks"))
-		_df = pd.read_csv(os.paath.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv"))
+		_df = pd.read_csv(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv"))
 		_df.event_start_time = pd.to_datetime(_df.event_start_time)
 
 		for _index, _row in _df.iterrows():
