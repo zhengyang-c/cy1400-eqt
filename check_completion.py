@@ -161,7 +161,7 @@ def verify_sac_files():
 
 		for _index, _row in _df.iterrows():
 
-			event_id = "{}.{}".format(_row.sta,datetime.datetime.strftime(_row.event_start_time,"%Y.%j.%H%M%S"))
+			event_id = "{}.{}".format(_row.station,datetime.datetime.strftime(_row.event_start_time,"%Y.%j.%H%M%S"))
 
 			for i in ["EHE", "EHN", "EHZ"]:
 				if event_id + "." + i + ".SAC" not in plotted_sac_files:
