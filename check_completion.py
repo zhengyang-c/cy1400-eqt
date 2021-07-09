@@ -139,11 +139,11 @@ def infer_actual_uptime():
 
 	# write text summary
 
-	big_df = pd.concat(df_list)
+	big_df = pd.concat(df_list, ignore_index = True)
 
 	big_df.to_csv("08jul_aceh_full_uptime.csv")
 	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
-
+infer_actual_uptime()
 
 def verify_sac_files():
 
@@ -174,7 +174,7 @@ def verify_sac_files():
 	error_df.to_csv("9jul_plottingerror.csv", index = False)
 
 
-verify_sac_files()
+#verify_sac_files()
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
 
