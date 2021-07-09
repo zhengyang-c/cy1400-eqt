@@ -145,10 +145,40 @@ def infer_actual_uptime():
 	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
 
 
+def verify_sac_files():
+
+	error_df = pd.DataFrame()
+
+	counter = 0
+	for index, row in df.iterrows():	
+
+		if not os.path.exists(row.merge_output_folder):
+			continue
+
+		plotted_sac_files = os.listdir(os.path.join(row.merge_output_folder, "sac_picks"))
+		_df = pd.read_csv(os.paath.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv"))
+		_df.event_start_time = pd.to_datetime(_df.event_start_time)
+
+		for _index, _row in _df.iterrows():
+
+			event_id = "{}.{}".format(_row.sta,datetime.datetime.strftime(_row.event_start_time,"%Y.%j.%H%M%S"))
+
+			for i in ["EHE", "EHN", "EHZ"]:
+				if event_id + "." + i + ".SAC" not in plotted_sac_files:
+
+					error_df.at[counter, "job_name"] = row.job_name
+					error_df.at[counter, "station"] = _row.sta
+					error_df.at[counter, "event_id"] = event_id
+					counter += 1
+
+	error_df.to_csv("9jul_plottingerror.csv", index = False)
+
+
+verify_sac_files()
 
 	# for each station, find the number of full days, number of partial days (hrs / 24)
 
-infer_actual_uptime()
+#infer_actual_uptime()
 
 #infer_actual_uptime()
 
