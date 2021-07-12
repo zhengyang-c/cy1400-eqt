@@ -29,8 +29,11 @@ def main():
 
 	for job_name in job_list:
 		job_folder = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
+		try:
+			station_list = [x for x in os.listdir(job_folder) if "_merged" not in x]
 
-		station_list = [x for x in os.listdir(job_folder) if "_merged" not in x]
+		except:
+			continue
 
 		print(job_name)
 
