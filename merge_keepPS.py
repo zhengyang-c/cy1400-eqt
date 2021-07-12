@@ -2,6 +2,13 @@ import pandas as pd
 import os
 import argparse
 
+
+# DESIRED ARGUMENTS:
+# -collapse_2s
+# -filterbyagreement
+# input file
+# output file
+
 # input:
 # csv folder
 # detections/job_name/STA/multi_00/X_prediction
@@ -9,9 +16,12 @@ import argparse
 # 
 # output:
 # merged_raw and merged_filtered csv file 
-def main():
-	pass
+# 
 
+from merge_csv import merging_df
+
+
+def main():
 	job_list = []
 	with open("joblist.txt", "r") as f:
 		for line in f:
@@ -22,17 +32,28 @@ def main():
 
 		station_list = [x for x in os.listdir(job_folder) if "_merged" not in x]
 
+		print(job_name)
+
 		for station in station_list:
 			csv_parent_folder = os.path.join(job_folder, station)
 			csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*X_prediction_results.csv')]
 
-			print(csv_files)
+			df = concat_df(csv_files)
+
+			df = preprocess(df, keepPS = True)
+
+			output_raw_csv = os.path.join(job_folder, station+"_merged", "keepPS_raw.csv")
+			df.to_csv(output_raw_csv)
+
+			df_filtered = merging_df(df)
+			output_filtered_csv = os.path.join(job_folder, station+"_merged", "keepPS_filtered.csv")			
+			df_filtered.to_csv(output_filtered_csv)
 
 		break
 
 def preprocess(df, keepPS = False):
 	# drop any row with no p or s arrival pick!!
-	if keepPS:
+	if not keepPS:
 		df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
 	#df['p_datetime'] = pd.to_datetime(df.p_arrival_time)

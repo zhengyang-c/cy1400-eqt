@@ -147,7 +147,7 @@ def merge_csv(csv_parent_folder, merge_folder, output_csv_name, dry_run = False,
 	#output_csv = "imported_figures/detections/TA19_nopp_multirun.csv"
 	# the output csv shouldn't be in the same directory as the merged stuff
 
-	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*.csv')]
+	csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*X_prediction_results.csv')]
 
 	if len(csv_files) == 0:
 		print("merge_csv.py: no files found, skipping")
