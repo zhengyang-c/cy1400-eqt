@@ -49,7 +49,6 @@ def main():
 			output_filtered_csv = os.path.join(job_folder, station+"_merged", "keepPS_filtered.csv")			
 			df_filtered.to_csv(output_filtered_csv)
 
-		break
 
 def preprocess(df, keepPS = False):
 	# drop any row with no p or s arrival pick!!
