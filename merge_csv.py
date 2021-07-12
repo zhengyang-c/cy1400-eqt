@@ -50,7 +50,7 @@ import pandas as pd
 
 def preprocess(df, keepPS = False):
 	# drop any row with no p or s arrival pick!!
-	if keepPS:
+	if not keepPS:
 		df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
 	df['p_datetime'] = pd.to_datetime(df.p_arrival_time)
