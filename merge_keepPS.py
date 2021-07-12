@@ -56,9 +56,9 @@ def preprocess(df, keepPS = False):
 	if not keepPS:
 		df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
-	#df['p_datetime'] = pd.to_datetime(df.p_arrival_time)
+	df['p_datetime'] = pd.to_datetime(df.p_arrival_time)
 
-	#df['event_datetime'] = pd.to_datetime(df.event_start_time)
+	df['event_datetime'] = pd.to_datetime(df.event_start_time)
 
 	#print(df['p_datetime'])
 	df.sort_values(by=['event_datetime'], inplace = True)
