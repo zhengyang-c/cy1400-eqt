@@ -48,9 +48,10 @@ from pathlib import Path
 import pandas as pd
 
 
-def preprocess(df):
+def preprocess(df, keepPS = False):
 	# drop any row with no p or s arrival pick!!
-	df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
+	if keepPS:
+		df.dropna(subset=['p_arrival_time', 's_arrival_time'], inplace = True)
 
 	df['p_datetime'] = pd.to_datetime(df.p_arrival_time)
 
@@ -139,7 +140,7 @@ def merging_df(df):
 
 	return df_filtered
 
-def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run = False, csv_or_not = False):
+def merge_csv(csv_parent_folder, merge_folder, output_csv_name, dry_run = False, csv_or_not = False, keepPS = False):
 
 	# just merge csv files can alr
 	# then use bash to mv 
@@ -158,7 +159,7 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 
 	df = concat_df(csv_files)
 	
-	df = preprocess(df)
+	df = preprocess(df, keepPS = keepPS)
 
 	 # after concatenating, the index is messed up 
 
@@ -206,10 +207,10 @@ def merge_csv(station, csv_parent_folder, merge_folder, output_csv_name, dry_run
 			_filenames = []
 
 			for cha in ["EHE", "EHN", "EHZ"]:
-				_filename = "{}.{}.{}.{}.{}.SAC".format(station, _year, _day, _timestamp, cha)
+				_filename = "{}.{}.{}.{}.{}.SAC".format(row.station, _year, _day, _timestamp, cha)
 				_filenames.append(_filename)
 
-			_filenames.append("{}.{}.{}.{}.png".format(station, _year, _day, _timestamp))
+			_filenames.append("{}.{}.{}.{}.png".format(row.station, _year, _day, _timestamp))
 
 			for c, _filename in enumerate(_filenames):
 				source_path = os.path.join(csv_parent_folder, row["relpath"],"sac_picks", _filename)
@@ -233,8 +234,6 @@ if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description = "One station csv merger for multiple EQT outputs, filtering duplicates. Then, copy the filtered files to a new folder. It also creates two new columns, one for the coincidence time (current event - previous event), and another for the no. of folders reporting that event.The time window used is 2 seconds, so if the present event is within 2 seconds of the previous one, they are grouped together.")
 
-	parser.add_argument('station', type = str, help = "station name e.g. TA19. This is for single station multi runs only.")
-
 	parser.add_argument('csv_folder', type = str, help = "Parent folder containing detection folders from use_eqt.py. Usually it should contain more than one detection folder.")
 
 	parser.add_argument('merge_folder', type = str, help = "The new folder to put all the merged files in.")
@@ -243,13 +242,19 @@ if __name__ == '__main__':
 
 	#parser.add_argument('merge_folder', type = str, help = "folder in which to copy the filtered .SAC and .png files")
 	parser.add_argument('-d', action='store_true', help = "Flag for DRY RUN. Does not perform any file writing operations, prints wherever possible")
-	parser.add_argument('-csv', action='store_true', help = "Flag for csv merging only")
+	parser.add_argument('-csv', action='store_true', help = "Flag for do not attempt to move SAC files (previously plotting took place before merging)")
+	parser.add_argument('-keepPS', action = 'store_true', help = "Flag to keep all P and S picks (even if it's null pick)")
+	parser.add_argument('-concat_only', action='store_true', help = "Flag to concat files and output merge_raw only")
 
 
 	args = parser.parse_args()
 
 	#merge_csv("TA19", "imported_figures/mergetest", "imported_figures/17mar_aceh_LR1e-6_multi", "17mar_aceh_LR1e-6_testmerge", dry_run = True)
-	merge_csv(args.station, args.csv_folder, args.merge_folder, args.output_csv_name, args.d, args.csv)
+
+	if args.concat_only:
+		pass
+	else:
+		merge_csv(args.csv_folder, args.merge_folder, args.output_csv_name, args.d, args.csv, args.keepPS)
 
 
 #merge_csv(args.csv_folder, args.output_csv)

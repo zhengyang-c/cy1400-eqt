@@ -65,8 +65,7 @@ def main(uid, encoded_csv):
 	if md.at[uid, "merge_csv"]:
 
 
-		write_str += "#merge csv\npython /home/zchoong001/cy1400/cy1400-eqt/merge_csv.py {} {} {} merge -csv\n".format(
-			md.at[uid, "sta"], 
+		write_str += "#merge csv\npython /home/zchoong001/cy1400/cy1400-eqt/merge_csv.py {} {} merge -csv\n".format(
 			md.at[uid, "prediction_output_folder"], 
 			md.at[uid, "merge_output_folder"],)
 
