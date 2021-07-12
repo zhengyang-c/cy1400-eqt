@@ -38,16 +38,19 @@ def main():
 			csv_parent_folder = os.path.join(job_folder, station)
 			csv_files = [str(path) for path in Path(csv_parent_folder).rglob('*X_prediction_results.csv')]
 
-			df = concat_df(csv_files)
+			try:
+				df = concat_df(csv_files)
 
-			df = preprocess(df, keepPS = True)
+				df = preprocess(df, keepPS = True)
 
-			output_raw_csv = os.path.join(job_folder, station+"_merged", "keepPS_raw.csv")
-			df.to_csv(output_raw_csv)
+				output_raw_csv = os.path.join(job_folder, station+"_merged", "keepPS_raw.csv")
+				df.to_csv(output_raw_csv)
 
-			df_filtered = merging_df(df)
-			output_filtered_csv = os.path.join(job_folder, station+"_merged", "keepPS_filtered.csv")			
-			df_filtered.to_csv(output_filtered_csv)
+				df_filtered = merging_df(df)
+				output_filtered_csv = os.path.join(job_folder, station+"_merged", "keepPS_filtered.csv")			
+				df_filtered.to_csv(output_filtered_csv)
+			except:
+				pass
 
 
 def preprocess(df, keepPS = False):
