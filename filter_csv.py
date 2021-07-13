@@ -3,7 +3,7 @@ import argparse
 import numpy as np
 import os
 
-def use_filter(input_file, output_file, s_snr_threshold, multi):
+def use_filter(input_file, output_file, s_snr_threshold = None, multi = None):
 
 	if not os.path.exists(input_file):
 		print("filter_csv: file not found")
@@ -11,7 +11,12 @@ def use_filter(input_file, output_file, s_snr_threshold, multi):
 
 	df = pd.read_csv(input_file)
 
-	df = df[(df['s_snr_ampsq_db'] > s_snr_threshold) & (df['agreement'] == multi)]
+	if s_snr_threshold:
+
+		df = df[(df['s_snr_ampsq_db'] > s_snr_threshold)]
+
+	if multi:
+		df = df[(df['agreement'] == multi)]
 
 	df.to_csv(output_file, index = False)
 
@@ -31,9 +36,9 @@ if __name__ == "__main__":
 
 	parser.add_argument('input_file', help = "csv after recompute_snr")
 	parser.add_argument('output_file', help = "output csv with files to plot")	
-	parser.add_argument('s_snr_threshold', help = "S arrival SNR threshold (db, computed using squared amplitudes with 1s windows", type = float)
-	parser.add_argument('multi', help = "no. of repeats that were performed", type = float)
+	parser.add_argument('-s_snr_threshold', help = "S arrival SNR threshold (db, computed using squared amplitudes with 1s windows", type = float, default = None)
+	parser.add_argument('-multi', help = "no. of repeats that were performed", type = float, default = None)
 	
 
 	args = parser.parse_args()
-	use_filter(args.input_file, args.output_file, args.s_snr_threshold, args.multi)
+	use_filter(args.input_file, args.output_file, s_snr_threshold = args.s_snr_threshold, multi = args.multi)
