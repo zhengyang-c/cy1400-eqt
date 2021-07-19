@@ -47,13 +47,15 @@ def get_all_files(sac_folder, output_file):
 	# i think have a pandas dataframe, find the station. 
 	# you want the path information for each of them
 	
-	folder_list = ["Deployed-2019-12-MSEED", # this is actually hardcoded
-	"Deployed-2020-01-MSEED",
-	"Deployed-2020-02-MSEED",
-	"Deployed-2020-03-MSEED",
-	"Deployed-2020-04-MSEED",
-	"Deployed-2020-05-MSEED",
-	"Deployed-2020-07-MSEED",]
+	# folder_list = ["Deployed-2019-12-MSEED", # this is actually hardcoded
+	# "Deployed-2020-01-MSEED",
+	# "Deployed-2020-02-MSEED",
+	# "Deployed-2020-03-MSEED",
+	# "Deployed-2020-04-MSEED",
+	# "Deployed-2020-05-MSEED",
+	# "Deployed-2020-07-MSEED",]
+
+	folder_list = [str(p) for p in Path(sac_folder).rglob("Deployed*MSEED")]
 
 	all_files = []
 
@@ -292,7 +294,7 @@ def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute
 		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(project_code, job_name))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
-		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}}\n".format(output_csv, job_name, env_name))
+		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}\n".format(output_csv, job_name, env_name))
 		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
 
 		if not no_execute:
@@ -568,7 +570,7 @@ if __name__ == "__main__":
 		make_station_json(args.json, args.input, args.output)
 
 	elif args.plot:
-		plot_all_uptime(args.selector, args.startd_ate, args.end_date, args.input)
+		plot_all_uptime(args.selector, args.start_date, args.end_date, args.input)
 	elif args.encode:
 		encode_multirun(
 			output_csv = args.output, 
