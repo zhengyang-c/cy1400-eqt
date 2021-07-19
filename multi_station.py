@@ -238,7 +238,7 @@ def select_files(selector_file, start_date, end_date, y_jul = True, y_mon = Fals
 		print("expected: ", expected_files, "actual: ", len(_df.index))
 
 
-		plot_all_uptime(selector_file, _startdate, _enddate)
+		#plot_all_uptime(selector_file, _startdate, _enddate)
 		
 
 	elif len(_df.index) > expected_files:
@@ -283,20 +283,36 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
-def pbs_writer(n_nodes, output_csv, job_name, no_execute = False):
+def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = False):
 
 	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
 
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		f.write("#PBS -N {}\n#PBS -P eos_shjwei\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(job_name))
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(project_code, job_name))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
-		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate tf2\n".format(output_csv, job_name))
+		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}}\n".format(output_csv, job_name, env_name))
 		f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
 
 		if not no_execute:
 			f.write("/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}.sh >& log/pbs/{0}/$PBS_JOBID.log 2>&1\n".format(job_name))
+
+def read_config(config_file_path):
+	"""
+	config_file_path should be an absolute file path for consistency
+	"""
+	
+	options = {}
+	with open(config_file_path, 'r') as f:
+		for line in f:
+			k,v = line.strip().split("=")
+			
+			options[k] = v
+	
+	print(options)
+	return options
+
 
 def encode_multirun(
 	output_csv = "", 
@@ -321,6 +337,7 @@ def encode_multirun(
 	make_sac_csv = False,
 	no_execute = False,
 	snr_threshold = 8,
+	config = "",
 	):
 
 	# encode everything (sac to hdf5, prediction
@@ -354,34 +371,63 @@ def encode_multirun(
 	# and if not they are automatically dropped / with some error message
 	# or just throw an error? but that's kinda disruptive i wouldn't like it 
 	# 
+	if config:
+		config_options = read_config(config)
 	
 	if job_name == "":
 		job_name = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-	if model_path == "":
+	if config:
+		model_path = config_options["MODEL_PATH"]
+		station_json = config_options["STATION_JSON"]
+		if hdf5_parent == "":
+			hdf5_parent = os.path.join("/scratch", (config_options["USERNAME"]), job_name)
+
+		if detection_parent == "":
+			detection_parent = os.path.join(config_options["PROJECT_ROOT"],"detections", job_name)
+
+		if not output_csv:
+			output_csv = os.path.join(config_options["PROJECT_ROOT"], "node_encode", job_name + ".csv")
+
+		if not sac_select:
+			sac_select = os.path.join(config_options["PROJECT_ROOT"], "station_time", job_name + ".csv")
+
+		_folders = [
+		os.path.join(config_options["PROJECT_ROOT"], "detections"), 
+		os.path.join(config_options["PROJECT_ROOT"], "node_encode"), 
+		os.path.join(config_options["PROJECT_ROOT"], "station_time"),
+		os.path.join(config_options["PROJECT_ROOT"], "pbs", "runtime_scripts"),
+		os.path.join(config_options["PROJECT_ROOT"], "log", "timing"),]
+
+		for _f in _folders:
+			if not os.path.exists(_f):
+				os.makedirs(_f)
+
+		env_name = config_options["ENV_NAME"]
+		project_code = config_options["PROJECT_CODE"]
+		
+
+	else:
 		model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
+		station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
 
-	#job_name = "10jun_10station_2020.150-151" #should be descriptive
+		if hdf5_parent == "":
+			hdf5_parent = os.path.join("/scratch/zchoong001", job_name)
 
+		if detection_parent == "":
+			detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
 
-	station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
+		if not output_csv:
+			output_csv = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/node_encode", job_name + ".csv")
 
-	if hdf5_parent == "":
-		hdf5_parent = os.path.join("/scratch/zchoong001", job_name)
-
-	if detection_parent == "":
-		detection_parent = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/detections", job_name)
-
-	if not output_csv:
-		output_csv = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/node_encode", job_name + ".csv")
-
-	if not sac_select:
-		sac_select = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/station_time", job_name + ".csv")
-
+		if not sac_select:
+			sac_select = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/station_time", job_name + ".csv")
+		
+		env_name = "tf2"
+		project_code = "eos_shjwei"
 
 	if make_sac_csv:
 		select_files(station_file, start_day, end_day, output_file = sac_select)
-
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
 
@@ -416,8 +462,17 @@ def encode_multirun(
 		df.at[c, "snr_threshold"] = snr_threshold
 
 		df.at[c, "station_json"] = station_json
+		if config:
+			df.at[c, "project_root"] = config_options["PROJECT_ROOT"]
 
+			df.at[c, "output_folder"] = os.path.join(config_options["PROJECT_ROOT"], "pbs", "runtime_scripts", job_name)
 		
+		else:
+
+			df.at[c, "project_root"] = "/home/zchoong001/cy1400/cy1400-eqt/"
+
+			df.at[c, "output_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}".format(job_name)
+
 		df.at[c, "job_name"] = job_name
 		df.at[c, "write_hdf5"] = write_hdf5
 		df.at[c, "run_eqt"] = run_eqt
@@ -435,7 +490,7 @@ def encode_multirun(
 	df.to_csv(output_csv, index = False)
 
 	if pbs:
-		pbs_writer(n_nodes, output_csv, job_name, no_execute = no_execute)
+		pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = no_execute)
 
 
 	# load station_list, see number of stations
@@ -501,6 +556,7 @@ if __name__ == "__main__":
 	parser.add_argument("-no_execute", action = "store_true", help = "pbs file will generate but not run", default = False)
 
 	parser.add_argument("-snr_threshold", type = int, help = "threshold number for S wave SNR", default = 8)
+	parser.add_argument("-config", help = "path to config file from which directories are created")
 
 	args = parser.parse_args()
 
@@ -536,6 +592,7 @@ if __name__ == "__main__":
 			filter_csv = args.filter_csv, 
 			write_headers = args.write_headers, 
 			no_execute = args.no_execute, 
-			snr_threshold = args.snr_threshold)
+			snr_threshold = args.snr_threshold, 
+			config = args.config)
 
 

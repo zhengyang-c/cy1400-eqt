@@ -1,0 +1,6 @@
+PROJECT_ROOT=/home/zchoong001/cy1400-eqt/cy1400
+USERNAME=zchoong001
+MODEL_PATH=/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5
+STATION_JSON=/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json
+ENV_NAME=tf2
+PROJECT_CODE=eos_shjwei

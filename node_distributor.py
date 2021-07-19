@@ -17,7 +17,9 @@ def main(uid, encoded_csv):
 
 	md = pd.read_csv(encoded_csv) # md for metadata bc lazy
 
-	output_folder = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}".format(md.at[uid, "job_name"])
+	#output_folder = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}".format(md.at[uid, "job_name"])
+	output_folder = md.at[uid, "output_folder"]
+
 
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
@@ -26,10 +28,10 @@ def main(uid, encoded_csv):
 
 	write_str = "#!/bin/bash\n"
 
-	log_file_name = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/log/timing", md.at[uid, "job_name"], md.at[uid, "sta"]+".txt")
+	log_file_name = os.path.join(md.at[uid, "project_root"], "log", "timing", md.at[uid, "job_name"], md.at[uid, "sta"]+".txt")
 
-	if not os.path.exists(os.path.join("/home/zchoong001/cy1400/cy1400-eqt/log/timing", md.at[uid, "job_name"])):
-		os.makedirs(os.path.join("/home/zchoong001/cy1400/cy1400-eqt/log/timing", md.at[uid, "job_name"]))
+	if not os.path.exists(os.path.join(md.at[uid, "project_root"], "log", "timing", md.at[uid, "job_name"])):
+		os.makedirs(os.path.join(md.at[uid, "project_root"], "log", "timing", md.at[uid, "job_name"]))
 
 	if md.at[uid, "write_hdf5"]:
 
@@ -41,7 +43,8 @@ def main(uid, encoded_csv):
 		# remember to remove the partial day file after i'm done rip
 		#
 		# -partial_day_file /home/zchoong001/cy1400/cy1400-eqt/all_aceh_sac_2020uptime_1jul.csv 
-		write_str += "#write hdf5\npython /home/zchoong001/cy1400/cy1400-eqt/sac_to_hdf5.py {} {} {} {} -t {}\n".format(
+		write_str += "#write hdf5\npython {} {} {} {} {} -t {}\n".format(
+			os.path.join(md.at[uid, "project_root"], "sac_to_hdf5.py"),
 			md.at[uid, "sac_select"], 
 			md.at[uid, "sta"], 
 			md.at[uid, "hdf5_folder"], 
@@ -57,21 +60,26 @@ def main(uid, encoded_csv):
 
 		print("run with {}, {}, {}".format(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], md.at[uid, "multi"]))
 
-		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython /home/zchoong001/cy1400/cy1400-eqt/run_eqt.py {} {} {}/multi_$f -t {}\ndone\n".format(
-			md.at[uid, "multi"], md.at[uid, "hdf5_folder"], 
-			md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"],
+		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython {} {} {} {}/multi_$f -t {}\ndone\n".format(
+			os.path.join(md.at[uid, "project_root"], "run_eqt.py"),
+			md.at[uid, "multi"], 
+			md.at[uid, "hdf5_folder"], 
+			md.at[uid, "model_path"], 
+			md.at[uid, "prediction_output_folder"],
 			log_file_name)
 
 	if md.at[uid, "merge_csv"]:
 
 
-		write_str += "#merge csv\npython /home/zchoong001/cy1400/cy1400-eqt/merge_csv.py {} {} merge -csv\n".format(
+		write_str += "#merge csv\npython {} {} {} merge -csv\n".format(
+			os.path.join(md.at[uid, "project_root"], "merge_csv.py"),
 			md.at[uid, "prediction_output_folder"], 
 			md.at[uid, "merge_output_folder"],)
 
 	if md.at[uid, "recompute_snr"]:
 
-		write_str += "#recompute snr\npython /home/zchoong001/cy1400/cy1400-eqt/recompute_snr.py {} {} {} {} {} -t {}\n".format(
+		write_str += "#recompute snr\npython {} {} {} {} {} {} -t {}\n".format(
+			os.path.join(md.at[uid, "project_root", "recompute_snr.py"]),
 			md.at[uid, "sac_select"], 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered.csv"), 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"),
@@ -81,7 +89,8 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "filter_csv"]:
 
-		write_str += "#filter csv\npython /home/zchoong001/cy1400/cy1400-eqt/filter_csv.py {} {} {} {}\n".format(
+		write_str += "#filter csv\npython {} {} {} {} {}\n".format(
+			os.path.join(md.at[uid, "project_root"], "filter_csv.py"),
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"), 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"), 
 			md.at[uid, "snr_threshold"], 
@@ -94,13 +103,15 @@ def main(uid, encoded_csv):
 	if md.at[uid, "plot_eqt"]:
 
 		# sac writing and plotting 
-		write_str += "#plot eqt \npython /home/zchoong001/cy1400/cy1400-eqt/plot_eqt.py {} {} -t {}\n".format(
+		write_str += "#plot eqt \npython {} {} {} -t {}\n".format(
+			os.path.join(md.at[uid, "project_root"], "plot_eqt.py"),
 			md.at[uid, "sac_select"], 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"),
 			log_file_name)
 
 	if md.at[uid, "write_headers"]:
-		write_str += "#write headers\npython /home/zchoong001/cy1400/cy1400-eqt/header_writer.py {} -t {}\n".format(
+		write_str += "#write headers\npython {} {} -t {}\n".format(
+			os.path.join(md.at[uid, "project_root"], "write_headers.py"),
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"),
 			log_file_name)
 
