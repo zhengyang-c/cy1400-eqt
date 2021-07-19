@@ -291,7 +291,7 @@ def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute
 
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(project_code, job_name))
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(job_name, project_code))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
 		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}\n".format(output_csv, job_name, env_name))
