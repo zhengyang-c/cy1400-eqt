@@ -38,11 +38,12 @@ def header_writer(csv_file):
 		for index, row in df.iterrows():
 
 			year_day = datetime.datetime.strftime(row.event_start_time, "%Y.%j")
-			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+			try: # for backwards compatibility 
+				sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
 
-			#sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
-
-			#start_of_day = sac_start_time.datetime
+				start_of_day = sac_start_time.datetime
+			except:
+				start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
 			timestamp = datetime.datetime.strftime(row.event_start_time, '%H%M%S')
 
