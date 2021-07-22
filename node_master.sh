@@ -16,52 +16,52 @@
 
 
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -pbs -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 05jul_test_A_all_2020 -pbs -plot_eqt -write_headers -sac_select /home/zchoong001/cy1400/cy1400-eqt/missing_sac_5jul.csv
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Apr -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Apr -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Feb -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Feb -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jan -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jan -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jul-Sep -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jul-Sep -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jun -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_Jun -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_May -pbs -plot_eqt -write_headers
-
-
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_May -pbs -plot_eqt -write_headers
 
 
 
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Apr-May -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jan-Mar -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jul-Sep -pbs -plot_eqt -write_headers
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Apr-May -pbs -write_hdf5 -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Apr-May -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jan-Mar -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Jan-Mar -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jul-Sep -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Apr-May -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Apr-May -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Jan-Mar -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/BB-CB-MA.txt -job 24jun_BB-CB-MA_Jan-Mar -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Jul-Sep -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Apr-May -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 24jun_TG-TS_Jan-Mar -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Jan-Mar -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 24jun_TG-TS_Jul-Sep -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/GE-GM.txt -job 24jun_GE-GM_Jul-Sep -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun1 -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 24jun_TG-TS_Jan-Mar -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun2 -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TG-TS.txt -job 24jun_TG-TS_Jul-Sep -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May1 -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun1 -pbs -plot_eqt -write_headers
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May2 -pbs -plot_eqt -write_headers
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_Jun2 -pbs -plot_eqt -write_headers
+
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May1 -pbs -plot_eqt -write_headers
+
+# python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/30jun_rerun.txt -job 30jun_rerun_May2 -pbs -plot_eqt -write_headers
 
 
 
