@@ -111,7 +111,7 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "write_headers"]:
 		write_str += "#write headers\npython {} {} -t {}\n".format(
-			os.path.join(md.at[uid, "project_root"], "write_headers.py"),
+			os.path.join(md.at[uid, "project_root"], "header_writer.py"),
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"),
 			log_file_name)
 
