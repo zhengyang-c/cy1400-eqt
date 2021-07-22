@@ -1,6 +1,6 @@
 import argparse
 import pandas as pd
-
+import obspy
 import glob
 import os
 import datetime
@@ -65,10 +65,12 @@ def sac_plotter(sac_csv, csv_file):
 			_df.reset_index(inplace = True)
 
 			# load routine
-			sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*000000.SAC".format(year_day))
-			
-			#sac_source = row["source_file"]
-			#sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
+			#
+			try:
+				sac_source = row["source_file"]
+				sac_start_time = obspy.UTCDateTime(row["sac_start_time"])
+			except:
+				sac_source  = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*000000.SAC".format(year_day))
 
 			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
 
