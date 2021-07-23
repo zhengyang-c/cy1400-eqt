@@ -60,7 +60,7 @@ def main(uid, encoded_csv):
 
 		print("run with {}, {}, {}".format(md.at[uid, "hdf5_folder"], md.at[uid, "model_path"], md.at[uid, "prediction_output_folder"], md.at[uid, "multi"]))
 
-		write_str += "#run eqt\nfor ((f=0;f<{};f++))\ndo\n\techo $f\n\tpython {} {} {} {}/multi_$f -t {}\ndone\n".format(
+		write_str += "#run eqt\nfor ((f=0;f<{1};f++))\ndo\n\techo $f\n\tpython {0} {2} {3} {4}/multi_$f -t {5}\ndone\n".format(
 			os.path.join(md.at[uid, "project_root"], "run_eqt.py"),
 			md.at[uid, "multi"], 
 			md.at[uid, "hdf5_folder"], 
