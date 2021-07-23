@@ -31,7 +31,7 @@
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -job 23jun_allTA_May -pbs -plot_eqt -write_headers
 
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Apr-May -pbs -plot_eqt -write_headers -no_execute
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Apr-May -run_eqt -pbs -no_execute
 
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jan-Mar -pbs -plot_eqt -write_headers
 
