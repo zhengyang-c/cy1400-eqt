@@ -51,6 +51,7 @@ def main():
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
 	for index, row in event_df.iterrows():
+		print(row.ID)
 	 	searcher(int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict)
 	#header_writer(5, df, event_df, phase_dict)
@@ -139,6 +140,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	output_file = "cat_header_writer.sh"
 
 	for sta in _station_dict:
+		print(sta)
 
 
 		_p_arrival_time, _s_arrival_time = "", ""
@@ -176,6 +178,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 
 		if _p_arrival_time:
 			_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] >= 0)].copy()
+			print(_p_df)
 			#print(_p_df)
 
 			assert _p_df.shape[0] == 1
