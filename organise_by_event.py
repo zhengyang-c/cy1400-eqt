@@ -43,20 +43,12 @@ def main():
 	for i in ["YR", "MO", "DY", "HR", "MI"]:
 		event_df[i].astype(int)
 
-	for index, row in event_df.iterrows():
-		try:
-			event_df.at[index, "timestamp"] = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(row.YR), int(row.MO), int(row.DY), int(row.HR), int(row.MI), row.SC), "%Y-%m-%d-%H-%M-%S.%f")
+	#for index, row in event_df.iterrows():
 
-		except:
-			if row.SC == 60.0:
-				event_df.at[index, "timestamp"] = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(row.YR), int(row.MO), int(row.DY), int(row.HR), int(row.MI), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
-				event_df.at[index, "timestamp"] += datetime.timedelta(minutes = 1)
-			else:
-				raise ValueError
 			
 
-	print(event_df["timestamp"])
-	event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
+	#print(event_df["timestamp"])
+	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
 	# for index, row in event_df.iterrows():
 	# 	searcher(row.ID, df, event_df, phase_dict, dryrun = True)
@@ -113,7 +105,19 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	i = uid
 
 	padded_id = (str(i).zfill(6))
-	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].values[0]
+	row_index = event_df[event_df["ID"] == uid].index[0]
+
+	try:
+		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
+
+	except:
+		if event_df.at[row_index, 'SC'] == 60.0:
+			origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
+			origin_time += datetime.timedelta(minutes = 1)
+		else:
+			raise ValueError
+
+	#origin_time = .values[0]
 	print("origin time", origin_time)
 	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
 
