@@ -113,9 +113,11 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	i = uid
 
 	padded_id = (str(i).zfill(6))
-	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].item()
+	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].values[0]
 	print("origin time", origin_time)
 	print(event_df.loc[event_df["ID"] == uid, "timestamp"])
+
+
 
 	dest_folder = os.path.join("event_archive", padded_id)
 
@@ -248,7 +250,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 
 		station_lat, station_lon = _station_dict[_sta]['stla'], _station_dict[_sta]['stlo']
 
-		event_lat, event_lon, event_depth = event_df.loc[event_df["ID"] == uid, "LAT"].item(), event_df.loc[event_df["ID"] == uid, "LON"].item(), event_df.loc[event_df["ID"] == uid, "DEPTH"].item()
+		event_lat, event_lon, event_depth = event_df.loc[event_df["ID"] == uid, "LAT"].values[0], event_df.loc[event_df["ID"] == uid, "LON"].values[0], event_df.loc[event_df["ID"] == uid, "DEPTH"].values[0]
 
 		bash_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {} stla {} stlo {}\\nwh\\nq\\n' | sac\n".format(dest_path, output_date_str, event_lat, event_lon, event_depth, station_lat, station_lon)
 
