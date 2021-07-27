@@ -51,7 +51,7 @@ def main():
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
 	for index, row in event_df.iterrows():
-	 	searcher(row.ID, df, event_df, phase_dict)
+	 	searcher(int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict)
 	#header_writer(5, df, event_df, phase_dict)
 
