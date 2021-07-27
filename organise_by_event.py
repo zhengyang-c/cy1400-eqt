@@ -115,6 +115,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	padded_id = (str(i).zfill(6))
 	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].item()
 	print("origin time", origin_time)
+	print(event_df.loc[event_df["ID"] == uid, "timestamp"])
 
 	dest_folder = os.path.join("event_archive", padded_id)
 
