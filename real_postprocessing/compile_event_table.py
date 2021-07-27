@@ -4,7 +4,7 @@ import shutil
 
 
 def main():
-	search_folder = "/home/zchoong001/detections/aceh_5jul"
+	search_folder = "/home/zchoong001/cy1400/cy1400-eqt/detections/aceh_5jul"
 
 	search_term = "*/*/merge_filtered_snr_customfilter.csv"
 
