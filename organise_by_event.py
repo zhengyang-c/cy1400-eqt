@@ -55,7 +55,7 @@ def main():
 				raise ValueError
 			
 
-	#print(event_df["timestamp"])
+	print(event_df["timestamp"])
 
 	# for index, row in event_df.iterrows():
 	# 	searcher(row.ID, df, event_df, phase_dict, dryrun = True)
