@@ -52,7 +52,7 @@ def main():
 
 	for index, row in event_df.iterrows():
 		print(row.ID)
-	 	searcher(int(row.ID), df, event_df, phase_dict)
+		searcher(int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict)
 	#header_writer(5, df, event_df, phase_dict)
 
