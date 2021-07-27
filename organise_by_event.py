@@ -107,15 +107,16 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	padded_id = (str(i).zfill(6))
 	row_index = event_df[event_df["ID"] == uid].index[0]
 
-	try:
-		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
+	#try:
 
-	except:
-		if event_df.at[row_index, 'SC'] == 60.0:
-			origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
-			origin_time += datetime.timedelta(minutes = 1)
-		else:
-			raise ValueError
+	origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
+
+	# except:
+	# 	if event_df.at[row_index, 'SC'] == 60.0:
+	# 		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(row.event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
+	# 		origin_time += datetime.timedelta(minutes = 1)
+	# 	else:
+	# 		raise ValueError
 
 	#origin_time = .values[0]
 	print("origin time", origin_time)
