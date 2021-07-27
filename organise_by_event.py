@@ -126,7 +126,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	dest_folder = os.path.join("event_archive", padded_id)
 
 
-	_ts = (phase_dict[padded_id]['timestamp'])
+	#_ts = (phase_dict[padded_id]['timestamp'])
 
 	_station_dict = phase_dict[padded_id]['data']
 
