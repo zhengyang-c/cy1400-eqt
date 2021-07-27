@@ -50,9 +50,9 @@ def main():
 	#print(event_df["timestamp"])
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
-	# for index, row in event_df.iterrows():
-	# 	searcher(row.ID, df, event_df, phase_dict, dryrun = True)
-	searcher(5, df, event_df, phase_dict)
+	for index, row in event_df.iterrows():
+	 	searcher(row.ID, df, event_df, phase_dict)
+	#searcher(5, df, event_df, phase_dict)
 	#header_writer(5, df, event_df, phase_dict)
 
 	# i think the P and S times in the phase_dict are not reliable so just use the new origin
@@ -239,7 +239,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 
 		output_date_str = datetime.datetime.strftime(origin_time, "%Y %j %H %M %S %f")[:-3] # drop the last 3 zeros
 
-		print(output_date_str)
+		#print(output_date_str)
 
 		"""
 			Setting of kzdate, kztime and iztype is eqivalent to the following SAC commands:
