@@ -50,9 +50,9 @@ def main():
 	#print(event_df["timestamp"])
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
-	# for index, row in event_df.iterrows():
-	# 	searcher(row.ID, df, event_df, phase_dict, dryrun = True)
-	searcher(5, df, event_df, phase_dict, dryrun = True)
+	for index, row in event_df.iterrows():
+	 	searcher(int(row.ID), df, event_df, phase_dict)
+	#searcher(5, df, event_df, phase_dict, dryrun = True)
 	#header_writer(5, df, event_df, phase_dict)
 
 	# i think the P and S times in the phase_dict are not reliable so just use the new origin
