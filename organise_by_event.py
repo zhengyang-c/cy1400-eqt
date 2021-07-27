@@ -56,7 +56,7 @@ def main():
 			
 
 	print(event_df["timestamp"])
-	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
+	event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
 	# for index, row in event_df.iterrows():
 	# 	searcher(row.ID, df, event_df, phase_dict, dryrun = True)
