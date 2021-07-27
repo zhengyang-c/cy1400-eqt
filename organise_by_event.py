@@ -113,9 +113,9 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	i = uid
 
 	padded_id = (str(i).zfill(6))
-	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].values[0]
+	origin_time = event_df.loc[event_df["ID"] == uid, "timestamp"].values[0].astype(datetime)
 	print("origin time", origin_time)
-	print(event_df.loc[event_df["ID"] == uid, "timestamp"])
+	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
 
 
 
