@@ -132,7 +132,10 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	_station_dict = phase_dict[padded_id]['data']
 
 	#print(_ts,_station_dict)
-	_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S.%f")
+	try:
+		_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S.%f")
+	except:
+		_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S")
 
 	files_to_copy = []
 
