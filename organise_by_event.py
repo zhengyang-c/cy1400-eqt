@@ -167,7 +167,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 				_df.at[index, '_p_delta'] = (row.p_arrival_time - _p_arrival_time).total_seconds()
 
 			if _s_arrival_time:
-				_df.at[index, '_s_delta'] = (row.p_arrival_time - _p_arrival_time).total_seconds()						
+				_df.at[index, '_s_delta'] = (row.s_arrival_time - _s_arrival_time).total_seconds()						
 
 		#print(_ts, sta)
 
