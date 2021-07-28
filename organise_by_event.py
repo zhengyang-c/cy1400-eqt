@@ -267,12 +267,11 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 
 	with open(output_file, 'w') as f:
 		f.write(bash_str)
-	time.sleep(2)
+	time.sleep(1)
 	os.chmod(output_file, 0o775)
 	time.sleep(1)
 
 	subprocess.call(["./{}".format(output_file)])
-	time.sleep(2)
 
 	
 
