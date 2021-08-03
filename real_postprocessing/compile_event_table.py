@@ -1,10 +1,11 @@
 import pandas as pd
 from pathlib import Path
 import shutil
+import argparse
 
 
-def main():
-	search_folder = "/home/zchoong001/cy1400/cy1400-eqt/detections/aceh_5jul"
+def main(search_folder, output_file):
+	#search_folder = "/home/zchoong001/cy1400/cy1400-eqt/detections/aceh_5jul"
 
 	# /home/zchoong001/cy1400/cy1400-eqt/detections/aceh_5jul/06jul_BBCBMA_2020/BB03_merged/sac_picks/BB03.2020.123.224426.SAC
 
@@ -35,7 +36,8 @@ def main():
 
 	df = pd.concat(df_list, ignore_index = True)
 
-	df.to_csv("7jul_compiled_customfilter.csv", index = False)
+	#df.to_csv("7jul_compiled_customfilter.csv", index = False)
+	df.to_csv(output_file, index = False)
 
 	#df = pd.read_csv("7jul_compiled_customfilter.csv")
 
@@ -43,9 +45,11 @@ def main():
 
 
 
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser()
+	parser.add_argument("input_folder", help = "")
+	parser.add_argument("output_file", help = "")
 
+	args = parser.parse_args()
 
-
-
-
-main()
+	main(args.input_folder, args.output_file)

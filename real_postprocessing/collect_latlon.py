@@ -42,11 +42,19 @@ def filter_csv(csv_file, output_file, lon = "", lat = "", depth = ""):
 	if lon:
 		minlon, maxlon = lon.split('/')
 
+		if float(minlon) > float(maxlon):
+			maxlon, minlon = minlon, maxlon
+
 	if lat:
 		minlat, maxlat = lat.split('/')
+		if float(minlat) > float(maxlat):
+			maxlat, minlat = minlat, maxlat
 
 	if depth:
 		mindep, maxdep = depth.split('/')
+
+		if float(mindep) > float(maxdep):
+			maxdep,mindep = mindep, maxdep
 	# load csv
 
 
