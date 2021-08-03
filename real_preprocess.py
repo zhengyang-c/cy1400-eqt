@@ -15,7 +15,7 @@ def main(input_csv, output_dir):
 
 	for index, row in df.iterrows():
 
-		event_date = datetime.datetime.strptime(row.p_arrival_time, "%Y%m%d") 
+		event_date = datetime.datetime.strftime(row.p_arrival_time, "%Y%m%d") 
 
 		folder_name = os.path.join(output_dir, event_date)
 		
