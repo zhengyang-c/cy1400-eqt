@@ -45,7 +45,7 @@ def main(input_csv, output_dir):
 			# 
 
 			with open(os.path.join(folder_name, _filename), "a") as f:
-				f.write(output_dir)
+				f.write(output_str)
 
 		if row.s_arrival_time:
 			_filename = "{}.{}.{}.txt".format(row.network, row.station, "S")
@@ -55,7 +55,7 @@ def main(input_csv, output_dir):
 			output_str = "{:.2f} {:.1f} 0\n".format(delta_t, row.s_snr_ampsq_db)
 
 			with open(os.path.join(folder_name, _filename), "a") as f:
-				f.write(output_dir)
+				f.write(output_str)
 
 
 		# do you think there will be edge effects across the dateline
