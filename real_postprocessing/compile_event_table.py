@@ -9,7 +9,7 @@ def main(search_folder, output_file):
 
 	# /home/zchoong001/cy1400/cy1400-eqt/detections/aceh_5jul/06jul_BBCBMA_2020/BB03_merged/sac_picks/BB03.2020.123.224426.SAC
 
-	search_term = "*/*/merge_filtered_snr_customfilter.csv"
+	search_term = "*/merge_filtered_snr_customfilter.csv"
 
 	file_list = [str(p) for p in Path(search_folder).rglob(search_term)]
 
