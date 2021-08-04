@@ -4,6 +4,8 @@ Helper and (pre/post)-processing scripts for a data-driven seismology project. I
 
 Uses the [EQTransformer model created by S. Mousavi](https://github.com/smousavi05/EQTransformer)
 
+Should this have more folders and less files in the project root? Yes, but relative file paths are a pain + this is not re-usable enough (yet) to package it as a Python module. 
+
 # Table of Contents:
 
 _insert next time_
