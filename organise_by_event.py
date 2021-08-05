@@ -19,13 +19,12 @@ import subprocess
 
 # if i move i still have the original files on hard drive / my onedrive
 
-def main():
+def main(sac_csv, input_json, reloc_csv, output_folder):
 
-	sac_csv = "real_postprocessing/7jul_compiled_customfilter.csv"
-	input_json = 'real_postprocessing/aceh_phase.json'
-
-
-	reloc_csv = "real_postprocessing/5jul_reloc.csv"
+	# sac_csv = "real_postprocessing/7jul_compiled_customfilter.csv"
+	# input_json = 'real_postprocessing/aceh_phase.json'
+	# reloc_csv = "real_postprocessing/5jul_reloc.csv"
+	# output_folder = "event_archive"
 
 
 	event_df = pd.read_csv(reloc_csv)
@@ -51,7 +50,7 @@ def main():
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
 	for index, row in event_df.iterrows():
-	 	searcher(int(row.ID), df, event_df, phase_dict)
+	 	searcher(output_folder, int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict, dryrun = True)
 	#header_writer(5, df, event_df, phase_dict)
 
@@ -97,7 +96,7 @@ def csv_cutter():
 
 
 
-def searcher(uid, df, event_df, phase_dict, dryrun = False):
+def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 	# this will only look for and then copy files if they aren't already copied
 	# 
@@ -124,7 +123,7 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 
 
 
-	dest_folder = os.path.join("event_archive", padded_id)
+	dest_folder = os.path.join(output_folder, padded_id)
 
 
 	_ts = (phase_dict[padded_id]['timestamp'])
@@ -191,8 +190,8 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 			for index, row in _p_df.iterrows():
 				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
-				_station_dict[sta]['station_P'] = row.p_arrival_time
-				_station_dict[sta]['station_S'] = row.s_arrival_time
+				#_station_dict[sta]['station_P'] = row.p_arrival_time
+				#_station_dict[sta]['station_S'] = row.s_arrival_time
 
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
@@ -211,12 +210,12 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 			for index, row in _s_df.iterrows():
 				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
-				_station_dict[sta]['station_P'] = row.p_arrival_time
-				_station_dict[sta]['station_S'] = row.s_arrival_time
+				#_station_dict[sta]['station_P'] = row.p_arrival_time
+				#_station_dict[sta]['station_S'] = row.s_arrival_time
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
 		#print(search_file_path)
-		_files_to_copy = [str(p) for p in glob(search_file_path)]
+		_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
 
 		files_to_copy.extend(_files_to_copy)
 
@@ -280,4 +279,16 @@ def searcher(uid, df, event_df, phase_dict, dryrun = False):
 	# check if stuff is already in destination folder
 	# if not, attempt to move
 
-main()
+
+if __name__ == "__main__":
+
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument("eqt_csv")
+	parser.add_argument("phase_json")
+	parser.add_argument("reloc_csv")
+	parser.add_argument("output_folder")
+
+	args = parser.parse_args()
+
+	main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)

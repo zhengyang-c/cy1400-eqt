@@ -86,11 +86,6 @@ def join_hypophase(search_dir, output_file):
 
 	filelist = sorted(filelist)
 
-
-
-	#print(filelist)
-
-
 	data = []
 
 	# just need to append everything and the ID be in order 
@@ -192,7 +187,73 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 	df.to_csv(output_file, index = False)
 
 
-	
+
+
+def convert_phase(input_file, output_file):
+
+	#input_file = "aceh_phase.dat"
+	#output_file = "aceh_phase.json"
+
+	df = pd.DataFrame()
+
+	def parse(x):
+		contents = [y.strip() for y in x[1:].split(" ") if y != ""]
+
+		return contents
+
+	all_phases = {}
+
+	with open(input_file, 'r') as f:
+
+		_station_list = []
+		row_counter = 0
+		headers = ['year', 'month', 'day', 'hour', 'min', 'sec', 'lat_guess', 'lon_guess', 'dep_guess']
+
+		for c, line in enumerate(f):
+
+			if line[0] == "#":
+				metadata = parse(line)
+
+				_id = metadata[-1]
+
+				all_phases[_id] = {}
+
+				for i in range(9):
+					all_phases[_id][headers[i]] = metadata[i]
+
+				all_phases[_id]['timestamp'] = str(datetime.datetime.strptime('-'.join(metadata[0:6]), "%Y-%m-%d-%H-%M-%S.%f"))
+				all_phases[_id]['data'] = []
+
+
+			else:
+				_data = [x.strip() for x in line.split(" ") if x != ""]
+
+				all_phases[_id]['data'].append(_data) 
+
+	for event_id in all_phases:
+		_station_dict = {}
+
+		for x in all_phases[event_id]['data']:
+			if x[0] not in _station_dict:
+				_station_dict[x[0]] = {}
+			_station_dict[x[0]][x[3]] = x[1] # natural support for only P or only S picks
+
+		all_phases[event_id]['data'] = _station_dict
+
+
+	with open(output_file, 'w') as f:
+
+		json.dump(all_phases, f, indent = 2)
+
+	#df.to_csv(output_file, index = False)
+	# build a table, with a column for stations,
+	# separate each station by like some character
+
+
+
+
+# for each ID, get the timestamp, get the list of stations + their original times and search for the waveforms
+
 if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
@@ -203,6 +264,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('-cat', action = "store_true")
 	parser.add_argument('-pha', action = "store_true")
+	parser.add_argument('-json', action = "store_true")
 	parser.add_argument('-reloc', action = "store_true")
 	parser.add_argument('-f', action = "store_true")
 
@@ -225,11 +287,14 @@ if __name__ == "__main__":
 		# cat: the initial estimate from catalog_sel
 		# 
 
-	if args.pha:
-		join_hypophase(args.input, args.output)
+	elif args.pha:
+	 	join_hypophase(args.input, args.output)
 
-	if args.reloc:
+	elif args.reloc:
 		make_reloc_catalog(args.input, args.output)
 
-	if args.f:
+	elif args.f:
 		filter_csv(args.input, args.output, lat = args.lat, lon = args.lon, depth = args.depth)
+
+	elif args.json:
+		convert_phase(args.input, args.output)
