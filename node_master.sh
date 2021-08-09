@@ -33,7 +33,7 @@
 
 #python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Apr-May -run_eqt -pbs -no_execute
 
-python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -s 2020.150 -e 2020.160 -job 7aug_nodropout_test -write_hdf5 -run_eqt -merge_csv -pbs -n_multi 5 -model_path EqT_model_testNoDropout.h5
+python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/TA_all.txt -s 2020.150 -e 2020.160 -job 7aug_nodropout_test -write_hdf5 -run_eqt -merge_csv -pbs -n_multi 5 -config config.txt
 
 
 # python multi_station.py -encode -i /home/zchoong001/cy1400/cy1400-eqt/station/A_all.txt -job 24jun_allA_Jan-Mar -pbs -plot_eqt -write_headers
