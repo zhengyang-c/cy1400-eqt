@@ -411,7 +411,7 @@ def encode_multirun(
 
 	else:
 		if not model_path:
-			model_path"/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
+			model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
 		station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
 
 		if hdf5_parent == "":
