@@ -117,12 +117,12 @@ def join_hypophase(search_dir, output_file):
 def join_catalog_sel(search_dir, output_file, search_file = ""):
 
 	#search_dir = "/home/zy/Downloads/REAL_test_10station/REAL_test/Waveform"
-
-	if search_file == "" or search_file not in ["hypoloc", "cat"]:
+	#print(search_file)
+	if search_file == "" or search_file not in ["hypo", "cat"]:
 		print("wrong search file selected, exiting")
 		return 
 
-	if search_file == "hypoloc":
+	if search_file == "hypo":
 		search_term = "hypolocSA.dat"
 	elif search_file == "cat":
 		search_term = "catalog_sel.txt"
@@ -160,7 +160,7 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 					df.at[c, 'station_gap'] = float(data[16])
 
 
-				elif search_file == "hypoloc":
+				elif search_file == "hypo":
 					df.at[c, 'year'], df.at[c, 'month'], df.at[c, 'day'] = data[0:3]			
 					df.at[c, 'hour'], df.at[c, 'min'], df.at[c, 'sec'] = data[3:6]
 
@@ -283,8 +283,8 @@ if __name__ == "__main__":
 
 		# to use: Python collect_latlon.py -i INPUT_FOLDER -o OUTPUT_CSV -cat -search_file hypoloc|cat
 
-		# hypoloc: the refined estimate
-		# cat: the initial estimate from catalog_sel
+		# hypoloc: the 'refined' output that 'should' be used
+		# cat: the initial estimate from catalog_sel but is included for completion anyway
 		# 
 
 	elif args.pha:
