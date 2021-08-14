@@ -2,6 +2,7 @@ from pathlib import Path
 import pandas as pd
 import argparse
 import datetime
+import json
 
 def make_reloc_catalog(input_file, output_file):
 
