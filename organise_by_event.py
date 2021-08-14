@@ -181,7 +181,12 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			_p_df = _df[(_df['_p_delta'] < 0.2) & (_df['_p_delta'] > -0.2)].copy()
 			#print(_p_df)
 
-			assert _p_df.shape[0] == 1
+			try:
+				assert _p_df.shape[0] == 1
+
+			except:
+				print(_p_df)
+				assert False
 
 			# check that there's only 1 match
 			# 
@@ -205,7 +210,13 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 		elif _s_arrival_time:
 			_s_df = _df[(_df['_s_delta'] < 0.2) & (_df['_s_delta'] > 0.2)].copy()
 
-			assert _s_df.shape[0] == 1
+			try:
+
+				assert _s_df.shape[0] == 1
+
+			except:
+				print(_s_df)
+				assert False
 
 			for index, row in _s_df.iterrows():
 				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
