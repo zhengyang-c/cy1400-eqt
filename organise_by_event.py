@@ -230,12 +230,13 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 		if os.path.exists(dest_path):
 			print("File already exists, not copying : {}".format(dest_path))
 
-		if dryrun:
-			
-			print("source file: {}".format(file))
-			print("dest folder: {}".format(dest_folder))
 		else:
-			shutil.copy(file, dest_folder)
+			if dryrun:
+				
+				print("source file: {}".format(file))
+				print("dest folder: {}".format(dest_folder))
+			else:
+				shutil.copy(file, dest_folder)
 
 
 		# write headers here
