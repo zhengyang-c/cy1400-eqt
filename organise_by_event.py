@@ -178,7 +178,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 		search_file_path = ""
 
 		if _p_arrival_time:
-			_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] >= 0)].copy()
+			_p_df = _df[(_df['_p_delta'] < 0.2) & (_df['_p_delta'] > -0.2)].copy()
 			#print(_p_df)
 
 			assert _p_df.shape[0] == 1
@@ -203,7 +203,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			# save search_file_path by just using iterrows again lol
 
 		elif _s_arrival_time:
-			_s_df = _df[(_df['_s_delta'] < 1) & (_df['_s_delta'] >= 0)].copy()
+			_s_df = _df[(_df['_s_delta'] < 0.2) & (_df['_s_delta'] > 0.2)].copy()
 
 			assert _s_df.shape[0] == 1
 
