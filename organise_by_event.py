@@ -119,6 +119,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 	#origin_time = .values[0]
 	print("origin time", origin_time)
+
 	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
 
 
@@ -142,8 +143,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	output_file = "cat_header_writer.sh"
 
 	for sta in _station_dict:
-
-
+		print(sta, uid)
 		_p_arrival_time, _s_arrival_time = "", ""
 
 		if 'P' in _station_dict[sta]:
