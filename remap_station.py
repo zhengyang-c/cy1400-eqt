@@ -132,7 +132,7 @@ def csv_remapping(search_folder, rel_search_term, map_file, station_file, dry_ru
 	
 	station_info = parse_station_info(station_file)
 	
-	file_list = [str(p) for p in Path(search_folder).glob(rel_search_term)]
+	file_list = [str(p) for p in Path(search_folder).rglob(rel_search_term)]
 
 	for file in file_list:
 		print(file)
