@@ -96,7 +96,7 @@ def sac_mapper(sac_file, station_map, station_info):
 			except:
 				# do some logging
 
-				print(sac_file, _station)
+				print("ERROR", sac_file, _station)
 				return {"output_str": ""}
 
 	return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
