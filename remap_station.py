@@ -180,8 +180,18 @@ def csv_mapper(input_csv, output_csv, map_file, station_info):
 
 	# expensive rewriting operation
 	for index, row in df.iterrows():
-		df.at[index, "station_lat"] = station_info[row.station]["lat"]
-		df.at[index, "station_lon"] = station_info[row.station]["lon"]
+		try:
+			df.at[index, "station_lat"] = station_info[row.station]["lat"]
+			df.at[index, "station_lon"] = station_info[row.station]["lon"]
+		except:
+			try:
+				drop_last = row.station[:-1]
+
+				df.at[index, "station_lat"] = station_info[drop_last]["lat"]
+				df.at[index, "station_lon"] = station_info[drop_last]["lon"]
+
+			except:
+				print(index, input_csv, "failed")
 
 
 
