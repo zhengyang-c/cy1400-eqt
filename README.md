@@ -1,14 +1,14 @@
 # cy1400-eqt
 
+# Refer to the Wiki; the README.md is not maintained 
+
 Helper and (pre/post)-processing scripts for a data-driven seismology project. Initially for the requirements of a Year 1 Research Module. 
 
 Uses the [EQTransformer model created by S. Mousavi](https://github.com/smousavi05/EQTransformer)
 
 Should this have more folders and less files in the project root? Yes, but relative file paths are a pain + this is not re-usable enough (yet) to package it as a Python module. 
 
-# Table of Contents:
 
-_insert next time_
 
 
 
@@ -17,8 +17,7 @@ _insert next time_
 1. Decide what model to use, start date, end date, number of stations (max 20).
 2. Make a linebreak separated file with your list of stations
 3. Make a csv file using multi_station.py -sf giving the filepaths to all the SAC files for each day and station, for a specified start and end date
-4. 
-5. 
+
 
 ## Other notes
 
