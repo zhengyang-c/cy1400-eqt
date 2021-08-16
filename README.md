@@ -2,6 +2,8 @@
 
 # Refer to the Wiki; the README.md is not maintained 
 
+[Wiki](https://github.com/zhengyang-c/cy1400-eqt/wiki/)
+
 Helper and (pre/post)-processing scripts for a data-driven seismology project. Initially for the requirements of a Year 1 Research Module. 
 
 Uses the [EQTransformer model created by S. Mousavi](https://github.com/smousavi05/EQTransformer)
