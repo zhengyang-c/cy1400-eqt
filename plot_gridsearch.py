@@ -35,10 +35,15 @@ def plotter(uid, station_list, station_info, args):
 
 	N_X, N_Y, N_Z = grid.shape[:3]	
 
+	# lons = lb_corner[0] + np.arange(N_X)
+	# lats = lb_corner[1] + np.arange(N_Y)
+
 	output = L2[:,:,indices[2][0]] # slice only at the depth where residual is minimum
 
 	plt.figure(figsize = (8,6), dpi = 300)
-	ax = plt.imshow(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
+	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
+
+	ax = plt.contourf( output, levels = np.arange(0,200,5), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
 	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}".format(lb_corner[0], lb_corner[1], uid), fontsize = 8)

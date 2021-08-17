@@ -67,6 +67,22 @@ def parse_event_coord(file_name, _format):
 					"dep": _depth
 					}
 
+	elif _format == "hypoDD_loc": # any .loc or .reloc file
+		with open(file_name, 'r') as f:
+			for line in f:
+				line = [x for x in line.strip().split(" ") if x != ""]
+
+				_id = str(line[0]).zfill(6)
+
+				event_info[_id] = {
+				"lat":float(line[1]),
+				"lon":float(line[2]),
+				"dep":float(line[3])
+				}
+
+	else:
+		raise ValueError("Format {} not supported, please consult the wiki".format(_format))
+
 	return event_info
 
 def load_travel_time(input_file):
@@ -424,9 +440,14 @@ def search(pid, file_info, args):
 
 					# keep standard dev in array because idk that could be useful? 
 
-					L2 = np.mean(sq_residuals)
+					volume = (grid_length * DX)**2 * (Z_RANGE)
+
+					sq_residuals /= volume
+					abs_residuals /= volume
+
+					L2 = np.sum(sq_residuals)
 					L2_std = np.std(sq_residuals)
-					L1 = np.mean(abs_residuals)
+					L1 = np.sum(abs_residuals)
 					L1_std = np.std(abs_residuals)
 
 					grid[i][j][k][0] = L2
@@ -655,7 +676,7 @@ if __name__ == "__main__":
 	parser.add_argument("station_info")
 	parser.add_argument("phase_json")
 	parser.add_argument("coord_file")
-	parser.add_argument("coord_format")
+	parser.add_argument("coord_format", choices = ["real_hypophase", "hypoDD_loc"])
 	parser.add_argument("tt_path")
 	parser.add_argument("output_folder")
 
