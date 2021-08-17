@@ -634,7 +634,7 @@ def dx(X1, X2):
 # interpolation function
 
 
-def convert_tt_file(input_file):
+def convert_tt_file(input_file, output_file):
 
 	# use the REAL format
 
@@ -642,7 +642,7 @@ def convert_tt_file(input_file):
 
 	# or just make it a 3d array
 
-	tt_table = np.zeros([141, 41, 2]) # hard coded and depends on size of array
+	tt_table = np.zeros([301, 41, 2]) # hard coded and depends on size of array
 
 	with open(input_file, 'r') as f:
 		for line in f:
@@ -650,7 +650,8 @@ def convert_tt_file(input_file):
 			_dist = float(_data[0])
 			_depth = float(_data[1])
 
-			_x_1 = int(_dist/0.01) # there will be one empty row which is inconsequential
+			_x_1 = int(_dist/0.01) # there will be one empty row (the very first one) which is inconsequential
+
 			_x_2 = int(_depth)
 
 			_P = float(_data[2])
@@ -662,7 +663,7 @@ def convert_tt_file(input_file):
 	# save numpy file
 	#print(tt_table)
 
-	with open("gridsearch/tt_t.npy", "wb") as f:
+	with open(output_file, "wb") as f:
 		np.save(f, tt_table)
 
 # plotting: i think plot 2D, in the top down plane, height at the depth of the maxima? idk
@@ -672,13 +673,16 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser()
 
-	
-	parser.add_argument("station_info")
-	parser.add_argument("phase_json")
-	parser.add_argument("coord_file")
-	parser.add_argument("coord_format", choices = ["real_hypophase", "hypoDD_loc"])
-	parser.add_argument("tt_path")
-	parser.add_argument("output_folder")
+	parser.add_argument("-convert_tt")
+	parser.add_argument("-output_tt")
+
+
+	parser.add_argument("-station_info")
+	parser.add_argument("-phase_json")
+	parser.add_argument("-coord_file")
+	parser.add_argument("-coord_format", choices = ["real_hypophase", "hypoDD_loc"])
+	parser.add_argument("-tt_path")
+	parser.add_argument("-output_folder")
 
 	parser.add_argument("-event_csv")
 	parser.add_argument("-event_id", type = int)
@@ -710,29 +714,37 @@ if __name__ == "__main__":
 
 	#parse_input(args.event_csv, arg)
 
-	parse_input(
-		args.station_info, 
-		args.phase_json,	
-		args.coord_file, 
-		args.coord_format, 
-		args.tt_path, 
-		args.output_folder, 
-		event_csv = args.event_csv, 
-		event_id = args.event_id, 
-		dry_run = args.dry,
-		save_numpy = args.save_numpy,
-		write_xyz = args.write_xyz,
-		convert_grd = args.convert_grd,
-		TT_DX = args.tt_dx,
-		TT_DZ = args.tt_dz,
-		DX = args.dx,
-		DZ = args.dz,
-		ZRANGE = args.zrange,
-		load_only = args.load_only,
-		plot_mpl = args.plot_mpl,
-		show_mpl = args.show_mpl,
-		layer_index = args.layer_index,
-		)
+	if args.tt_path:
+
+		parse_input(
+			args.station_info, 
+			args.phase_json,	
+			args.coord_file, 
+			args.coord_format, 
+			args.tt_path, 
+			args.output_folder, 
+			event_csv = args.event_csv, 
+			event_id = args.event_id, 
+			dry_run = args.dry,
+			save_numpy = args.save_numpy,
+			write_xyz = args.write_xyz,
+			convert_grd = args.convert_grd,
+			TT_DX = args.tt_dx,
+			TT_DZ = args.tt_dz,
+			DX = args.dx,
+			DZ = args.dz,
+			ZRANGE = args.zrange,
+			load_only = args.load_only,
+			plot_mpl = args.plot_mpl,
+			show_mpl = args.show_mpl,
+			layer_index = args.layer_index,
+			)
+
+
+	elif args.convert_tt:
+		convert_tt_file(args.convert_tt, args.output_tt)
+
+
 
 	#parse_input(55, "station_info.dat", "real_postprocessing/5jul_assoc/5jul_aceh_phase.json", "/home/zy/cy1400-eqt/real_postprocessing/5jul_assoc/aceh_phase.dat", "real_hypophase", "gridsearch/tt_t.npy", dry_run = True)
 

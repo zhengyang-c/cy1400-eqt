@@ -59,8 +59,8 @@ def plotter(uid, station_list, station_info, args):
 	_x = (args["event_coords"][0] - lb_corner[0])/args["DX"]
 	_y = (args["event_coords"][1] - lb_corner[1])/args["DX"]
 
-	plt.scatter(_x, _y, marker = "*", color = [0,0,0,0.5],)
-	plt.scatter(indices[0][0], indices[1][0], marker = "s", color = [1,1,1,0.3])	
+	plt.scatter(_x, _y, marker = "*", color = [0,0,0],)
+	plt.scatter(indices[0][0], indices[1][0], marker = "s", color = [1,1,1,0.5])	
 	plt.savefig(os.path.join(args["output_folder"], args["base_filename"] + "_mpl.pdf"),)	
 
 	if args["show_mpl"]:
