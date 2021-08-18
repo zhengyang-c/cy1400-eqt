@@ -133,6 +133,8 @@ def parse_input(station_file_name,
 	show_mpl = False,
 	layer_index = 0):
 
+	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]])
+
 	args = {}
 
 	args["station_file"] = station_file_name
@@ -192,9 +194,9 @@ def parse_input(station_file_name,
 
 		for index, row in df.iterrows():
 			try:
-				_id = row.id
+				_id = int(row.id)
 			except:
-				_id = row.ID
+				_id = int(row.ID)
 
 
 			padded_id = str(_id).zfill(6)
