@@ -201,7 +201,7 @@ def parse_input(station_file_name,
 
 
 			padded_id = str(_id).zfill(6)
-			args["output_folder"] = output_folder
+			#args["output_folder"] = output_folder
 			search(padded_id, file_info, args)
 
 

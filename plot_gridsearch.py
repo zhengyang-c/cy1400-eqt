@@ -61,7 +61,7 @@ def plotter(uid, station_list, station_info, args):
 
 	plt.scatter(_x, _y, marker = "*", color = [0,0,0],)
 	plt.scatter(indices[0][0], indices[1][0], marker = "s", color = [1,1,1,0.5])	
-	plt.savefig(os.path.join(args["output_folder"], args["base_filename"] + "_mpl.pdf"),)	
+	plt.savefig(os.path.join(args["output_folder"], uid, args["base_filename"] + "_mpl.pdf"),)	
 
 	if args["show_mpl"]:
 		plt.show()
