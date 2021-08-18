@@ -131,7 +131,8 @@ def parse_input(station_file_name,
 	load_only = False,
 	plot_mpl = False,
 	show_mpl = False,
-	layer_index = 0):
+	layer_index = 0,
+	force = False):
 
 	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]]):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -358,7 +359,27 @@ def search(pid, file_info, args):
 	else:
 		pass
 
-	if not args["load_only"]:
+	output_folder = os.path.join(args["output_folder"], pid)
+
+	base_filename = "{}_DX{}_DZ{}".format(pid, DX, DZ)
+	npy_filename = os.path.join(output_folder, base_filename + ".npy")
+	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
+	grd_filename = os.path.join(output_folder, base_filename + ".grd")
+
+	#args["output_folder"] = output_folder
+	args["base_filename"] = base_filename
+	args["npy_filename"] = npy_filename
+	#args["xyz_filename"] = xyz_filename
+
+	if not os.path.exists(output_folder):
+		os.makedirs(output_folder)
+
+	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
+
+	if args["load_only"]:
+		pass
+		
+	elif args["force"] or not already_created :
 		for i in range(grid_length): # lon
 			for j in range(grid_length): # lat
 				for k in range(N_Z): # depth
@@ -469,22 +490,6 @@ def search(pid, file_info, args):
 	
 	#print(grid)
 
-	output_folder = os.path.join(args["output_folder"], pid)
-
-	base_filename = "{}_DX{}_DZ{}".format(pid, DX, DZ)
-	npy_filename = os.path.join(output_folder, base_filename + ".npy")
-	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
-	grd_filename = os.path.join(output_folder, base_filename + ".grd")
-
-	#args["output_folder"] = output_folder
-	args["base_filename"] = base_filename
-	args["npy_filename"] = npy_filename
-	#args["xyz_filename"] = xyz_filename
-
-
-
-	if not os.path.exists(output_folder):
-		os.makedirs(output_folder)
 
 	if args["load_only"]:
 		with open(npy_filename, 'rb') as f:
@@ -688,6 +693,8 @@ if __name__ == "__main__":
 	parser.add_argument("-tt_path")
 	parser.add_argument("-output_folder")
 
+	parser.add_argument("-f", "--force", help = "Force to run gridsearch")
+
 	parser.add_argument("-event_csv")
 	parser.add_argument("-event_id", type = int)
 
@@ -742,6 +749,7 @@ if __name__ == "__main__":
 			plot_mpl = args.plot_mpl,
 			show_mpl = args.show_mpl,
 			layer_index = args.layer_index,
+			force = args.force
 			)
 
 

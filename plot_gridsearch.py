@@ -26,6 +26,10 @@ def plotter(uid, station_list, station_info, args):
 
 	print(grid.shape)
 
+	print(indices)
+
+
+
 	lb_corner = args["lb_corner"]
 
 	min_x = lb_corner[0] + indices[0][0] * args["DX"]
@@ -40,10 +44,13 @@ def plotter(uid, station_list, station_info, args):
 
 	output = L2[:,:,indices[2][0]] # slice only at the depth where residual is minimum
 
+	# print(output[indices[0][0], indices[1][0]])
+	# print(output[57,28])
+
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output, levels = np.arange(0,200,5), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,200,5), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
 	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}".format(lb_corner[0], lb_corner[1], uid), fontsize = 8)
@@ -65,6 +72,10 @@ def plotter(uid, station_list, station_info, args):
 
 	if args["show_mpl"]:
 		plt.show()
+
+	#plt.clf()
+	#plt.cla()
+	plt.close(plt.gcf())
 
 	
 
