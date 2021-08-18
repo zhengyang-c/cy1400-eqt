@@ -133,7 +133,8 @@ def parse_input(station_file_name,
 	show_mpl = False,
 	layer_index = 0):
 
-	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]])
+	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]]):
+		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
 
 	args = {}
 
