@@ -148,7 +148,7 @@ def parse_input(station_file_name,
 	args["dry_run"] = dry_run
 	args["save_numpy"] = save_numpy
 	args["write_xyz"] = write_xyz
-	args["output_folder"] = output_folder
+	
 
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
@@ -201,6 +201,7 @@ def parse_input(station_file_name,
 
 
 			padded_id = str(_id).zfill(6)
+			args["output_folder"] = output_folder
 			search(padded_id, file_info, args)
 
 
@@ -475,7 +476,7 @@ def search(pid, file_info, args):
 	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
 
-	args["output_folder"] = output_folder
+	#args["output_folder"] = output_folder
 	args["base_filename"] = base_filename
 	args["npy_filename"] = npy_filename
 	#args["xyz_filename"] = xyz_filename
