@@ -94,57 +94,21 @@ def csv_cutter():
 	# for convenience 
 
 
+def df_searcher(df, _station_dict, _ts,):
 
-
-def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
-
-	# this will only look for and then copy files if they aren't already copied
-	# 
-
-	i = uid
-
-	padded_id = (str(i).zfill(6))
-	row_index = event_df[event_df["ID"] == uid].index[0]
-
-	try:
-
-		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
-
-	except:
-		if event_df.at[row_index, 'SC'] == 60.0:
-			origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
-			origin_time += datetime.timedelta(minutes = 1)
-		else:
-			raise ValueError
-
-	#origin_time = .values[0]
-	print("origin time", origin_time)
-
-	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
-
-
-
-	dest_folder = os.path.join(output_folder, padded_id)
-
-
-	_ts = (phase_dict[padded_id]['timestamp'])
-
-	_station_dict = phase_dict[padded_id]['data']
-
-	#print(_ts,_station_dict)
+	files_to_copy = []
 	try:
 		_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S.%f")
 	except:
 		_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S")
-
-	files_to_copy = []
-
-	bash_str = "#!/bin/bash\n"
-	output_file = "cat_header_writer.sh"
-
 	for sta in _station_dict:
-		print(sta, uid)
+		#print(sta, uid)
 		_p_arrival_time, _s_arrival_time = "", ""
+
+
+		# the phase file (association by REAL) might have both P and S picks, or only one of them
+		# either way, we only need either one of those picks to identify which event it was
+		# this is because we are just trying to find the correct detection file along with the 'actual' arrival times
 
 		if 'P' in _station_dict[sta]:
 			_p_arrival_time = _ts + datetime.timedelta(seconds = float(_station_dict[sta]['P']))
@@ -160,9 +124,10 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 			# manually compute the time difference zzz
 
-			# this is quite efficient because i could just match the year month minute hour etc
+			# this is quite inefficient because i could just match the year month minute hour etc
 			# but like what if there are edge cases right..
-			# 
+			
+
 			
 
 			if _p_arrival_time:
@@ -195,8 +160,8 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			for index, row in _p_df.iterrows():
 				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
-				#_station_dict[sta]['station_P'] = row.p_arrival_time
-				#_station_dict[sta]['station_S'] = row.s_arrival_time
+				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()
 
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
@@ -221,14 +186,66 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			for index, row in _s_df.iterrows():
 				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
-				#_station_dict[sta]['station_P'] = row.p_arrival_time
-				#_station_dict[sta]['station_S'] = row.s_arrival_time
+				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
 		#print(search_file_path)
 		_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
 
 		files_to_copy.extend(_files_to_copy)
+
+	return {"files_to_copy": files_to_copy, "_station_dict": _station_dict}
+
+def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
+
+	# this will only look for and then copy files if they aren't already copied
+	# 
+
+	i = uid
+
+	padded_id = (str(i).zfill(6))
+	row_index = event_df[event_df["ID"] == uid].index[0]
+
+	try:
+
+		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
+
+	except:
+		if event_df.at[row_index, 'SC'] == 60.0:
+			origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
+			origin_time += datetime.timedelta(minutes = 1)
+		else:
+			raise ValueError
+
+	#origin_time = .values[0]
+	print("origin time", origin_time)
+
+	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
+
+
+
+	dest_folder = os.path.join(output_folder, padded_id)
+
+
+
+
+	_station_dict = phase_dict[padded_id]['data']
+
+	_ts = (phase_dict[padded_id]['timestamp'])
+
+
+	bash_str = "#!/bin/bash\n"
+	output_file = "cat_header_writer.sh"
+
+	# function call: search here
+
+	search_output = df_searcher(df, _station_dict, _ts)
+
+
+	files_to_copy = search_output["files_to_copy"]
+	_station_dict = search_output["_station_dict"]
+
 
 	if not os.path.exists(dest_folder) and not dryrun:
 		os.makedirs(dest_folder)

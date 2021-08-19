@@ -81,3 +81,95 @@ def plotter(uid, station_list, station_info, args):
 
 
 	# need location of stations, location of event wrt lower bottom corner
+
+	
+"""
+note that GMT doesn't recognise the netcdf i produce for some reason, so this is left here
+just to make the main grid search script less cluttered
+"""
+def netcdf_writer(lb_corner, DX, DZ ):
+
+	# https://unidata.github.io/python-training/workshop/Bonus/netcdf-writing/
+	grp = netCDF4.Dataset("gmt/gridsearch/test.nc", "w")
+
+	with open("gridsearch/55_test_grid.npy", 'rb') as f:
+		grid = np.load(f)
+
+	# need array dimensions
+
+	N_X, N_Y, N_Z = grid.shape[:3]
+
+	print("loaded shape", grid.shape)
+
+	# need starting positions + stepsize
+	lon_dim = grp.createDimension('x', N_X)
+	lat_dim = grp.createDimension('y', N_Y)
+
+
+	# write a model title for completion with date 
+	grp.title = "Test"
+	grp.setncattr_string("")
+	x = grp.createVariable('x', np.float64, ('x',))
+	x.units = 'degrees_east'
+	x.long_name = 'x'
+	y = grp.createVariable('y', np.float64, ('y',))
+	y.units = 'degrees_north'
+	y.long_name = 'y'
+
+	print(N_X, N_Y)
+	print(lb_corner)
+
+
+	x[:] = lb_corner[0] + np.arange(N_X) * DX
+	y[:] = lb_corner[1] + np.arange(N_Y) * DX
+
+	#print(lon[:])
+	#print(lat[:])
+
+	#print(grid[0][0][0][0].shape)
+
+	rms_l2 = grp.createVariable("z", np.float64, ('x', 'y', ))
+
+	rms_l2.units = 'km'
+	rms_l2.long_name = "z"
+
+
+	best_depth = 9
+
+	rms_l2[:,:] = grid[:,:,best_depth,0]
+
+	print(rms_l2)
+
+
+	grp.close()
+
+
+
+
+def test_grid():
+
+	file_name = "gridsearch/000055_20210815-220241_DX0.05_DZ5.npy"
+
+	with open(file_name, "rb") as f:
+		grid = np.load(f)
+
+	print(grid.shape)
+
+	L2 = grid[:, :, :, 0]
+
+	indices = np.where(L2 == L2.min())
+	print(indices)
+
+	depths = L2[indices[0][0], indices[1][0], :, ]
+
+	plt.plot(np.arange(len(depths)), depths)
+	plt.show()
+
+
+
+	# ax = plt.imshow(L2[:, :, indices[2]], cmap = 'rainbow')
+	# plt.colorbar(ax, cmap = "rainbow")
+
+	# plt.show()
+
+

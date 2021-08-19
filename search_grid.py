@@ -9,6 +9,9 @@ import netCDF4
 from plot_gridsearch import plotter
 import subprocess
 
+
+from organise_by_event import df_searcher
+
 # first generate travel time table
 # devise a scheme for easy lookup: dictionaries are expensive...
 # is it faster? it's like a 0.3MB textfile....
@@ -92,24 +95,6 @@ def load_travel_time(input_file):
 
 	return tt
 
-"""
-
-	parse_input(
-		args.station_info, 
-		args.phase_json,	
-		args.coord_file, 
-		args.coord_format, 
-		args.tt_path, 
-		args.output_folder, 
-		event_csv = args.event_csv, 
-		event_id = args.event_id, 
-		dry_run = args.dry,
-		save_numpy = args.save_numpy,
-		write_xyz = args.write_xyz,
-		convert_grd = args.convert_grd)
-
-
-"""
 
 def parse_input(station_file_name, 
 	phase_json_name, 
@@ -132,7 +117,8 @@ def parse_input(station_file_name,
 	plot_mpl = False,
 	show_mpl = False,
 	layer_index = 0,
-	force = False):
+	force = False,
+	eqt_csv = ""):
 
 	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]]):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -156,6 +142,7 @@ def parse_input(station_file_name,
 	args["show_mpl"] = show_mpl
 
 	args["layer_index"] = layer_index
+	args["force"] = force
 
 	args["convert_grd"] = convert_grd
 	args["DX"] = DX
@@ -185,10 +172,21 @@ def parse_input(station_file_name,
 	"phase_info": phase_info}
 
 
+	df = load_eqt_csv(eqt_csv)
+
+
 	if args["event_id"]:
 		padded_id = (str(args["event_id"]).zfill(6))
 
-		search(padded_id, file_info, args) # doesn't need to return anything
+		_station_dict = phase_info[padded_id]['data']
+
+		_ts = phase_info[padded_id]['timestamp']
+
+		_new_station_dict = df_searcher(df, _station_dict, _ts)
+
+		print(_new_station_dict)
+
+		#search(padded_id, file_info, args) # doesn't need to return anything
 
 	elif args["event_csv"]:
 
@@ -232,35 +230,17 @@ def parse_input(station_file_name,
 	#print(event_info)
 
 	
+def load_eqt_csv(eqt_csv):
 
+	df = pd.read_csv(eqt_csv)
+	df["p_arrival_time"] = pd.to_datetime(df["p_arrival_time"])
+	df["s_arrival_time"] = pd.to_datetime(df["s_arrival_time"])
 
-def test_grid():
+	return df
 
-	file_name = "gridsearch/000055_20210815-220241_DX0.05_DZ5.npy"
+def filter_eqt_phases():
 
-	with open(file_name, "rb") as f:
-		grid = np.load(f)
-
-	print(grid.shape)
-
-	L2 = grid[:, :, :, 0]
-
-	indices = np.where(L2 == L2.min())
-	print(indices)
-
-	depths = L2[indices[0][0], indices[1][0], :, ]
-
-	plt.plot(np.arange(len(depths)), depths)
-	plt.show()
-
-
-
-	# ax = plt.imshow(L2[:, :, indices[2]], cmap = 'rainbow')
-	# plt.colorbar(ax, cmap = "rainbow")
-
-	# plt.show()
-
-
+	pass
 
 
 def search(pid, file_info, args):
@@ -298,11 +278,55 @@ def search(pid, file_info, args):
 	tt = file_info["tt"]
 	event_info = file_info["event_info"]
 
+
 	station_list = phase_info[pid]["data"].keys()
+
+	"""
+	options:
+	1) rely on REAL association to choose phases
+	2) manually choose phases myself
+
+	obviously i am going to do (1) because REAL association is alright
+
+	plotting the wadati diagram, there are a lot of outliers
+
+	but if i only use the phases that REAL is using, there are almost no outliers
+	so at least the association is reliable
+
+	that said i think i'll have to plot the record section
+	but the record section is plot using raw SAC data i.e. it's not bp filtered yet
+	i could write a new file e.g. append like a _ or something at the back
+	but that would take up double the space
+	the folder is already 12.8GB
+	i have 84GB available 
+	the original archive is also on disk and on onedrive so i could just modify the traces later
+
+	so:
+
+	1. load EQT csv 
+	2. for specific station phases, find the correct detection assuming REAL phase choice is correct 
+	(which it has good reason to be, given the wadati diagram plot)
+
+	i'm not doing EQ association myself
+
+	3. maybe also save the csv file subset so you don't have to do the operation everytime 
+	4. save the p arrival and s arrival time in their own vectors python list
+
+	5. for each grid cell, obtain an array of 'candidate' origin times
+	6. since np.std() cannot operate directly on datetime objects, normalise using the minimum value
+	7. find the standard deviation and save in the cell
+
+	this means that the grid doesn't need like size 4 array for every cell
+
+	but i'm also lazy to like rework it you know
+
+	8. the cell with the minimum standard deviation should give the origin time + location
+
+	"""
 
 	# construct grid, centered around event lat lon 
 
-	## get bounding box
+	# get bounding box first
 
 
 
@@ -375,11 +399,14 @@ def search(pid, file_info, args):
 		os.makedirs(output_folder)
 
 	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
+	print("alread created: ", already_created)
+
 
 	if args["load_only"]:
 		pass
 		
-	elif args["force"] or not already_created :
+	elif args["force"] or (not already_created):
+		
 		for i in range(grid_length): # lon
 			for j in range(grid_length): # lat
 				for k in range(N_Z): # depth
@@ -564,64 +591,6 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, output_folder = "", filename 
 				f.write("{:.7f} {:.7f} {:.3f}\n".format(x,y,z))
 
 
-	
-
-def netcdf_writer(lb_corner, DX, DZ ):
-
-	# https://unidata.github.io/python-training/workshop/Bonus/netcdf-writing/
-	grp = netCDF4.Dataset("gmt/gridsearch/test.nc", "w")
-
-	with open("gridsearch/55_test_grid.npy", 'rb') as f:
-		grid = np.load(f)
-
-	# need array dimensions
-
-	N_X, N_Y, N_Z = grid.shape[:3]
-
-	print("loaded shape", grid.shape)
-
-	# need starting positions + stepsize
-	lon_dim = grp.createDimension('x', N_X)
-	lat_dim = grp.createDimension('y', N_Y)
-
-
-	# write a model title for completion with date 
-	grp.title = "Test"
-	grp.setncattr_string("")
-	x = grp.createVariable('x', np.float64, ('x',))
-	x.units = 'degrees_east'
-	x.long_name = 'x'
-	y = grp.createVariable('y', np.float64, ('y',))
-	y.units = 'degrees_north'
-	y.long_name = 'y'
-
-	print(N_X, N_Y)
-	print(lb_corner)
-
-
-	x[:] = lb_corner[0] + np.arange(N_X) * DX
-	y[:] = lb_corner[1] + np.arange(N_Y) * DX
-
-	#print(lon[:])
-	#print(lat[:])
-
-	#print(grid[0][0][0][0].shape)
-
-	rms_l2 = grp.createVariable("z", np.float64, ('x', 'y', ))
-
-	rms_l2.units = 'km'
-	rms_l2.long_name = "z"
-
-
-	best_depth = 9
-
-	rms_l2[:,:] = grid[:,:,best_depth,0]
-
-	print(rms_l2)
-
-
-	grp.close()
-
 
 
 
@@ -636,11 +605,9 @@ def ip(X, Y):
 
 		return (Y[1] - Y[0])/(X[1] - X[0])
 
+# find the euclidean distance, taken to approximate the great circle distance for small distances
 def dx(X1, X2):
 	return np.sqrt((X1[0] - X2[0])**2 + (X1[1] - X2[1])**2)
-
-
-# interpolation function
 
 
 def convert_tt_file(input_file, output_file):
@@ -675,8 +642,6 @@ def convert_tt_file(input_file, output_file):
 	with open(output_file, "wb") as f:
 		np.save(f, tt_table)
 
-# plotting: i think plot 2D, in the top down plane, height at the depth of the maxima? idk
-# https://www.python-course.eu/matplotlib_contour_plot.php
 
 if __name__ == "__main__":
 
@@ -688,12 +653,14 @@ if __name__ == "__main__":
 
 	parser.add_argument("-station_info")
 	parser.add_argument("-phase_json")
+
+	parser.add_argument("-eqt_csv")
 	parser.add_argument("-coord_file")
 	parser.add_argument("-coord_format", choices = ["real_hypophase", "hypoDD_loc"])
 	parser.add_argument("-tt_path")
 	parser.add_argument("-output_folder")
 
-	parser.add_argument("-f", "--force", help = "Force to run gridsearch")
+	parser.add_argument("-f", "--force", help = "Force to run gridsearch", action = 'store_true')
 
 	parser.add_argument("-event_csv")
 	parser.add_argument("-event_id", type = int)
@@ -749,7 +716,8 @@ if __name__ == "__main__":
 			plot_mpl = args.plot_mpl,
 			show_mpl = args.show_mpl,
 			layer_index = args.layer_index,
-			force = args.force
+			force = args.force,
+			eqt_csv = args.eqt_csv
 			)
 
 
