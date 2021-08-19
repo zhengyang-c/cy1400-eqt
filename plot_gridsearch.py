@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import argparse
+import datetime
 
 
 def load_numpy_file(file_name):
@@ -20,7 +21,7 @@ def load_numpy_file(file_name):
 def plotter(uid, station_list, station_info, args):
 
 	grid = load_numpy_file(args["npy_filename"])
-	L2 = grid[:,:,:,args["layer_index"]]
+	L2 = grid[:,:,:,0] # 0: get the standard deviation
 
 	indices = np.where(L2 == L2.min())
 
@@ -44,16 +45,29 @@ def plotter(uid, station_list, station_info, args):
 
 	output = L2[:,:,indices[2][0]] # slice only at the depth where residual is minimum
 
+	print(indices)
+
+	mean_time = grid[indices[0][0], indices[1][0], indices[2][0], 1]
+	ref_time = grid[indices[0][0], indices[1][0], indices[2][0], 2]
+
+	best_origin_time = datetime.datetime.fromtimestamp(ref_time) + datetime.timedelta(seconds = mean_time)
+	print(ref_time)
+	print(mean_time)
+
+	print("best origin time: ", best_origin_time)
+
+	origin_time_str = datetime.datetime.strftime(best_origin_time, "%Y-%m-%d %H%M%S.%f")
+
 	# print(output[indices[0][0], indices[1][0]])
 	# print(output[57,28])
 
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output.T, levels = np.arange(0,200,5), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,24,2), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
-	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}".format(lb_corner[0], lb_corner[1], uid), fontsize = 8)
+	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str), fontsize = 8)
 	plt.title("DX: {} deg, DZ: {} km\nMin Loc: {:.4f},{:.4f} (White Sq.) | EV Loc: {:.4f},{:.4f} (Black Star), EV Source: {}".format(args["DX"], args["DZ"], min_x, min_y, args["event_coords"][0], args["event_coords"][1], args["event_coord_format"]), fontsize = 6)
 
 	for station in station_list:

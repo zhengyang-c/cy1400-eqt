@@ -168,6 +168,9 @@ def df_searcher(df, _station_dict, _ts,):
 				#print(_station_dict[sta]['P'])
 
 				# REMINDER: this will fail if e.g. not using multi to merge / want to search inside multi_X folder
+				# i can't remember why it'll fail
+				# probably because the arrival time may not be what it thinks it is
+				# i.e. the merged arrival time is a median of all the collated picks
 
 
 			# save search_file_path by just using iterrows again lol

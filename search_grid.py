@@ -116,9 +116,9 @@ def parse_input(station_file_name,
 	load_only = False,
 	plot_mpl = False,
 	show_mpl = False,
-	layer_index = 0,
 	force = False,
-	eqt_csv = ""):
+	eqt_csv = "",
+	extra_radius = 2):
 
 	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]]):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -136,12 +136,16 @@ def parse_input(station_file_name,
 	args["save_numpy"] = save_numpy
 	args["write_xyz"] = write_xyz
 	args["output_folder"] = output_folder
+	args["extra_radius"] = extra_radius
 
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
-	args["show_mpl"] = show_mpl
+	args["show_mpl"] = show_mpl	
 
-	args["layer_index"] = layer_index
+	if show_mpl:
+		args["plot_mpl"] = True
+		args["save_numpy"] = True
+
 	args["force"] = force
 
 	args["convert_grd"] = convert_grd
@@ -169,7 +173,7 @@ def parse_input(station_file_name,
 	file_info = {"station_info": station_info,
 	"event_info": event_info,
 	"tt": tt,
-	"phase_info": phase_info}
+	}
 
 
 	df = load_eqt_csv(eqt_csv)
@@ -182,11 +186,12 @@ def parse_input(station_file_name,
 
 		_ts = phase_info[padded_id]['timestamp']
 
-		_new_station_dict = df_searcher(df, _station_dict, _ts)
+		_new_station_dict = df_searcher(df, _station_dict, _ts)["_station_dict"]
 
-		print(_new_station_dict)
+		file_info["phase_info"] = _new_station_dict
 
-		#search(padded_id, file_info, args) # doesn't need to return anything
+
+		search(padded_id, file_info, args) # doesn't need to return anything
 
 	elif args["event_csv"]:
 
@@ -200,7 +205,16 @@ def parse_input(station_file_name,
 
 
 			padded_id = str(_id).zfill(6)
-			#
+
+			_station_dict = phase_info[padded_id]['data']
+
+			_ts = phase_info[padded_id]['timestamp']
+
+			_new_station_dict = df_searcher(df, _station_dict, _ts)["_station_dict"]
+			# this is probably a very expensive operation
+			# this won't work very well with multiprocessing / it'll be quite a bit of effort
+
+			file_info["phase_info"] = _new_station_dict
 			search(padded_id, file_info, args)
 
 
@@ -279,7 +293,7 @@ def search(pid, file_info, args):
 	event_info = file_info["event_info"]
 
 
-	station_list = phase_info[pid]["data"].keys()
+	station_list = phase_info.keys()
 
 	"""
 	options:
@@ -351,7 +365,7 @@ def search(pid, file_info, args):
 	TT_NZ = args["TT_DZ"]
 
 	# just pad some extra area
-	extra_radius = 2
+	extra_radius = args["extra_radius"]
 
 	# just make it a square that captures everything 
 	# each grid coordinates represents a centre point 
@@ -415,10 +429,15 @@ def search(pid, file_info, args):
 
 					delta_r = [] # distance and depth pairs
 					phase_list = []
-					obs_tt = []
+					#obs_tt = []
 
-					for station in phase_info[pid]["data"]:
-						for phase in phase_info[pid]["data"][station]:
+					arrivals = [] # origin times
+					# this only uses phases chosen by REAL association
+					for station in phase_info:
+
+						for phase in ["P", "S"]:
+							if phase not in phase_info[station]:
+								continue
 
 							_dep = k * DZ # stations assumed to be at 0 km elevation
 
@@ -428,12 +447,16 @@ def search(pid, file_info, args):
 
 							phase_list.append(phase)
 							delta_r.append(_row)
-							obs_tt.append(float(phase_info[pid]["data"][station][phase]))
+							#obs_tt.append(float(phase_info[station][phase]))
+							if phase == "P":
+								arrivals.append(phase_info[station]["station_P"])
+							elif phase == "S":
+								arrivals.append(phase_info[station]["station_S"])
 
 							#print(_row)
 
 					delta_r = np.array(delta_r)
-					obs_tt = np.array(obs_tt)
+					#obs_tt = np.array(obs_tt)
 
 					# bin the distance and depth 
 					# bin distance only (?) i won't be touching depth
@@ -485,27 +508,72 @@ def search(pid, file_info, args):
 
 					tt_cell += tt_dist_gradients * tt_dist_deltas
 
-					# calculate L2 and L1 errors
+					# with the travel times, find the set of origin times
 
-					sq_residuals = (tt_cell - obs_tt)**2
-					abs_residuals = np.sqrt(sq_residuals)
+					assert len(phase_list) == len(arrivals) == len(tt_cell)
 
-					# keep standard dev in array because idk that could be useful? 
+					guess_ot = []
 
-					volume = (grid_length * DX)**2 * (Z_RANGE)
+					for _c in range(len(arrivals)):
+						guess_ot.append(arrivals[_c] - datetime.timedelta(seconds = tt_cell[_c]))
 
-					sq_residuals /= volume
-					abs_residuals /= volume
+					# normalise the origin times and find the std 
 
-					L2 = np.sum(sq_residuals)
-					L2_std = np.std(sq_residuals)
-					L1 = np.sum(abs_residuals)
-					L1_std = np.std(abs_residuals)
+					min_origin_time = min(guess_ot)
+					for _c in range(len(guess_ot)):
+						guess_ot[_c] = (guess_ot[_c] - min_origin_time).total_seconds()
 
-					grid[i][j][k][0] = L2
-					grid[i][j][k][1] = L2_std
-					grid[i][j][k][2] = L1
-					grid[i][j][k][3] = L1_std
+					mean_time = np.mean(guess_ot)
+					std_time = np.std(guess_ot)
+					#ref_str = datetime.datetime.strftime(min_origin_time, "%Y%m%d-%H%M%S.%f")
+
+					grid[i][j][k][0] = std_time
+					grid[i][j][k][1] = mean_time
+					grid[i][j][k][2] = min_origin_time.timestamp()
+					# save the mean and std origin time in the grid
+					# saving the datetime object sounds like a bad idea
+					# so just convert the reference time to a string?
+					# so it'll be
+					# 
+					# std
+					# mean delta
+					# min_time reference as string
+					# 
+					# then i can look up the cell, and reobtain the mean time
+					# 
+					
+
+
+
+
+
+					"""
+					following code was done assuming the truth of REAL travel times, which
+					may not always be the case
+					they are left here for reference
+					"""
+
+					# # calculate L2 and L1 errors
+
+					# sq_residuals = (tt_cell - obs_tt)**2
+					# abs_residuals = np.sqrt(sq_residuals)
+
+					# # keep standard dev in array because idk that could be useful? 
+
+					# volume = (grid_length * DX)**2 * (Z_RANGE)
+
+					# sq_residuals /= volume
+					# abs_residuals /= volume
+
+					# L2 = np.sum(sq_residuals)
+					# L2_std = np.std(sq_residuals)
+					# L1 = np.sum(abs_residuals)
+					# L1_std = np.std(abs_residuals)
+
+					# grid[i][j][k][0] = L2
+					# grid[i][j][k][1] = L2_std
+					# grid[i][j][k][2] = L1
+					# grid[i][j][k][3] = L1_std
 
 
 
@@ -523,7 +591,7 @@ def search(pid, file_info, args):
 			grid = np.load(f)
 
 	else:
-		if args["save_numpy"]:
+		if (args["force"] or not os.path.exists(npy_filename)) or args["save_numpy"]:
 			print("Saving .npy to: ", npy_filename)
 			with open(npy_filename, 'wb') as f:
 				np.save(f, grid)
@@ -682,7 +750,9 @@ if __name__ == "__main__":
 	parser.add_argument("-plot_mpl", action = "store_true")
 	parser.add_argument("-show_mpl", action = "store_true")
 
-	parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
+	parser.add_argument("-extra_radius", type = int, default = 2)
+
+	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
 
 	parser.add_argument('-dry', action = "store_true")
 
@@ -715,9 +785,9 @@ if __name__ == "__main__":
 			load_only = args.load_only,
 			plot_mpl = args.plot_mpl,
 			show_mpl = args.show_mpl,
-			layer_index = args.layer_index,
 			force = args.force,
-			eqt_csv = args.eqt_csv
+			eqt_csv = args.eqt_csv,
+			extra_radius = args.extra_radius
 			)
 
 
