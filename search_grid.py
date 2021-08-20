@@ -12,6 +12,10 @@ import math
 
 from organise_by_event import df_searcher
 
+from itertools import repeat
+
+import multiprocessing as mp
+
 # first generate travel time table
 # devise a scheme for easy lookup: dictionaries are expensive...
 # is it faster? it's like a 0.3MB textfile....
@@ -121,7 +125,7 @@ def parse_input(station_file_name,
 	eqt_csv = "",
 	extra_radius = 2):
 
-	if any([x == None for x in [DX, DZ, TT_DX, TT_DZ, ZRANGE]]):
+	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
 
 	args = {}
@@ -143,6 +147,8 @@ def parse_input(station_file_name,
 	args["plot_mpl"] = plot_mpl
 	args["show_mpl"] = show_mpl	
 
+	args["eqt_csv"] = eqt_csv
+
 	if show_mpl:
 		args["plot_mpl"] = True
 		args["save_numpy"] = True
@@ -154,27 +160,15 @@ def parse_input(station_file_name,
 	args["DZ"] = DZ
 	args["ZRANGE"] = ZRANGE
 
+
+	args["N_DX"] = N_DX
+
 	args["TT_DX"] = TT_DX
 	args["TT_DZ"] = TT_DZ
 
 
-	station_info = parse_station_info(args["station_file"])
-	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
-	tt = load_travel_time(args["travel_time_file"])
-
-	args["TT_NX"] = tt.shape[0]
-	args["TT_NZ"] = tt.shape[1]
 
 	print(args)
-
-
-	with open(args["phase_json"], 'r') as f:
-		phase_info = json.load(f)
-
-	file_info = {"station_info": station_info,
-	"event_info": event_info,
-	"tt": tt,
-	}
 
 
 	df = load_eqt_csv(eqt_csv)
@@ -183,43 +177,22 @@ def parse_input(station_file_name,
 	if args["event_id"]:
 		padded_id = (str(args["event_id"]).zfill(6))
 
-		_station_dict = phase_info[padded_id]['data']
 
-		_ts = phase_info[padded_id]['timestamp']
-
-		_new_station_dict = df_searcher(df, _station_dict, _ts)["_station_dict"]
-
-		file_info["phase_info"] = _new_station_dict
-
-
-		search(padded_id, file_info, args) # doesn't need to return anything
+		search(padded_id, args) # doesn't need to return anything
 
 	elif args["event_csv"]:
-
 		df = pd.read_csv(args["event_csv"])
 
-		for index, row in df.iterrows():
-			try:
-				_id = int(row.id)
-			except:
-				_id = int(row.ID)
+		try:
+			all_id = df["id"].tolist()
+		except:
+			all_id = df["ID"].tolist()
 
+		all_id = [str(_id).zfill(6) for _id in all_id]
 
-			padded_id = str(_id).zfill(6)
+		pool = mp.Pool(mp.cpu_count())
 
-			_station_dict = phase_info[padded_id]['data']
-
-			_ts = phase_info[padded_id]['timestamp']
-
-			_new_station_dict = df_searcher(df, _station_dict, _ts)["_station_dict"]
-			# this is probably a very expensive operation
-			# this won't work very well with multiprocessing / it'll be quite a bit of effort
-
-			file_info["phase_info"] = _new_station_dict
-			search(padded_id, file_info, args)
-
-
-
+		result = pool.starmap(search, zip(all_id, repeat(args)))
 
 
 
@@ -258,7 +231,29 @@ def filter_eqt_phases():
 	pass
 
 
-def search(pid, file_info, args):
+def search(pid, args):
+
+	# move file loading to children
+
+	station_info = parse_station_info(args["station_file"])
+	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
+	tt = load_travel_time(args["travel_time_file"])
+	args["TT_NX"] = tt.shape[0]
+	args["TT_NZ"] = tt.shape[1]
+	with open(args["phase_json"], 'r') as f:
+		phase_info = json.load(f)
+
+	_station_dict = phase_info[pid]['data']
+
+	_ts = phase_info[pid]['timestamp']
+
+	df = load_eqt_csv(args["eqt_csv"])
+
+	phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
+
+
+	# construct station list:
+	station_list = phase_info.keys()
 
 	# input: preliminary located event, coordinates of stations, 
 	# 
@@ -286,15 +281,7 @@ def search(pid, file_info, args):
 	# use the netcdf 4 library to write a .nc file (and rename to .grd because geologists ree)
 	# 
 	
-	
-	# construct station list:
-	phase_info = file_info["phase_info"]
-	station_info = file_info["station_info"]
-	tt = file_info["tt"]
-	event_info = file_info["event_info"]
 
-
-	station_list = phase_info.keys()
 
 	"""
 	options:
@@ -351,33 +338,47 @@ def search(pid, file_info, args):
 	_lats.append(event_info[pid]["lat"])
 	_lons.append(event_info[pid]["lon"])
 
+	_max_length = max([max(_lats) - min(_lats), max(_lons) - min(_lons)])
+
 	_event_coords = (event_info[pid]["lon"], event_info[pid]["lat"])
 
 	# cell parameters
-	DX = args["DX"] # degrees
 	DZ = args["DZ"] # km
 	Z_RANGE = args["ZRANGE"]
 
 	TT_DX = args["TT_DX"]
 	TT_DZ = args["TT_DZ"] # km
 
-	# length of travel time arrays, used for interpolation
 	TT_NX = args["TT_NZ"]
 	TT_NZ = args["TT_DZ"]
-
-	# just pad some extra area
 	extra_radius = args["extra_radius"]
-
-	# just make it a square that captures everything 
-	# each grid coordinates represents a centre point 
-
-	# left bottom corner (x ,y) == (lon, lat)
-	lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
-
 	args["event_coords"] = _event_coords
-	args["lb_corner"] = lb_corner
 
-	grid_length = round(np.ceil(max([max(_lats) - min(_lats), max(_lons) - min(_lons)])/DX) + 2 * extra_radius)
+
+	if not args["N_DX"]: # default for N_DX is 0
+
+		DX = args["DX"] # degrees
+		# length of travel time arrays, used for interpolation
+		# just pad some extra area
+		# just make it a square that captures everything 
+		# each grid coordinates represents a centre point 
+		# left bottom corner (x ,y) == (lon, lat)
+		# 
+		lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
+		grid_length = round(np.ceil(_max_length/DX) + 2 * extra_radius)
+
+	else:
+
+		# how to decide extra padding? just take the max dist and add like 10% on each side
+
+		DX = _max_length / args["N_DX"]
+		args["DX"] = DX 
+
+		lb_corner = (min(_lons) - _max_length*0.1, min(_lats) - _max_length*0.1)
+		grid_length = round(np.ceil(_max_length * 1.2/DX))
+
+
+	args["lb_corner"] = lb_corner
 
 	N_Z = round(Z_RANGE/DZ)
 
@@ -400,7 +401,7 @@ def search(pid, file_info, args):
 
 	output_folder = os.path.join(args["output_folder"], pid)
 
-	base_filename = "{}_DX{}_DZ{}".format(pid, DX, DZ)
+	base_filename = "{}_DX{:.3g}_DZ{:.3g}".format(pid, DX, DZ)
 	npy_filename = os.path.join(output_folder, base_filename + ".npy")
 	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
@@ -414,7 +415,7 @@ def search(pid, file_info, args):
 		os.makedirs(output_folder)
 
 	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
-	print("alread created: ", already_created)
+	print("already created: ", already_created)
 
 
 	if args["load_only"]:
