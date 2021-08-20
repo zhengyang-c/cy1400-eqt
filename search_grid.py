@@ -186,9 +186,12 @@ def parse_input(station_file_name,
 		try:
 			all_id = df["id"].tolist()
 		except:
-			all_id = df["ID"].tolist()
+			try:
+				all_id = df["ID"].tolist()
+			except:
+				all_id = df["cat_index"].tolist()
 
-		all_id = [str(_id).zfill(6) for _id in all_id]
+		all_id = [str(int(_id)).zfill(6) for _id in all_id]
 
 		pool = mp.Pool(mp.cpu_count())
 
