@@ -57,6 +57,7 @@ def plotter(uid, station_list, station_info, args):
 	print("best origin time: ", best_origin_time)
 
 	origin_time_str = datetime.datetime.strftime(best_origin_time, "%Y-%m-%d %H%M%S.%f")
+	best_depth = indices[2][0] * args["DZ"]
 
 	# print(output[indices[0][0], indices[1][0]])
 	# print(output[57,28])
@@ -64,10 +65,10 @@ def plotter(uid, station_list, station_info, args):
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output.T, levels = np.arange(0,24,2), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,20,1), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
-	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str), fontsize = 8)
+	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}, Best Depth: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str, best_depth), fontsize = 8)
 	plt.title("DX: {} deg, DZ: {} km\nMin Loc: {:.4f},{:.4f} (White Sq.) | EV Loc: {:.4f},{:.4f} (Black Star), EV Source: {}".format(args["DX"], args["DZ"], min_x, min_y, args["event_coords"][0], args["event_coords"][1], args["event_coord_format"]), fontsize = 6)
 
 	for station in station_list:

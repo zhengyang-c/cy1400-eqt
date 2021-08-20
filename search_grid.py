@@ -8,7 +8,7 @@ import os
 import netCDF4
 from plot_gridsearch import plotter
 import subprocess
-
+import math
 
 from organise_by_event import df_searcher
 
@@ -109,6 +109,7 @@ def parse_input(station_file_name,
 	write_xyz = False,
 	convert_grd = False,
 	DX = 0.01,
+	N_DX = 0,
 	DZ = 5,
 	ZRANGE = 41,
 	TT_DX = 0.01,
@@ -376,9 +377,9 @@ def search(pid, file_info, args):
 	args["event_coords"] = _event_coords
 	args["lb_corner"] = lb_corner
 
-	grid_length = int(np.ceil(max([max(_lats) - min(_lats), max(_lons) - min(_lons)])/DX) + 2 * extra_radius)
+	grid_length = round(np.ceil(max([max(_lats) - min(_lats), max(_lons) - min(_lons)])/DX) + 2 * extra_radius)
 
-	N_Z = int(Z_RANGE/DZ)
+	N_Z = round(Z_RANGE/DZ)
 
 	grid = np.zeros([grid_length, grid_length, N_Z, 4])
 
@@ -461,11 +462,11 @@ def search(pid, file_info, args):
 					# bin the distance and depth 
 					# bin distance only (?) i won't be touching depth
 					
-					tt_dist_indices = np.array([int(x) for x in delta_r[:, 0]/TT_DX])
+					tt_dist_indices = np.array([round(x) for x in delta_r[:, 0]/TT_DX])
 
 					tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
 
-					tt_dep_index = int((k * DZ)/TT_DZ)
+					tt_dep_index = round((k * DZ)/TT_DZ)
 					#print(tt_dep_index)
 
 					#print(max(delta_r[:,0]))
@@ -689,17 +690,22 @@ def convert_tt_file(input_file, output_file):
 	tt_table = np.zeros([301, 41, 2]) # hard coded and depends on size of array
 
 	with open(input_file, 'r') as f:
-		for line in f:
+		for c, line in enumerate(f):
+
 			_data = line.strip().split(" ")
 			_dist = float(_data[0])
 			_depth = float(_data[1])
 
-			_x_1 = int(_dist/0.01) # there will be one empty row (the very first one) which is inconsequential
+			_x_1 = round(_dist/0.01) # there will be one empty row (the very first one) which is inconsequential
 
-			_x_2 = int(_depth)
+			_x_2 = round(_depth)
+
+			
 
 			_P = float(_data[2])
 			_S = float(_data[3])
+
+			#print("dist index",_x_1, "_dist:",_dist, len(_data[0]))
 
 			tt_table[_x_1][_x_2][0] = _P
 			tt_table[_x_1][_x_2][1] = _S
@@ -737,6 +743,8 @@ if __name__ == "__main__":
 
 	parser.add_argument("-tt_dx", type = float)
 	parser.add_argument("-tt_dz", type = float)
+
+	parser.add_argument("-n_dx", type = float)
 
 
 	parser.add_argument("-dx", type = float)
@@ -781,6 +789,7 @@ if __name__ == "__main__":
 			TT_DZ = args.tt_dz,
 			DX = args.dx,
 			DZ = args.dz,
+			N_DX = args.n_dx,
 			ZRANGE = args.zrange,
 			load_only = args.load_only,
 			plot_mpl = args.plot_mpl,
