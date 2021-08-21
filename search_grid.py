@@ -16,6 +16,8 @@ from itertools import repeat
 
 import multiprocessing as mp
 
+from utils import parse_station_info, parse_event_coord
+
 # first generate travel time table
 # devise a scheme for easy lookup: dictionaries are expensive...
 # is it faster? it's like a 0.3MB textfile....
@@ -32,65 +34,6 @@ import multiprocessing as mp
 # interpolation? estimate local derivative? or just round
 # try both why not like just call a function
 
-
-def parse_station_info(input_file):
-	# 'reusing functions is bad practice' yes haha
-
-	station_info = {}
-
-	with open(input_file, 'r') as f:
-		for line in f:
-			#print(line)
-			try:
-				sta, lon, lat = [x for x in line.strip().split("\t") if x != ""]
-			except:
-				sta, lon, lat = [x for x in line.strip().split(" ") if x != ""] 
-			station_info[sta] = {"lon": float(lon), "lat": float(lat)}	
-	return station_info
-
-def parse_event_coord(file_name, _format):
-
-	event_info = {}
-
-	# uid : {"lon", "lat", "depth"}
-
-	if _format == "real_hypophase":
-	
-		with open(file_name, 'r') as f:
-			for line in f:
-				line = [x for x in line.strip().split(" ") if x != ""]
-
-				if line[0] == "#":
-					#print(line)
-
-					_lon = float(line[8])
-					_lat = float(line[7])
-					_depth = float(line[9])
-					_id = (line[-1])
-
-					event_info[_id] = {
-					"lat": _lat,
-					"lon": _lon,
-					"dep": _depth
-					}
-
-	elif _format == "hypoDD_loc": # any .loc or .reloc file
-		with open(file_name, 'r') as f:
-			for line in f:
-				line = [x for x in line.strip().split(" ") if x != ""]
-
-				_id = str(line[0]).zfill(6)
-
-				event_info[_id] = {
-				"lat":float(line[1]),
-				"lon":float(line[2]),
-				"dep":float(line[3])
-				}
-
-	else:
-		raise ValueError("Format {} not supported, please consult the wiki".format(_format))
-
-	return event_info
 
 def load_travel_time(input_file):
 
