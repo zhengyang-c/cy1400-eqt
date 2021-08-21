@@ -190,6 +190,30 @@ def parse_event_coord(file_name, _format):
 				"dep":float(line[3])
 				}
 
+	elif _format == "event_csv":
+		df = pd.read_csv(file_name)
+
+		for index, row in df.iterrows():
+			for _i in ["ID", "id", "cat_index"]:
+				if _i in df.columns:
+					_id = row[_id]
+					break
+			for _i in ["lat", "LAT", "event_lat", "ev_lat"]:
+				if _i in df.columns:
+					event_info[_id]["lat"] = row[_i]
+					break
+
+			for _i in ["lon", "LON", "event_lon", "ev_lon"]:
+				if _i in df.columns:
+					event_info[_id]["lon"] = row[_i]
+					break
+
+			for _i in ["DEPTH", "depth", "dep", "DEP", "event_depth", "event_dep"]:
+				if _i in df.columns:
+					event_info[_id]["dep"] = row[_i]
+					break
+
+
 	else:
 		raise ValueError("Format {} not supported, please consult the wiki".format(_format))
 
