@@ -135,6 +135,36 @@ def load_with_path_and_grade(csv_file, source_folder):
 
 	return new_df
 
+def parse_xy_lines(input_file):
+
+	all_lines = []
+
+	b_c = 0 # bracket counter
+
+	_line = []
+
+	with open(input_file, 'r') as f:
+		for line in f:
+			if ">" in line.strip():
+				b_c += 1
+
+				if len(_line) > 0:
+					all_lines.append(_line)
+
+				_line = []	
+
+				continue
+			if b_c % 2:
+				#print(line.strip().split(" "))
+				try:
+					_lon, _lat = line.strip().split(" ")
+				except:
+					_lon, _lat = line.strip().split("\t")
+				_line.append((float(_lon), float(_lat)))
+
+	return all_lines
+
+
 
 def parse_station_info(input_file):
 	# 'reusing functions is bad practice' yes haha
@@ -196,7 +226,8 @@ def parse_event_coord(file_name, _format):
 		for index, row in df.iterrows():
 			for _i in ["ID", "id", "cat_index"]:
 				if _i in df.columns:
-					_id = row[_id]
+					_id = str(int(row[_i])).zfill(6)
+					event_info[_id] = {}
 					break
 			for _i in ["lat", "LAT", "event_lat", "ev_lat"]:
 				if _i in df.columns:
