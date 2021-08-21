@@ -368,7 +368,7 @@ def search(pid, args):
 		# left bottom corner (x ,y) == (lon, lat)
 		# 
 		lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
-		grid_length = round(np.ceil(_max_length/DX) + 2 * extra_radius)
+		grid_length = int(round(np.ceil(_max_length/DX) + 2 * extra_radius))
 
 	else:
 
@@ -378,12 +378,12 @@ def search(pid, args):
 		args["DX"] = DX 
 
 		lb_corner = (min(_lons) - _max_length*0.1, min(_lats) - _max_length*0.1)
-		grid_length = round(np.ceil(_max_length * 1.2/DX))
+		grid_length = int(round(np.ceil(_max_length * 1.2/DX)))
 
 
 	args["lb_corner"] = lb_corner
 
-	N_Z = round(Z_RANGE/DZ)
+	N_Z = int(round(Z_RANGE/DZ))
 
 	grid = np.zeros([grid_length, grid_length, N_Z, 4])
 
@@ -466,11 +466,11 @@ def search(pid, args):
 					# bin the distance and depth 
 					# bin distance only (?) i won't be touching depth
 					
-					tt_dist_indices = np.array([round(x) for x in delta_r[:, 0]/TT_DX])
+					tt_dist_indices = np.array([int(round(x)) for x in delta_r[:, 0]/TT_DX])
 
 					tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
 
-					tt_dep_index = round((k * DZ)/TT_DZ)
+					tt_dep_index = int(round((k * DZ)/TT_DZ))
 					#print(tt_dep_index)
 
 					#print(max(delta_r[:,0]))
@@ -700,7 +700,7 @@ def convert_tt_file(input_file, output_file):
 			_dist = float(_data[0])
 			_depth = float(_data[1])
 
-			_x_1 = round(_dist/0.01) # there will be one empty row (the very first one) which is inconsequential
+			_x_1 = int(round(_dist/0.01)) # there will be one empty row (the very first one) which is inconsequential
 
 			_x_2 = round(_depth)
 
