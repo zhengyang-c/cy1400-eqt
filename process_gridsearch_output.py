@@ -30,7 +30,7 @@ def main():
 
 	df = pd.DataFrame()
 
-	for c, p in enumerate(Path(search_folder).rglob(search_term))
+	for c, p in enumerate(Path(search_folder).rglob(search_term)):
 		file_name = str(p)
 
 		pid = file_name.split("_")[0]
