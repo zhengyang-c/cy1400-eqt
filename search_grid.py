@@ -52,7 +52,6 @@ def parse_input(station_file_name,
 	event_csv = "",
 	event_id = 0, 
 	dry_run = False, 
-	save_numpy = False,
 	write_xyz = False,
 	convert_grd = False,
 	DX = 0.01,
@@ -66,7 +65,9 @@ def parse_input(station_file_name,
 	show_mpl = False,
 	force = False,
 	eqt_csv = "",
-	extra_radius = 2):
+	extra_radius = 2,
+	extra_range = 1.2,
+	append_text = ""):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -81,10 +82,13 @@ def parse_input(station_file_name,
 	args["event_csv"] = event_csv
 	args["event_id"] = event_id
 	args["dry_run"] = dry_run
-	args["save_numpy"] = save_numpy
+	#args["save_numpy"] = save_numpy
 	args["write_xyz"] = write_xyz
 	args["output_folder"] = output_folder
+
 	args["extra_radius"] = extra_radius
+	args["extra_range"] = extra_range
+	args["append_text"] = append_text
 
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
@@ -94,7 +98,7 @@ def parse_input(station_file_name,
 
 	if show_mpl:
 		args["plot_mpl"] = True
-		args["save_numpy"] = True
+		#args["save_numpy"] = True
 
 	args["force"] = force
 
@@ -317,11 +321,15 @@ def search(pid, args):
 
 		# how to decide extra padding? just take the max dist and add like 10% on each side
 
-		DX = _max_length / args["N_DX"]
-		args["DX"] = DX 
+		padding_range = (args["extra_range"] - 1)/2
 
-		lb_corner = (min(_lons) - _max_length*0.1, min(_lats) - _max_length*0.1)
-		grid_length = int(round(np.ceil(_max_length * 1.2/DX)))
+		lb_corner = (min(_lons) - _max_length*padding_range, min(_lats) - _max_length*padding_range)
+		max_grid_length = _max_length * args["extra_range"]
+
+		DX = max_grid_length / args["N_DX"]
+
+		grid_length = int(round(math.ceil(max_grid_length/DX)))
+		args["DX"] = DX 
 
 
 	args["lb_corner"] = lb_corner
@@ -348,6 +356,10 @@ def search(pid, args):
 	output_folder = os.path.join(args["output_folder"], pid)
 
 	base_filename = "{}_DX{:.3g}_DZ{:.3g}".format(pid, DX, DZ)
+
+	if args["append_text"]:
+		base_filename += "_{}".format(args["append_text"])
+
 	npy_filename = os.path.join(output_folder, base_filename + ".npy")
 	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
@@ -434,9 +446,10 @@ def search(pid, args):
 
 						if _i + 1 > TT_NX:
 							_indices = np.array([_i - 1, _i])
-						if _i - 1 < 0:
+						elif _i - 1 < 0:
 							_indices = np.array([_i, _i + 1])
-						_indices = np.array([_i - 1, _i, _i + 1]) 
+						else:
+							_indices = np.array([_i - 1, _i, _i + 1]) 
 
 						if phase_list[_c] == "P":
 							_Y = [tt[_x][tt_dep_index][0] for _x in _indices]
@@ -539,7 +552,7 @@ def search(pid, args):
 			grid = np.load(f)
 
 	else:
-		if (args["force"] or not os.path.exists(npy_filename)) or args["save_numpy"]:
+		if (args["force"] or not os.path.exists(npy_filename)):
 			print("Saving .npy to: ", npy_filename)
 			with open(npy_filename, 'wb') as f:
 				np.save(f, grid)
@@ -697,7 +710,7 @@ if __name__ == "__main__":
 	parser.add_argument("-dx", type = float)
 	parser.add_argument("-dz", type = float)
 
-	parser.add_argument("-save_numpy", action = "store_true")
+	#parser.add_argument("-save_numpy", action = "store_true")
 	parser.add_argument("-write_xyz", action = "store_true")
 	parser.add_argument("-convert_grd", action = "store_true")
 
@@ -706,6 +719,8 @@ if __name__ == "__main__":
 	parser.add_argument("-show_mpl", action = "store_true")
 
 	parser.add_argument("-extra_radius", type = int, default = 2)
+	parser.add_argument("-extra_range", type = float, default = 1.2)
+	parser.add_argument("-append_text", type = str, default = "")
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
 
@@ -729,7 +744,6 @@ if __name__ == "__main__":
 			event_csv = args.event_csv, 
 			event_id = args.event_id, 
 			dry_run = args.dry,
-			save_numpy = args.save_numpy,
 			write_xyz = args.write_xyz,
 			convert_grd = args.convert_grd,
 			TT_DX = args.tt_dx,
@@ -743,7 +757,9 @@ if __name__ == "__main__":
 			show_mpl = args.show_mpl,
 			force = args.force,
 			eqt_csv = args.eqt_csv,
-			extra_radius = args.extra_radius
+			extra_radius = args.extra_radius,
+			extra_range = args.extra_range,
+			append_text = args.append_text,
 			)
 
 

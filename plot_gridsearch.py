@@ -12,6 +12,8 @@ def load_numpy_file(file_name):
 		with open(file_name, "rb") as f:
 			grid = np.load(f)
 
+		print("Loading numpy file: {}".format(file_name))
+
 		return grid
 	except:
 
@@ -23,13 +25,13 @@ def plotter(uid, station_list, station_info, args):
 	grid = load_numpy_file(args["npy_filename"])
 	L2 = grid[:,:,:,0] # 0: get the standard deviation
 
+	print(grid)
+
 	indices = np.where(L2 == L2.min())
 
-	print(grid.shape)
+	#print(grid.shape)
 
-	print(indices)
-
-
+	#print(indices)
 
 	lb_corner = args["lb_corner"]
 
@@ -65,7 +67,7 @@ def plotter(uid, station_list, station_info, args):
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output.T, levels = np.arange(0,20,1), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,2,0.01), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
 	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}, Best Depth: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str, best_depth), fontsize = 8)
