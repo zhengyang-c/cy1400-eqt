@@ -67,7 +67,8 @@ def parse_input(station_file_name,
 	eqt_csv = "",
 	extra_radius = 2,
 	extra_range = 1.2,
-	append_text = ""):
+	append_text = "",
+	print_metadata = False,):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -93,6 +94,8 @@ def parse_input(station_file_name,
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
 	args["show_mpl"] = show_mpl	
+
+	args["print_metadata"] = print_metadata
 
 	args["eqt_csv"] = eqt_csv
 
@@ -339,19 +342,27 @@ def search(pid, args):
 	grid = np.zeros([grid_length, grid_length, N_Z, 4])
 
 	print("dry_run:",args["dry_run"])
+	metadata = {
+		"corner_x": lb_corner[0],
+		"corner_y": lb_corner[1],
+		"DX": DX,
+		"DZ": DZ,
+		"ID:": pid,
+	}
+	# if args["print_metadata"]:
 
-	if args["dry_run"]:
 
-		#xyz_writer(lb_corner, DX, DZ)
-		#plotter(grid, lb_corner, DX, DZ, station_list, station_info, _event_coords, pid)
-		#netcdf_writer(lb_corner, DX, DZ)
-		print(lb_corner, DX, DZ)
-		#return (lb_corner, DX, DZ)
-		#
+
+	# 	#xyz_writer(lb_corner, DX, DZ)
+	# 	#plotter(grid, lb_corner, DX, DZ, station_list, station_info, _event_coords, pid)
+	# 	#netcdf_writer(lb_corner, DX, DZ)
+	# 	print(lb_corner, DX, DZ)
+	# 	#return (lb_corner, DX, DZ)
+	# 	#
 		
-		return 0
-	else:
-		pass
+	# 	return 0
+	# else:
+	# 	pass
 
 	output_folder = os.path.join(args["output_folder"], pid)
 
@@ -364,6 +375,8 @@ def search(pid, args):
 	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
 
+	json_filename = os.path.join(output_folder, base_filename + ".json")
+
 	#args["output_folder"] = output_folder
 	args["base_filename"] = base_filename
 	args["npy_filename"] = npy_filename
@@ -375,9 +388,11 @@ def search(pid, args):
 	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
 	print("already created: ", already_created)
 
+	if args["print_metadata"]:
+		with open(json_filename, 'w') as f:
+			f.write(json.dumps(metadata, indent = 4))
+		return 0
 
-	if args["load_only"]:
-		pass
 		
 	elif args["force"] or (not already_created):
 		
@@ -711,6 +726,8 @@ if __name__ == "__main__":
 	parser.add_argument("-dz", type = float)
 
 	#parser.add_argument("-save_numpy", action = "store_true")
+
+	parser.add_argument("-p", "--print_metadata", action = "store_true")
 	parser.add_argument("-write_xyz", action = "store_true")
 	parser.add_argument("-convert_grd", action = "store_true")
 
@@ -760,6 +777,7 @@ if __name__ == "__main__":
 			extra_radius = args.extra_radius,
 			extra_range = args.extra_range,
 			append_text = args.append_text,
+			print_metadata = args.print_metadata,
 			)
 
 

@@ -67,7 +67,7 @@ def plotter(uid, station_list, station_info, args):
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output.T, levels = np.arange(0,2,0.01), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,2,0.1), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
 	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}, Best Depth: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str, best_depth), fontsize = 8)
