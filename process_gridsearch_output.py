@@ -46,8 +46,8 @@ def main():
 		L2 = grid[:,:,:,0] # 0: get the standard deviation
 		indices = np.where(L2 == L2.min())
 
-		min_x = lb_corner[0] + indices[0][0] * args["DX"]
-		min_y = lb_corner[1] + indices[1][0] * args["DX"]
+		#min_x = lb_corner[0] + indices[0][0] * args["DX"]
+		#min_y = lb_corner[1] + indices[1][0] * args["DX"]
 
 		min_std = L2[indices[0][0], indices[1][0], indices[2][0]]
 
