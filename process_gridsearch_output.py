@@ -33,8 +33,6 @@ def main():
 	for c, p in enumerate(Path(search_folder).rglob(search_term)):
 		file_name = str(p)
 
-		print(file_name)
-
 		pid = file_name.split("_")[0]
 
 		with open(file_name, 'rb') as f:
@@ -42,6 +40,8 @@ def main():
 				grid = np.load(f)
 			except:
 				print(file_name)
+				continue
+
 
 		L2 = grid[:,:,:,0] # 0: get the standard deviation
 		indices = np.where(L2 == L2.min())
