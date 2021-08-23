@@ -33,7 +33,9 @@ def main():
 	for c, p in enumerate(Path(search_folder).rglob(search_term)):
 		file_name = str(p)
 
-		pid = file_name.split("_")[0]
+		back_name = file_name.split("/")[-1]
+
+		pid = back_name.split("_")[0]
 
 		with open(file_name, 'rb') as f:
 			try:
@@ -53,8 +55,8 @@ def main():
 
 		df.at[c, 'min_std'] = min_std
 		df.at[c, 'ID'] = pid
-		df.at[c, 'DX'] = file_name.split("_")[1][2:]
-		df.at[c, 'DZ'] = file_name.split("_")[2][2:]
+		df.at[c, 'DX'] = back_name.split("_")[1][2:]
+		df.at[c, 'DZ'] = back_name.split("_")[2][2:]
 
 	df.to_csv("log/23aug_5julafterREAL_gridsearch.csv",index = False)
 
