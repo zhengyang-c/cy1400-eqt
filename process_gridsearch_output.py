@@ -57,6 +57,9 @@ def main():
 		df.at[c, 'ID'] = pid
 		df.at[c, 'DX'] = back_name.split("_")[1][2:]
 		df.at[c, 'DZ'] = back_name.split("_")[2][2:]
+		df.at[c, 'x_min'] = L2[indices[0][0]
+		df.at[c, 'y_min'] = L2[indices[1][0]
+		df.at[c, 'z_min'] = L2[indices[2][0]
 
 	df.to_csv("log/23aug_5julafterREAL_gridsearch.csv",index = False)
 

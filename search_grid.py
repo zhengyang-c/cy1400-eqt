@@ -388,10 +388,11 @@ def search(pid, args):
 	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
 	print("already created: ", already_created)
 
-	if args["print_metadata"]:
-		with open(json_filename, 'w') as f:
-			f.write(json.dumps(metadata, indent = 4))
-		return 0
+	
+	with open(json_filename, 'w') as f:
+		f.write(json.dumps(metadata, indent = 4))
+		if args["print_metadata"]:
+			return 0
 
 		
 	elif args["force"] or (not already_created):
