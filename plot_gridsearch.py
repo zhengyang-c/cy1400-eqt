@@ -20,6 +20,11 @@ def load_numpy_file(file_name):
 		raise ValueError(".npy file does not exist yet, please run search_grid first")
 
 
+
+# TODO: rewrite plotter s.t. it will plot the confidence intervals for some range / or also show the contours
+# 3 plots viewing from 3 diff axes i guess
+# also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
+
 def plotter(uid, station_list, station_info, args):
 
 	grid = load_numpy_file(args["npy_filename"])

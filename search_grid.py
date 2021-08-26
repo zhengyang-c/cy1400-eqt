@@ -18,6 +18,12 @@ import multiprocessing as mp
 
 from utils import parse_station_info, parse_event_coord
 
+# https://stackoverflow.com/questions/13670333/multiple-variables-in-scipys-optimize-minimize
+import scipy.optimize as optimize
+
+from util_gridsearch import arbitrary_search
+
+
 # first generate travel time table
 # devise a scheme for easy lookup: dictionaries are expensive...
 # is it faster? it's like a 0.3MB textfile....
@@ -54,8 +60,7 @@ def parse_input(station_file_name,
 	dry_run = False, 
 	write_xyz = False,
 	convert_grd = False,
-	DX = 0.01,
-	N_DX = 0,
+	N_DX = 20,
 	DZ = 5,
 	ZRANGE = 41,
 	TT_DX = 0.01,
@@ -106,7 +111,6 @@ def parse_input(station_file_name,
 	args["force"] = force
 
 	args["convert_grd"] = convert_grd
-	args["DX"] = DX
 	args["DZ"] = DZ
 	args["ZRANGE"] = ZRANGE
 
@@ -178,10 +182,6 @@ def load_eqt_csv(eqt_csv):
 	df["s_arrival_time"] = pd.to_datetime(df["s_arrival_time"])
 
 	return df
-
-def filter_eqt_phases():
-
-	pass
 
 
 def search(pid, args):
@@ -283,7 +283,10 @@ def search(pid, args):
 
 	# get bounding box first
 
-
+	# set initial seed as the bounding boxes of the region
+	# i.e.
+	# LON 94 - 97
+	# LAT 3 -6 
 
 	_lats = [station_info[x]["lat"] for x in station_list]
 	_lons = [station_info[x]["lon"] for x in station_list]
@@ -308,65 +311,47 @@ def search(pid, args):
 	args["event_coords"] = _event_coords
 
 
-	if not args["N_DX"]: # default for N_DX is 0
+	# if not args["N_DX"]: # default for N_DX is 0
 
-		DX = args["DX"] # degrees
-		# length of travel time arrays, used for interpolation
-		# just pad some extra area
-		# just make it a square that captures everything 
-		# each grid coordinates represents a centre point 
-		# left bottom corner (x ,y) == (lon, lat)
-		# 
-		lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
-		grid_length = int(round(np.ceil(_max_length/DX) + 2 * extra_radius))
+	# 	DX = args["DX"] # degrees
+	# 	# length of travel time arrays, used for interpolation
+	# 	# just pad some extra area
+	# 	# just make it a square that captures everything 
+	# 	# each grid coordinates represents a centre point 
+	# 	# left bottom corner (x ,y) == (lon, lat)
+	# 	# 
+	# 	lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
+	# 	grid_length = int(round(np.ceil(_max_length/DX) + 2 * extra_radius))
 
-	else:
+	# else:
 
-		# how to decide extra padding? just take the max dist and add like 10% on each side
+	# 	# how to decide extra padding? just take the max dist and add like 10% on each side
 
-		padding_range = (args["extra_range"] - 1)/2
+	# 	padding_range = (args["extra_range"] - 1)/2
 
-		lb_corner = (min(_lons) - _max_length*padding_range, min(_lats) - _max_length*padding_range)
-		max_grid_length = _max_length * args["extra_range"]
+	# 	lb_corner = (min(_lons) - _max_length*padding_range, min(_lats) - _max_length*padding_range)
+	# 	max_grid_length = _max_length * args["extra_range"]
 
-		DX = max_grid_length / args["N_DX"]
+	# 	DX = max_grid_length / args["N_DX"]
 
-		grid_length = int(round(math.ceil(max_grid_length/DX)))
-		args["DX"] = DX 
+	# 	grid_length = int(round(math.ceil(max_grid_length/DX)))
+	# 	args["DX"] = DX 
 
 
-	args["lb_corner"] = lb_corner
+	#args["lb_corner"] = lb_corner
+	#args["grid_length"] = grid_length
 
 	N_Z = int(round(Z_RANGE/DZ))
 
-	grid = np.zeros([grid_length, grid_length, N_Z, 4])
+	args["N_Z"] = N_Z
 
 	print("dry_run:",args["dry_run"])
-	metadata = {
-		"corner_x": lb_corner[0],
-		"corner_y": lb_corner[1],
-		"DX": DX,
-		"DZ": DZ,
-		"ID:": pid,
-	}
-	# if args["print_metadata"]:
 
-
-
-	# 	#xyz_writer(lb_corner, DX, DZ)
-	# 	#plotter(grid, lb_corner, DX, DZ, station_list, station_info, _event_coords, pid)
-	# 	#netcdf_writer(lb_corner, DX, DZ)
-	# 	print(lb_corner, DX, DZ)
-	# 	#return (lb_corner, DX, DZ)
-	# 	#
-		
-	# 	return 0
-	# else:
-	# 	pass
+	# metadata is for json saving
 
 	output_folder = os.path.join(args["output_folder"], pid)
 
-	base_filename = "{}_DX{:.3g}_DZ{:.3g}".format(pid, DX, DZ)
+	base_filename = "{}_DZ{:.3g}".format(pid, DZ)
 
 	if args["append_text"]:
 		base_filename += "_{}".format(args["append_text"])
@@ -389,168 +374,30 @@ def search(pid, args):
 	print("already created: ", already_created)
 
 	
-	with open(json_filename, 'w') as f:
-		f.write(json.dumps(metadata, indent = 4))
-		if args["print_metadata"]:
-			return 0
+	# with open(json_filename, 'w') as f:
+	# 	f.write(json.dumps(metadata, indent = 4))
+	# 	if args["print_metadata"]:
+	# 		return 0
 
 		
-	elif args["force"] or (not already_created):
+	seed_lb_corner = (94.5, 3.5)
+	seed_grid_length = 2
+	if args["force"] or (not already_created):
+		#grid = simple_search(args, phase_info, station_info, tt)
 		
-		for i in range(grid_length): # lon
-			for j in range(grid_length): # lat
-				for k in range(N_Z): # depth
+		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
-					cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], k * DZ]
+		target_lb = (grid_output["min_x"] - 0.1, grid_output["min_y"] - 0.1)
+		target_grid_length = 0.2
 
-					delta_r = [] # distance and depth pairs
-					phase_list = []
-					#obs_tt = []
+		ref_lambda = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True)
 
-					arrivals = [] # origin times
-					# this only uses phases chosen by REAL association
-					for station in phase_info:
+		ref_tau = ref_lambda - ref_lambda[args["N_DX"]//2, args["N_DX"] // 2]
 
-						for phase in ["P", "S"]:
-							if phase not in phase_info[station]:
-								continue
+		mc_args = {"sigma_ml": grid_output["sigma_ml"], "ref_tau" : ref_tau, "min_z": grid_output["min_z"] }
 
-							_dep = k * DZ # stations assumed to be at 0 km elevation
+		arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True, mc_args = mc_args, N_monte_carlo = 20, do_mc = True)
 
-							_dist = dx([station_info[station]["lon"], station_info[station]["lat"]], cell_coords[:2])
-
-							_row = [_dist, _dep]
-
-							phase_list.append(phase)
-							delta_r.append(_row)
-							#obs_tt.append(float(phase_info[station][phase]))
-							if phase == "P":
-								arrivals.append(phase_info[station]["station_P"])
-							elif phase == "S":
-								arrivals.append(phase_info[station]["station_S"])
-
-							#print(_row)
-
-					delta_r = np.array(delta_r)
-					#obs_tt = np.array(obs_tt)
-
-					# bin the distance and depth 
-					# bin distance only (?) i won't be touching depth
-					
-					tt_dist_indices = np.array([int(round(x)) for x in delta_r[:, 0]/TT_DX])
-
-					tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
-
-					tt_dep_index = int(round((k * DZ)/TT_DZ))
-					#print(tt_dep_index)
-
-					#print(max(delta_r[:,0]))
-
-					#print(tt_dist_indices)
-					#print(tt_dist_deltas)
-					#
-					
-					tt_cell = []
-					
-					tt_dist_gradients = []
-
-
-					# do an interpolation operation by taking the nearby indices
-					# and estimating gradient
-
-					for _c, _i in enumerate(tt_dist_indices): #_i are for travel time table indices
-
-						if _i + 1 > TT_NX:
-							_indices = np.array([_i - 1, _i])
-						elif _i - 1 < 0:
-							_indices = np.array([_i, _i + 1])
-						else:
-							_indices = np.array([_i - 1, _i, _i + 1]) 
-
-						if phase_list[_c] == "P":
-							_Y = [tt[_x][tt_dep_index][0] for _x in _indices]
-							tt_cell.append(tt[_i][tt_dep_index][0])
-
-						elif phase_list[_c] == "S":
-							_Y = [tt[_x][tt_dep_index][1] for _x in _indices]
-
-							tt_cell.append(tt[_i][tt_dep_index][1])
-
-						tt_dist_gradients.append(ip((_indices) * TT_DX, _Y))
-
-					tt_dist_gradients = np.array(tt_dist_gradients)
-					tt_cell = np.array(tt_cell)
-
-					# add the correction from the table terms using interpolation method
-
-					tt_cell += tt_dist_gradients * tt_dist_deltas
-
-					# with the travel times, find the set of origin times
-
-					assert len(phase_list) == len(arrivals) == len(tt_cell)
-
-					guess_ot = []
-
-					for _c in range(len(arrivals)):
-						guess_ot.append(arrivals[_c] - datetime.timedelta(seconds = tt_cell[_c]))
-
-					# normalise the origin times and find the std 
-
-					min_origin_time = min(guess_ot)
-					for _c in range(len(guess_ot)):
-						guess_ot[_c] = (guess_ot[_c] - min_origin_time).total_seconds()
-
-					mean_time = np.mean(guess_ot)
-					std_time = np.std(guess_ot)
-					#ref_str = datetime.datetime.strftime(min_origin_time, "%Y%m%d-%H%M%S.%f")
-
-					grid[i][j][k][0] = std_time
-					grid[i][j][k][1] = mean_time
-					grid[i][j][k][2] = min_origin_time.timestamp()
-					# save the mean and std origin time in the grid
-					# saving the datetime object sounds like a bad idea
-					# so just convert the reference time to a string?
-					# so it'll be
-					# 
-					# std
-					# mean delta
-					# min_time reference as string
-					# 
-					# then i can look up the cell, and reobtain the mean time
-					# 
-					
-
-
-
-
-
-					"""
-					following code was done assuming the truth of REAL travel times, which
-					may not always be the case
-					they are left here for reference
-					"""
-
-					# # calculate L2 and L1 errors
-
-					# sq_residuals = (tt_cell - obs_tt)**2
-					# abs_residuals = np.sqrt(sq_residuals)
-
-					# # keep standard dev in array because idk that could be useful? 
-
-					# volume = (grid_length * DX)**2 * (Z_RANGE)
-
-					# sq_residuals /= volume
-					# abs_residuals /= volume
-
-					# L2 = np.sum(sq_residuals)
-					# L2_std = np.std(sq_residuals)
-					# L1 = np.sum(abs_residuals)
-					# L1_std = np.std(abs_residuals)
-
-					# grid[i][j][k][0] = L2
-					# grid[i][j][k][1] = L2_std
-					# grid[i][j][k][2] = L1
-					# grid[i][j][k][3] = L1_std
 
 
 
@@ -563,40 +410,40 @@ def search(pid, args):
 	#print(grid)
 
 
-	if args["load_only"]:
-		with open(npy_filename, 'rb') as f:
-			grid = np.load(f)
+	# if args["load_only"]:
+	# 	with open(npy_filename, 'rb') as f:
+	# 		grid = np.load(f)
 
-	else:
-		if (args["force"] or not os.path.exists(npy_filename)):
-			print("Saving .npy to: ", npy_filename)
-			with open(npy_filename, 'wb') as f:
-				np.save(f, grid)
+	# else:
+	# 	if (args["force"] or not os.path.exists(npy_filename)):
+	# 		print("Saving .npy to: ", npy_filename)
+	# 		with open(npy_filename, 'wb') as f:
+	# 			np.save(f, grid)
 
-	if args["write_xyz"]:
-		xyz_writer(grid, lb_corner, DX, DZ, 0, output_folder = output_folder, filename = base_filename)
+	# if args["write_xyz"]:
+	# 	xyz_writer(grid, lb_corner, DX, DZ, 0, output_folder = output_folder, filename = base_filename)
 		
 
-	if args["convert_grd"]:
-		# gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
+	# if args["convert_grd"]:
+	# 	# gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
 
-		# just generate the script and run it lol
-		# but gmt isn't installed / conda has to be active
-		# should i just activate conda
+	# 	# just generate the script and run it lol
+	# 	# but gmt isn't installed / conda has to be active
+	# 	# should i just activate conda
 
-		output_str = "gmt xyz2grd {} -G{} -I{:.3g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
-			xyz_filename,
-			grd_filename,
-			DX,
-			lb_corner[0],
-			lb_corner[0] + grid_length * DX,
-			lb_corner[1],			
-			lb_corner[1] + grid_length * DX,
-			)
-		p = subprocess.Popen(output_str, shell = True)
+	# 	output_str = "gmt xyz2grd {} -G{} -I{:.3g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+	# 		xyz_filename,
+	# 		grd_filename,
+	# 		DX,
+	# 		lb_corner[0],
+	# 		lb_corner[0] + grid_length * DX,
+	# 		lb_corner[1],			
+	# 		lb_corner[1] + grid_length * DX,
+	# 		)
+	# 	p = subprocess.Popen(output_str, shell = True)
 
-	if args["plot_mpl"]:
-		plotter(pid, station_list, station_info, args)
+	# if args["plot_mpl"]:
+	# 	plotter(pid, station_list, station_info, args)
 
 	
 		#gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
@@ -638,21 +485,8 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, output_folder = "", filename 
 
 
 
-
-def ip(X, Y):
-	if len(X) == 3:
-
-		# arithmetic average of in between gradients to approximate gradient at midpoint
-
-		return 0.5 * ((Y[2] - Y[1])/(X[2] - X[1]) + (Y[1] - Y[0])/(X[1] - X[0]))
-
-	if len(X) == 2:
-
-		return (Y[1] - Y[0])/(X[1] - X[0])
-
 # find the euclidean distance, taken to approximate the great circle distance for small distances
-def dx(X1, X2):
-	return np.sqrt((X1[0] - X2[0])**2 + (X1[1] - X2[1])**2)
+
 
 
 def convert_tt_file(input_file, output_file):
@@ -720,10 +554,8 @@ if __name__ == "__main__":
 	parser.add_argument("-tt_dx", type = float)
 	parser.add_argument("-tt_dz", type = float)
 
-	parser.add_argument("-n_dx", type = float)
+	parser.add_argument("-n_dx", type = int, default = 20)
 
-
-	parser.add_argument("-dx", type = float)
 	parser.add_argument("-dz", type = float)
 
 	#parser.add_argument("-save_numpy", action = "store_true")
@@ -766,7 +598,6 @@ if __name__ == "__main__":
 			convert_grd = args.convert_grd,
 			TT_DX = args.tt_dx,
 			TT_DZ = args.tt_dz,
-			DX = args.dx,
 			DZ = args.dz,
 			N_DX = args.n_dx,
 			ZRANGE = args.zrange,
