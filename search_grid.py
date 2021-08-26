@@ -396,7 +396,7 @@ def search(pid, args):
 
 		mc_args = {"sigma_ml": grid_output["sigma_ml"], "ref_tau" : ref_tau, "min_z": grid_output["min_z"] }
 
-		arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True, mc_args = mc_args, N_monte_carlo = 20, do_mc = True)
+		arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True, mc_args = mc_args, N_monte_carlo = 300, do_mc = True)
 
 
 
