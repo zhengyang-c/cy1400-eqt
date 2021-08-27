@@ -175,14 +175,16 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 			# locate mc origin
 			_mc_indices = np.where(grid == grid.min())
 
-			_mc_tau = lambdas -  lambdas[_mc_indices[0][0], _mc_indices[1][0],_mc_indices[2][0]]
+			#_mc_tau = lambdas -  lambdas[_mc_indices[0][0], _mc_indices[1][0],_mc_indices[2][0]]
 
-			mc_mask += (_mc_tau < mc_args["ref_tau"]).astype('int')
+			#mc_mask += (_mc_tau < mc_args["ref_tau"]).astype('int')
+
+			mc_mask[_mc_indices[0][0], _mc_indices[1][0],_mc_indices[2][0]] += 1
 
 
 	# found_coordinates
 	if not do_mc:
-		print(grid)
+		#print(grid)
 
 		L2 = grid[:,:,:,0] # 0: get the standard deviation
 
@@ -249,7 +251,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		# plt.colorbar()
 		# plt.show()
 
-		with open("gridsearch/test_mask.npy", "wb") as f:
+		with open("gridsearch/test_stdmask.npy", "wb") as f:
 			np.save(f, mc_mask)
 
 		return mc_mask
