@@ -51,8 +51,9 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 	"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
 	"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
 	"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
+	"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 	"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
-	"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\"+s\"Best misfit (L2): {:.3g}\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"], grid_output["sigma_ml"]),
+	"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"]),
 	"gmt psconvert $PSFILE -Tf -A+m1c",
 	"rm temp.cpt",
 	]

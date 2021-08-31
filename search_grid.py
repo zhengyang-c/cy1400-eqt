@@ -17,16 +17,12 @@ import subprocess
 import math
 
 from organise_by_event import df_searcher
-
 from itertools import repeat
-
 import multiprocessing as mp
-
 from utils import parse_station_info, parse_event_coord
 
 # https://stackoverflow.com/questions/13670333/multiple-variables-in-scipys-optimize-minimize
 import scipy.optimize as optimize
-
 from util_gridsearch import arbitrary_search
 
 
@@ -429,7 +425,7 @@ def search(pid, args):
 	else:
 		_grid = plot_grid[0]
 
-	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename)
+	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename, pers = "map")
 
 	output_str = "gmt xyz2grd {} -G{} -I{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
 		xyz_filename,
@@ -485,16 +481,25 @@ def search(pid, args):
 	# use the table to do a interpolation to get the estimated travel time (not that i think it'll help)
 	# compute the squared difference and save it somewhere (inside the grid?)
 
-def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = ""):
+def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = "", pers = "map"):
+
+	# pers = map, londep, latdep
+
 
 	L2 = grid[:,:,:,index]
 
 	indices = np.where(L2 == L2.min())
 
-	N_X, N_Y, N_Z = grid.shape[:3]
+	#N_X, N_Y, N_Z = grid.shape[:3]
 	
+	if pers == "map":
+		output = L2[:,:,indices[2][0]]
+	elif pers == "londep":
+		output = L2[:, indices[1][0], :]
+	elif pers == "latdep":
+		output = L2[indices[0][0], :, :]
 
-	output = L2[:,:,indices[2][0]]
+	N_X, N_Y = output.shape
 
 	with open(filename, "w") as f:
 		for i in range(N_X):
