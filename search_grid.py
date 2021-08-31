@@ -604,7 +604,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("-p", "--print_metadata", action = "store_true")
 
-	parser.add_argument("-m", "--map_type", type = str)
+	parser.add_argument("-m", "--map_type", type = str, default = "map")
 
 	parser.add_argument("-load_only", action = "store_true")
 	parser.add_argument("-plot_mpl", action = "store_true")
