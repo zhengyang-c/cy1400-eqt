@@ -5,8 +5,14 @@ import matplotlib.pyplot as plt
 import argparse
 import datetime
 import os
-import netCDF4
-from plot_gridsearch import plotter
+
+
+#gpsdist: two distance between two geographic points
+# locations2degrees: no. of degrees between two points on a spherical earth
+# degrees to kilometers (i think this is like multiplying with factor of)
+
+
+from plot_gridsearch import plotter, gmt_plotter
 import subprocess
 import math
 
@@ -359,12 +365,15 @@ def search(pid, args):
 	npy_filename = os.path.join(output_folder, base_filename + ".npy")
 	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
-
+	ps_filename = os.path.join(output_folder, base_filename + ".ps")
+	sh_filename = os.path.join(output_folder, "plot.sh")
 	json_filename = os.path.join(output_folder, base_filename + ".json")
 
 	#args["output_folder"] = output_folder
 	args["base_filename"] = base_filename
 	args["npy_filename"] = npy_filename
+	
+
 	#args["xyz_filename"] = xyz_filename
 
 	if not os.path.exists(output_folder):
@@ -372,13 +381,6 @@ def search(pid, args):
 
 	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
 	print("already created: ", already_created)
-
-	
-	# with open(json_filename, 'w') as f:
-	# 	f.write(json.dumps(metadata, indent = 4))
-	# 	if args["print_metadata"]:
-	# 		return 0
-
 		
 	seed_lb_corner = (94.5, 3.5)
 	seed_grid_length = 2
@@ -387,17 +389,62 @@ def search(pid, args):
 		
 		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
-		target_lb = (grid_output["min_x"] - 0.1, grid_output["min_y"] - 0.1)
+		print(grid_output)
+
+		target_lb = (grid_output["best_x"] - 0.1, grid_output["best_y"] - 0.1)
 		target_grid_length = 0.2
 
-		ref_lambda = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True)
+		args["N_DX"] = 50
 
-		ref_tau = ref_lambda - ref_lambda[args["N_DX"]//2, args["N_DX"] // 2]
+		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
-		mc_args = {"sigma_ml": grid_output["sigma_ml"], "ref_tau" : ref_tau, "min_z": grid_output["min_z"] }
+		print(plot_grid[1])
 
-		arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, compute_lambda = True, mc_args = mc_args, N_monte_carlo = 300, do_mc = True)
+		grid_output["station_misfit"] = plot_grid[1]
+		grid_output["lb_corner_x"] = plot_grid[2][0]
+		grid_output["lb_corner_y"] = plot_grid[2][1]
+		grid_output["cell_size"] = plot_grid[3]
 
+		with open(npy_filename, "wb") as f:
+			np.save(f, plot_grid[0])
+
+		with open(json_filename, "w") as f:
+			json.dump(grid_output, f, indent = 4)
+
+	
+	if args["load_only"]:
+		with open(npy_filename,"rb") as f:
+			_grid = np.load(f)
+
+		with open(json_filename, "r") as f:
+			grid_output = json.load(f)
+
+		target_lb = (grid_output["best_x"] - 0.1, grid_output["best_y"] - 0.1)
+		target_grid_length = 0.2
+
+		#grid_output["cell_size"]
+
+	else:
+		_grid = plot_grid[0]
+
+	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename)
+
+	output_str = "gmt xyz2grd {} -G{} -I{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+		xyz_filename,
+		grd_filename,
+		grid_output["cell_size"],
+		target_lb[0],
+		target_lb[0] + target_grid_length,
+		target_lb[1],			
+		target_lb[1] + target_grid_length,
+		)
+	print(output_str)
+	p = subprocess.Popen(output_str, shell = True)
+
+	_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
+
+
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims)
 
 
 
@@ -420,27 +467,7 @@ def search(pid, args):
 	# 		with open(npy_filename, 'wb') as f:
 	# 			np.save(f, grid)
 
-	# if args["write_xyz"]:
-	# 	xyz_writer(grid, lb_corner, DX, DZ, 0, output_folder = output_folder, filename = base_filename)
-		
 
-	# if args["convert_grd"]:
-	# 	# gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
-
-	# 	# just generate the script and run it lol
-	# 	# but gmt isn't installed / conda has to be active
-	# 	# should i just activate conda
-
-	# 	output_str = "gmt xyz2grd {} -G{} -I{:.3g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
-	# 		xyz_filename,
-	# 		grd_filename,
-	# 		DX,
-	# 		lb_corner[0],
-	# 		lb_corner[0] + grid_length * DX,
-	# 		lb_corner[1],			
-	# 		lb_corner[1] + grid_length * DX,
-	# 		)
-	# 	p = subprocess.Popen(output_str, shell = True)
 
 	# if args["plot_mpl"]:
 	# 	plotter(pid, station_list, station_info, args)
@@ -459,7 +486,7 @@ def search(pid, args):
 	# use the table to do a interpolation to get the estimated travel time (not that i think it'll help)
 	# compute the squared difference and save it somewhere (inside the grid?)
 
-def xyz_writer(grid, lb_corner, DX, DZ, index = 0, output_folder = "", filename = ""):
+def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = ""):
 
 	L2 = grid[:,:,:,index]
 
@@ -470,9 +497,7 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, output_folder = "", filename 
 
 	output = L2[:,:,indices[2][0]]
 
-	output_file = os.path.join(output_folder, filename + ".xyz")
-
-	with open(output_file, "w") as f:
+	with open(filename, "w") as f:
 		for i in range(N_X):
 			for j in range(N_Y):
 				x = lb_corner[0] + i * DX
@@ -482,13 +507,7 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, output_folder = "", filename 
 
 				f.write("{:.7f} {:.7f} {:.3f}\n".format(x,y,z))
 
-
-
-
-# find the euclidean distance, taken to approximate the great circle distance for small distances
-
-
-
+# outdated
 def convert_tt_file(input_file, output_file):
 
 	# use the REAL format

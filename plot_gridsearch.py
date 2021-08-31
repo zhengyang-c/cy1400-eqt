@@ -3,7 +3,8 @@ import numpy as np
 import os
 import argparse
 import datetime
-
+import time
+import subprocess
 
 def load_numpy_file(file_name):
 
@@ -24,6 +25,40 @@ def load_numpy_file(file_name):
 # TODO: rewrite plotter s.t. it will plot the confidence intervals for some range / or also show the contours
 # 3 plots viewing from 3 diff axes i guess
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
+# 
+
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims):
+
+	output_str = [
+	"#!/bin/bash",
+	"gmt set PS_MEDIA=A4",
+	"gmt set FORMAT_GEO_MAP=D",
+	"PROJ=\"-JM6i\"",
+	"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], lims[2], lims[3]),
+	"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+	"PSFILE=\"{}\"".format(output_file),
+	"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
+	"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K > $PSFILE".format(grd_file),
+	"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
+	"gmt psscale $PROJ $LIMS -DjBC+w14c/0.5c+jBC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
+	"gmt psbasemap $PROJ $LIMS -BWeSn -Bxa0.05 -Bya0.05 -O >> $PSFILE",
+	"gmt psconvert $PSFILE -Tf -A+m1c",
+	"rm temp.cpt",
+	]
+
+	with open(output_sh, "w") as f:
+		f.write("\n".join(output_str))
+
+	time.sleep(0.5)
+
+	os.chmod(output_sh, 0o775)
+
+	time.sleep(0.5)
+
+	subprocess.call(["./{}".format(output_sh)])
+
+
+
 
 def plotter(uid, station_list, station_info, args):
 
@@ -72,7 +107,7 @@ def plotter(uid, station_list, station_info, args):
 	plt.figure(figsize = (8,6), dpi = 300)
 	#ax = plt.contour(output, origin = 'lower', cmap = 'rainbow' ,interpolation = 'none')
 
-	ax = plt.contourf( output.T, levels = np.arange(0,2,0.1), cmap = 'rainbow', origin = 'lower')
+	ax = plt.contourf( output.T, levels = np.arange(0,0.5,0.05), cmap = 'rainbow', origin = 'lower')
 	plt.colorbar()
 	
 	plt.suptitle("Origin: ({:.2f},{:.2f}), EV ID: {}, Origin Time: {}, Best Depth: {}".format(lb_corner[0], lb_corner[1], uid, origin_time_str, best_depth), fontsize = 8)
