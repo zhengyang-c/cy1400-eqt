@@ -59,9 +59,6 @@ def parse_input(station_file_name,
 	output_folder = "",
 	event_csv = "",
 	event_id = 0, 
-	dry_run = False, 
-	write_xyz = False,
-	convert_grd = False,
 	N_DX = 20,
 	DZ = 5,
 	ZRANGE = 41,
@@ -72,10 +69,8 @@ def parse_input(station_file_name,
 	show_mpl = False,
 	force = False,
 	eqt_csv = "",
-	extra_radius = 2,
-	extra_range = 1.2,
-	append_text = "",
-	print_metadata = False,):
+	print_metadata = False,
+	map_type = ""):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -89,14 +84,8 @@ def parse_input(station_file_name,
 	args["travel_time_file"] = travel_time_file
 	args["event_csv"] = event_csv
 	args["event_id"] = event_id
-	args["dry_run"] = dry_run
-	#args["save_numpy"] = save_numpy
-	args["write_xyz"] = write_xyz
-	args["output_folder"] = output_folder
 
-	args["extra_radius"] = extra_radius
-	args["extra_range"] = extra_range
-	args["append_text"] = append_text
+	args["output_folder"] = output_folder
 
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
@@ -112,7 +101,6 @@ def parse_input(station_file_name,
 
 	args["force"] = force
 
-	args["convert_grd"] = convert_grd
 	args["DZ"] = DZ
 	args["ZRANGE"] = ZRANGE
 
@@ -504,8 +492,15 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = "", pers = "map"):
 	with open(filename, "w") as f:
 		for i in range(N_X):
 			for j in range(N_Y):
-				x = lb_corner[0] + i * DX
-				y = lb_corner[1] + j * DX
+				if pers == "map":
+					x = lb_corner[0] + i * DX
+					y = lb_corner[1] + j * DX
+				elif pers == "londep":
+					x = lb_corner[0] + i * DX
+					y = j * DZ
+				elif pers == "latdep":
+					x = lb_corner[1] + i * DX
+					y = j * DZ
 
 				z = output[i,j]
 
@@ -584,16 +579,14 @@ if __name__ == "__main__":
 	#parser.add_argument("-save_numpy", action = "store_true")
 
 	parser.add_argument("-p", "--print_metadata", action = "store_true")
-	parser.add_argument("-write_xyz", action = "store_true")
-	parser.add_argument("-convert_grd", action = "store_true")
+
+	parser.add_argument("-m", "--map_type", type = str)
 
 	parser.add_argument("-load_only", action = "store_true")
 	parser.add_argument("-plot_mpl", action = "store_true")
 	parser.add_argument("-show_mpl", action = "store_true")
 
-	parser.add_argument("-extra_radius", type = int, default = 2)
-	parser.add_argument("-extra_range", type = float, default = 1.2)
-	parser.add_argument("-append_text", type = str, default = "")
+
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
 
@@ -616,9 +609,6 @@ if __name__ == "__main__":
 			args.output_folder, 
 			event_csv = args.event_csv, 
 			event_id = args.event_id, 
-			dry_run = args.dry,
-			write_xyz = args.write_xyz,
-			convert_grd = args.convert_grd,
 			TT_DX = args.tt_dx,
 			TT_DZ = args.tt_dz,
 			DZ = args.dz,
@@ -629,10 +619,8 @@ if __name__ == "__main__":
 			show_mpl = args.show_mpl,
 			force = args.force,
 			eqt_csv = args.eqt_csv,
-			extra_radius = args.extra_radius,
-			extra_range = args.extra_range,
-			append_text = args.append_text,
 			print_metadata = args.print_metadata,
+			map_type = args.map_type
 			)
 
 
