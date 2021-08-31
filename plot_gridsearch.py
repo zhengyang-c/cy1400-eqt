@@ -27,36 +27,91 @@ def load_numpy_file(file_name):
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
 # 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid):
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, map_type = "map"):
 
 
 	with open(station_file, "w") as f:
 		for x in station_list:
 			f.write("{}\t{}\t{}\n".format(x, station_info[x]["lon"], station_info[x]["lat"]))
 
-	output_str = [
-	"#!/bin/bash",
-	"gmt set PS_MEDIA=A4",
-	"gmt set FORMAT_GEO_MAP=D",
-	"PROJ=\"-JM6i\"",
-	"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], lims[2], lims[3]),
-	"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
-	"PSFILE=\"{}\"".format(output_file),
-	"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
-	"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
-	"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
-	"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
-	"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K -O >> $PSFILE".format(grd_file),
-	"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
-	"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
-	"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
-	"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
-	"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
-	"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
-	"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"]),
-	"gmt psconvert $PSFILE -Tf -A+m1c",
-	"rm temp.cpt",
-	]
+	# this will probably only work for JM6i
+	# for londep/latdep you want to use JX
+
+	if map_type == "map":
+
+		output_str = [
+		"#!/bin/bash",
+		"gmt set PS_MEDIA=A4",
+		"gmt set FORMAT_GEO_MAP=D",
+		"PROJ=\"-JM6i\"",
+		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], lims[2], lims[3]),
+		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PSFILE=\"{}\"".format(output_file),
+		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
+		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
+		"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
+		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K -O >> $PSFILE".format(grd_file),
+		"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
+		"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
+		"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
+		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
+		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
+		"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psconvert $PSFILE -Tf -A+m1c",
+		"rm temp.cpt",
+		]
+
+	elif map_type == "londep":
+
+		output_str = [
+		"#!/bin/bash",
+		"gmt set PS_MEDIA=A4",
+		"gmt set FORMAT_GEO_MAP=D",
+		"PROJ=\"-Jx40c/-0.4c\"",
+		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], -1, lims[3]),
+		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PSFILE=\"{}\"".format(output_file),
+		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
+		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
+		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K > $PSFILE".format(grd_file),
+		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
+		"awk '{{print $2,0}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
+		"awk '{{print $2,0,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
+		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_z"]),
+		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/1c -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
+		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya5 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psconvert $PSFILE -Tf -A+m1c",
+		"rm temp.cpt",
+		]
+
+	elif map_type == "latdep": # copying because i've given up
+
+		output_str = [
+		"#!/bin/bash",
+		"gmt set PS_MEDIA=A4",
+		"gmt set FORMAT_GEO_MAP=D",
+		"PROJ=\"-Jx40c/-0.4c\"",
+		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], -1, lims[3]),
+		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PSFILE=\"{}\"".format(output_file),
+		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
+		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
+		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K > $PSFILE".format(grd_file),
+		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
+		"awk '{{print $2,0}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
+		"awk '{{print $2,0,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
+		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_y"], grid_output["best_z"]),
+		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/1c -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
+		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya5 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psconvert $PSFILE -Tf -A+m1c",
+		"rm temp.cpt",
+		]
 
 	with open(output_sh, "w") as f:
 		f.write("\n".join(output_str))

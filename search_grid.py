@@ -87,6 +87,8 @@ def parse_input(station_file_name,
 
 	args["output_folder"] = output_folder
 
+	args["map_type"] = map_type
+
 	args["load_only"] = load_only
 	args["plot_mpl"] = plot_mpl
 	args["show_mpl"] = show_mpl	
@@ -297,7 +299,6 @@ def search(pid, args):
 
 	TT_NX = args["TT_NZ"]
 	TT_NZ = args["TT_DZ"]
-	extra_radius = args["extra_radius"]
 	args["event_coords"] = _event_coords
 
 
@@ -335,7 +336,7 @@ def search(pid, args):
 
 	args["N_Z"] = N_Z
 
-	print("dry_run:",args["dry_run"])
+	
 
 	# metadata is for json saving
 
@@ -343,13 +344,15 @@ def search(pid, args):
 
 	base_filename = "{}_DZ{:.3g}".format(pid, DZ)
 
-	if args["append_text"]:
-		base_filename += "_{}".format(args["append_text"])
+	map_str = ""
+
+	if args["map_type"] == "londep" or args["map_type"] == "latdep":
+		map_str = "_" + args["map_type"]
 
 	npy_filename = os.path.join(output_folder, base_filename + ".npy")
-	xyz_filename = os.path.join(output_folder, base_filename + ".xyz")
-	grd_filename = os.path.join(output_folder, base_filename + ".grd")
-	ps_filename = os.path.join(output_folder, base_filename + ".ps")
+	xyz_filename = os.path.join(output_folder, base_filename + map_str + ".xyz")
+	grd_filename = os.path.join(output_folder, base_filename + map_str + ".grd")
+	ps_filename = os.path.join(output_folder, base_filename + map_str + ".ps")
 	sh_filename = os.path.join(output_folder, "plot.sh")
 	station_filename = os.path.join(output_folder, "station.txt")
 	json_filename = os.path.join(output_folder, base_filename + ".json")
@@ -364,7 +367,7 @@ def search(pid, args):
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
 
-	already_created = os.path.exists(npy_filename) or os.path.exists(xyz_filename) or os.path.exists(grd_filename)
+	already_created = os.path.exists(npy_filename) or os.path.exists(json_filename)
 	print("already created: ", already_created)
 		
 	seed_lb_corner = (94.5, 3.5)
@@ -413,23 +416,41 @@ def search(pid, args):
 	else:
 		_grid = plot_grid[0]
 
-	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename, pers = "map")
+	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename, pers = args["map_type"])
 
-	output_str = "gmt xyz2grd {} -G{} -I{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+
+
+	if args["map_type"] == "map":
+		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
+		_y_cell_size = grid_output["cell_size"]
+
+
+	elif args["map_type"] == "londep":
+		_lims = (target_lb[0], target_lb[0] + target_grid_length, 0, N_Z)
+		_y_cell_size = 1
+
+
+	elif args["map_type"] == "latdep":
+		_lims = (target_lb[1], target_lb[1] + target_grid_length, 0, N_Z)
+		_y_cell_size = 1
+	# the plot limits will depend on the map type	
+
+	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
 		xyz_filename,
 		grd_filename,
 		grid_output["cell_size"],
-		target_lb[0],
-		target_lb[0] + target_grid_length,
-		target_lb[1],			
-		target_lb[1] + target_grid_length,
-		)
+		_y_cell_size,
+		_lims[0],
+		_lims[1],
+		_lims[2],	
+		_lims[3],
+	)
+
 	print(output_str)
 	p = subprocess.Popen(output_str, shell = True)
 
-	_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid)
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid, map_type = args["map_type"])
 
 	
 	# numpy saving of the whole array
@@ -488,6 +509,9 @@ def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = "", pers = "map"):
 		output = L2[indices[0][0], :, :]
 
 	N_X, N_Y = output.shape
+
+	#plt.imshow(output, cmap = "rainbow")
+	#plt.show()
 
 	with open(filename, "w") as f:
 		for i in range(N_X):
