@@ -367,6 +367,7 @@ def search(pid, args):
 	grd_filename = os.path.join(output_folder, base_filename + ".grd")
 	ps_filename = os.path.join(output_folder, base_filename + ".ps")
 	sh_filename = os.path.join(output_folder, "plot.sh")
+	station_filename = os.path.join(output_folder, "station.txt")
 	json_filename = os.path.join(output_folder, base_filename + ".json")
 
 	#args["output_folder"] = output_folder
@@ -404,6 +405,7 @@ def search(pid, args):
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
 		grid_output["cell_size"] = plot_grid[3]
+		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 		with open(npy_filename, "wb") as f:
 			np.save(f, plot_grid[0])
@@ -443,10 +445,7 @@ def search(pid, args):
 
 	_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 
-
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims)
-
-
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid)
 
 	
 	# numpy saving of the whole array

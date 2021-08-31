@@ -27,7 +27,12 @@ def load_numpy_file(file_name):
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
 # 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims):
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid):
+
+
+	with open(station_file, "w") as f:
+		for x in station_list:
+			f.write("{}\t{}\t{}\n".format(x, station_info[x]["lon"], station_info[x]["lat"]))
 
 	output_str = [
 	"#!/bin/bash",
@@ -37,11 +42,17 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 	"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], lims[2], lims[3]),
 	"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
 	"PSFILE=\"{}\"".format(output_file),
+	"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
+	"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
 	"gmt makecpt -Crainbow -T0/0.5/0.02 > temp.cpt",
-	"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K > $PSFILE".format(grd_file),
+	"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
+	"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K -O >> $PSFILE".format(grd_file),
 	"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
-	"gmt psscale $PROJ $LIMS -DjBC+w14c/0.5c+jBC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
-	"gmt psbasemap $PROJ $LIMS -BWeSn -Bxa0.05 -Bya0.05 -O >> $PSFILE",
+	"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
+	"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
+	"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
+	"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G0/0.5/0.02 -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE",
+	"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\"+s\"Best misfit (L2): {:.3g}\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"], grid_output["sigma_ml"]),
 	"gmt psconvert $PSFILE -Tf -A+m1c",
 	"rm temp.cpt",
 	]
