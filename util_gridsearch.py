@@ -262,8 +262,10 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX)
 	new_grid_length = DX * 4
+
+	new_DX = new_grid_length / args["N_DX"]
 		
-	if DX < (0.3/111.11): # pretty arbitrary / could make it a flag
+	if new_DX < (0.3/111.11): # pretty arbitrary / could make it a flag
 		return output
 	else:
 		return arbitrary_search(args, new_lb_corner, new_grid_length, phase_info, station_info, tt)
