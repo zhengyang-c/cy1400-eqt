@@ -353,9 +353,14 @@ def search(pid, args):
 	xyz_filename = os.path.join(output_folder, base_filename + map_str + ".xyz")
 	grd_filename = os.path.join(output_folder, base_filename + map_str + ".grd")
 	ps_filename = os.path.join(output_folder, base_filename + map_str + ".ps")
+
+	ps_zoomout_filename = os.path.join(output_folder, base_filename + map_str + "_zoom.ps")
 	sh_filename = os.path.join(output_folder, "plot.sh")
 	station_filename = os.path.join(output_folder, "station.txt")
 	json_filename = os.path.join(output_folder, base_filename + ".json")
+
+	misfit_filename = os.path.join(output_folder, "misfit.txt")
+	misfitplot_filename = os.path.join(output_folder, "misfit.pdf")
 
 	#args["output_folder"] = output_folder
 	args["base_filename"] = base_filename
@@ -423,16 +428,19 @@ def search(pid, args):
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 		_y_cell_size = grid_output["cell_size"]
+		_all_station_lims = (min(_lons) - 0.1, max(_lons) + 0.1, min(_lats) - 0.1, max(_lats) + 0.1)
 
 
 	elif args["map_type"] == "londep":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
+		_all_station_lims = (min(_lons) - 0.1, max(_lons) + 0.1, 0, N_Z)
 
 
 	elif args["map_type"] == "latdep":
 		_lims = (target_lb[1], target_lb[1] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
+		_all_station_lims = (min(_lats) - 0.1, max(_lats) + 0.1, 0, N_Z)
 	# the plot limits will depend on the map type	
 
 	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
@@ -450,7 +458,14 @@ def search(pid, args):
 	p = subprocess.Popen(output_str, shell = True)
 
 
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid, map_type = args["map_type"])
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename)
+
+	
+
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"])
+	
+
+
 
 	
 	# numpy saving of the whole array
