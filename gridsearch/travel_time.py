@@ -70,3 +70,5 @@ def generate_tt():
 	with open("model_dlange.npy", "wb") as f:
 		np.save(f, tt)
 
+generate_tt()
+
