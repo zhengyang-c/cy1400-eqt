@@ -64,6 +64,8 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 	
 	tt_dist_indices = np.array([int(round(x)) for x in delta_r[:, 0]/TT_DX]) # for table interpolation
 
+	
+	# TT_DX is 1 so this is ok
 	tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
 
 	tt_dep_index = int(round((k * DZ)/TT_DZ))
@@ -241,6 +243,8 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		"ref_timestamp":  datetime.datetime.strftime(datetime.datetime.fromtimestamp(grid[best_i, best_j, best_k, 2]), "%Y%m%d-%H%M%S.%f"),
 	}
 
+	print(output)
+
 	# get station misfits if it's the minimum
 
 	if get_grid:
@@ -265,7 +269,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	new_DX = new_grid_length / args["N_DX"]
 		
-	if new_DX < (0.3/111.11): # pretty arbitrary / could make it a flag
+	if DX < (0.1/111.11): # pretty arbitrary / could make it a flag
 		return output
 	else:
 		return arbitrary_search(args, new_lb_corner, new_grid_length, phase_info, station_info, tt)

@@ -33,18 +33,18 @@ def txt_velocity_model():
 		gradient = (layer_velocities[i+1] - layer_velocities[i])/(layer_depth[i+1] - layer_depth[i])
 
 		for j in range(layer_depth[i] + 1,layer_depth[i+1] + 1):
-			new_vp = (gradient * (j - layer_depth[i])) + layer_velocities[i] 
+			new_vp = (gradient * (j - layer_depth[i] - 0.5)) + layer_velocities[i] 
 
 			output_vp.append(new_vp)
 			output_vs.append(new_vp / vp_vs)
 			output_depth.append(float(j))
 
 
-	with open("txt_model_dlange_corr.txt", "w") as f:
+	with open("txt_model_dlange_corr2.txt", "w") as f:
 		for i in range(len(output_depth)):
-			f.write("{:.3g}\t{:.3g}\t{:.3g}\n".format(1, output_vs[i], output_vp[i])) # it's probably model thicknesss
+			f.write("{:.5g}\t{:.5g}\t{:.5g}\n".format(1, output_vs[i], output_vp[i])) # it's probably model thicknesss
 
-txt_velocity_model()
+#txt_velocity_model()
 
 def generate_tt():
 	# call trav.pl
@@ -58,16 +58,16 @@ def generate_tt():
 	for i in range(0, distance_range):
 		for j in range(0, depth_range):
 
-			out = check_output(["./trav.pl", "p", "txt_model_dlange_corr.txt", str(j), str(i)])
+			out = check_output(["./trav.pl", "p", "txt_model_dlange_corr2.txt", str(j), str(i)])
 			out = [float(x) for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 			tt[i][j][0] = out[1]
 
-			out = check_output(["./trav.pl", "s", "txt_model_dlange_corr.txt", str(j), str(i)])
+			out = check_output(["./trav.pl", "s", "txt_model_dlange_corr2.txt", str(j), str(i)])
 			out = [float(x) for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
 			tt[i][j][1] = out[1]
 
-	with open("model_dlange.npy", "wb") as f:
+	with open("model_dlange2.npy", "wb") as f:
 		np.save(f, tt)
 
 generate_tt()

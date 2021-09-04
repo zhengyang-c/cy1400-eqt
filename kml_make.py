@@ -14,20 +14,31 @@ from utils import parse_event_coord, parse_station_info, parse_xy_lines
 
 # taken from search_grid.py
 
+
 def events(input_file, output_file, meta_desc, file_type = "event_csv"):
 
 	#input_file = "real_postprocessing/5jul_assoc/5jul_reloc.csv"
 	#output_file = "gearth_kml/5jul_afterhypoDD.kml"
-
-	event_info = parse_event_coord(input_file, file_type)
+	#
+	#
+	# pass in a dictionary with the lat, lon, key is the ID 
+	
+	if file_type == "direct":
+		event_info = input_file
+	else:
+		event_info = parse_event_coord(input_file, file_type)
 
 	#meta_desc = "After hypoDD relocation, 5 Jul Aceh catalogue"
 
 	kml = simplekml.Kml()
 
 	for _id in event_info:
-		pt = kml.newpoint(name=_id, description = meta_desc, coords = [(event_info[_id]["lon"], event_info[_id]["lat"], -1 *event_info[_id]["dep"])])
-		pt.style.iconstyle.color = 'ff00ff00' # green
+		if "dep" in event_info[_id]:
+			pt = kml.newpoint(name=_id, description = meta_desc, coords = [(event_info[_id]["lon"], event_info[_id]["lat"], -1 *event_info[_id]["dep"])])
+		else:
+			pt = kml.newpoint(name=_id, description = meta_desc, coords = [(event_info[_id]["lon"], event_info[_id]["lat"])])
+
+		pt.style.iconstyle.color = 'ff00ff00' # green; the format is like ALPHA B G R
 
 	kml.save(output_file)
 

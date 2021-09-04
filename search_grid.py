@@ -6,6 +6,7 @@ import argparse
 import datetime
 import os
 
+import kml_make
 
 #gpsdist: two distance between two geographic points
 # locations2degrees: no. of degrees between two points on a spherical earth
@@ -342,7 +343,7 @@ def search(pid, args):
 
 	output_folder = os.path.join(args["output_folder"], pid)
 
-	base_filename = "{}_DZ{:.3g}".format(pid, DZ)
+	base_filename = "{}".format(pid)
 
 	map_str = ""
 
@@ -358,6 +359,8 @@ def search(pid, args):
 	sh_filename = os.path.join(output_folder, "plot.sh")
 	station_filename = os.path.join(output_folder, "station.txt")
 	json_filename = os.path.join(output_folder, base_filename + ".json")
+
+	kml_filename = os.path.join(output_folder, base_filename + ".kml")
 
 	misfit_filename = os.path.join(output_folder, "misfit.txt")
 	misfitplot_filename = os.path.join(output_folder, "misfit.pdf")
@@ -377,6 +380,9 @@ def search(pid, args):
 		
 	seed_lb_corner = (94.5, 3.5)
 	seed_grid_length = 2
+
+	target_grid_length = 0.2
+
 	if args["force"] or (not already_created):
 		#grid = simple_search(args, phase_info, station_info, tt)
 		
@@ -384,10 +390,9 @@ def search(pid, args):
 
 		print(grid_output)
 
-		target_lb = (grid_output["best_x"] - 0.1, grid_output["best_y"] - 0.1)
-		target_grid_length = 0.2
+		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
 
-		args["N_DX"] = 50
+		args["N_DX"] = 100
 
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
@@ -397,6 +402,7 @@ def search(pid, args):
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
 		grid_output["cell_size"] = plot_grid[3]
+		grid_output["cell_n"] = arg["N_DX"]
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 		with open(npy_filename, "wb") as f:
@@ -404,17 +410,16 @@ def search(pid, args):
 
 		with open(json_filename, "w") as f:
 			json.dump(grid_output, f, indent = 4)
-
 	
-	if args["load_only"]:
+	if args["load_only"] and not args["force"]:
 		with open(npy_filename,"rb") as f:
 			_grid = np.load(f)
 
 		with open(json_filename, "r") as f:
 			grid_output = json.load(f)
 
-		target_lb = (grid_output["best_x"] - 0.1, grid_output["best_y"] - 0.1)
-		target_grid_length = 0.2
+		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)
+		#target_grid_length = target_grid_length
 
 		#grid_output["cell_size"]
 
@@ -428,19 +433,19 @@ def search(pid, args):
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 		_y_cell_size = grid_output["cell_size"]
-		_all_station_lims = (min(_lons) - 0.1, max(_lons) + 0.1, min(_lats) - 0.1, max(_lats) + 0.1)
+		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2)
 
 
 	elif args["map_type"] == "londep":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
-		_all_station_lims = (min(_lons) - 0.1, max(_lons) + 0.1, 0, N_Z)
+		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, 0, N_Z)
 
 
 	elif args["map_type"] == "latdep":
 		_lims = (target_lb[1], target_lb[1] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
-		_all_station_lims = (min(_lats) - 0.1, max(_lats) + 0.1, 0, N_Z)
+		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
 	# the plot limits will depend on the map type	
 
 	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
@@ -460,9 +465,18 @@ def search(pid, args):
 
 	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename)
 
-	
 
 	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"])
+
+
+	_event_info = {pid+"gs":{
+	"lat":grid_output["best_y"], 
+	"lon":grid_output["best_x"], 
+	"dep":grid_output["best_z"],}
+	}
+	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
+
+
 	
 
 

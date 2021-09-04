@@ -58,6 +58,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt makecpt -Crainbow -T{} > temp.cpt".format(colorscale),
 		"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -Q -K -O >> $PSFILE".format(grd_file),
+		"gmt psxy $PLATE $PROJ $LIMS -W1p -K -O >> $PSFILE",
 		"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
 		"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
 		"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
