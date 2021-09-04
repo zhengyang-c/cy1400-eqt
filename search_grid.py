@@ -426,27 +426,34 @@ def search(pid, args):
 	else:
 		_grid = plot_grid[0]
 
-	xyz_writer(_grid, target_lb, grid_output["cell_size"], DZ, 0, filename = xyz_filename, pers = args["map_type"])
+	L2 = _grid[:,:,:,0]
 
+	indices = np.where(L2 == L2.min())
 
+	
 
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 		_y_cell_size = grid_output["cell_size"]
 		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2)
-
+		_output = L2[:,:,indices[2][0]]
 
 	elif args["map_type"] == "londep":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
 		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, 0, N_Z)
-
+		_output = L2[:, indices[1][0], :]
 
 	elif args["map_type"] == "latdep":
 		_lims = (target_lb[1], target_lb[1] + target_grid_length, 0, N_Z)
 		_y_cell_size = 1
 		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
+		_output = L2[indices[0][0], :, :]
+
+
 	# the plot limits will depend on the map type	
+
+	xyz_writer(_output, target_lb, grid_output["cell_size"], DZ, filename = xyz_filename)
 
 	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
 		xyz_filename,
@@ -477,11 +484,6 @@ def search(pid, args):
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
 
-	
-
-
-
-	
 	# numpy saving of the whole array
 	# also include cell numbers to construct the array
 	# lower left corner can be constructed from the ID tbh
@@ -509,8 +511,6 @@ def search(pid, args):
 		#gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
 
 
-
-
 	# for each grid cell, compute the misfit between the observed and 'theoretical' travel time
 	# use both L1 and L2 norm because... reasons? first entry for L1, second for L2
 	# 
@@ -519,23 +519,10 @@ def search(pid, args):
 	# use the table to do a interpolation to get the estimated travel time (not that i think it'll help)
 	# compute the squared difference and save it somewhere (inside the grid?)
 
-def xyz_writer(grid, lb_corner, DX, DZ, index = 0, filename = "", pers = "map"):
+def xyz_writer(output, lb_corner, DX, DZ,  filename = ""):
 
 	# pers = map, londep, latdep
 
-
-	L2 = grid[:,:,:,index]
-
-	indices = np.where(L2 == L2.min())
-
-	#N_X, N_Y, N_Z = grid.shape[:3]
-	
-	if pers == "map":
-		output = L2[:,:,indices[2][0]]
-	elif pers == "londep":
-		output = L2[:, indices[1][0], :]
-	elif pers == "latdep":
-		output = L2[indices[0][0], :, :]
 
 	N_X, N_Y = output.shape
 
