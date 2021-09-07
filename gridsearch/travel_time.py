@@ -70,5 +70,21 @@ def generate_tt():
 	with open("model_dlange2.npy", "wb") as f:
 		np.save(f, tt)
 
-generate_tt()
+def check_tt():
+
+	with open("model_dlange2.npy", "rb") as f:
+		tt = np.load(f)
+
+	# first plot the velocity model
+	plt.title("velocity model, v_p")
+	plt.imshow(tt[:,:,0].T, origin = "lower", cmap = 'rainbow')
+	plt.ylabel("Depth [km]")
+	plt.xlabel("Distance [km]")
+	plt.colorbar()
+	plt.show()
+
+check_tt()
+
+	# next, plot a colormap of the travel time table you have
+
 

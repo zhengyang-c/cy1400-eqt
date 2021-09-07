@@ -6,6 +6,7 @@ import argparse
 import datetime
 import os
 
+
 import kml_make
 
 #gpsdist: two distance between two geographic points
@@ -51,6 +52,15 @@ def load_travel_time(input_file):
 
 	return tt
 
+def load_exclude(file_name):
+	excl = []
+	with open(file_name, "r") as f:
+		for line in f:
+			excl.append(line.strip())
+
+	return excl
+
+
 
 def parse_input(station_file_name, 
 	phase_json_name, 
@@ -71,7 +81,11 @@ def parse_input(station_file_name,
 	force = False,
 	eqt_csv = "",
 	print_metadata = False,
-	map_type = ""):
+	map_type = "",
+	run_rotate = False,
+	event_folder = "",
+	exclude = "",
+	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
@@ -98,6 +112,9 @@ def parse_input(station_file_name,
 
 	args["eqt_csv"] = eqt_csv
 
+	args["event_folder"] = event_folder
+	args["run_rotate"] = run_rotate
+
 	if show_mpl:
 		args["plot_mpl"] = True
 		#args["save_numpy"] = True
@@ -112,6 +129,7 @@ def parse_input(station_file_name,
 
 	args["TT_DX"] = TT_DX
 	args["TT_DZ"] = TT_DZ
+	args["exclude"] = exclude
 
 
 
@@ -119,6 +137,10 @@ def parse_input(station_file_name,
 
 
 	df = load_eqt_csv(eqt_csv)
+
+	if args["exclude"]:
+		exclude_list = load_exclude(exclude)
+		args["exclude_list"] = exclude_list
 
 
 	if args["event_id"]:
@@ -182,6 +204,13 @@ def search(pid, args):
 	# move file loading to children
 
 	station_info = parse_station_info(args["station_file"])
+
+	if args["exclude"]:
+		for _station in list(station_info.keys()):
+			if _station in args["exclude_list"]:
+				print("Excluding station", _station)
+				station_info.pop(_station, None)
+
 	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
 	tt = load_travel_time(args["travel_time_file"])
 	args["TT_NX"] = tt.shape[0]
@@ -197,9 +226,20 @@ def search(pid, args):
 
 	phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
 
+	#print(station_info)
+
 
 	# construct station list:
-	station_list = phase_info.keys()
+	if args["exclude"]:
+		station_list = [x for x in phase_info.keys() if (x not in args["exclude_list"])]
+
+		for _station in list(phase_info.keys()):
+			if _station in args["exclude_list"]:
+				phase_info.pop(_station, None)
+	else:
+		station_list = phase_info.keys()
+
+	print(station_list)
 
 	# input: preliminary located event, coordinates of stations, 
 	# 
@@ -381,7 +421,7 @@ def search(pid, args):
 	seed_lb_corner = (94.5, 3.5)
 	seed_grid_length = 2
 
-	target_grid_length = 0.2
+	target_grid_length = 0.1
 
 	if args["force"] or (not already_created):
 		#grid = simple_search(args, phase_info, station_info, tt)
@@ -392,7 +432,7 @@ def search(pid, args):
 
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
 
-		args["N_DX"] = 100
+		args["N_DX"] = 50
 
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
@@ -402,7 +442,8 @@ def search(pid, args):
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
 		grid_output["cell_size"] = plot_grid[3]
-		grid_output["cell_n"] = arg["N_DX"]
+		grid_output["cell_n"] = args["N_DX"]
+		grid_output["cell_height"] = args["DZ"]
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 		with open(npy_filename, "wb") as f:
@@ -410,8 +451,10 @@ def search(pid, args):
 
 		with open(json_filename, "w") as f:
 			json.dump(grid_output, f, indent = 4)
+
+		_grid = plot_grid[0]
 	
-	if args["load_only"] and not args["force"]:
+	else:
 		with open(npy_filename,"rb") as f:
 			_grid = np.load(f)
 
@@ -423,8 +466,8 @@ def search(pid, args):
 
 		#grid_output["cell_size"]
 
-	else:
-		_grid = plot_grid[0]
+	
+		
 
 	L2 = _grid[:,:,:,0]
 
@@ -453,7 +496,7 @@ def search(pid, args):
 
 	# the plot limits will depend on the map type	
 
-	xyz_writer(_output, target_lb, grid_output["cell_size"], DZ, filename = xyz_filename)
+	xyz_writer(_output, target_lb, grid_output["cell_size"], DZ, filename = xyz_filename, pers = args["map_type"])
 
 	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
 		xyz_filename,
@@ -473,7 +516,7 @@ def search(pid, args):
 	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename)
 
 
-	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"])
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"], ticscale = "0.1")
 
 
 	_event_info = {pid+"gs":{
@@ -482,6 +525,9 @@ def search(pid, args):
 	"dep":grid_output["best_z"],}
 	}
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
+
+	if args["run_rotate"]:
+		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"])
 
 
 	# numpy saving of the whole array
@@ -519,7 +565,7 @@ def search(pid, args):
 	# use the table to do a interpolation to get the estimated travel time (not that i think it'll help)
 	# compute the squared difference and save it somewhere (inside the grid?)
 
-def xyz_writer(output, lb_corner, DX, DZ,  filename = ""):
+def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
 
 	# pers = map, londep, latdep
 
@@ -586,6 +632,7 @@ def convert_tt_file(input_file, output_file):
 
 
 if __name__ == "__main__":
+	from search_rotate import rotate_search
 
 	parser = argparse.ArgumentParser()
 
@@ -626,6 +673,12 @@ if __name__ == "__main__":
 	parser.add_argument("-plot_mpl", action = "store_true")
 	parser.add_argument("-show_mpl", action = "store_true")
 
+	parser.add_argument("-r", "--run_rotate", action = "store_true")
+	parser.add_argument("-ef", "--event_folder", type = str, default = "imported_figures/event_archive")
+
+
+	parser.add_argument("-excl", "--exclude")
+
 
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
@@ -660,7 +713,10 @@ if __name__ == "__main__":
 			force = args.force,
 			eqt_csv = args.eqt_csv,
 			print_metadata = args.print_metadata,
-			map_type = args.map_type
+			map_type = args.map_type,
+			event_folder = args.event_folder,
+			run_rotate = args.run_rotate,
+			exclude = args.exclude
 			)
 
 

@@ -27,7 +27,7 @@ def load_numpy_file(file_name):
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
 # 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, misfit_file = "", misfitplot_file = "", map_type = "map"):
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05"):
 
 
 	with open(station_file, "w") as f:
@@ -38,7 +38,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 	# for londep/latdep you want to use JX
 	# 
 	
-	colorscale = "0/1/0.05"
+	#colorscale = "0/1/0.05"
 
 	# probably want another map with all the stations inside so you can.. see.. the stations
 	# just call the fn with another set o lims and output_file
@@ -63,9 +63,9 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"awk '{{print $2,$3}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
 		"awk '{{print $2,$3,$1}}' {} | gmt pstext $PROJ $LIMS -F+f6p,0+jRB -D-0.2c/0 -K -O >> $PSFILE".format(station_file),
 		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
-		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
+		"echo \"Best misfit: {:.3g}\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 		"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
-		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya0.05 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
 		"rm temp.cpt",
 		]
@@ -90,7 +90,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_z"]),
 		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/1c -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
-		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya5 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, 1),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
 		"rm temp.cpt",
 		]
@@ -115,7 +115,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_y"], grid_output["best_z"]),
 		"echo \"Best misfit (L2): {:.3g} s\" | gmt pstext $PROJ $LIMS -F+cBC -D0/1c -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
-		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa0.05 -Bya5 -O >> $PSFILE".format(pid, grid_output["best_z"]),
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, 1),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
 		"rm temp.cpt",
 		]
