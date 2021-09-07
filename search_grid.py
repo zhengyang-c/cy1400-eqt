@@ -80,11 +80,11 @@ def parse_input(station_file_name,
 	show_mpl = False,
 	force = False,
 	eqt_csv = "",
-	print_metadata = False,
 	map_type = "",
 	run_rotate = False,
 	event_folder = "",
 	exclude = "",
+	append_text = "",
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
@@ -108,8 +108,6 @@ def parse_input(station_file_name,
 	args["plot_mpl"] = plot_mpl
 	args["show_mpl"] = show_mpl	
 
-	args["print_metadata"] = print_metadata
-
 	args["eqt_csv"] = eqt_csv
 
 	args["event_folder"] = event_folder
@@ -130,6 +128,8 @@ def parse_input(station_file_name,
 	args["TT_DX"] = TT_DX
 	args["TT_DZ"] = TT_DZ
 	args["exclude"] = exclude
+
+	args["append_text"] = append_text
 
 
 
@@ -205,11 +205,11 @@ def search(pid, args):
 
 	station_info = parse_station_info(args["station_file"])
 
-	if args["exclude"]:
-		for _station in list(station_info.keys()):
-			if _station in args["exclude_list"]:
-				print("Excluding station", _station)
-				station_info.pop(_station, None)
+	# if args["exclude"]:
+	# 	for _x in list(station_info.keys()):
+	# 		if _station in args["exclude_list"]:
+	# 			print("Excluding station-phase", _station)
+	# 			station_info.pop(_station, None)
 
 	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
 	tt = load_travel_time(args["travel_time_file"])
@@ -231,16 +231,15 @@ def search(pid, args):
 
 	# construct station list:
 	if args["exclude"]:
-		station_list = [x for x in phase_info.keys() if (x not in args["exclude_list"])]
+		for _station_phase in args["exclude_list"]:
+			_station, _phase = _station_phase.split("_")
+			if _station in phase_info:
+				if _phase in phase_info[_station][_phase]:
+					phase_info[_station].pop(_phase)
+					print("Dropped phase:",_station, _phase)
+	station_list = phase_info.keys()
 
-		for _station in list(phase_info.keys()):
-			if _station in args["exclude_list"]:
-				phase_info.pop(_station, None)
-	else:
-		station_list = phase_info.keys()
-
-	print(station_list)
-
+	
 	# input: preliminary located event, coordinates of stations, 
 	# 
 	# want to use grid to represent the centre coordinate of each square so it's more consistent (?)
@@ -383,7 +382,10 @@ def search(pid, args):
 
 	output_folder = os.path.join(args["output_folder"], pid)
 
-	base_filename = "{}".format(pid)
+	if args["append_text"]:
+		base_filename = "{}_{}".format(pid, args["append_text"])
+	else:
+		base_filename = "{}".format(pid)
 
 	map_str = ""
 
@@ -421,7 +423,7 @@ def search(pid, args):
 	seed_lb_corner = (94.5, 3.5)
 	seed_grid_length = 2
 
-	target_grid_length = 0.1
+	target_grid_length = 0.25
 
 	if args["force"] or (not already_created):
 		#grid = simple_search(args, phase_info, station_info, tt)
@@ -527,7 +529,7 @@ def search(pid, args):
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
 	if args["run_rotate"]:
-		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"])
+		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], append_text = args["append_text"])
 
 
 	# numpy saving of the whole array
@@ -662,11 +664,6 @@ if __name__ == "__main__":
 	parser.add_argument("-n_dx", type = int, default = 20)
 
 	parser.add_argument("-dz", type = float)
-
-	#parser.add_argument("-save_numpy", action = "store_true")
-
-	parser.add_argument("-p", "--print_metadata", action = "store_true")
-
 	parser.add_argument("-m", "--map_type", type = str, default = "map")
 
 	parser.add_argument("-load_only", action = "store_true")
@@ -676,8 +673,9 @@ if __name__ == "__main__":
 	parser.add_argument("-r", "--run_rotate", action = "store_true")
 	parser.add_argument("-ef", "--event_folder", type = str, default = "imported_figures/event_archive")
 
-
 	parser.add_argument("-excl", "--exclude")
+
+	parser.add_argument("-ap", "--append_text", type = str, help = "appends an underscore followed by the text in the flag, modifying the base name of the file", default = "")
 
 
 
@@ -712,11 +710,11 @@ if __name__ == "__main__":
 			show_mpl = args.show_mpl,
 			force = args.force,
 			eqt_csv = args.eqt_csv,
-			print_metadata = args.print_metadata,
 			map_type = args.map_type,
 			event_folder = args.event_folder,
 			run_rotate = args.run_rotate,
-			exclude = args.exclude
+			exclude = args.exclude,
+			append_text = args.append_text,
 			)
 
 

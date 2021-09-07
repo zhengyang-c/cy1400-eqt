@@ -65,7 +65,7 @@ def baz(X1, X2):
 	return gps2dist_azimuth(X1[1], X1[0], X2[1], X2[0])[1]
 
 
-def rotate_search(pid, event_folder, output_folder, station_info_file):
+def rotate_search(pid, event_folder, output_folder, station_info_file, append_text = ""):
 
 	# pid = "000212"
 	# event_folder = "imported_figures/event_archive"
@@ -73,15 +73,24 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 
 	# output_folder = "gridsearch/output"
 
-	basename = os.path.join(output_folder, pid)
+	output_folder = os.path.join(output_folder, pid)
+	
 
 	# i should automatically look for the json file
+	if append_text:
+		search_name = pid + "_" + append_text
 
-	json_candidates = [str(p) for p in Path(basename).glob("*.json")]
-	assert len(json_candidates) == 1	
+	basename = os.path.join(output_folder, "{}".format(search_name))
+
+	json_candidates = [str(p) for p in Path(output_folder).glob("{}.json".format(search_name))]
+
+
+	print(search_name, output_folder)
+	print(json_candidates)
+	assert len(json_candidates) == 1
 	json_file = json_candidates[0]
 
-	npy_candidates = [str(p) for p in Path(basename).glob("*.npy")]
+	npy_candidates = [str(p) for p in Path(output_folder).glob("{}.npy".format(search_name))]
 	assert len(npy_candidates) ## this is so NOT future proof zzzz
 	np_file = npy_candidates[0]
 
@@ -91,7 +100,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 
 	station_list = list(set([x.split(".")[0] for x in os.listdir(os.path.join(event_folder, pid)) if "SAC" in x]))
 
-	print(station_list)
+	#print(station_list)
 
 	#rotater(station_list[0], pid, event_folder, station_info_file)
 	rotation_coeff = {}
@@ -101,7 +110,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 
 	station_info_file
 
-	print(rotation_coeff)
+	#print(rotation_coeff)
 
 	with open(json_file, "r") as f:
 		gs_output = json.load(f)
@@ -152,13 +161,13 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 	# plt.contourf(combined.T, origin = "lower")
 	# plt.colorbar()
 	# plt.show()
-	# 
 	
-	xyz_file = os.path.join(basename, "rotated{}.xyz".format(pid))
-	grd_file = os.path.join(basename, "rotated{}.grd".format(pid))
-	ps_file = os.path.join(basename, "rotated{}.ps".format(pid))
-	sh_file = os.path.join(basename, "rotated_plot.sh".format(pid))
-	station_filename = os.path.join(basename, "station.txt")
+	
+	xyz_file = basename+"rotated.xyz"
+	grd_file = basename+"rotated.grd"
+	ps_file = basename+"rotated.ps"
+	sh_file = basename+"rotated_plot.sh"
+	station_filename = basename+"station.txt"
 
 	xyz_writer(grid, lb_corner, DX, DZ, filename = xyz_file, pers = "map")
 	_lims = [lb_corner[0],
@@ -188,10 +197,11 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 
 
 	# plot for combined
-	xyz_file = os.path.join(basename, "combined{}.xyz".format(pid))
-	grd_file = os.path.join(basename, "combined{}.grd".format(pid))
-	ps_file = os.path.join(basename, "combined{}.ps".format(pid))
-	sh_file = os.path.join(basename, "combined.sh".format(pid))
+	xyz_file = basename+"combined.xyz"
+	grd_file = basename+"combined.grd"
+	ps_file = basename+"combined.ps"
+	sh_file = basename+"combined_plot.sh"
+	#station_filename = basename+"station.txt"
 
 	xyz_writer(combined, lb_corner, DX, DZ, filename = xyz_file, pers = "map")
 
@@ -218,7 +228,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file):
 
 	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map")
 
-	kml_filename = os.path.join(basename, "combined.kml")
+	kml_filename = basename+"combined.kml"
 
 	_event_info = {pid+"g+r":{
 	"lat":_grid_output["best_y"], 
