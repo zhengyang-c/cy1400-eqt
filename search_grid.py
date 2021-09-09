@@ -242,7 +242,14 @@ def search(pid, args):
 
 	if args["p_only"] or args["s_only"]:
 		for _station in phase_info:
-			pass
+			if ("station_P" in phase_info[_station]) and args["p_only"]:
+				phase_info[_station].pop("station_P")
+			if ("station_S" in phase_info[_station]) and args["s_only"]:
+				phase_info[_station].pop("station_S")
+
+	print(phase_info)
+	print("\n\n")
+
 
 	station_list = phase_info.keys()
 
