@@ -85,6 +85,8 @@ def parse_input(station_file_name,
 	event_folder = "",
 	exclude = "",
 	append_text = "",
+	p_only = False,
+	s_only = False,
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
@@ -131,6 +133,8 @@ def parse_input(station_file_name,
 
 	args["append_text"] = append_text
 
+	args["p_only"] = args.p_only
+	args["s_only"] = args.s_only
 
 
 	print(args)
@@ -165,29 +169,6 @@ def parse_input(station_file_name,
 		pool = mp.Pool(mp.cpu_count())
 
 		result = pool.starmap(search, zip(all_id, repeat(args)))
-
-
-
-	# in principle this should be ok with taking in REAL and before/after hypoDD
-	# info needed:
-	# 	- name of stations (and station files) --> coordinates
-	# 	- relative P and S arrival of each station (i.e. phase info)
-	# 	- BUT: the relative P and S arrivals depend on the location of the event: if the event is relocated, then the times will be differrent
-	# 	- just assume correct origin time first
-	# 	
-	# 	
-	# 	
-	# event_coord_formats:
-	# real_hypophase, read lines starting with # 
-	# hypoDD.loc / .reloc use every line
-	
-		
-
-	#print(station_info)
-
-	#print(phase_info)
-
-	#print(event_info)
 
 	
 def load_eqt_csv(eqt_csv):
@@ -239,87 +220,6 @@ def search(pid, args):
 					print("Dropped phase:",_station, _phase)
 	station_list = phase_info.keys()
 
-	
-	# input: preliminary located event, coordinates of stations, 
-	# 
-	# want to use grid to represent the centre coordinate of each square so it's more consistent (?)
-	# 
-	# size of grid: 
-	# (1) draw a bounding box across all the stations
-	# (2) use a set bounding box centred on the event
-	# 
-	# no. of grids:
-	# 
-	# 
-	# want to use static size grid for cross comparison
-	# (1) could be static e.g. divide dynamic area into N no. of grids
-	# (2) or static size per grid e.g. 1km (0.01 degrees) 
-	# 
-	# 
-	# 
-	# grid unit: in decimal degrees 
-	# 
-	# output: a 2d map / image
-	# colorscale: could i use GMT? or just use matplotlib
-	# might be easier to use GMT 
-	# 
-	# use the netcdf 4 library to write a .nc file (and rename to .grd because geologists ree)
-	# 
-	
-
-
-	"""
-	options:
-	1) rely on REAL association to choose phases
-	2) manually choose phases myself
-
-	obviously i am going to do (1) because REAL association is alright
-
-	plotting the wadati diagram, there are a lot of outliers
-
-	but if i only use the phases that REAL is using, there are almost no outliers
-	so at least the association is reliable
-
-	that said i think i'll have to plot the record section
-	but the record section is plot using raw SAC data i.e. it's not bp filtered yet
-	i could write a new file e.g. append like a _ or something at the back
-	but that would take up double the space
-	the folder is already 12.8GB
-	i have 84GB available 
-	the original archive is also on disk and on onedrive so i could just modify the traces later
-
-	so:
-
-	1. load EQT csv 
-	2. for specific station phases, find the correct detection assuming REAL phase choice is correct 
-	(which it has good reason to be, given the wadati diagram plot)
-
-	i'm not doing EQ association myself
-
-	3. maybe also save the csv file subset so you don't have to do the operation everytime 
-	4. save the p arrival and s arrival time in their own vectors python list
-
-	5. for each grid cell, obtain an array of 'candidate' origin times
-	6. since np.std() cannot operate directly on datetime objects, normalise using the minimum value
-	7. find the standard deviation and save in the cell
-
-	this means that the grid doesn't need like size 4 array for every cell
-
-	but i'm also lazy to like rework it you know
-
-	8. the cell with the minimum standard deviation should give the origin time + location
-
-	"""
-
-	# construct grid, centered around event lat lon 
-
-	# get bounding box first
-
-	# set initial seed as the bounding boxes of the region
-	# i.e.
-	# LON 94 - 97
-	# LAT 3 -6 
-
 	_lats = [station_info[x]["lat"] for x in station_list]
 	_lons = [station_info[x]["lon"] for x in station_list]
 
@@ -342,35 +242,6 @@ def search(pid, args):
 	args["event_coords"] = _event_coords
 
 
-	# if not args["N_DX"]: # default for N_DX is 0
-
-	# 	DX = args["DX"] # degrees
-	# 	# length of travel time arrays, used for interpolation
-	# 	# just pad some extra area
-	# 	# just make it a square that captures everything 
-	# 	# each grid coordinates represents a centre point 
-	# 	# left bottom corner (x ,y) == (lon, lat)
-	# 	# 
-	# 	lb_corner = (min(_lons) - extra_radius * DX, min(_lats) - extra_radius * DX) # lon, lat 
-	# 	grid_length = int(round(np.ceil(_max_length/DX) + 2 * extra_radius))
-
-	# else:
-
-	# 	# how to decide extra padding? just take the max dist and add like 10% on each side
-
-	# 	padding_range = (args["extra_range"] - 1)/2
-
-	# 	lb_corner = (min(_lons) - _max_length*padding_range, min(_lats) - _max_length*padding_range)
-	# 	max_grid_length = _max_length * args["extra_range"]
-
-	# 	DX = max_grid_length / args["N_DX"]
-
-	# 	grid_length = int(round(math.ceil(max_grid_length/DX)))
-	# 	args["DX"] = DX 
-
-
-	#args["lb_corner"] = lb_corner
-	#args["grid_length"] = grid_length
 
 	N_Z = int(round(Z_RANGE/DZ))
 
@@ -532,41 +403,6 @@ def search(pid, args):
 		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], append_text = args["append_text"])
 
 
-	# numpy saving of the whole array
-	# also include cell numbers to construct the array
-	# lower left corner can be constructed from the ID tbh
-	# 
-	
-	#print(grid)
-
-
-	# if args["load_only"]:
-	# 	with open(npy_filename, 'rb') as f:
-	# 		grid = np.load(f)
-
-	# else:
-	# 	if (args["force"] or not os.path.exists(npy_filename)):
-	# 		print("Saving .npy to: ", npy_filename)
-	# 		with open(npy_filename, 'wb') as f:
-	# 			np.save(f, grid)
-
-
-
-	# if args["plot_mpl"]:
-	# 	plotter(pid, station_list, station_info, args)
-
-	
-		#gmt xyz2grd test.xyz -Gtest.grd -I0.05 $LIMS
-
-
-	# for each grid cell, compute the misfit between the observed and 'theoretical' travel time
-	# use both L1 and L2 norm because... reasons? first entry for L1, second for L2
-	# 
-	# construct a vector target locations (station locations), calculate for each of them the distance
-	# (do a plane approx) and the depth difference, 
-	# use the table to do a interpolation to get the estimated travel time (not that i think it'll help)
-	# compute the squared difference and save it somewhere (inside the grid?)
-
 def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
 
 	# pers = map, londep, latdep
@@ -683,6 +519,9 @@ if __name__ == "__main__":
 
 	parser.add_argument('-dry', action = "store_true")
 
+	parser.add_argument("-p", "--p_only", action = "store_true", help = "only consider P phases")
+	parser.add_argument("-s", "--s_only", action = "store_true", help = "only consider S phases")
+
 
 	args = parser.parse_args()
 
@@ -715,6 +554,8 @@ if __name__ == "__main__":
 			run_rotate = args.run_rotate,
 			exclude = args.exclude,
 			append_text = args.append_text,
+			p_only = args.p_only,
+			s_only = args.s_only,
 			)
 
 

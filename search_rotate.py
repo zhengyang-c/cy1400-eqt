@@ -79,6 +79,8 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	# i should automatically look for the json file
 	if append_text:
 		search_name = pid + "_" + append_text
+	else:
+		search_name = pid
 
 	basename = os.path.join(output_folder, "{}".format(search_name))
 
