@@ -24,7 +24,7 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 
 	for station in phase_info:
 
-		for phase in ["P", "S"]:
+		for phase in ["station_P", "station_S"]:
 			if phase not in phase_info[station]:
 				continue
 
@@ -33,20 +33,20 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 			_dist = dx([station_info[station]["lon"], station_info[station]["lat"]], cell_coords[:2])
 
 			_row = [_dist, _dep]
-
-			phase_list.append(phase)
 			delta_r.append(_row)
-			#obs_tt.append(float(phase_info[station][phase]))
+
+			if phase == "station_P":
+				phase_list.append("P")
+				
+			elif phase == "station_S":
+				phase_list.append("S")
+
+			arrivals.append(phase_info[station][phase])
 
 			# if do_mc:
 			# 	mc_delta = np.random.normal(0, scale = mc_args["sigma_ml"])
 			# else:
 			# 	mc_delta = 0
-			if phase == "P":
-				arrivals.append(phase_info[station]["station_P"] )
-
-			elif phase == "S":
-				arrivals.append(phase_info[station]["station_S"])
 
 			_station_list.append(station)
 
