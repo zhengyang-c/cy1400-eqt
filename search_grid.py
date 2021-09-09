@@ -87,6 +87,7 @@ def parse_input(station_file_name,
 	append_text = "",
 	p_only = False,
 	s_only = False,
+	time_remapping = "",
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
@@ -133,8 +134,11 @@ def parse_input(station_file_name,
 
 	args["append_text"] = append_text
 
-	args["p_only"] = args.p_only
-	args["s_only"] = args.s_only
+	args["p_only"] = p_only
+	args["s_only"] = s_only
+
+	args["time_remapping"] = time_remapping
+	# apply time remapping when loading the phase info
 
 
 	print(args)
@@ -186,20 +190,17 @@ def search(pid, args):
 
 	station_info = parse_station_info(args["station_file"])
 
-	# if args["exclude"]:
-	# 	for _x in list(station_info.keys()):
-	# 		if _station in args["exclude_list"]:
-	# 			print("Excluding station-phase", _station)
-	# 			station_info.pop(_station, None)
-
 	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
 	tt = load_travel_time(args["travel_time_file"])
 	args["TT_NX"] = tt.shape[0]
 	args["TT_NZ"] = tt.shape[1]
+
+
 	with open(args["phase_json"], 'r') as f:
 		phase_info = json.load(f)
 
 	_station_dict = phase_info[pid]['data']
+
 
 	_ts = phase_info[pid]['timestamp']
 
@@ -208,6 +209,26 @@ def search(pid, args):
 	phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
 
 	#print(station_info)
+
+	if args["time_remapping"]:
+		rdf = pd.read_csv(args["time_remapping"])#remap dataframe
+		rdf["p_arrival_time"] = pd.to_datetime(rdf["p_arrival_time"])
+		rdf["s_arrival_time"] = pd.to_datetime(rdf["s_arrival_time"])
+		for index, row in rdf.iterrows():
+			_p = row.p_arrival_time
+			_s = row.s_arrival_time
+
+			_sta = row.datetime_str.split(".")[0]
+
+			if _sta in phase_info:
+
+				if 'P' in phase_info[_sta]:
+					if _p == phase_info[_sta]['station_P']:
+						phase_info[_sta]['station_P'] += datetime.timedelta(seconds = row.A_delta)
+
+				if 'S' in phase_info[_sta]:
+					if _s == phase_info[_sta]['station_S']:
+						phase_info[_sta]['station_S'] += datetime.timedelta(seconds = row.T0_delta)
 
 
 	# construct station list:
@@ -218,6 +239,8 @@ def search(pid, args):
 				if _phase in phase_info[_station][_phase]:
 					phase_info[_station].pop(_phase)
 					print("Dropped phase:",_station, _phase)
+
+
 	station_list = phase_info.keys()
 
 	_lats = [station_info[x]["lat"] for x in station_list]
@@ -522,6 +545,7 @@ if __name__ == "__main__":
 	parser.add_argument("-p", "--p_only", action = "store_true", help = "only consider P phases")
 	parser.add_argument("-s", "--s_only", action = "store_true", help = "only consider S phases")
 
+	parser.add_argument("-dt", "--time_remapping", type = str, help = "path to csv dataframe with remapped P and S arrivals (A and T0)")
 
 	args = parser.parse_args()
 
@@ -556,6 +580,7 @@ if __name__ == "__main__":
 			append_text = args.append_text,
 			p_only = args.p_only,
 			s_only = args.s_only,
+			time_remapping = args.time_remapping,
 			)
 
 
