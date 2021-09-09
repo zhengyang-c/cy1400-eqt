@@ -236,10 +236,13 @@ def search(pid, args):
 		for _station_phase in args["exclude_list"]:
 			_station, _phase = _station_phase.split("_")
 			if _station in phase_info:
-				if _phase in phase_info[_station][_phase]:
-					phase_info[_station].pop(_phase)
-					print("Dropped phase:",_station, _phase)
+				if _phase in phase_info[_station]:
+					phase_info[_station].pop("station_" + _phase)
+					#print("Dropped phase:",_station, _phase)
 
+	if args["p_only"] or args["s_only"]:
+		for _station in phase_info:
+			pass
 
 	station_list = phase_info.keys()
 
