@@ -110,8 +110,6 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	for station in station_list:
 		rotation_coeff[station] = rotater(station, pid, event_folder,)
 
-	station_info_file
-
 	#print(rotation_coeff)
 
 	with open(json_file, "r") as f:
@@ -121,8 +119,9 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	DX = gs_output["cell_size"]
 	DZ = 1
 	try:
-		NX = gs_output["cell_n"]
+		NX = gs_output["cell_n"] 
 	except:
+		# some legacy support which can probably be removed
 		NX = 100
 
 	grid = np.zeros((NX + 1, NX + 1))
@@ -196,8 +195,6 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map")
 
-
-
 	# plot for combined
 	xyz_file = basename+"combined.xyz"
 	grd_file = basename+"combined.grd"
@@ -233,14 +230,30 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	kml_filename = basename+"combined.kml"
 
 	_event_info = {pid+"g+r":{
-	"lat":_grid_output["best_y"], 
 	"lon":_grid_output["best_x"], 
+	"lat":_grid_output["best_y"], 	
 	"dep":_grid_output["best_z"],}
 	}
 
 	kml_make.events(_event_info, kml_filename, "combined rotation misfits and gridsearch misfits", file_type = "direct")
 
+	# rotate sac traces according to best_x best_y
 
+
+	for _station in station_list:
+		_station_coords = station_info[_station]
+
+		_baz = baz((_station_coords["lon"], _station_coords["lat"]), (_grid_output["best_x"], _grid_output["best_y"]))
+
+		rotater(_station, pid, event_folder, save = True, output_folder = output_folder, best_baz = _baz)
+		
+
+
+
+	# use the combined best location to calculate the new BAZ
+	# plot a before and after of the locations
+	# 
+	# 
 
 
 	# need to know lb_corner
@@ -267,13 +280,9 @@ def S(x, *p):
 	A, phi, y0 = p
 	return np.abs(A) * np.cos((2 * x + phi) * np.pi/180) + y0
 
-def grid_search():
-	pass
+	
 
-
-
-
-def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.1, t_max = 0.1):
+def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.1, t_max = 0.1, save = False, output_folder = "", best_baz = 0):
 
 	# get station list, get a grid (?) seed the grid with some starting reference point and grid area (?)
 	# so that the two results are comparable i.e. i can add the results from this gridsearch to the other
@@ -281,8 +290,6 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 	# how to get station list: ls the waveform folder, 
 
 	#station = "TG07"
-
-	
 
 	# need station_info to get station coordinates
 	
@@ -299,16 +306,6 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 	search_folder = os.path.join(event_folder, pid)
 
 	st = obspy.read(os.path.join(search_folder, station + "*C"))
-
-	#print(st)
-
-	# get P arrival, get S arrival ,plot for some range
-
-	# print(st[0].stats["sac"]["o"])
-	# print(st[0].stats["sac"]["a"])
-	# print(st[0].stats["sac"]["t0"])
-
-	#dt = st[0].stats["starttime"] + 
 
 	# need to build kztime from the sac stats to get the reference point O
 
@@ -329,43 +326,56 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 
 	# now rotate acccoring to the BAZ
 
-	_X = []
-	_Y = []
+	if save:
 
-	for i in range(0, 360, 1):
-		#print(i)
+		st.rotate(method="NE->RT", back_azimuth = (best_baz + 90)%360)
 
-		_sti = _stt.copy()
+		if not os.path.exists(os.path.join(output_folder, "rotated")):
+			os.makedirs(os.path.join(output_folder, "rotated"))
+		for tr in st:
+			tr.write(os.path.join(output_folder, "rotated", tr.id + "." + pid + "test.SAC"), format = "SAC")
 
-		_sti.rotate(method="NE->RT", back_azimuth = i)
 
+		return (0,0,99)
+	else:
+
+		_X = []
+		_Y = []
+
+		for i in range(0, 360, 1):
+			#print(i)
+
+			_sti = _stt.copy()
+
+			_sti.rotate(method="NE->RT", back_azimuth = i)
+
+			
+			
+			assert _sti[0].stats["channel"] == "EHT"
+
+			energy = np.sum(_sti[0].data**2)/(_t0 - _a - 0.2) # minimise the transverse component
+
+
+			#print("BAZ", i, "energy", energy)
+			_X.append(i)
+			_Y.append(energy)
+
+		_X = np.array(_X)
+		_Y = np.array(_Y)
+
+		x0 = (0.5, 180, 0.3)
+
+		coeff, var_matrix = curve_fit(S, _X, _Y, p0 = x0)
+
+		#print(coeff)
+
+		# plt.plot(_X, _Y)
+		# plt.plot(_X, S(_X, *coeff))
+		# plt.show()
 		
 		
-		assert _sti[0].stats["channel"] == "EHT"
 
-		energy = np.sum(_sti[0].data**2)/(_t0 - _a - 0.2) # minimise the transverse component
-
-
-		#print("BAZ", i, "energy", energy)
-		_X.append(i)
-		_Y.append(energy)
-
-	_X = np.array(_X)
-	_Y = np.array(_Y)
-
-	x0 = (0.5, 180, 0.3)
-
-	coeff, var_matrix = curve_fit(S, _X, _Y, p0 = x0)
-
-	#print(coeff)
-
-	# plt.plot(_X, _Y)
-	# plt.plot(_X, S(_X, *coeff))
-	# plt.show()
-	
-	
-
-	return coeff
+		return coeff
 
 	#print(_X[np.argmin(_Y)])
 
@@ -377,7 +387,7 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 
 if __name__ == "__main__":
 
-	frequency_test()
+	test_plot()
 
 	# parser = argparse.ArgumentParser()
 	# parser.add_argument("pid")

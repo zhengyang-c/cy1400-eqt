@@ -364,18 +364,11 @@ def search(pid, args):
 			grid_output = json.load(f)
 
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)
-		#target_grid_length = target_grid_length
 
-		#grid_output["cell_size"]
-
-	
-		
 
 	L2 = _grid[:,:,:,0]
 
 	indices = np.where(L2 == L2.min())
-
-	
 
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
