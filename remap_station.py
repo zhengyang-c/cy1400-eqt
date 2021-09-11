@@ -160,7 +160,8 @@ def sac_mapper(sac_file, station_map, station_info):
 				new_station
 				)
 
-			new_path = os.path.join(sac_folder, station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
+			#new_path = os.path.join(sac_folder, station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
+			new_path = os.path.join(sac_folder, reverse_station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
 
 			return {
 				"output_str": output_str,
