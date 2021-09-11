@@ -220,7 +220,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			event_df.at[row_index, 'SC']))
 
 	try:
-		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(
+		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{:.6g}".format(
 			int(event_df.at[row_index, 'YR']), 
 			int(event_df.at[row_index, 'MO']), 
 			int(event_df.at[row_index, 'DY']), 
