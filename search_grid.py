@@ -112,7 +112,7 @@ def parse_input(station_file_name,
 
 	args["eqt_csv"] = eqt_csv
 
-	args["gmt_home"] = eqt_csv
+	args["gmt_home"] = gmt_home
 
 	args["event_folder"] = event_folder
 	args["run_rotate"] = run_rotate
