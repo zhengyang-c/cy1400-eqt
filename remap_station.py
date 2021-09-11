@@ -97,7 +97,7 @@ def sac_mapper(sac_file, station_map, station_info):
 
 	#station_map = create_map(map_file)
 
-	#print(sac_file)
+	
 
 	sac_basepath = sac_file.split("/")[-1]
 	sac_folder = "/".join(sac_file.split("/")[:-1])
@@ -120,7 +120,7 @@ def sac_mapper(sac_file, station_map, station_info):
 	output_list = []
 	for _i in station_map:
 		for j in station_map[_i]:
-			output_list.append(j)
+			output_list.append(station_map[_i][_j])
 	reverse_station_map = {}
 
 	for _i in station_map:
@@ -136,6 +136,8 @@ def sac_mapper(sac_file, station_map, station_info):
 		
 		#if _station in station_map[_wf_ts]: # station name
 		if _station in output_list:
+			print(sac_file)
+			print(_station)
 
 			# maybe return a dictionary
 			# generate the str here 
