@@ -6,6 +6,7 @@ from pathlib import Path
 import argparse
 import datetime
 import time
+import json
 
 # should map station names first then map station coordinates?
 
@@ -34,6 +35,8 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 
 		output_str += resp["output_str"]
 
+		mv_str += "mv {} {}\n".format(resp["original_path"], resp["new_path"])
+
 
 	with open(output_file, 'w') as f:
 		f.write(output_str)
@@ -42,8 +45,20 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 	os.chmod(output_file, 0o775)
 
 	time.sleep(1)
+
+	with open(output_file, 'w') as f:
+		f.write(mv_str)
 	#subprocess.call(["{}".format(output_file)])	
 
+
+def json_remapping(json_file, map_file, station_info_file):
+
+	station_info = parse_station_info(station_info_file)
+
+	station_map = create_map(map_file)
+
+	with open(json_file, 'r') as f:
+		phase_dict = json.load(json_file)
 
 
 def sac_mapper(sac_file, station_map, station_info):
@@ -95,7 +110,6 @@ def sac_mapper(sac_file, station_map, station_info):
 				}
 			except:
 				# do some logging
-
 				print("ERROR", sac_file, _station)
 				return {"output_str": ""}
 
