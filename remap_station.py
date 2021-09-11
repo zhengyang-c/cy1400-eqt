@@ -193,10 +193,6 @@ def csv_mapper(input_csv, output_csv, map_file, station_info):
 	df = pd.read_csv(input_csv)
 
 	# i'm assuming these have event_start_time column
-	assert df["event_start_time"]
-	assert df["station"]
-	assert df["station_lon"]
-	assert df["station_lat"]
 
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
 
