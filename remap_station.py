@@ -172,12 +172,14 @@ def sac_mapper(sac_file, station_map, station_info):
 			# 	# do some logging
 			# 	print("ERROR", sac_file, _station)
 			# 	return {"output_str": ""}
-
-	return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
-					sac_file,
-					station_info[_station]["lat"],
-					station_info[_station]["lon"],
-					)}
+			# 	
+			# 	
+	return {"output_str": ""}		
+	# return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
+	# 				sac_file,
+	# 				station_info[_station]["lat"],
+	# 				station_info[_station]["lon"],
+	# 				)}
 
 	# given some file name, rename it
 	# change the staion header
