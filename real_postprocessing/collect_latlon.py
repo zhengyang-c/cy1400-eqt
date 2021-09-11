@@ -146,13 +146,13 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 
 				if search_file == "cat":
 
-					df.at[c, 'year'], df.at[c, 'month'], df.at[c, 'day'] = data[1:4]			
-					df.at[c, 'hour'], df.at[c, 'min'], df.at[c, 'sec'] = data[4].split(":")
+					df.at[c, 'YR'], df.at[c, 'MO'], df.at[c, 'DY'] = data[1:4]			
+					df.at[c, 'HR'], df.at[c, 'MI'], df.at[c, 'SC'] = data[4].split(":")
 
 					df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[1:5]), "%Y-%m-%d-%H:%M:%S.%f")
-					df.at[c, 'lat'] = float(data[7])
-					df.at[c, 'lon'] = float(data[8])
-					df.at[c, 'depth'] = float(data[9])
+					df.at[c, 'LAT'] = float(data[7])
+					df.at[c, 'LON'] = float(data[8])
+					df.at[c, 'DEPTH'] = float(data[9])
 					df.at[c, 'residual_time'] = float(data[6])
 					df.at[c, 'n_p_picks'] = int(data[12])
 					df.at[c, 'n_s_picks'] = int(data[13])
@@ -162,14 +162,14 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 
 
 				elif search_file == "hypo":
-					df.at[c, 'year'], df.at[c, 'month'], df.at[c, 'day'] = data[0:3]			
-					df.at[c, 'hour'], df.at[c, 'min'], df.at[c, 'sec'] = data[3:6]
+					df.at[c, 'YR'], df.at[c, 'MO'], df.at[c, 'DY'] = data[0:3]			
+					df.at[c, 'HR'], df.at[c, 'MI'], df.at[c, 'SC'] = data[3:6]
 
 					df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H-%M-%S.%f")
-					df.at[c, 'lat'] = float(data[6])
-					df.at[c, 'lon'] = float(data[7])
-					df.at[c, 'depth'] = float(data[8])
-					df.at[c, 'mag'] = float(data[9])			
+					df.at[c, 'LAT'] = float(data[6])
+					df.at[c, 'LON'] = float(data[7])
+					df.at[c, 'DEPTH'] = float(data[8])
+					df.at[c, 'MAG'] = float(data[9])			
 
 					df.at[c, 'n_picks'] = int(data[10])
 					df.at[c, 'station_gap'] = float(data[11])
@@ -183,7 +183,7 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 
 	for index, row in df.iterrows():
 		
-		df.at[index, "cat_index"] = f"{index:06d}"
+		df.at[index, "ID"] = f"{index:06d}"
 
 	df.to_csv(output_file, index = False)
 
@@ -261,7 +261,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('-i','--input', help = "generic input")
 	parser.add_argument('-o', '--output',)
-	parser.add_argument('-search_file', help = "'cat' or 'hypoloc'", default = "")
+	parser.add_argument('-search_file', help = "'cat' or 'hypo'", default = "")
 
 	parser.add_argument('-cat', action = "store_true")
 	parser.add_argument('-pha', action = "store_true")

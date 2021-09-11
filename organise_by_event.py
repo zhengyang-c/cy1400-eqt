@@ -187,7 +187,7 @@ def df_searcher(df, _station_dict, _ts,):
 				assert False
 
 			for index, row in _s_df.iterrows():
-				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
+				search_file_path = os.path.join(row.event_dflocal_file_root, 'sac_picks', row.datetime_str+"*C") 
 
 				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
 				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()

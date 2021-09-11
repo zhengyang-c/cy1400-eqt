@@ -64,8 +64,6 @@ def load_exclude(file_name):
 
 def parse_input(station_file_name, 
 	phase_json_name, 
-	event_coord_file, 
-	event_coord_format, 
 	travel_time_file, 
 	output_folder = "",
 	event_csv = "",
@@ -97,8 +95,8 @@ def parse_input(station_file_name,
 
 	args["station_file"] = station_file_name
 	args["phase_json"] = phase_json_name
-	args["event_coord_file"] = event_coord_file
-	args["event_coord_format"] = event_coord_format
+	# args["event_coord_file"] = event_coord_file
+	# args["event_coord_format"] = event_coord_format
 	args["travel_time_file"] = travel_time_file
 	args["event_csv"] = event_csv
 	args["event_id"] = event_id
@@ -190,7 +188,7 @@ def search(pid, args):
 
 	station_info = parse_station_info(args["station_file"])
 
-	event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
+	#event_info = parse_event_coord(args["event_coord_file"], args["event_coord_format"])
 	tt = load_travel_time(args["travel_time_file"])
 	args["TT_NX"] = tt.shape[0]
 	args["TT_NZ"] = tt.shape[1]
@@ -252,12 +250,12 @@ def search(pid, args):
 	_lats = [station_info[x]["lat"] for x in station_list]
 	_lons = [station_info[x]["lon"] for x in station_list]
 
-	_lats.append(event_info[pid]["lat"])
-	_lons.append(event_info[pid]["lon"])
+	# _lats.append(event_info[pid]["lat"])
+	# _lons.append(event_info[pid]["lon"])
 
 	_max_length = max([max(_lats) - min(_lats), max(_lons) - min(_lons)])
 
-	_event_coords = (event_info[pid]["lon"], event_info[pid]["lat"])
+	#_event_coords = (event_info[pid]["lon"], event_info[pid]["lat"])
 
 	# cell parameters
 	DZ = args["DZ"] # km
@@ -268,7 +266,7 @@ def search(pid, args):
 
 	TT_NX = args["TT_NZ"]
 	TT_NZ = args["TT_DZ"]
-	args["event_coords"] = _event_coords
+	#args["event_coords"] = _event_coords
 
 
 
@@ -504,8 +502,8 @@ if __name__ == "__main__":
 	parser.add_argument("-phase_json")
 
 	parser.add_argument("-eqt_csv")
-	parser.add_argument("-coord_file")
-	parser.add_argument("-coord_format", choices = ["real_hypophase", "hypoDD_loc"])
+	# parser.add_argument("-coord_file")
+	# parser.add_argument("-coord_format", choices = ["real_hypophase", "hypoDD_loc"])
 	parser.add_argument("-tt_path")
 	parser.add_argument("-output_folder")
 
@@ -556,8 +554,6 @@ if __name__ == "__main__":
 		parse_input(
 			args.station_info, 
 			args.phase_json,	
-			args.coord_file, 
-			args.coord_format, 
 			args.tt_path, 
 			args.output_folder, 
 			event_csv = args.event_csv, 
