@@ -211,6 +211,13 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	row_index = event_df[event_df["ID"] == uid].index[0]
 
 	print("current row:", row_index, uid)
+	print("{}-{}-{}-{}-{}-{}".format(
+			int(event_df.at[row_index, 'YR']), 
+			int(event_df.at[row_index, 'MO']), 
+			int(event_df.at[row_index, 'DY']), 
+			int(event_df.at[row_index, 'HR']), 
+			int(event_df.at[row_index, 'MI']), 
+			event_df.at[row_index, 'SC']))
 
 	try:
 		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(
