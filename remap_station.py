@@ -53,19 +53,42 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 	#subprocess.call(["{}".format(output_file)])	
 
 
-def json_remapping(json_file, map_file, station_info_file):
+def json_remapping(json_file, map_file, station_info_file, output_file):
+	print("what")
 
 	station_info = parse_station_info(station_info_file)
 
 	station_map = create_map(map_file)
 
 	with open(json_file, 'r') as f:
-		phase_dict = json.load(json_file)
+		phase_dict = json.load(f)
 
 	event_list = list(phase_dict.keys())
 
 	for event in event_list:
-		ts = phase_dict[event]["timestamp"]
+		try:
+			ts = datetime.datetime.strptime(phase_dict[event]["timestamp"], "%Y-%m-%d %H:%M:%S.%f")
+		except:
+			ts = datetime.datetime.strptime(phase_dict[event]["timestamp"], "%Y-%m-%d %H:%M:%S")
+
+		y_m = datetime.datetime.strftime(ts, "%Y_%m")
+
+		if not y_m in station_map:
+			continue
+
+		#print("wow")
+
+		for station in list(phase_dict[event]["data"].keys()):
+			if station in station_map[y_m]:
+				print("old station", station)				
+				new_station = station_map[y_m][station]
+				print("new station,", new_station)
+				phase_dict[event]["data"][new_station] = phase_dict[event]["data"].pop(station)
+
+
+
+	with open(output_file, 'w') as f:
+		json.dump(phase_dict, f, indent = 4)
 
 
 def sac_mapper(sac_file, station_map, station_info):
@@ -311,11 +334,12 @@ if __name__ == "__main__":
 	parser.add_argument('-station_file', help = "tab separated file with station coordinates")
 
 	parser.add_argument("-sf", help = "folder to search in")
+
 	parser.add_argument("-st", help = "search term (encase in quotes so the shell doesn't expand it)")
 
 	#parser.add_argument("-map_one", action = "store_true", help = "map for one csv file only")
 	parser.add_argument("-csv", action = "store_true", help = "map for csv files only")
-
+	parser.add_argument("-json", action = "store_true")
 	parser.add_argument("-sac", action = "store_true", help = "map for sac files")
 
 	parser.add_argument('-dry', action = "store_true", default = False)
@@ -328,5 +352,10 @@ if __name__ == "__main__":
 		csv_remapping(args.sf, args.st, args.map_file, args.station_file, dry_run = args.dry)
 	elif args.sac:
 		sac_remapping(args.sf, args.st, args.map_file, args.station_file, args.output)
+
+	elif args.json:
+		json_remapping(args.input, args.map_file, args.station_file, args.output)
+
+		# def json_remapping(json_file, map_file, station_info_file, output_file):
 
 # def sac_remapping(search_folder, search_term, output_file, map_file, station_file):
