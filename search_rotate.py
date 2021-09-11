@@ -333,7 +333,7 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 		if not os.path.exists(os.path.join(output_folder, "rotated")):
 			os.makedirs(os.path.join(output_folder, "rotated"))
 		for tr in st:
-			tr.write(os.path.join(output_folder, "rotated", tr.id + "." + pid + "test.SAC"), format = "SAC")
+			tr.write(os.path.join(output_folder, "rotated", tr.id + "." + pid + ".SAC"), format = "SAC")
 
 
 		return (0,0,99)
