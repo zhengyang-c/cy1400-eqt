@@ -44,12 +44,12 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 		f.write(output_str)
 
 	time.sleep(1)
-	os.chmod(output_file, 0o775)
+	#os.chmod(output_file, 0o775)
 
 	time.sleep(1)
 
-	with open(output_file, 'w') as f:
-		f.write(mv_str)
+	#with open(output_file, 'w') as f:
+	#	f.write(mv_str)
 	#subprocess.call(["{}".format(output_file)])	
 
 
