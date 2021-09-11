@@ -220,7 +220,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 			event_df.at[row_index, 'SC']))
 
 	try:
-		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{:.6g}".format(
+		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{:.6f}".format(
 			int(event_df.at[row_index, 'YR']), 
 			int(event_df.at[row_index, 'MO']), 
 			int(event_df.at[row_index, 'DY']), 
@@ -233,6 +233,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 		if event_df.at[row_index, 'SC'] == 60.0:
 			origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), "0.0"), "%Y-%m-%d-%H-%M-%S.%f")
 			origin_time += datetime.timedelta(minutes = 1)
+
 		else:
 			raise ValueError
 
