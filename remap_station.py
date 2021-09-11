@@ -113,33 +113,15 @@ def sac_mapper(sac_file, station_map, station_info):
 	#waveform timestamp
 	_wf_ts = datetime.datetime.strftime(_dt, "%Y_%m")
 
-	# fix the wrongly copied over
 
-	# build keylist
-
-	output_list = []
-	for _i in station_map:
-		for _j in station_map[_i]:
-			output_list.append(station_map[_i][_j])
-
-	#print(output_list)
-	reverse_station_map = {}
-
-	for _i in station_map:
-		reverse_station_map[_i] = {}
-		for _j in station_map[_i]:
-			reverse_station_map[_i][station_map[_i][_j]] = _j
-
-	#print(reverse_station_map)
-
-	if _wf_ts in station_map: # year month
+	if False:
+	#if _wf_ts in station_map: # year month
 	#if _station in output_list:
 
 		# write header first 
 		# add to some sort of list to keep track so maybe return to the sac_remapping function
 		
-		#if _station in station_map[_wf_ts]: # station name
-		if _station in reverse_station_map[_wf_ts]:
+		if _station in station_map[_wf_ts]: # station name
 			print(sac_file)
 			print(_station)
 
@@ -151,7 +133,8 @@ def sac_mapper(sac_file, station_map, station_info):
 			#
 			
 			#new_station = station_map[_wf_ts][_station]
-			new_station = reverse_station_map[_wf_ts][_station]
+			#new_station = reverse_station_map[_wf_ts][_station]
+			new_station = _station
 			#try: 
 			output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
 				sac_file,
@@ -174,12 +157,12 @@ def sac_mapper(sac_file, station_map, station_info):
 			# 	return {"output_str": ""}
 			# 	
 			# 	
-	return {"output_str": ""}		
-	# return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
-	# 				sac_file,
-	# 				station_info[_station]["lat"],
-	# 				station_info[_station]["lon"],
-	# 				)}
+	
+	return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
+					sac_file,
+					station_info[_station]["lat"],
+					station_info[_station]["lon"],
+					)}
 
 	# given some file name, rename it
 	# change the staion header
