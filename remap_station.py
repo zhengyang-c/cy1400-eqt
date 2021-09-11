@@ -119,7 +119,7 @@ def sac_mapper(sac_file, station_map, station_info):
 
 	output_list = []
 	for _i in station_map:
-		for j in station_map[i]:
+		for j in station_map[_i]:
 			output_list.append(j)
 
 	#if _wf_ts in station_map: # year month
