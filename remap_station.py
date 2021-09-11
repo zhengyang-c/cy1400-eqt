@@ -139,7 +139,7 @@ def sac_mapper(sac_file, station_map, station_info):
 		# add to some sort of list to keep track so maybe return to the sac_remapping function
 		
 		#if _station in station_map[_wf_ts]: # station name
-		if _station in output_list:
+		if _station in reverse_station_map[_wf_ts]:
 			print(sac_file)
 			print(_station)
 
