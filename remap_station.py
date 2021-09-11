@@ -122,14 +122,14 @@ def sac_mapper(sac_file, station_map, station_info):
 		for j in station_map[_i]:
 			output_list.append(j)
 
-	#if _wf_ts in station_map: # year month
-	if _station in output_list:
+	if _wf_ts in station_map: # year month
+	#if _station in output_list:
 
 		# write header first 
 		# add to some sort of list to keep track so maybe return to the sac_remapping function
 		
 		#if _station in station_map[_wf_ts]: # station name
-		if 1:
+		if _station in output_list:
 
 			# maybe return a dictionary
 			# generate the str here 
@@ -138,25 +138,25 @@ def sac_mapper(sac_file, station_map, station_info):
 			
 			#new_station = station_map[_wf_ts][_station]
 			new_station = _station
-			try: 
-				output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
-					sac_file,
-					station_info[new_station]["lat"],
-					station_info[new_station]["lon"],
-					new_station
-					)
+			#try: 
+			output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
+				sac_file,
+				station_info[new_station]["lat"],
+				station_info[new_station]["lon"],
+				new_station
+				)
 
-				new_path = os.path.join(sac_folder, station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
+			new_path = os.path.join(sac_folder, station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
 
-				return {
-					"output_str": output_str,
-					"original_path": sac_file,
-					"new_path": new_path
-				}
-			except:
-				# do some logging
-				print("ERROR", sac_file, _station)
-				return {"output_str": ""}
+			return {
+				"output_str": output_str,
+				"original_path": sac_file,
+				"new_path": new_path
+			}
+			# except:
+			# 	# do some logging
+			# 	print("ERROR", sac_file, _station)
+			# 	return {"output_str": ""}
 
 	return {"output_str": "printf \"r {}\\nch STLA {} STLO {} \\nwh\\nq\\n\" | sac\n".format(
 					sac_file,
