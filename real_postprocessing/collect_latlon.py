@@ -137,6 +137,11 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 	df = pd.DataFrame()
 
 	c = 0
+	try:
+		assert len(filelist) > 0
+	except:
+		raise AssertionError("No files were selected! Quitting.")
+
 	for file in filelist:
 		with open(file, 'r') as f:
 			for line in f:
