@@ -143,6 +143,8 @@ def sac_mapper(sac_file, station_map, station_info):
 			print(sac_file)
 			print(_station)
 
+			print(reverse_station_map[_wf_ts])
+
 			# maybe return a dictionary
 			# generate the str here 
 			# 
