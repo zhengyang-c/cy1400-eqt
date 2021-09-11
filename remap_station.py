@@ -28,6 +28,7 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 	station_map = create_map(map_file)
 
 	output_str = "#!/bin/bash\n"
+	mv_str = "#!/bin/bash\n"
 
 	for sac_file in Path(search_folder).rglob(search_term):
 
@@ -35,7 +36,8 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 
 		output_str += resp["output_str"]
 
-		mv_str += "mv {} {}\n".format(resp["original_path"], resp["new_path"])
+		if "original_path" in resp:
+			mv_str += "mv {} {}\n".format(resp["original_path"], resp["new_path"])
 
 
 	with open(output_file, 'w') as f:
@@ -59,6 +61,11 @@ def json_remapping(json_file, map_file, station_info_file):
 
 	with open(json_file, 'r') as f:
 		phase_dict = json.load(json_file)
+
+	event_list = list(phase_dict.keys())
+
+	for event in event_list:
+		ts = phase_dict[event]["timestamp"]
 
 
 def sac_mapper(sac_file, station_map, station_info):
