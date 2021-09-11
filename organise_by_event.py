@@ -210,9 +210,17 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	padded_id = (str(i).zfill(6))
 	row_index = event_df[event_df["ID"] == uid].index[0]
 
-	try:
+	print("current row:", row_index, uid)
 
-		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(int(event_df.at[row_index, 'YR']), int(event_df.at[row_index, 'MO']), int(event_df.at[row_index, 'DY']), int(event_df.at[row_index, 'HR']), int(event_df.at[row_index, 'MI']), event_df.at[row_index, 'SC']), "%Y-%m-%d-%H-%M-%S.%f")
+	try:
+		origin_time = datetime.datetime.strptime("{}-{}-{}-{}-{}-{}".format(
+			int(event_df.at[row_index, 'YR']), 
+			int(event_df.at[row_index, 'MO']), 
+			int(event_df.at[row_index, 'DY']), 
+			int(event_df.at[row_index, 'HR']), 
+			int(event_df.at[row_index, 'MI']), 
+			event_df.at[row_index, 'SC']), 
+			"%Y-%m-%d-%H-%M-%S.%f")
 
 	except:
 		if event_df.at[row_index, 'SC'] == 60.0:
