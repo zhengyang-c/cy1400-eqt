@@ -119,7 +119,7 @@ def sac_mapper(sac_file, station_map, station_info):
 
 	output_list = []
 	for _i in station_map:
-		for j in station_map[_i]:
+		for _j in station_map[_i]:
 			output_list.append(station_map[_i][_j])
 	reverse_station_map = {}
 
