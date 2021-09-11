@@ -121,6 +121,12 @@ def sac_mapper(sac_file, station_map, station_info):
 	for _i in station_map:
 		for j in station_map[_i]:
 			output_list.append(j)
+	reverse_station_map = {}
+
+	for _i in station_map:
+		reverse_station_map[_i] = {}
+		for _j in station_map[_i]:
+			reverse_station_map[_i][station_map[_i][_j]] = _j
 
 	if _wf_ts in station_map: # year month
 	#if _station in output_list:
@@ -137,7 +143,7 @@ def sac_mapper(sac_file, station_map, station_info):
 			#
 			
 			#new_station = station_map[_wf_ts][_station]
-			new_station = _station
+			new_station = reverse_station_map[_wf_ts][_station]
 			#try: 
 			output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
 				sac_file,
