@@ -65,7 +65,7 @@ def baz(X1, X2):
 	return gps2dist_azimuth(X1[1], X1[0], X2[1], X2[0])[1]
 
 
-def rotate_search(pid, event_folder, output_folder, station_info_file, append_text = ""):
+def rotate_search(pid, event_folder, output_folder, station_info_file, append_text = "", gmt_home = "/home/zy/gmt"):
 
 	# pid = "000212"
 	# event_folder = "imported_figures/event_archive"
@@ -193,7 +193,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	_grid_output["sigma_ml"] = np.min(grid)
 
-	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map")
+	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)
 
 	# plot for combined
 	xyz_file = basename+"combined.xyz"
@@ -225,7 +225,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	_grid_output["sigma_ml"] = np.min(combined)
 
 
-	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map")
+	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)
 
 	kml_filename = basename+"combined.kml"
 

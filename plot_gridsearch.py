@@ -27,7 +27,7 @@ def load_numpy_file(file_name):
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
 # 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05"):
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05", gmt_home = "/home/zy/gmt"):
 
 
 	with open(station_file, "w") as f:
@@ -37,6 +37,8 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 	# this will probably only work for JM6i
 	# for londep/latdep you want to use JX
 	# 
+	# 
+
 	
 	#colorscale = "0/1/0.05"
 
@@ -51,10 +53,10 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt set FORMAT_GEO_MAP=D",
 		"PROJ=\"-JM6i\"",
 		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], lims[2], lims[3]),
-		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PLATE=\"{}/plate/sumatran_fault_ll.xy\"".format(gmt_home),
 		"PSFILE=\"{}\"".format(output_file),
-		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
-		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
+		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
 		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
 		"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -Q -K -O >> $PSFILE".format(grd_file),
@@ -78,10 +80,10 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt set FORMAT_GEO_MAP=D",
 		"PROJ=\"-Jx40c/-0.4c\"",
 		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], -1, lims[3]),
-		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PLATE=\"{}/plate/sumatran_fault_ll.xy\"".format(gmt_home),
 		"PSFILE=\"{}\"".format(output_file),
-		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
-		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
+		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
 		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -Q -K > $PSFILE".format(grd_file),
 		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
@@ -103,10 +105,10 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt set FORMAT_GEO_MAP=D",
 		"PROJ=\"-Jx40c/-0.4c\"",
 		"LIMS=\"-R{:.5g}/{:.5g}/{:.5g}/{:.5g}\"".format(lims[0], lims[1], -1, lims[3]),
-		"PLATE=\"/home/zy/gmt/plate/sumatran_fault_ll.xy\"",
+		"PLATE=\"{}/plate/sumatran_fault_ll.xy\"".format(gmt_home),
 		"PSFILE=\"{}\"".format(output_file),
-		"CPT=\"-C/home/zy/gmt/cpt/colombia.cpt\"",
-		"ETOP=\"/home/zy/gmt/etop/GMRTv3_9_20210325topo_61m.grd\"",
+		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
+		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
 		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K -Q > $PSFILE".format(grd_file),
 		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",

@@ -86,6 +86,7 @@ def parse_input(station_file_name,
 	p_only = False,
 	s_only = False,
 	time_remapping = "",
+	gmt_home = "",
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
@@ -110,6 +111,8 @@ def parse_input(station_file_name,
 	args["show_mpl"] = show_mpl	
 
 	args["eqt_csv"] = eqt_csv
+
+	args["gmt_home"] = eqt_csv
 
 	args["event_folder"] = event_folder
 	args["run_rotate"] = run_rotate
@@ -406,10 +409,10 @@ def search(pid, args):
 	p = subprocess.Popen(output_str, shell = True)
 
 
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename)
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
 
 
-	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"], ticscale = "0.1")
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
 
 
 	_event_info = {pid+"gs":{
@@ -420,7 +423,7 @@ def search(pid, args):
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
 	if args["run_rotate"]:
-		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], append_text = args["append_text"])
+		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], append_text = args["append_text"], gmt_home = args["gmt_home"])
 
 
 def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
@@ -533,6 +536,8 @@ if __name__ == "__main__":
 
 	parser.add_argument("-ap", "--append_text", type = str, help = "appends an underscore followed by the text in the flag, modifying the base name of the file", default = "")
 
+	parser.add_argument('-gmt', "--gmt_home", type = str, default = "/home/zy/gmt")
+
 
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
@@ -576,6 +581,7 @@ if __name__ == "__main__":
 			p_only = args.p_only,
 			s_only = args.s_only,
 			time_remapping = args.time_remapping,
+			gmt_home = args.gmt_home
 			)
 
 
