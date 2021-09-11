@@ -113,21 +113,31 @@ def sac_mapper(sac_file, station_map, station_info):
 	#waveform timestamp
 	_wf_ts = datetime.datetime.strftime(_dt, "%Y_%m")
 
-	# fix A10 first
+	# fix the wrongly copied over
 
-	if _wf_ts in station_map: # year month
+	# build keylist
+
+	output_list = []
+	for _i in station_map:
+		for j in station_map[i]:
+			output_list.append(j)
+
+	#if _wf_ts in station_map: # year month
+	if _station in output_list:
 
 		# write header first 
 		# add to some sort of list to keep track so maybe return to the sac_remapping function
 		
-		if _station in station_map[_wf_ts]: # station name
+		#if _station in station_map[_wf_ts]: # station name
+		if 1:
 
 			# maybe return a dictionary
 			# generate the str here 
 			# 
 			#
 			
-			new_station = station_map[_wf_ts][_station]
+			#new_station = station_map[_wf_ts][_station]
+			new_station = _station
 			try: 
 				output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
 					sac_file,
