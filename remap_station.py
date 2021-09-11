@@ -97,7 +97,7 @@ def sac_mapper(sac_file, station_map, station_info):
 
 	#station_map = create_map(map_file)
 
-	print(sac_file)
+	#print(sac_file)
 
 	sac_basepath = sac_file.split("/")[-1]
 	sac_folder = "/".join(sac_file.split("/")[:-1])
@@ -113,6 +113,8 @@ def sac_mapper(sac_file, station_map, station_info):
 	#waveform timestamp
 	_wf_ts = datetime.datetime.strftime(_dt, "%Y_%m")
 
+	# fix A10 first
+
 	if _wf_ts in station_map: # year month
 
 		# write header first 
@@ -123,12 +125,15 @@ def sac_mapper(sac_file, station_map, station_info):
 			# maybe return a dictionary
 			# generate the str here 
 			# 
+			#
+			
+			new_station = station_map[_wf_ts][_station]
 			try: 
 				output_str = "printf \"r {}\\nch STLA {} STLO {} KSTNM {}\\nwh\\nq\\n\" | sac\n".format(
 					sac_file,
-					station_info[_station]["lat"],
-					station_info[_station]["lon"],
-					station_map[_wf_ts][_station]
+					station_info[new_station]["lat"],
+					station_info[new_station]["lon"],
+					new_station
 					)
 
 				new_path = os.path.join(sac_folder, station_map[_wf_ts][_station] + "." + ".".join(sac_basepath.split(".")[1:]))
