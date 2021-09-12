@@ -142,7 +142,7 @@ def parse_input(station_file_name,
 	# apply time remapping when loading the phase info
 
 
-	print(args)
+	#print(args)
 
 
 	df = load_eqt_csv(eqt_csv)
@@ -331,7 +331,7 @@ def search(pid, args):
 		
 		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
-		print(grid_output)
+		#print(grid_output)
 
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
 
@@ -339,7 +339,7 @@ def search(pid, args):
 
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
-		print(plot_grid[1])
+		#print(plot_grid[1])
 
 		grid_output["station_misfit"] = plot_grid[1]
 		grid_output["lb_corner_x"] = plot_grid[2][0]
