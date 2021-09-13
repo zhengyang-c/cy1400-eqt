@@ -57,7 +57,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"PSFILE=\"{}\"".format(output_file),
 		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
 		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
-		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
+		"gmt makecpt -Crainbow -T{} -Z > {}".format(colorscale, os.path.join(output_folder, "temp.cpt")),
 		"gmt grdimage $ETOP $PROJ $LIMS $CPT -K > $PSFILE",
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -Q -K -O >> $PSFILE".format(grd_file),
 		"gmt psxy $PLATE $PROJ $LIMS -W1p -K -O >> $PSFILE",
@@ -69,7 +69,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
 		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
-		"rm temp.cpt",
+		#"rm temp.cpt",
 		]
 
 	elif map_type == "londep":
@@ -84,7 +84,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"PSFILE=\"{}\"".format(output_file),
 		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
 		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
-		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
+		"gmt makecpt -Crainbow -T{} -Z > {}".format(colorscale, os.path.join(output_folder, "temp.cpt")),
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -Q -K > $PSFILE".format(grd_file),
 		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
 		"awk '{{print $2,0}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
@@ -94,7 +94,6 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
 		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, 1),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
-		"rm temp.cpt",
 		]
 
 	elif map_type == "latdep": # copying because i've given up
@@ -109,7 +108,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"PSFILE=\"{}\"".format(output_file),
 		"CPT=\"-C{}/cpt/colombia.cpt\"".format(gmt_home),
 		"ETOP=\"{}/etop/GMRTv3_9_20210325topo_61m.grd\"".format(gmt_home),
-		"gmt makecpt -Crainbow -T{} -Z > temp.cpt".format(colorscale),
+		"gmt makecpt -Crainbow -T{} -Z > {}".format(colorscale, os.path.join(output_folder, "temp.cpt")),
 		"gmt grdimage {} $PROJ $LIMS -Ctemp.cpt -K -Q > $PSFILE".format(grd_file),
 		#"gmt pscoast $PROJ $LIMS -W1p -Df -N1/0.5p -A0/0/1 -K -O >> $PSFILE",
 		"awk '{{print $2,0}}' {} | gmt psxy $PROJ $LIMS -Gblack -St0.1i -W0.5p -K -O >> $PSFILE".format(station_file),
@@ -119,7 +118,6 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"gmt psscale $PROJ $LIMS -DjLB+w14c/0.5c+jLB+o0.5c -G{} -Ctemp.cpt --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale),
 		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, 1),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
-		"rm temp.cpt",
 		]
 
 	with open(output_sh, "w") as f:
