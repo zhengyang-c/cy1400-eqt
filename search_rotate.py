@@ -108,7 +108,14 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	rotation_coeff = {}
 
 	for station in station_list:
-		rotation_coeff[station] = rotater(station, pid, event_folder,)
+		_coeff = rotater(station, pid, event_folder,)
+		if _coeff == -1:
+			continue
+		rotation_coeff[station] = _coeff
+
+	if len(rotation_coeff.keys()) == 0:
+		print("No fitting made for rotation operation, quitting. ")
+		return 0
 
 	#print(rotation_coeff)
 
@@ -374,7 +381,12 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 
 		x0 = (0.5, 180, 0.3)
 
-		coeff, var_matrix = curve_fit(S, _X, _Y, p0 = x0)
+		try:
+
+			coeff, var_matrix = curve_fit(S, _X, _Y, p0 = x0)
+
+		except:
+			return -1
 
 		#print(coeff)
 

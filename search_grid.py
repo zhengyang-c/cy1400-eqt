@@ -346,6 +346,7 @@ def search(pid, args):
 		grid_output["lb_corner_y"] = plot_grid[2][1]
 		grid_output["cell_size"] = plot_grid[3]
 		grid_output["cell_n"] = args["N_DX"]
+		grid_output["ID"] = pid
 		grid_output["cell_height"] = args["DZ"]
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
