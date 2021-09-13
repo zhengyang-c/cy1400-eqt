@@ -13,12 +13,12 @@ import matplotlib.pyplot as plt
 
 def txt_velocity_model():
 
-	layer_depth = [0, 5, 10, 20, 30, 40, 50,] # bottom
-	layer_velocities = [5.2, 5.5, 6, 6.6, 7.6, 8.0, 8.1]
+	layer_depth = [0, 5, 10, 20, 30, 40, 50, 70, 90] # bottom
+	layer_velocities = [5.2, 5.5, 6, 6.6, 7.6, 8.0, 8.0, 8.2, 8.2]
 	vp_vs = 1.76 # from wadati plot
 
 	
-	max_depth = 60 # for reasons ...
+	max_depth = 90 # for reasons ...
 
 	# or just have 1 km depth from 0 to 20, then 5 km depths until 5, 
 	# think the last layer is like 0 km depth because that should specify the model for the rest of it
@@ -40,7 +40,7 @@ def txt_velocity_model():
 			output_depth.append(float(j))
 
 
-	with open("txt_model_dlange_corr2.txt", "w") as f:
+	with open("txt_model_dlange_corr2_deeper.txt", "w") as f:
 		for i in range(len(output_depth)):
 			f.write("{:.5g}\t{:.5g}\t{:.5g}\n".format(1, output_vs[i], output_vp[i])) # it's probably model thicknesss
 
@@ -51,7 +51,7 @@ def generate_tt():
 	# trav.pl [p | s]  model_file source_depth distances
 	
 	distance_range = 451
-	depth_range = 41
+	depth_range = 76
 
 	tt = np.zeros([distance_range, depth_range, 2])
 
@@ -59,16 +59,16 @@ def generate_tt():
 		print(i)
 		for j in range(0, depth_range):
 
-			out = check_output(["./trav.pl", "p", "txt_model_dlange_corr2.txt", str(j), str(i)])
+			out = check_output(["./trav.pl", "p", "txt_model_dlange_corr2_deeper.txt", str(j), str(i)])
 			out = [float(x) for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 			tt[i][j][0] = out[1]
 
-			out = check_output(["./trav.pl", "s", "txt_model_dlange_corr2.txt", str(j), str(i)])
+			out = check_output(["./trav.pl", "s", "txt_model_dlange_corr2_deeper.txt", str(j), str(i)])
 			out = [float(x) for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
 			tt[i][j][1] = out[1]
 
-	with open("model_dlange2_451km.npy", "wb") as f:
+	with open("model_dlange2_451km-60km.npy", "wb") as f:
 		np.save(f, tt)
 
 def check_tt():

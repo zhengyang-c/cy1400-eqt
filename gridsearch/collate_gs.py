@@ -17,9 +17,7 @@ def check_json():
 
 	all_json_files = [str(p) for p in Path(search_folder).rglob("*.json")]
 
-	output_csv = "gridsearch/7jul_gsonly_13sep.csv"
-
-
+	output_csv = "gridsearch/7jul_gsonly_13sep_all.csv"
 
 	for c, json_file in enumerate(all_json_files):
 
@@ -65,5 +63,5 @@ def check_misfits():
 	# this is a secondary thing don't need to be done now
 	pass
 
-#check_json()
-patch_gs()
+check_json()
+#patch_gs()
