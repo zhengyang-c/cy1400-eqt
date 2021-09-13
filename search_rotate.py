@@ -89,7 +89,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	print(search_name, output_folder)
 	print(json_candidates)
-	assert len(json_candidates) == 1
+	assert len(json_candidates) == 1 # this is so not future proof
 	json_file = json_candidates[0]
 
 	npy_candidates = [str(p) for p in Path(output_folder).glob("{}.npy".format(search_name))]
@@ -191,6 +191,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	for _x in ["best_x", "best_y", "best_z"]:
 		_grid_output[_x] = gs_output[_x]
 
+
 	_grid_output["sigma_ml"] = np.min(grid)
 
 	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)
@@ -223,6 +224,14 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 	_grid_output["best_z"] = gs_output["best_z"]
 
 	_grid_output["sigma_ml"] = np.min(combined)
+
+	gs_output["best_x_c"] = _grid_output["best_x"]
+	gs_output["best_y_c"] = _grid_output["best_y"]
+	gs_output["best_z_c"] = _grid_output["best_z"]
+	gs_output["misfit_combined"] = _grid_output["sigma_ml"]
+
+	with open(json_file, "w") as f:
+		json.dump(gs_output, f, indent = 4)
 
 
 	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)

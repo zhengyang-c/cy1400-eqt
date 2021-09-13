@@ -50,12 +50,13 @@ def generate_tt():
 	# call trav.pl
 	# trav.pl [p | s]  model_file source_depth distances
 	
-	distance_range = 301
+	distance_range = 451
 	depth_range = 41
 
 	tt = np.zeros([distance_range, depth_range, 2])
 
 	for i in range(0, distance_range):
+		print(i)
 		for j in range(0, depth_range):
 
 			out = check_output(["./trav.pl", "p", "txt_model_dlange_corr2.txt", str(j), str(i)])
@@ -67,7 +68,7 @@ def generate_tt():
 
 			tt[i][j][1] = out[1]
 
-	with open("model_dlange2.npy", "wb") as f:
+	with open("model_dlange2_451km.npy", "wb") as f:
 		np.save(f, tt)
 
 def check_tt():
@@ -83,8 +84,8 @@ def check_tt():
 	plt.colorbar()
 	plt.show()
 
-check_tt()
 
+generate_tt()
 	# next, plot a colormap of the travel time table you have
 
 
