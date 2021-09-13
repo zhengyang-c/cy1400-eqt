@@ -41,6 +41,23 @@ def check_json():
 			df.at[c, h] = e_md[header_map[h]]
 	df.to_csv(output_csv, index = False)
 	
+def patch_gs():
+
+	source_csv = "imported_figures/7jul_gsonly_13sep.csv"
+
+	df = pd.read_csv(source_csv)
+
+	#all_expected = [x for x in range(2639)]
+
+	output_str = "ID,\n"
+	check = df["ID"].tolist()
+
+	for x in range(2639): # should make it dependent on the input list..... next time
+		if x not in check:
+			output_str += str(x) +"\n"
+
+	with open("imported_figures/gs_13sep_patch.csv", 'w') as f:
+		f.write(output_str)
 
 def check_misfits():
 	# want to know distribution of misfits but kinda hard if not on an event by event basis?
@@ -48,4 +65,5 @@ def check_misfits():
 	# this is a secondary thing don't need to be done now
 	pass
 
-check_json()
+#check_json()
+patch_gs()

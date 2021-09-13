@@ -109,9 +109,11 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	for station in station_list:
 		_coeff = rotater(station, pid, event_folder,)
-		if _coeff == -1:
-			continue
-		rotation_coeff[station] = _coeff
+		try:
+			if _coeff == -1:
+				continue
+		except:
+			rotation_coeff[station] = _coeff
 
 	if len(rotation_coeff.keys()) == 0:
 		print("No fitting made for rotation operation, quitting. ")
@@ -201,7 +203,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	_grid_output["sigma_ml"] = np.min(grid)
 
-	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)
+	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid, output_folder, map_type = "map", gmt_home = gmt_home)
 
 	# plot for combined
 	xyz_file = basename+"combined.xyz"
@@ -241,7 +243,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 		json.dump(gs_output, f, indent = 4)
 
 
-	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid,  map_type = "map", gmt_home = gmt_home)
+	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid, output_folder, map_type = "map", gmt_home = gmt_home)
 
 	kml_filename = basename+"combined.kml"
 

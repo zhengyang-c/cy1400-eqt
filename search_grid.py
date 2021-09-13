@@ -410,10 +410,10 @@ def search(pid, args):
 	p = subprocess.Popen(output_str, shell = True)
 
 
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid,  map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
 
 
-	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
 
 
 	_event_info = {pid+"gs":{
