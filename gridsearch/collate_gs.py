@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import argparse
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def check_json():
 
@@ -57,11 +58,70 @@ def patch_gs():
 	with open("imported_figures/gs_13sep_patch.csv", 'w') as f:
 		f.write(output_str)
 
-def check_misfits():
+def plot_hist():
 	# want to know distribution of misfits but kinda hard if not on an event by event basis?
 
 	# this is a secondary thing don't need to be done now
-	pass
+	df = pd.read_csv("imported_figures/7jul_gsonly_13sep_all.csv")
 
-check_json()
+	depths = df["evdp_gs"].tolist()
+	misfits = df["misfit_gs"].tolist()
+
+	plt.hist(depths, bins = np.arange(0,41))
+	plt.show()
+	
+	plt.yscale("log")
+	plt.hist(misfits, bins = np.arange(0,4,0.5))
+	plt.show()
+	
+# want to collate individual misfits by loading all the json files / collecting all the json files? so just zip them lol
+#
+def collate_misfits():
+
+	search_folder = "gridsearch/13sep_gs_json/jsons"
+	all_jsons = [str(p) for p in Path(search_folder).glob("*json")]
+	df = pd.DataFrame(columns = ["ID", "station", "misfit", "phase"])
+	c = 0
+	for _jsonfile in all_jsons:
+		with open(_jsonfile, 'r') as f:
+			_md = json.load(f)
+		#print(_md)
+
+		for _sta in _md["station_misfit"]:
+			if "P" in _md["station_misfit"][_sta]:
+				df.at[c, "ID"] = _jsonfile.split("/")[-1][:6]
+				df.at[c, "station"] = _sta
+				df.at[c, "misfit"] = _md["station_misfit"][_sta]["P"]
+				df.at[c, "phase"] = "P"
+
+				c += 1
+			if "S" in _md["station_misfit"][_sta]:
+				df.at[c, "ID"] = _jsonfile.split("/")[-1][:6]
+				df.at[c, "station"] = _sta
+				df.at[c, "misfit"] = _md["station_misfit"][_sta]["S"]
+				df.at[c, "phase"] = "S"
+
+				c += 1
+
+	df.to_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
+
+
+def plot_misfits():
+
+	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
+
+	p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
+	s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
+
+	plt.xscale("log")
+	plt.hist(p_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)	
+	plt.hist(s_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)
+	plt.show()
+
+#collate_misfits()
+plot_misfits()
+		
+#check_json()
 #patch_gs()
+#plot_hist()
+#collate_misfits()
