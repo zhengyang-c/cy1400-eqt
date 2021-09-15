@@ -110,36 +110,13 @@ def plot_misfits():
 
 	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
 
-	# p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
-	# s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
+	p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
+	s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
 
-	# plt.xscale("log")
-	# plt.hist(p_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)	
-	# plt.hist(s_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)
-	# plt.show()
-
-	# collate by station to see if there are any consistent offenders
-
-	stations = {}
-	for index, row in df.iterrows():
-		if row.station in stations:
-			stations[row.station]["n"] += 1
-			stations[row.station]["misfit"] += row.misfit
-		else:
-			stations[row.station] = {"n": 1, "misfit": row.misfit}
-
-	output_misfits = "gridsearch/13sep_gs_json/misfit_station.txt"
-
-	avg_misfit = []
-	with open(output_misfits, "w") as f:
-		for sta in stations:
-			stations[sta]["avg"] = stations[sta]["misfit"]/stations[sta]["n"]	
-			avg_misfit.append(stations[sta]["avg"])
-			#f.write("{} {:.5g}\n".format(sta, stations[sta]["avg"]))
-
-	plt.hist(avg_misfit, bins = np.arange(0,2,0.1))
+	plt.xscale("log")
+	plt.hist(p_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)	
+	plt.hist(s_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)
 	plt.show()
-
 
 def generate_phase_exclude():
 	# it'll be this massive json
@@ -170,7 +147,9 @@ def generate_phase_exclude():
 			pass
 			# find the P or S phases
 
-			
+
+#collate_misfits()
+plot_misfits()
 
 		
 #check_json()

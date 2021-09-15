@@ -135,7 +135,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	grid = np.zeros((NX + 1, NX + 1))
 
-	for station in rotation_coeff:
+	for station in station_list:
 		print("processing", station)
 		station_coord = (station_info[station]["lon"], station_info[station]["lat"])
 		#print(station_coord)
@@ -149,7 +149,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 				grid[i][j] += normS(_baz, *rotation_coeff[station])
 
-	grid /= len(list(rotation_coeff.keys()))
+	grid /= len(station_list)
 
 	# plt.contourf(grid.T, origin = "lower")
 	# plt.colorbar()
