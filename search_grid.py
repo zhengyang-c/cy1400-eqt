@@ -341,7 +341,7 @@ def search(pid, args):
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, target_lb_z)		
 
 		args["N_DX"] = 50
-		args["N_Z"] = int(round(20/args["DZ"])) # 20km
+		#args["N_Z"] = int(round(20/args["DZ"])) # 20km
 
 		#print("plotting grid N_DZ:", args["N_Z"])
 		print("plotting grid D_Z:", args["DZ"])
