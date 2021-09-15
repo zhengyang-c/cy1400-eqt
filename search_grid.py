@@ -321,7 +321,7 @@ def search(pid, args):
 	already_created = os.path.exists(npy_filename) or os.path.exists(json_filename)
 	print("already created: ", already_created)
 		
-	seed_lb_corner = (94, 3.5)
+	seed_lb_corner = (94, 3.5, 0)
 	seed_grid_length = 3
 
 	target_grid_length = 0.25
@@ -333,9 +333,18 @@ def search(pid, args):
 
 		#print(grid_output)
 
-		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
+		if grid_output["best_z"] - 10 < 0:
+			target_lb_z = 0
+		else:
+			target_lb_z = grid_output["best_z"] - 10 # +- 10km
+
+		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, target_lb_z)		
 
 		args["N_DX"] = 50
+		args["N_DZ"] = int(round(20/args["DZ"])) # 20km
+
+		print("plotting grid N_DZ:", args["N_DZ"])
+		print("plotting grid D_Z:", args["DZ"])
 
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
@@ -445,10 +454,10 @@ def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
 					y = lb_corner[1] + j * DX
 				elif pers == "londep":
 					x = lb_corner[0] + i * DX
-					y = j * DZ
+					y = lb_corner[2] + j * DZ
 				elif pers == "latdep":
 					x = lb_corner[1] + i * DX
-					y = j * DZ
+					y = lb_corner[2] + j * DZ
 
 				z = output[i,j]
 

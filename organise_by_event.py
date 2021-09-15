@@ -92,6 +92,29 @@ def csv_cutter():
 	pass
 	# for each folder in event_archive, put in a csv file with the metadat from relocated table 
 	# for convenience 
+	# 
+	# 
+
+def df_searcher_one_off(eqt_csv, phase_json, metadata):
+
+	# please have the metadata as very succint bc it will take up storage space
+
+	df = pd.read_csv(eqt_csv)
+
+	o_df = pd.DataFrame(columns = ["datetime_str", "p_arrival_time", "s_arrival_time", "event_id", "metadata"])
+
+	with open(phase_json, 'r') as f:
+		phase_dict = json.load(f)
+
+	for event in phase_dict:		
+		try:
+			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S.%f")
+		except:
+			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S")
+
+		for sta in phase_dict[event]:
+			_p_arrival_time, _s_arrival_time = "", ""
+
 
 
 def df_searcher(df, _station_dict, _ts,):

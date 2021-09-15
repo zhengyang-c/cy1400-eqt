@@ -158,13 +158,19 @@ def generate_phase_exclude():
 	# s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
 	# 
 	# 
-	_df = df[df["misfit"] > 0.5]
-	
-	# just make an ignore list, load the csv file on the child worker side, 
-	
-	# loop through the df and edit the dictionary
+	#_df = df[df["misfit"] > 0.5]
 
+	# write all the misfits to file, can change on the worker side
+	# 
 	# then edit the searcher to ignore phases in the json given the flag
+	# 
+	
+	for event in phase_dict:
+		for _station in phase_dict[event]["data"]:
+			pass
+			# find the P or S phases
+
+			
 
 		
 #check_json()

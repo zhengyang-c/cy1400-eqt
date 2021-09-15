@@ -11,7 +11,7 @@ from obspy.geodetics import gps2dist_azimuth
 from obspy.geodetics import locations2degrees
 
 def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = False, ref_mean = 0, ref_origin = 0):
-	cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], k * DZ]
+	cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], k * DZ + lb_corner[2]]
 
 	delta_r = [] # distance and depth pairs
 	phase_list = []
@@ -28,7 +28,7 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 			if phase not in phase_info[station]:
 				continue
 
-			_dep = k * DZ # stations assumed to be at 0 km elevation
+			_dep = cell_coords[2] # stations assumed to be at 0 km elevation
 
 			_dist = dx([station_info[station]["lon"], station_info[station]["lat"]], cell_coords[:2])
 
@@ -68,7 +68,7 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 	# TT_DX is 1 so this is ok
 	tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
 
-	tt_dep_index = int(round((k * DZ)/TT_DZ))
+	tt_dep_index = int(round((k * DZ + lb_corner[2]) /TT_DZ))
 
 	# print("indices", tt_dist_indices[:5])
 	# print("actual", delta_r[:5,0])
@@ -229,7 +229,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	best_x = lb_corner[0] + best_i * args["DX"]
 	best_y = lb_corner[1] + best_j * args["DX"]
-	best_z = best_k * args["DZ"]
+	best_z = lb_corner[2] + best_k * args["DZ"]
 
 
 
@@ -262,12 +262,23 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	# 
 	# 
 	
-	# find new lower left corner:
+	# find new lower left corner:  want to be best_k +/- 10
 
-	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX)
+	# find new N_Z and vertical component of corner
+
+	if best_k - 10 < 0:
+		new_Z_start = 0
+
+	new_N_Z = int(round(21 / args["DZ"]))
+
+	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
 	new_grid_length = DX * 4
 
 	new_DX = new_grid_length / args["N_DX"]
+
+	args["N_Z"] = new_N_Z
+
+	print("new N_Z: ",N_Z)
 		
 	if DX < (0.1/111.11): # pretty arbitrary / could make it a flag
 		return output
