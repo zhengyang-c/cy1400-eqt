@@ -162,10 +162,12 @@ def df_searcher_one_off(eqt_csv, phase_json):
 				
 
 				for index, row in _p_df.iterrows():
-					phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+					#phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+					phase_dict[event]["data"][sta]['station_P'] = datetime.datetime.strftime(row.p_arrival_time, "%Y%m%d-%H%M%S.%f")
 
 					if 'S' in phase_dict[event]["data"][sta]:
-						phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+						#phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+						phase_dict[event]["data"][sta]['station_S'] = datetime.datetime.strftime(row.s_arrival_time, "%Y%m%d-%H%M%S.%f")
 
 					o_df.at[o_c, "datetime_str"] = row.datetime_str
 					o_df.at[o_c, "p_arrival_time"] = row.p_arrival_time
@@ -185,11 +187,12 @@ def df_searcher_one_off(eqt_csv, phase_json):
 					assert False
 
 				for index, row in _s_df.iterrows():
-					
-					phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+					phase_dict[event]["data"][sta]['station_S'] = datetime.datetime.strftime(row.s_arrival_time, "%Y%m%d-%H%M%S.%f")
+					#phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+
 
 					if 'P' in phase_dict[event]["data"][sta]:
-						phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+						phase_dict[event]["data"][sta]['station_P'] = datetime.datetime.strftime(row.p_arrival_time, "%Y%m%d-%H%M%S.%f")#phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
 
 					o_df.at[o_c, "datetime_str"] = row.datetime_str
 					o_df.at[o_c, "p_arrival_time"] = row.p_arrival_time
@@ -451,6 +454,5 @@ if __name__ == "__main__":
 
 	# main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
 
-	#df_searcher_one_off("gridsearch/remap7jul_compiled_customfilter.csv", "gridsearch/remap_phase.json")
-
+	#df_searcher_one_off("gridsearch/remap7jul_compiled_customfilter.csv", "gridsearch/remap_phase.json")	
 	df_searcher_one_off("real_postprocessing/for_gs/7jul_compiled_customfilter.csv","real_postprocessing/for_gs/remap_phase.json")
