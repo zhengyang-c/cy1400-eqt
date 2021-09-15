@@ -118,39 +118,8 @@ def plot_misfits():
 	plt.hist(s_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)
 	plt.show()
 
-def generate_phase_exclude():
-	# it'll be this massive json
-	# organised by event --> station --> phase
-	# i could just modify the existing phase.json
-	# 
-	
-	input_json = "real_postprocessing/remap_phase.json"
-
- 	with open(input_json, 'r') as f:
- 		phase_dict = json.load(f)
-
- 	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
-
- 	# p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
-	# s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
-	# 
-	# 
-	#_df = df[df["misfit"] > 0.5]
-
-	# write all the misfits to file, can change on the worker side
-	# 
-	# then edit the searcher to ignore phases in the json given the flag
-	# 
-	
-	for event in phase_dict:
-		for _station in phase_dict[event]["data"]:
-			pass
-			# find the P or S phases
-
-
 #collate_misfits()
 plot_misfits()
-
 		
 #check_json()
 #patch_gs()
