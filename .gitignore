@@ -24,4 +24,5 @@ gridsearch/output/*
 gridsearch/*.npy
 pssac_test/*
 release/*
+*.pyc
 

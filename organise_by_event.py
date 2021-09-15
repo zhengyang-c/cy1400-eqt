@@ -95,25 +95,115 @@ def csv_cutter():
 	# 
 	# 
 
-def df_searcher_one_off(eqt_csv, phase_json, metadata):
+def df_searcher_one_off(eqt_csv, phase_json):
 
 	# please have the metadata as very succint bc it will take up storage space
 
 	df = pd.read_csv(eqt_csv)
 
-	o_df = pd.DataFrame(columns = ["datetime_str", "p_arrival_time", "s_arrival_time", "event_id", "metadata"])
+	df["p_arrival_time"] = pd.to_datetime(df["p_arrival_time"])
+	df["s_arrival_time"] = pd.to_datetime(df["s_arrival_time"])
+
+	o_df = pd.DataFrame(columns = ["datetime_str", "p_arrival_time", "s_arrival_time", "ID", "metadata"])
+
+	o_c = 0
 
 	with open(phase_json, 'r') as f:
 		phase_dict = json.load(f)
 
-	for event in phase_dict:		
+	for event in phase_dict:
+
+		print(event)
+
+		_ts = phase_dict[event]["timestamp"]
 		try:
 			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S.%f")
 		except:
 			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S")
 
-		for sta in phase_dict[event]:
+
+		for sta in phase_dict[event]["data"]:
+
+			print(sta)
+
+			_df = df[(df["station"] == sta)].copy()
+
 			_p_arrival_time, _s_arrival_time = "", ""
+
+			if 'P' in phase_dict[event]["data"][sta]:
+				_p_arrival_time = _ts + datetime.timedelta(seconds = float(phase_dict[event]["data"][sta]['P']))
+
+			if 'S' in phase_dict[event]["data"][sta]:
+				_s_arrival_time = _ts + datetime.timedelta(seconds = float(phase_dict[event]["data"][sta]['S']))
+
+
+			for index, row in _df.iterrows():
+				if _p_arrival_time:
+					_df.at[index, '_p_delta'] = (row.p_arrival_time - _p_arrival_time).total_seconds()
+
+				if _s_arrival_time:
+					_df.at[index, '_s_delta'] = (row.s_arrival_time - _s_arrival_time).total_seconds()		
+
+
+			search_file_path = ""
+
+			if _p_arrival_time:
+				_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] > -1)].copy()
+
+				try:
+					assert _p_df.shape[0] == 1
+
+				except:
+					print(_p_df)
+					assert False
+
+				# check that there's only 1 match
+				# 
+				
+
+				for index, row in _p_df.iterrows():
+					phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+
+					if 'S' in phase_dict[event]["data"][sta]:
+						phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+
+					o_df.at[o_c, "datetime_str"] = row.datetime_str
+					o_df.at[o_c, "p_arrival_time"] = row.p_arrival_time
+					o_df.at[o_c, "s_arrival_time"] = row.s_arrival_time
+					o_df.at[o_c, "ID"] = event
+
+					o_c += 1
+
+			elif _s_arrival_time:
+				_s_df = _df[(_df['_s_delta'] < 1) & (_df['_s_delta'] > -1)].copy()
+
+				try:
+					assert _s_df.shape[0] == 1
+
+				except:
+					print(_s_df)
+					assert False
+
+				for index, row in _s_df.iterrows():
+					
+					phase_dict[event]["data"][sta]['station_S'] = row.s_arrival_time.to_pydatetime()
+
+					if 'P' in phase_dict[event]["data"][sta]:
+						phase_dict[event]["data"][sta]['station_P'] = row.p_arrival_time.to_pydatetime()
+
+					o_df.at[o_c, "datetime_str"] = row.datetime_str
+					o_df.at[o_c, "p_arrival_time"] = row.p_arrival_time
+					o_df.at[o_c, "s_arrival_time"] = row.s_arrival_time
+					o_df.at[o_c, "ID"] = event
+
+					o_c += 1
+
+	with open("test.json", "w") as f:
+		json.dump(phase_dict, f, indent = 4)
+
+	o_df.to_csv("test.csv", index = False)
+
+
 
 
 
@@ -149,9 +239,6 @@ def df_searcher(df, _station_dict, _ts,):
 
 			# this is quite inefficient because i could just match the year month minute hour etc
 			# but like what if there are edge cases right..
-			
-
-			
 
 			if _p_arrival_time:
 				_df.at[index, '_p_delta'] = (row.p_arrival_time - _p_arrival_time).total_seconds()
@@ -353,13 +440,17 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 if __name__ == "__main__":
 
-	parser = argparse.ArgumentParser()
+	# parser = argparse.ArgumentParser()
 
-	parser.add_argument("eqt_csv")
-	parser.add_argument("phase_json")
-	parser.add_argument("reloc_csv")
-	parser.add_argument("output_folder")
+	# parser.add_argument("eqt_csv")
+	# parser.add_argument("phase_json")
+	# parser.add_argument("reloc_csv")
+	# parser.add_argument("output_folder")
 
-	args = parser.parse_args()
+	# args = parser.parse_args()
 
-	main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
+	# main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
+
+	#df_searcher_one_off("gridsearch/remap7jul_compiled_customfilter.csv", "gridsearch/remap_phase.json")
+
+	df_searcher_one_off("real_postprocessing/for_gs/7jul_compiled_customfilter.csv","real_postprocessing/for_gs/remap_phase.json")

@@ -277,7 +277,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	new_DX = new_grid_length / args["N_DX"]
 
-	#args["N_Z"] = new_N_Z
+	args["N_Z"] = new_N_Z
 
 	print("new N_Z: ",N_Z)
 		

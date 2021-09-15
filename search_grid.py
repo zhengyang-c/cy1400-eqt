@@ -200,14 +200,16 @@ def search(pid, args):
 	with open(args["phase_json"], 'r') as f:
 		phase_info = json.load(f)
 
-	_station_dict = phase_info[pid]['data']
+	#_station_dict = phase_info[pid]['data']
 
 
 	_ts = phase_info[pid]['timestamp']
 
 	df = load_eqt_csv(args["eqt_csv"])
 
-	phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
+	#phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
+
+	phase_info = phase_info[pid]["data"]
 
 	#print(station_info)
 
@@ -341,7 +343,7 @@ def search(pid, args):
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, target_lb_z)		
 
 		args["N_DX"] = 50
-		#args["N_Z"] = int(round(20/args["DZ"])) # 20km
+		args["N_Z"] = int(round(20/args["DZ"])) # 20km
 
 		#print("plotting grid N_DZ:", args["N_Z"])
 		print("plotting grid D_Z:", args["DZ"])
