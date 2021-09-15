@@ -1,0 +1,98 @@
+#! /usr/bin/perl
+die "usage: ~/util/chEVT.pl appendix subdir path\n" if @ARGV < 3;
+($appendix,$subdir,$DIR)=@ARGV;
+print "KKKKKKKKKKKK $appendix,$subdir,$DIR\n";
+chomp($appendix);
+chomp($subdir);
+chomp($DIR);
+#$appendix="*SH*.DIS";
+#$subdir = "P";
+#$subdir = "SH";
+#$DIR="/Users/shjwei/work/indonesia/20180819/tele2";
+$dirbad="$DIR/bad";
+
+#check that the directories exist
+(-d $DIR) || die("The directory $DIR does not exist!\n");
+(-d $dirbad) || mkdir($dirbad,0755);
+#my($num,$head)=@ARGV; 
+my($num,$head); 
+if($num eq ""){$num=6;}
+if($head eq ""){$head="gcarc";} 
+chdir($DIR);
+
+@DIRS = `ls -d $subdir`; # This folder contains the data.
+for($j = 0; $j < @DIRS; $j++){
+ $dir = $DIRS[$j]; chomp($dir);
+ print "KKK $dir\n";
+ chdir($dir);
+ print stdout "changing to directory $dir\n";
+ @STATION = `ls *.$appendix\n`;
+
+#sorting by the $head.
+  print stdout "Begin sorting by $head\n";
+  for($si=0; $si<@STATION; $si++){ 
+    $temp = `saclst $head f $STATION[$si] `; chomp($temp);
+    ($temp1,$hdvalue[$si]) = split(' ',$temp);
+    chomp($hdvalue[$si]);chomp($STATION[$si]);
+    print stdout "$si:$STATION[$si]::$hdvalue[$si]\n";
+  }
+  $sn=@STATION;
+  &pcbub(\@hdvalue,\@STATION,$sn);
+  print stdout "After sorting\n";
+  for($sl=0; $sl<@STATION; $sl++){ 
+    print stdout "$sl:$STATION[$sl]::$hdvalue[$sl]\n";
+  }
+#sorted finish
+  for($st = 0; $st < @STATION; $st=$st+$num){
+    $jst=$st;
+        for($jj=0; $jj < $num; $jj++,$jst++){
+          $sacarray[$jj]=$STATION[$jst];chomp($sacarray[$jj]);
+        }
+	open(SAC,"|sac");
+	print SAC "r @sacarray\n";
+	print SAC "window x 0.05 0.8 y 0.1 0.9\n";
+        print SAC "fileid location ul type list kcmpnm kstnm gcarc mag\n";
+#	print SAC "bp c 0.01 0.5 n 4 p 2\n";
+        print SAC "qdp off\n";
+        print SAC "ppk bell off\n";
+        print SAC "ppk\n";
+	print SAC "quit\n";
+	close(SAC);
+        print stdout "\nFile list:\n";
+        for($ii=1; $ii<=$num; $ii++){
+           print stdout "$ii:$sacarray[$ii-1]\n";}
+        print stdout "Which one you want to delete(1,2,3...)\n";
+        $flag = <stdin>;
+        if(($flag =~ /[^(\d&\s)]/)||($flag =~ /^S/))
+            {die("Program terminated(by user)!\n");}
+	for($jj=1; $jj<=$num; $jj++){
+        if($flag =~ /$jj/){
+	     ($sacf,$sacf2,$sacf3,$sactail)=split(/\./,$sacarray[$jj-1]);
+	     if($sacf eq ""){last;}
+             print stdout "Now deleting $sacf.$sacf2.$sacf3.*...\n";
+             `mv $sacf.$sacf2.$sacf3.* $dirbad`;}
+          if($flag =~ /^quit/){die("Program terminated(quit)!\n");}
+        }
+        }
+  chdir("..");
+ }
+
+
+
+sub pcbub{
+  my($ps,$names,$ns)=@_;
+  $ks=0; $ms=$ns-1;
+  while ($ks<$ms)
+    { $js=$ms-1; $ms=0;
+      for ($is=$ks; $is<=$js; $is++){
+        if ($$ps[$is]>$$ps[$is+1])
+          { $ds=$$ps[$is]; $$ps[$is]=$$ps[$is+1]; $$ps[$is+1]=$ds; $ms=$is;
+            $tf1=$$names[$is]; $$names[$is]=$$names[$is+1]; $$names[$is+1]=$tf1;}}
+      $js=$ks+1; $ks=0;
+      for ($is=$ms; $is>=$js; $is--){
+        if ($$ps[$is-1]>$$ps[$is])
+          { $ds=$$ps[$is]; $$ps[$is]=$$ps[$is-1]; $$ps[$is-1]=$ds; $ks=$is;
+            $tf2=$$names[$is]; $$names[$is]=$$names[$is-1]; $$names[$is-1]=$tf2;}}
+    }
+  return(@$names);
+}

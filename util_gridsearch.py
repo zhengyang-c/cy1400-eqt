@@ -271,12 +271,13 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	new_N_Z = int(round(21 / args["DZ"]))
 
-	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
+	#new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
+	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, 0)
 	new_grid_length = DX * 4
 
 	new_DX = new_grid_length / args["N_DX"]
 
-	args["N_Z"] = new_N_Z
+	#args["N_Z"] = new_N_Z
 
 	print("new N_Z: ",N_Z)
 		

@@ -1,0 +1,11 @@
+set term pdf font "Helvetica, 12" size 8.6cm,6cm
+
+filename = "plots/eventbyhour_21marmerged.pdf"
+
+set output filename
+
+set xr [-0.5:23.5]
+set xl "Hour (UTC)"
+set yl "No. of events"
+
+plot "plot_data/eventhourhistogram_21marmerged.txt" u 1:2 smooth freq w boxes lc rgb "black" notitle fs solid 0.1
