@@ -41,7 +41,14 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 			elif phase == "station_S":
 				phase_list.append("S")
 
-			arrivals.append(phase_info[station][phase])
+			_arrivaltime = phase_info[station][phase]
+
+			try:
+				_arrivaltime = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
+			except:
+				_arrivaltime = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
+
+			arrivals.append(_arrivaltime)
 
 			# if do_mc:
 			# 	mc_delta = np.random.normal(0, scale = mc_args["sigma_ml"])
@@ -213,7 +220,6 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 				_cell_output = cell_fn(i, j, k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX)
 			
 				grid[i][j][k][:] = _cell_output
-
 				
 	L2 = grid[:,:,:,0] # 0: get the standard deviation
 
@@ -221,17 +227,13 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	#print(indices)
 
-
 	best_i = indices[0][0]
 	best_j = indices[1][0]
 	best_k = indices[2][0]
 
-
 	best_x = lb_corner[0] + best_i * args["DX"]
 	best_y = lb_corner[1] + best_j * args["DX"]
 	best_z = best_k * args["DZ"]
-
-
 
 	output = {
 		"best_x": best_x,		
@@ -264,7 +266,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	
 	# find new lower left corner:
 
-<<<<<<< HEAD
+
 	# find new N_Z and vertical component of corner
 
 	if best_k - 10 < 0:
@@ -274,9 +276,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	#new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
 	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, 0)
-=======
-	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX)
->>>>>>> parent of 99f22af (Add vertical depth narrowing)
+
 	new_grid_length = DX * 4
 
 	new_DX = new_grid_length / args["N_DX"]
