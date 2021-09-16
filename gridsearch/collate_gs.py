@@ -118,10 +118,6 @@ def plot_misfits():
 	plt.hist(s_misfits, bins = np.logspace(-3, 0.6), alpha = 0.5)
 	plt.show()
 
-<<<<<<< HEAD
-#collate_misfits()
-plot_misfits()
-=======
 
 def generate_phase_exclude():
 	# it'll be this massive json
@@ -148,8 +144,7 @@ def generate_phase_exclude():
 
 	# then edit the searcher to ignore phases in the json given the flag
 
->>>>>>> parent of 99f22af (Add vertical depth narrowing)
-		
+
 #check_json()
 #patch_gs()
 #plot_hist()

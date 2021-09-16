@@ -201,13 +201,10 @@ def df_searcher_one_off(eqt_csv, phase_json):
 
 					o_c += 1
 
-	with open("test.json", "w") as f:
+	with open("real_postprocessing/5jul_assoc/5jul_phase_arrivaltimes.json", "w") as f:
 		json.dump(phase_dict, f, indent = 4)
 
-	o_df.to_csv("test.csv", index = False)
-
-
-
+	o_df.to_csv("real_postprocessing/5jul_assoc/5jul_phase_arrivaltimes.csv", index = False)
 
 
 def df_searcher(df, _station_dict, _ts,):
@@ -454,5 +451,5 @@ if __name__ == "__main__":
 
 	# main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
 
-	#df_searcher_one_off("gridsearch/remap7jul_compiled_customfilter.csv", "gridsearch/remap_phase.json")	
-	df_searcher_one_off("real_postprocessing/for_gs/7jul_compiled_customfilter.csv","real_postprocessing/for_gs/remap_phase.json")
+	df_searcher_one_off("real_postprocessing/5jul_assoc/5jul_compiled_customfilter.csv", "real_postprocessing/5jul_assoc/5jul_aceh_phase.json")	
+	#df_searcher_one_off("real_postprocessing/for_gs/7jul_compiled_customfilter.csv","real_postprocessing/for_gs/remap_phase.json")

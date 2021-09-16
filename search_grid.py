@@ -18,7 +18,6 @@ from plot_gridsearch import plotter, gmt_plotter
 import subprocess
 import math
 
-from organise_by_event import df_searcher
 from itertools import repeat
 import multiprocessing as mp
 from utils import parse_station_info, parse_event_coord
@@ -87,6 +86,7 @@ def parse_input(station_file_name,
 	s_only = False,
 	time_remapping = "",
 	gmt_home = "",
+	no_plot = False
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
@@ -116,6 +116,8 @@ def parse_input(station_file_name,
 
 	args["event_folder"] = event_folder
 	args["run_rotate"] = run_rotate
+
+	args["no_plot"] = run_rotate
 
 	if show_mpl:
 		args["plot_mpl"] = True
@@ -206,8 +208,6 @@ def search(pid, args):
 	_ts = phase_info[pid]['timestamp']
 
 	df = load_eqt_csv(args["eqt_csv"])
-
-	#phase_info = df_searcher(df, _station_dict, _ts)["_station_dict"]
 
 	phase_info = phase_info[pid]["data"]
 
@@ -328,27 +328,18 @@ def search(pid, args):
 
 	target_grid_length = 0.25
 
-	if args["force"] or (not already_created):
-		#grid = simple_search(args, phase_info, station_info, tt)
-		
+	if args["force"] or (not already_created):		
+		# do initial search get best estimate,
 		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
-		#print(grid_output)
-
+		# then draw a box around it to get the colour map
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
-
 		args["N_DX"] = 50
-
 		args["N_Z"] = int(round(20/args["DZ"])) # 20km
-
-		#print("plotting grid N_DZ:", args["N_Z"])
 		print("plotting grid D_Z:", args["DZ"])
-
-
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
-		#print(plot_grid[1])
-
+		# save the results in a dictionary (dump to json later)
 		grid_output["station_misfit"] = plot_grid[1]
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
@@ -375,11 +366,14 @@ def search(pid, args):
 
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)
 
+	if args["no_plot"]:
+		return 0
 
 	L2 = _grid[:,:,:,0]
 
 	indices = np.where(L2 == L2.min())
 
+	# the plot limits will depend on the map type (map view, horizontal view)
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
 		_y_cell_size = grid_output["cell_size"]
@@ -397,9 +391,6 @@ def search(pid, args):
 		_y_cell_size = 1
 		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
 		_output = L2[indices[0][0], :, :]
-
-
-	# the plot limits will depend on the map type	
 
 	xyz_writer(_output, target_lb, grid_output["cell_size"], DZ, filename = xyz_filename, pers = args["map_type"])
 
@@ -420,15 +411,15 @@ def search(pid, args):
 
 	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
 
-
 	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
-
 
 	_event_info = {pid+"gs":{
 	"lat":grid_output["best_y"], 
 	"lon":grid_output["best_x"], 
 	"dep":grid_output["best_z"],}
 	}
+
+	# write kml file, can just drag and drop into google earth
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
 	if args["run_rotate"]:
@@ -547,6 +538,8 @@ if __name__ == "__main__":
 
 	parser.add_argument('-gmt', "--gmt_home", type = str, default = "/home/zy/gmt")
 
+	parser.add_argument('-np', "--no_plot", action = "store_true")
+
 
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
@@ -590,7 +583,8 @@ if __name__ == "__main__":
 			p_only = args.p_only,
 			s_only = args.s_only,
 			time_remapping = args.time_remapping,
-			gmt_home = args.gmt_home
+			gmt_home = args.gmt_home,
+			no_plot = args.no_plot
 			)
 
 
