@@ -22,6 +22,8 @@ def check_json():
 
 	for c, json_file in enumerate(all_json_files):
 
+		print(json_file)
+
 		e_md = {}
 
 		header_map = {"evla_gs": "best_y", "evlo_gs": "best_x", "evdp_gs":"best_z", "origin_time":"ref_timestamp", "misfit_gs": "sigma_ml", "cell_size": "cell_size", "cell_height": "cell_height", "evla_c": "best_y_c", "evlo_c": "best_x_c"}
