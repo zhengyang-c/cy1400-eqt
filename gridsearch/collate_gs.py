@@ -127,12 +127,12 @@ def generate_phase_exclude():
 	
 	input_json = "real_postprocessing/remap_phase.json"
 
- 	with open(input_json, 'r') as f:
- 		phase_dict = json.load(f)
+	with open(input_json, 'r') as f:
+		phase_dict = json.load(f)
 
- 	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
+	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
 
- 	# p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
+	# p_misfits = df[df["phase"] == "P"]["misfit"].tolist()
 	# s_misfits = df[df["phase"] == "S"]["misfit"].tolist()
 	# 
 	# 
