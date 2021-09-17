@@ -39,7 +39,10 @@ def check_json():
 		df.at[c, "ID"] = e_id
 
 		for h in header_map:
-			df.at[c, h] = e_md[header_map[h]]
+			try:
+				df.at[c, h] = e_md[header_map[h]]
+			except:
+				pass
 	df.to_csv(output_csv, index = False)
 	
 def patch_gs():
