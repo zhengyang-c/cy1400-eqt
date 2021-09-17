@@ -76,7 +76,6 @@ def parse_input(station_file_name,
 	plot_mpl = False,
 	show_mpl = False,
 	force = False,
-	eqt_csv = "",
 	map_type = "",
 	run_rotate = False,
 	event_folder = "",
@@ -110,8 +109,6 @@ def parse_input(station_file_name,
 	args["plot_mpl"] = plot_mpl
 	args["show_mpl"] = show_mpl	
 
-	args["eqt_csv"] = eqt_csv
-
 	args["gmt_home"] = gmt_home
 
 	args["event_folder"] = event_folder
@@ -143,11 +140,6 @@ def parse_input(station_file_name,
 	args["time_remapping"] = time_remapping
 	# apply time remapping when loading the phase info
 
-
-	#print(args)
-
-
-	df = load_eqt_csv(eqt_csv)
 
 	if args["exclude"]:
 		exclude_list = load_exclude(exclude)
@@ -207,7 +199,7 @@ def search(pid, args):
 
 	_ts = phase_info[pid]['timestamp']
 
-	df = load_eqt_csv(args["eqt_csv"])
+	#df = load_eqt_csv(args["eqt_csv"])
 
 	phase_info = phase_info[pid]["data"]
 
@@ -574,7 +566,6 @@ if __name__ == "__main__":
 			plot_mpl = args.plot_mpl,
 			show_mpl = args.show_mpl,
 			force = args.force,
-			eqt_csv = args.eqt_csv,
 			map_type = args.map_type,
 			event_folder = args.event_folder,
 			run_rotate = args.run_rotate,

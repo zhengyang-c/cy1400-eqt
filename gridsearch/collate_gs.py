@@ -11,20 +11,20 @@ def check_json():
 
 	# want to collate a CSV file with most of the JSON parameters
 
-	search_folder = "gridsearch/7jul_gsr_afterREAL"
+	search_folder = "gridsearch/7jul_gsr_afterREAL_deeperredo"
 
-	pd_columns = ["ID", "evla_gs", "evlo_gs", "evdp_gs", "origin_time", "misfit_gs", "misfit_combined", "cell_size", "cell_height"]
+	pd_columns = ["ID", "evla_gs", "evlo_gs", "evdp_gs", "origin_time", "misfit_gs", "misfit_combined", "cell_size", "cell_height", "evla_c", "evlo_c", ]
 	df = pd.DataFrame(columns = pd_columns)
 
 	all_json_files = [str(p) for p in Path(search_folder).rglob("*.json")]
 
-	output_csv = "gridsearch/7jul_gsonly_13sep_all.csv"
+	output_csv = "gridsearch/7jul_gsr_17sep_all.csv"
 
 	for c, json_file in enumerate(all_json_files):
 
 		e_md = {}
 
-		header_map = {"evla_gs": "best_y", "evlo_gs": "best_x", "evdp_gs":"best_z", "origin_time":"ref_timestamp", "misfit_gs": "sigma_ml", "cell_size": "cell_size", "cell_height": "cell_height"}
+		header_map = {"evla_gs": "best_y", "evlo_gs": "best_x", "evdp_gs":"best_z", "origin_time":"ref_timestamp", "misfit_gs": "sigma_ml", "cell_size": "cell_size", "cell_height": "cell_height", "evla_c": "best_y_c", "evlo_c": "best_x_c"}
 
 		with open(json_file, 'r') as f:
 			e_md = json.load(f)
@@ -145,7 +145,4 @@ def generate_phase_exclude():
 	# then edit the searcher to ignore phases in the json given the flag
 
 
-#check_json()
-#patch_gs()
-#plot_hist()
-#collate_misfits()
+check_json()

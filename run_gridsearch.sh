@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python search_grid.py -station_info station_info.dat -phase_json gridsearch/jul7_phases_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 120 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -eqt_csv gridsearch/remap7jul_compiled_customfilter.csv -m map -r -ef imported_figures/event_archive -f -noplot
+python search_grid.py -station_info station_info.dat -phase_json real_postprocessing/5jul_assoc/5jul_phase_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 120 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -m map -f -np
 #--time_remapping arrivaltime_remapping/main.csv
 # -excl gridsearch/test_exclude.txt -r -ef imported_figures/event_archive 
 

@@ -193,21 +193,8 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	TT_NX = args["TT_NX"]
 	TT_NZ = args["TT_NZ"]
 
-
-	# arbitrary_search (call itself)
-
-	# 111km --> 1 degree
-	# 0.3 km --> 
-	# 
-	
-	# grid_length is in units of decimal degrees
-
 	DX = grid_length / (args["N_DX"])
 	args["DX"] = DX	
-
-	# if do_mc:
-	# 	mc_mask = np.zeros([args["N_DX"]+1, args["N_DX"]+1, N_Z])
-
 
 	grid = np.zeros([args["N_DX"] + 1, args["N_DX"] + 1, N_Z, 3])
 
@@ -224,8 +211,6 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	L2 = grid[:,:,:,0] # 0: get the standard deviation
 
 	indices = np.where(L2 == L2.min())
-
-	#print(indices)
 
 	best_i = indices[0][0]
 	best_j = indices[1][0]
@@ -261,8 +246,6 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	# for an initial N of 20, this means that you will pass 4 points 
 	# 
 	# i also realise that like i have fence post problem . . . .actually maybe not because i'm rounding up my gridlength
-	# 
-	# 
 	
 	# find new lower left corner:
 
