@@ -254,9 +254,9 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	new_N_Z = int(round(21 / args["DZ"])) # 21 just seems like a nice number so +/-10 km depth 
 
-	if best_z - 10 < 0:
+	if best_z - 10 * args["DZ"]< 0:
 		new_Z_start = 0
-	elif best_z + 10 > tt.shape[1]:
+	elif best_z + 10 * args["DZ"]> tt.shape[1]:
 		new_Z_start = best_z - 21 * args["DZ"]
 	else:
 		new_Z_start = best_z - 10 * args["DZ"]

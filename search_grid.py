@@ -211,9 +211,10 @@ def search(pid, args):
 
 	# exclude after time remapping so phases won't get deleted + throw error (?) whatever
 
+	print(phase_info)
+
 	if args["exclude"]:
 		exclude_df = pd.read_csv(args["exclude"])
-
 		_edf = exclude_df[exclude_df["ID"] == int(pid)]
 
 		for index, row in _edf.iterrows():
@@ -322,14 +323,13 @@ def search(pid, args):
 		args["N_DX"] = 50
 		args["N_Z"] = int(round(20/args["DZ"])) # 20km
 
-		print("plotting grid D_Z:", args["DZ"])
-
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
 		# save the results in a dictionary (dump to json later)
 		grid_output["station_misfit"] = plot_grid[1]
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
+		grid_output["lb_corner_y"] = plot_grid[2][2]
 		grid_output["cell_size"] = plot_grid[3]
 		grid_output["cell_n"] = args["N_DX"]
 		grid_output["ID"] = pid
