@@ -298,7 +298,7 @@ def search(pid, args):
 	already_created = os.path.exists(npy_filename) or os.path.exists(json_filename)
 	print("already created: ", already_created)
 		
-	seed_lb_corner = (94, 3.5)
+	seed_lb_corner = (94, 3.5, 0)
 	seed_grid_length = 3
 
 	target_grid_length = 0.25

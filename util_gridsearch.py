@@ -75,7 +75,7 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 	# TT_DX is 1 so this is ok
 	tt_dist_deltas = delta_r[:,0] - tt_dist_indices * TT_DX
 
-	tt_dep_index = int(round((k * DZ)/TT_DZ))
+	tt_dep_index = int(round((lb_corner[2] + k * DZ)/TT_DZ))
 
 	# print("indices", tt_dist_indices[:5])
 	# print("actual", delta_r[:5,0])
@@ -252,21 +252,18 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	# find new N_Z and vertical component of corner
 
-	if best_k - 10 < 0:
+	if best_z - 10 < 0:
 		new_Z_start = 0
 	else:
 		new_Z_start = best_z - 10 * args["DZ"]
 
 	new_N_Z = int(round(21 / args["DZ"]))
-
 	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
-	#new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, 0)
 
 	new_grid_length = DX * 4
-
 	new_DX = new_grid_length / args["N_DX"]
 		
-	if DX < (0.1/111.11): # pretty arbitrary / could make it a flag
+	if new_DX < (0.1/111.11):
 		return output
 	else:
 		return arbitrary_search(args, new_lb_corner, new_grid_length, phase_info, station_info, tt)

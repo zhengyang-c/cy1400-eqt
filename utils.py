@@ -250,8 +250,15 @@ def parse_event_coord(file_name, _format):
 
 	return event_info
 
-def split_csv(input_csv, output_csv):
-	pass
+def split_csv(input_csv, output_csv_root, N = 4):
+
+	df = pd.read_csv(input_csv)
+
+	remainder = len(df) % 4
+	n_rows_per_file = len(df) // 4
+
+	
+	
 
 if __name__ == "__main__":
 	pass
