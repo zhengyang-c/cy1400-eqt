@@ -308,7 +308,7 @@ def search(pid, args):
 		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
 		# then draw a box around it to get the colour map
-		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)		
+		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, grid_output["best_y"] - 10)		
 		args["N_DX"] = 50
 		args["N_Z"] = int(round(20/args["DZ"])) # 20km
 		print("plotting grid D_Z:", args["DZ"])

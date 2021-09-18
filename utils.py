@@ -249,3 +249,9 @@ def parse_event_coord(file_name, _format):
 		raise ValueError("Format {} not supported, please consult the wiki".format(_format))
 
 	return event_info
+
+def split_csv(input_csv, output_csv):
+	pass
+
+if __name__ == "__main__":
+	pass

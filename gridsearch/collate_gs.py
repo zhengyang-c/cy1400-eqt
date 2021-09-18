@@ -82,6 +82,18 @@ def plot_hist():
 	with open("imported_figures/jul7_phases_arrivaltimes.json") as f:
 		phase_dict = json.load(f)
 
+	# get distribution of no. of phases
+
+	n_phases = []
+
+	for e in phase_dict:
+		n_phases.append(sum([len(phase_dict[e]["data"][sta].keys())/2 for sta in phase_dict[e]["data"]]))
+
+
+	plt.hist(n_phases, bins = np.arange(0,np.max(n_phases)))
+
+	plt.show()
+
 	# rearrange this into 
 
 	# get new misfit distribution
@@ -164,4 +176,4 @@ def generate_phase_exclude():
 
 	# then edit the searcher to ignore phases in the json given the flag
 
-generate_phase_exclude()
+plot_hist()

@@ -218,7 +218,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	best_x = lb_corner[0] + best_i * args["DX"]
 	best_y = lb_corner[1] + best_j * args["DX"]
-	best_z = best_k * args["DZ"]
+	best_z = lb_corner[2] + best_k * args["DZ"]
 
 	output = {
 		"best_x": best_x,		
@@ -254,10 +254,13 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	if best_k - 10 < 0:
 		new_Z_start = 0
+	else:
+		new_Z_start = best_z - 10 * args["DZ"]
 
 	new_N_Z = int(round(21 / args["DZ"]))
 
 	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
+	#new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, 0)
 
 	new_grid_length = DX * 4
 
