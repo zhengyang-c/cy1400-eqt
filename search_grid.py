@@ -219,8 +219,9 @@ def search(pid, args):
 		for index, row in _edf.iterrows():
 			if row.station in phase_info:
 				if row.phase in phase_info[row.station]:
-					phase_info[row.station].pop("station_" + _phase)
-					phase_info[row.station].pop(_phase)
+					print("Excluding station {} phase {}".format(row.station, row.phase))
+					phase_info[row.station].pop("station_" + row.phase)
+					phase_info[row.station].pop(row.phase)
 
 
 	if args["p_only"] or args["s_only"]:
@@ -322,7 +323,7 @@ def search(pid, args):
 		args["N_Z"] = int(round(20/args["DZ"])) # 20km
 
 		print("plotting grid D_Z:", args["DZ"])
-		
+
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
 		# save the results in a dictionary (dump to json later)
