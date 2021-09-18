@@ -67,17 +67,26 @@ def plot_hist():
 	# want to know distribution of misfits but kinda hard if not on an event by event basis?
 
 	# this is a secondary thing don't need to be done now
-	df = pd.read_csv("imported_figures/7jul_gsonly_13sep_all.csv")
+	# df = pd.read_csv("imported_figures/7jul_gsonly_13sep_all.csv")
 
-	depths = df["evdp_gs"].tolist()
-	misfits = df["misfit_gs"].tolist()
+	# depths = df["evdp_gs"].tolist()
+	# misfits = df["misfit_gs"].tolist()
 
-	plt.hist(depths, bins = np.arange(0,41))
-	plt.show()
+	# plt.hist(depths, bins = np.arange(0,41))
+	# plt.show()
 	
-	plt.yscale("log")
-	plt.hist(misfits, bins = np.arange(0,4,0.5))
-	plt.show()
+	# plt.yscale("log")
+	# plt.hist(misfits, bins = np.arange(0,4,0.5))
+	# plt.show()
+	# 
+	with open("imported_figures/jul7_phases_arrivaltimes.json") as f:
+		phase_dict = json.load(f)
+
+	# rearrange this into 
+
+	# get new misfit distribution
+
+
 	
 # want to collate individual misfits by loading all the json files / collecting all the json files? so just zip them lol
 #
