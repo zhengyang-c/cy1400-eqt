@@ -329,7 +329,7 @@ def search(pid, args):
 		grid_output["station_misfit"] = plot_grid[1]
 		grid_output["lb_corner_x"] = plot_grid[2][0]
 		grid_output["lb_corner_y"] = plot_grid[2][1]
-		grid_output["lb_corner_y"] = plot_grid[2][2]
+		grid_output["lb_corner_z"] = plot_grid[2][2]
 		grid_output["cell_size"] = plot_grid[3]
 		grid_output["cell_n"] = args["N_DX"]
 		grid_output["ID"] = pid
