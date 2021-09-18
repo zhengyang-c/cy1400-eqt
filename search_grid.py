@@ -51,16 +51,6 @@ def load_travel_time(input_file):
 
 	return tt
 
-def load_exclude(file_name):
-	excl = []
-	with open(file_name, "r") as f:
-		for line in f:
-			excl.append(line.strip())
-
-	return excl
-
-
-
 def parse_input(station_file_name, 
 	phase_json_name, 
 	travel_time_file, 
@@ -141,11 +131,6 @@ def parse_input(station_file_name,
 	# apply time remapping when loading the phase info
 
 
-	if args["exclude"]:
-		exclude_list = load_exclude(exclude)
-		args["exclude_list"] = exclude_list
-
-
 	if args["event_id"]:
 		padded_id = (str(args["event_id"]).zfill(6))
 
@@ -203,8 +188,6 @@ def search(pid, args):
 
 	phase_info = phase_info[pid]["data"]
 
-	#print(station_info)
-
 	if args["time_remapping"]:
 		rdf = pd.read_csv(args["time_remapping"])#remap dataframe
 		rdf["p_arrival_time"] = pd.to_datetime(rdf["p_arrival_time"])
@@ -226,14 +209,19 @@ def search(pid, args):
 						phase_info[_sta]['station_S'] += datetime.timedelta(seconds = row.T0_delta)
 
 
-	# construct station list:
+	# exclude after time remapping so phases won't get deleted + throw error (?) whatever
+
 	if args["exclude"]:
-		for _station_phase in args["exclude_list"]:
-			_station, _phase = _station_phase.split("_")
-			if _station in phase_info:
-				if _phase in phase_info[_station]:
-					phase_info[_station].pop("station_" + _phase)
-					#print("Dropped phase:",_station, _phase)
+		exclude_df = pd.read_csv(args["exclude"])
+
+		_edf = exclude_df[exclude_df["ID"] == int(pid)]
+
+		for index, row in _edf.iterrows():
+			if row.station in phase_info:
+				if row.phase in phase_info[row.station]:
+					phase_info[row.station].pop("station_" + _phase)
+					phase_info[row.station].pop(_phase)
+
 
 	if args["p_only"] or args["s_only"]:
 		for _station in phase_info:
@@ -264,14 +252,9 @@ def search(pid, args):
 	TT_NX = args["TT_NZ"]
 	TT_NZ = args["TT_DZ"]
 	#args["event_coords"] = _event_coords
-
-
-
 	N_Z = int(round(Z_RANGE/DZ))
 
-	args["N_Z"] = N_Z
-
-	
+	args["N_Z"] = N_Z	
 
 	# metadata is for json saving
 
@@ -496,7 +479,7 @@ if __name__ == "__main__":
 	parser.add_argument("-station_info")
 	parser.add_argument("-phase_json")
 
-	parser.add_argument("-eqt_csv")
+	#parser.add_argument("-eqt_csv")
 	# parser.add_argument("-coord_file")
 	# parser.add_argument("-coord_format", choices = ["real_hypophase", "hypoDD_loc"])
 	parser.add_argument("-tt_path")

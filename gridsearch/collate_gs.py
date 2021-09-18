@@ -132,8 +132,8 @@ def generate_phase_exclude():
 	
 	input_json = "real_postprocessing/remap_phase.json"
 
-	with open(input_json, 'r') as f:
-		phase_dict = json.load(f)
+	# with open(input_json, 'r') as f:
+	# 	phase_dict = json.load(f)
 
 	df = pd.read_csv("gridsearch/13sep_gs_json/misfit_summary.csv")
 
@@ -142,6 +142,12 @@ def generate_phase_exclude():
 	# 
 	# 
 	_df = df[df["misfit"] > 0.5]
+
+	_df.to_csv("gridsearch/13sep_gs_json/misfit_blacklist_7jul_13sep_0.5s.csv", index = False)
+
+
+	_df = df[df["misfit"] > 1.0]
+	_df.to_csv("gridsearch/13sep_gs_json/misfit_blacklist_7jul_13sep_1.0s.csv", index = False)
 	
 	# just make an ignore list, load the csv file on the child worker side, 
 	
@@ -149,5 +155,4 @@ def generate_phase_exclude():
 
 	# then edit the searcher to ignore phases in the json given the flag
 
-
-check_json()
+generate_phase_exclude()
