@@ -360,6 +360,9 @@ def search(pid, args):
 
 	indices = np.where(L2 == L2.min())
 
+	_lons.append(grid_output["best_x"])
+	_lats.append(grid_output["best_y"])
+
 	# the plot limits will depend on the map type (map view, horizontal view)
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
