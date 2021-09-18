@@ -410,7 +410,7 @@ def search(pid, args):
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
 	if args["run_rotate"]:
-		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], append_text = args["append_text"], gmt_home = args["gmt_home"])
+		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], grid_output, append_text = args["append_text"], gmt_home = args["gmt_home"])
 
 
 def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):

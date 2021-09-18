@@ -65,7 +65,7 @@ def baz(X1, X2):
 	return gps2dist_azimuth(X1[1], X1[0], X2[1], X2[0])[1]
 
 
-def rotate_search(pid, event_folder, output_folder, station_info_file, append_text = "", gmt_home = "/home/zy/gmt"):
+def rotate_search(pid, event_folder, output_folder, station_info_file, gs_output, append_text = "", gmt_home = "/home/zy/gmt"):
 
 	# pid = "000212"
 	# event_folder = "imported_figures/event_archive"
@@ -124,10 +124,8 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	#print(rotation_coeff)
 
-	with open(json_file, "r") as f:
-		gs_output = json.load(f)
-
 	lb_corner = (gs_output["lb_corner_x"], gs_output["lb_corner_y"])
+	print("lb_corner rotation:", lb_corner)
 	DX = gs_output["cell_size"]
 	DZ = 1
 	try:
@@ -154,15 +152,6 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 					grid[i][j] += normS(_baz, *rotation_coeff[station])
 
 	grid /= (len(station_list) - ignored_stations)
-
-	# plt.contourf(grid.T, origin = "lower")
-	# plt.colorbar()
-	# plt.show()
-
-	# load numpy file and overlay misfits
-
-
-
 	with open(np_file, 'rb') as f:
 		gs_grid = np.load(f)
 
