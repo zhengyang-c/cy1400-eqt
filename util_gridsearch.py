@@ -11,7 +11,7 @@ from obspy.geodetics import gps2dist_azimuth
 from obspy.geodetics import locations2degrees
 
 def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = False, ref_mean = 0, ref_origin = 0):
-	cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], k * DZ]
+	cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], lb_corner[2] + k * DZ]
 
 	delta_r = [] # distance and depth pairs
 	phase_list = []
@@ -258,6 +258,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		new_Z_start = best_z - 10 * args["DZ"]
 
 	new_N_Z = int(round(21 / args["DZ"]))
+	args["N_Z"] = new_N_Z
 	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
 
 	new_grid_length = DX * 4
