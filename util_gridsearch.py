@@ -252,14 +252,17 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	# find new N_Z and vertical component of corner
 
+	new_N_Z = int(round(21 / args["DZ"])) # 21 just seems like a nice number so +/-10 km depth 
+
 	if best_z - 10 < 0:
 		new_Z_start = 0
+	elif best_z + 10 > tt.shape()[1]:
+		new_Z_start = best_z - 21 * args["DZ"]
 	else:
 		new_Z_start = best_z - 10 * args["DZ"]
-
-	new_N_Z = int(round(21 / args["DZ"]))
+	
 	args["N_Z"] = new_N_Z
-	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start * args["DZ"])
+	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start)
 
 	new_grid_length = DX * 4
 	new_DX = new_grid_length / args["N_DX"]
