@@ -82,16 +82,53 @@ def plot_hist():
 	with open("imported_figures/jul7_phases_arrivaltimes.json") as f:
 		phase_dict = json.load(f)
 
-	# get distribution of no. of phases
+	#get distribution of no. of phases
+
+
+
+	#df = pd.read_csv("gridsearch/13sep_gs_json/misfit_blacklist_7jul_13sep_1.0s.csv")
+
+	# print(df)
+	# c = 0
+	# for event in phase_dict:
+	# 	#print(event)
+	# 	_df = df[df["ID"] == int(event)]
+
+	# 	for sta in phase_dict[event]["data"].keys():
+	# 		#print(sta)
+	# 		_sdf = _df[_df["station"] == sta]
+
+	# 		for index, row in _sdf.iterrows():
+	# 			#print(row)
+	# 			if row.phase in phase_dict[event]["data"][sta]:
+	# 				#print("POP")
+	# 				c += 1
+	# 				phase_dict[event]["data"][sta].pop(row.phase)
+	# 				phase_dict[event]["data"][sta].pop("station_"+row.phase)
+	
+	# c = 0
+	# j = 0
+	# df = pd.DataFrame(columns = ["ID", "phase", "station"])
+	for e in phase_dict:
+		for s in phase_dict[e]["data"]:
+
+			if "S" in phase_dict[e]["data"][s]:
+				phase_dict[e]["data"][s].pop("S")
+				phase_dict[e]["data"][s].pop("station_S")
+
+
+	# print(df)
 
 	n_phases = []
 
 	for e in phase_dict:
 		n_phases.append(sum([len(phase_dict[e]["data"][sta].keys())/2 for sta in phase_dict[e]["data"]]))
 
+	print(sum(n_phases))
 
 	plt.hist(n_phases, bins = np.arange(0,np.max(n_phases)))
-
+	plt.xlim(0,10)
+	#plt.ylim(0,40)
 	plt.show()
 
 	# rearrange this into 
@@ -151,7 +188,7 @@ def generate_phase_exclude():
 	# i could just modify the existing phase.json
 	# 
 	
-	input_json = "real_postprocessing/remap_phase.json"
+	#input_json = "real_postprocessing/remap_phase.json"
 
 	# with open(input_json, 'r') as f:
 	# 	phase_dict = json.load(f)

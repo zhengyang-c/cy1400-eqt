@@ -104,7 +104,7 @@ def parse_input(station_file_name,
 	args["event_folder"] = event_folder
 	args["run_rotate"] = run_rotate
 
-	args["no_plot"] = run_rotate
+	args["no_plot"] = no_plot
 
 	if show_mpl:
 		args["plot_mpl"] = True
