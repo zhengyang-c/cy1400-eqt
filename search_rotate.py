@@ -106,14 +106,17 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 
 	#rotater(station_list[0], pid, event_folder, station_info_file)
 	rotation_coeff = {}
-
+	ignored_stations = 0
 	for station in station_list:
 		_coeff = rotater(station, pid, event_folder,)
 		try:
 			if _coeff == -1:
+				ignored_stations += 1
 				continue
 		except:
 			rotation_coeff[station] = _coeff
+
+	ignored_stations += 1
 
 	if len(rotation_coeff.keys()) == 0:
 		print("No fitting made for rotation operation, quitting. ")
@@ -147,9 +150,10 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, append_te
 				#print(cell_coords)
 				_baz = baz(station_coord, cell_coords)
 
-				grid[i][j] += normS(_baz, *rotation_coeff[station])
+				if station in rotation_coeff:
+					grid[i][j] += normS(_baz, *rotation_coeff[station])
 
-	grid /= len(station_list)
+	grid /= (len(station_list) - ignored_stations)
 
 	# plt.contourf(grid.T, origin = "lower")
 	# plt.colorbar()
