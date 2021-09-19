@@ -11,14 +11,14 @@ def check_json(search_folder, output_csv):
 
 	# want to collate a CSV file with most of the JSON parameters
 
-	search_folder = "gridsearch/7jul_gsr_afterREAL_deeperredo"
+	#search_folder = "gridsearch/7jul_gsr_afterREAL_deeperredo"
 
 	pd_columns = ["ID", "evla_gs", "evlo_gs", "evdp_gs", "origin_time", "misfit_gs", "misfit_combined", "cell_size", "cell_height", "evla_c", "evlo_c", ]
 	df = pd.DataFrame(columns = pd_columns)
 
 	all_json_files = [str(p) for p in Path(search_folder).rglob("*.json")]
 
-	output_csv = "gridsearch/7jul_gsr_17sep_all.csv"
+	#output_csv = "gridsearch/7jul_gsr_17sep_all.csv"
 
 	for c, json_file in enumerate(all_json_files):
 
