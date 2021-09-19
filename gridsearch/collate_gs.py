@@ -5,7 +5,7 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def check_json(search_folder, output_csv):
+def check_json(search_folder, output_csv, misfit_csv):
 
 	# want to know how many done / failed (well formed json)
 
@@ -15,6 +15,10 @@ def check_json(search_folder, output_csv):
 
 	pd_columns = ["ID", "evla_gs", "evlo_gs", "evdp_gs", "origin_time", "misfit_gs", "misfit_combined", "cell_size", "cell_height", "evla_c", "evlo_c", ]
 	df = pd.DataFrame(columns = pd_columns)
+
+	mdf = pd.DataFrame(columns = ["ID", "station", "misfit", "phase"])
+
+	_c = 0
 
 	all_json_files = [str(p) for p in Path(search_folder).rglob("*.json")]
 
@@ -43,7 +47,24 @@ def check_json(search_folder, output_csv):
 				df.at[c, h] = e_md[header_map[h]]
 			except:
 				pass
+
+		for _sta in e_md["station_misfit"]:
+			if "P" in e_md["station_misfit"][_sta]:
+				mdf.at[_c, "ID"] = e_id
+				mdf.at[_c, "station"] = _sta
+				mdf.at[_c, "misfit"] = e_md["station_misfit"][_sta]["P"]
+				mdf.at[_c, "phase"] = "P"
+				_c += 1
+
+			if "S" in e_md["station_misfit"][_sta]:
+				mdf.at[_c, "ID"] = e_id
+				mdf.at[_c, "station"] = _sta
+				mdf.at[_c, "misfit"] = e_md["station_misfit"][_sta]["S"]
+				mdf.at[_c, "phase"] = "S"
+				_c += 1
+
 	df.to_csv(output_csv, index = False)
+	mdf.to_csv(misfit_csv, index = False)
 
 
 if __name__ == "__main__":
