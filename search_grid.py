@@ -43,6 +43,13 @@ from util_gridsearch import arbitrary_search
 # interpolation? estimate local derivative? or just round
 # try both why not like just call a function
 
+class NumpyEncoder(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, np.ndarray):
+			return obj.tolist()
+		if isintance(obj, np.int64):
+			return float(obj)
+		return json.JSONEncoder.default(self, obj)
 
 def load_travel_time(input_file):
 
@@ -327,13 +334,13 @@ def search(pid, args):
 
 		# save the results in a dictionary (dump to json later)
 		grid_output["station_misfit"] = plot_grid[1] # this is a dictionary
-		grid_output["lb_corner_x"] = float(plot_grid[2][0])
-		grid_output["lb_corner_y"] = float(plot_grid[2][1])
-		grid_output["lb_corner_z"] = float(plot_grid[2][2])
-		grid_output["cell_size"] = float(plot_grid[3])
-		grid_output["cell_n"] = float(args["N_DX"])
+		grid_output["lb_corner_x"] = (plot_grid[2][0])
+		grid_output["lb_corner_y"] = (plot_grid[2][1])
+		grid_output["lb_corner_z"] = (plot_grid[2][2])
+		grid_output["cell_size"] = (plot_grid[3])
+		grid_output["cell_n"] = (args["N_DX"])
 		grid_output["ID"] = pid
-		grid_output["cell_height"] = float(args["DZ"])
+		grid_output["cell_height"] = (args["DZ"])
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 		print("\n\n\n\n")
@@ -343,7 +350,8 @@ def search(pid, args):
 			np.save(f, plot_grid[0])
 
 		with open(json_filename, "w") as f:
-			json.dump(grid_output, f, indent = 4)
+			json.dump(grid_output, f, indent = 4, cls=NumpyEncoder)
+			# https://stackoverflow.com/questions/26646362/numpy-array-is-not-json-serializable
 
 		_grid = plot_grid[0]
 	
