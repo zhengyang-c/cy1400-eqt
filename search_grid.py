@@ -317,15 +317,9 @@ def search(pid, args):
 		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
 
 		# then draw a box around it to get the colour map
+		# second gridsearch without the iterations
 
-		if grid_output["best_z"] - 11 < 0:
-			new_Z_start = 0
-		elif grid_output["best_z"]  + 11 > tt.shape[1]:
-			new_Z_start = grid_output["best_z"] - 21 * args["DZ"]
-		else:
-			new_Z_start = grid_output["best_z"] - 10 * args["DZ"]
-
-		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
+		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, 0)		
 
 		args["N_DX"] = 50
 		args["N_Z"] = int(round(21/args["DZ"])) # 20km
