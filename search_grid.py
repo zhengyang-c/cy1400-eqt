@@ -326,7 +326,7 @@ def search(pid, args):
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
 		# save the results in a dictionary (dump to json later)
-		grid_output["station_misfit"] = float(plot_grid[1])
+		grid_output["station_misfit"] = plot_grid[1] # this is a dictionary
 		grid_output["lb_corner_x"] = float(plot_grid[2][0])
 		grid_output["lb_corner_y"] = float(plot_grid[2][1])
 		grid_output["lb_corner_z"] = float(plot_grid[2][2])
