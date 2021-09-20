@@ -326,14 +326,14 @@ def search(pid, args):
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
 		# save the results in a dictionary (dump to json later)
-		grid_output["station_misfit"] = plot_grid[1]
-		grid_output["lb_corner_x"] = plot_grid[2][0]
-		grid_output["lb_corner_y"] = plot_grid[2][1]
-		grid_output["lb_corner_z"] = plot_grid[2][2]
-		grid_output["cell_size"] = plot_grid[3]
-		grid_output["cell_n"] = args["N_DX"]
+		grid_output["station_misfit"] = float(plot_grid[1])
+		grid_output["lb_corner_x"] = float(plot_grid[2][0])
+		grid_output["lb_corner_y"] = float(plot_grid[2][1])
+		grid_output["lb_corner_z"] = float(plot_grid[2][2])
+		grid_output["cell_size"] = float(plot_grid[3])
+		grid_output["cell_n"] = float(args["N_DX"])
 		grid_output["ID"] = pid
-		grid_output["cell_height"] = args["DZ"]
+		grid_output["cell_height"] = float(args["DZ"])
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 		print("\n\n\n\n")
