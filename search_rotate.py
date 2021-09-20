@@ -15,6 +15,14 @@ import kml_make
 
 # get station list, start from nearest
 
+class NumpyEncoder(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, np.ndarray):
+			return obj.tolist()
+		if isinstance(obj, np.int64):
+			return float(obj)
+		return json.JSONEncoder.default(self, obj)
+
 def frequency_test():
 
 	station = "TG11"
@@ -241,7 +249,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, gs_output
 	gs_output["misfit_combined"] = _grid_output["sigma_ml"]
 
 	with open(json_file, "w") as f:
-		json.dump(gs_output, f, indent = 4)
+		json.dump(gs_output, f, indent = 4, cls=NumpyEncoder)
 
 
 	gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid, output_folder, map_type = "map", gmt_home = gmt_home)
