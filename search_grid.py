@@ -336,6 +336,9 @@ def search(pid, args):
 		grid_output["cell_height"] = args["DZ"]
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
+		print("\n\n\n\n")
+		print(grid_output)
+
 		with open(npy_filename, "wb") as f:
 			np.save(f, plot_grid[0])
 

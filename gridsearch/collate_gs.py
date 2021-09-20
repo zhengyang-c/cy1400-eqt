@@ -66,12 +66,32 @@ def check_json(search_folder, output_csv, misfit_csv):
 	df.to_csv(output_csv, index = False)
 	mdf.to_csv(misfit_csv, index = False)
 
+def patch_gs(source_csv, output_csv):
+
+	df = pd.read_csv(source_csv)
+
+	#all_expected = [x for x in range(2639)]
+
+	output_str = "ID,\n"
+	check = df["ID"].tolist()
+
+	for x in range(2639): # should make it dependent on the input list..... next time
+		if x not in check:
+			output_str += str(x) +"\n"
+
+	with open(output_csv, 'w') as f:
+		f.write(output_str)
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument("search_folder")
-	parser.add_argument("output_csv")
+	parser.add_argument("-sf","--search_folder")
+	parser.add_argument("-o", "--output_csv")
+	parser.add_argument("-scsv", "--source_csv")
+	parser.add_argument("-p", action = 'store_true')
 
 	args = parser.parse_args()
 
-	check_json(args.search_folder, args.output_csv)
+	if args.p:
+		patch_gs(args.source_csv, args.output_csv)
+	else:
+		check_json(args.search_folder, args.output_csv)

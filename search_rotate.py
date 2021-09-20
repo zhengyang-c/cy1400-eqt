@@ -157,6 +157,9 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, gs_output
 
 	#best_depths = gs_grid[:, :, gs_output["best_k"],0]
 	try:
+		print("best_z:", gs_output["best_z"])
+		print("best_k:", gs_output["best_k"])
+		print("lb_corner_z:", gs_output["lb_corner_z"])
 		best_depths = gs_grid[:, :,int(round((gs_output["best_z"] - gs_output["lb_corner_z"])/gs_output["cell_height"])),0]
 	except:
 		raise ValueError("faulty id: {}".format(pid))
