@@ -167,7 +167,7 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 
 			_phase = phase_list[_i]
 
-			station_misfit[_sta][_phase] = np.abs((min_origin_time + datetime.timedelta(seconds = guess_ot[_i] - ref_mean) - datetime.datetime.fromtimestamp(ref_origin)).total_seconds())
+			station_misfit[_sta][_phase] = float(np.abs((min_origin_time + datetime.timedelta(seconds = guess_ot[_i] - ref_mean) - datetime.datetime.fromtimestamp(ref_origin)).total_seconds()))
 
 		print(station_misfit)
 		return station_misfit
@@ -221,6 +221,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	best_z = lb_corner[2] + best_k * args["DZ"]
 
 	output = {
+		"DX":DX,
 		"best_x": best_x,		
 		"best_y": best_y,
 		"best_z": best_z,
