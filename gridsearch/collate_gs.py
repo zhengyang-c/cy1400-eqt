@@ -82,16 +82,46 @@ def patch_gs(source_csv, output_csv):
 	with open(output_csv, 'w') as f:
 		f.write(output_str)
 
+def collate_misfits(source_folder, output_csv):
+
+	search_folder = source_folder
+	all_jsons = [str(p) for p in Path(search_folder).glob("*json")]
+	df = pd.DataFrame(columns = ["ID", "station", "misfit", "phase"])
+	c = 0
+	for _jsonfile in all_jsons:
+		with open(_jsonfile, 'r') as f:
+			_md = json.load(f)
+		#print(_md)
+
+		for _sta in _md["station_misfit"]:
+			if "P" in _md["station_misfit"][_sta]:
+				df.at[c, "ID"] = _jsonfile.split("/")[-1][:6]
+				df.at[c, "station"] = _sta
+				df.at[c, "misfit"] = _md["station_misfit"][_sta]["P"]
+				df.at[c, "phase"] = "P"
+				c += 1
+			if "S" in _md["station_misfit"][_sta]:
+				df.at[c, "ID"] = _jsonfile.split("/")[-1][:6]
+				df.at[c, "station"] = _sta
+				df.at[c, "misfit"] = _md["station_misfit"][_sta]["S"]
+				df.at[c, "phase"] = "S"
+				c += 1
+
+	df.to_csv(output_csv)
+
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-sf","--search_folder")
 	parser.add_argument("-o", "--output_csv")
 	parser.add_argument("-scsv", "--source_csv")
-	parser.add_argument("-p", action = 'store_true')
+	parser.add_argument("-p", action = "store_true")
+	parser.add_argument("-c", action = "store_true")
 
 	args = parser.parse_args()
 
 	if args.p:
 		patch_gs(args.source_csv, args.output_csv)
+	elif args.c:
+		collate_misfits(args.search_folder, args.output_csv)
 	else:
 		check_json(args.search_folder, args.output_csv)
