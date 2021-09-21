@@ -319,10 +319,11 @@ def search(pid, args):
 		# then draw a box around it to get the colour map
 		# second gridsearch without the iterations
 
+		# literally just compute everything
 		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, 0)		
 
 		args["N_DX"] = 50
-		args["N_Z"] = int(round(21/args["DZ"])) # 20km
+		#args["N_Z"] = int(round(21/args["DZ"])) # 20km
 
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
