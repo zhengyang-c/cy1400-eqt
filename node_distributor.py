@@ -79,7 +79,8 @@ def main(uid, encoded_csv):
 	if md.at[uid, "recompute_snr"]:
 
 		write_str += "#recompute snr\npython {} {} {} {} {} {} -t {}\n".format(
-			os.path.join(md.at[uid, "project_root", "recompute_snr.py"]),
+			#os.path.join(md.at[uid, "project_root", "recompute_snr.py"]),
+			os.path.join(md.at[uid, "project_root"], "recompute_snr.py"),
 			md.at[uid, "sac_select"], 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered.csv"), 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"),
