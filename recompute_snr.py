@@ -67,10 +67,10 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv, station, hd
 	# 
 	
 
-	# hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
-	# hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
+	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
+	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
 
-	# det_df = det_df.merge(hdf, on = "file_name")
+	det_df = det_df.merge(hdf, on = "file_name")
 
 	prev_year_day = ""
 	
@@ -103,10 +103,12 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv, station, hd
 
 			#print(_df)
 			# load routine
-			file_root = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
 			
-			
-			file_root = row.source_file
+			try:
+				file_root = row.source_file
+			except:
+				file_root = os.path.join("/".join(_df.at[0, "filepath"].split("/")[:-1]), "*{}*.SAC".format(year_day))
+
 
 			st = obspy.read(file_root)
 
