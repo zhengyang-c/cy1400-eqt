@@ -5,7 +5,7 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def check_json(search_folder, output_csv, misfit_csv):
+def check_json(search_folder, output_csv):
 
 	# want to know how many done / failed (well formed json)
 

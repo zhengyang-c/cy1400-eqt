@@ -163,7 +163,7 @@ def rotate_search(pid, event_folder, output_folder, station_info_file, gs_output
 	with open(np_file, 'rb') as f:
 		gs_grid = np.load(f)
 
-	best_depths = gs_grid[:, :, gs_output["best_k"],0]
+	best_depths = gs_grid[:, :, int(gs_output["best_k"]),0]
 	# try:
 	# 	print("best_z:", gs_output["best_z"])
 	# 	print("best_k:", gs_output["best_k"])
