@@ -8,8 +8,6 @@ from utils import parse_station_info, parse_event_coord
 from obspy.geodetics import gps2dist_azimuth
 from scipy.optimize import curve_fit
 from pathlib import Path
-from search_grid import xyz_writer
-from plot_gridsearch import gmt_plotter
 import subprocess
 import kml_make
 

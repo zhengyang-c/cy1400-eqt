@@ -85,7 +85,7 @@ def parse_input(station_file_name,
 	no_plot = False
 	):
 
-	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]) or (not N_DX and not DX):
+	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]): 
 		raise ValueError("Please specify DX, DZ, TT_DX, TT_DZ, and ZRANGE")
 
 	args = {}
@@ -182,6 +182,7 @@ def search(pid, args):
 	args["TT_NX"] = tt.shape[0]
 	args["TT_NZ"] = tt.shape[1]
 
+	args["pid"] = pid
 
 	with open(args["phase_json"], 'r') as f:
 		phase_info = json.load(f)
@@ -284,6 +285,10 @@ def search(pid, args):
 	grd_filename = os.path.join(output_folder, base_filename + map_str + ".grd")
 	ps_filename = os.path.join(output_folder, base_filename + map_str + ".ps")
 
+	rot_filename = os.path.join(output_folder, base_filename + "rot.npy") 
+
+	com_filename = os.path.join(output_folder, base_filename + "com.npy") 
+
 	ps_zoomout_filename = os.path.join(output_folder, base_filename + map_str + "_zoom.ps")
 	sh_filename = os.path.join(output_folder, "plot.sh")
 	station_filename = os.path.join(output_folder, "station.txt")
@@ -314,7 +319,7 @@ def search(pid, args):
 
 	if args["force"] or (not already_created):		
 		# do initial search get best estimate,
-		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt)
+		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt, )
 
 		# then draw a box around it to get the colour map
 		# second gridsearch without the iterations
@@ -338,12 +343,22 @@ def search(pid, args):
 		grid_output["lb_corner_y"] = (plot_grid[2][1])
 		grid_output["lb_corner_z"] = (plot_grid[2][2])
 		grid_output["cell_size"] = (plot_grid[3])
-		grid_output["cell_n"] = (args["N_DX"])
+		grid_output["cell_n"] = (args["N_DX"] + 1)
 		grid_output["ID"] = pid
 		grid_output["cell_height"] = (args["DZ"])
 		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
-		print("\n\n\n\n")
+
+		if args["run_rotate"]:
+			rotate_grid = plot_grid[5] # should probably just use a dictionary
+			combined = plot_grid[6]
+
+			with open(com_filename, "wb") as f:
+				np.save(f, combined)
+			
+			with open(rot_filename, "wb") as f:
+				np.save(f, rotate_grid)
+
 		print(grid_output)
 
 		with open(npy_filename, "wb") as f:
@@ -362,7 +377,7 @@ def search(pid, args):
 		with open(json_filename, "r") as f:
 			grid_output = json.load(f)
 
-		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2)
+		target_lb = (grid_output["lb_corner_x"], grid_output["lb_corner_y"], grid_output["lb_corner_z"])
 
 	if args["no_plot"]:
 		return 0
@@ -423,10 +438,50 @@ def search(pid, args):
 	# write kml file, can just drag and drop into google earth
 	kml_make.events(_event_info, kml_filename, "grid search", file_type = "direct")
 
+	# run all the plotting, printing that is needed for rotated data:
+
 	if args["run_rotate"]:
-		rotate_search(pid, args["event_folder"], args["output_folder"], args["station_file"], grid_output, append_text = args["append_text"], gmt_home = args["gmt_home"])
+
+		#_grid_output = grid_output
+
+		xyz_file = os.path.join(output_folder, base_filename + "rotated.xyz")
+		grd_file = os.path.join(output_folder, base_filename + "rotated.grd")
+		ps_file = os.path.join(output_folder, base_filename + "rotated.ps")
+		sh_file = os.path.join(output_folder, base_filename + "rotated_plot.sh")
+
+		xyz_writer(rotate_grid, target_lb, grid_output["cell_size"] , DZ, filename = xyz_file, pers = "map")
+
+		output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+				xyz_file,
+				grd_file,
+				grid_output["cell_size"],
+				grid_output["cell_size"],
+				*_lims,
+			)
+
+		print(output_str)
+
+		#gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"])
 
 
+		p = subprocess.Popen(output_str, shell = True)
+		xyz_file = os.path.join(output_folder, base_filename + "combined.xyz")
+		grd_file = os.path.join(output_folder, base_filename + "combined.grd")
+		ps_file = os.path.join(output_folder, base_filename + "combined.ps")
+		sh_file = os.path.join(output_folder, base_filename + "combined_plot.sh")
+
+		xyz_writer(combined, target_lb, grid_output["cell_size"] , DZ, filename = xyz_file, pers = "map")
+
+		output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+				xyz_file,
+				grd_file,
+				grid_output["cell_size"],
+				grid_output["cell_size"],
+				*_lims,
+			)
+
+		print(output_str)
+		p = subprocess.Popen(output_str, shell = True)
 def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
 
 	# pers = map, londep, latdep
@@ -445,10 +500,10 @@ def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
 					y = lb_corner[1] + j * DX
 				elif pers == "londep":
 					x = lb_corner[0] + i * DX
-					y = j * DZ
+					y = lb_corner[2] + j * DZ
 				elif pers == "latdep":
 					x = lb_corner[1] + i * DX
-					y = j * DZ
+					y = lb_corner[2] + j * DZ
 
 				z = output[i,j]
 
@@ -494,7 +549,6 @@ def convert_tt_file(input_file, output_file):
 
 
 if __name__ == "__main__":
-	from search_rotate import rotate_search
 
 	parser = argparse.ArgumentParser()
 
