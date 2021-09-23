@@ -5,7 +5,7 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def check_json(search_folder, output_csv):
+def check_json(search_folder, output_csv, misfit_csv):
 
 	# want to know how many done / failed (well formed json)
 
@@ -113,6 +113,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-sf","--search_folder")
 	parser.add_argument("-o", "--output_csv")
+	parser.add_argument("-m", "--misfit_csv")
 	parser.add_argument("-scsv", "--source_csv")
 	parser.add_argument("-p", action = "store_true")
 	parser.add_argument("-c", action = "store_true")
@@ -121,7 +122,5 @@ if __name__ == "__main__":
 
 	if args.p:
 		patch_gs(args.source_csv, args.output_csv)
-	elif args.c:
-		collate_misfits(args.search_folder, args.output_csv)
 	else:
-		check_json(args.search_folder, args.output_csv)
+		check_json(args.search_folder, args.output_csv, args.misfit_csv)
