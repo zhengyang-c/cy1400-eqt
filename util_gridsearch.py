@@ -193,7 +193,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	# pass in an arbitrary lower left corner, along with the size of the box
 
-	print("lb_corner", lb_corner, "grid_length", grid_length)
+	#print("lb_corner", lb_corner, "grid_length", grid_length)
 
 
 	N_Z = args["N_Z"]
@@ -237,6 +237,8 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 			do_rotate = True
 		
 		rotate_grid = np.zeros([args["N_DX"] + 1, args["N_DX"] + 1])
+	else:
+		do_rotate = False
 
 	for i in range(args["N_DX"] + 1): # lon
 	#for i in range(1):
@@ -245,18 +247,19 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 			for k in range(N_Z): # depth
 
 				_cell_output = cell_fn(i, j, k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX)
-			
 				grid[i][j][k][:] = _cell_output
 
-			for station in _station_list:
-				station_coord = (station_info[station]["lon"], station_info[station]["lat"])
+			if args["run_rotate"]:
+				for station in _station_list:
+					station_coord = (station_info[station]["lon"], station_info[station]["lat"])
 
-				if do_rotate:
 					rotate_grid[i][j] += cell_rotate(i, j, lb_corner, DX, station_coord, rotation_coeff[station])
-				
+					
 	L2 = grid[:,:,:,0] # 0: get the standard deviation
 
 	indices = np.where(L2 == L2.min())
+
+	print("Inside gridsearch: ", indices)
 
 	best_i = indices[0][0]
 	best_j = indices[1][0]
@@ -265,6 +268,8 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	best_x = lb_corner[0] + best_i * args["DX"]
 	best_y = lb_corner[1] + best_j * args["DX"]
 	best_z = lb_corner[2] + best_k * args["DZ"]
+
+	print("Inside gridsearch: ", best_i, best_j, best_k)
 
 
 	if do_rotate:
@@ -282,9 +287,6 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 		c_indices = np.where(combined == combined.min())
 
-		best_i = c_indices[0][0]
-		best_j = c_indices[1][0]
-
 	output = {
 		"DX":DX,
 		"best_x": best_x,		
@@ -300,15 +302,39 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	}
 
 	if do_rotate:
-		output["combined_misfit"] = combined[best_i, best_j]
-	print(output)
+		best_i_c = c_indices[0][0]
+		best_j_c = c_indices[1][0]
+		best_x_c = lb_corner[0] + best_i_c * args["DX"] 
+		best_y_c = lb_corner[1] + best_j_c * args["DX"] 
+
+		output["combined_misfit"] = combined[best_i_c, best_j_c]
+		output["best_x_c"] = best_x_c
+		output["best_y_c"] = best_y_c
+		output["best_i_c"] = best_i_c
+		output["best_j_c"] = best_j_c
+		  
+	#print(output)
 
 	# get station misfits if it's the minimum
 
 	if get_grid:
-		station_misfit = cell_fn(best_i,best_j,best_k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = True, ref_mean = grid[best_i, best_j, best_k, 1], ref_origin = grid[best_i, best_j, best_k, 2])
 
-		return (grid, station_misfit, lb_corner, DX, args["N_DX"] + 1, rotate_grid, combined)
+		if do_rotate:
+			station_misfit = cell_fn(best_i_c,best_j_c,best_k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = True, ref_mean = grid[best_i_c, best_j_c, best_k, 1], ref_origin = grid[best_i_c, best_j_c, best_k, 2])
+
+			for _station in _station_list:
+				_station_coords = station_info[_station]
+
+
+				_baz = baz((_station_coords["lon"], _station_coords["lat"]), (output["best_x_c"], output["best_y_c"]))
+				_baz = baz((_station_coords["lon"], _station_coords["lat"]), (output["best_x"], output["best_y"]))
+
+				rotater(_station, args["pid"], args["event_folder"], save = True, output_folder = os.path.join(args["output_folder"], args["base_filename"]), best_baz = _baz)
+
+		else:
+			station_misfit = cell_fn(best_i,best_j,best_k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = True, ref_mean = grid[best_i, best_j, best_k, 1], ref_origin = grid[best_i, best_j, best_k, 2])
+
+		return (grid, station_misfit, lb_corner, DX, args["N_DX"] + 1, rotate_grid, combined, output)
 
 
 	# positions:
@@ -333,7 +359,12 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		new_Z_start = best_z - 10 * args["DZ"]
 	
 	args["N_Z"] = new_N_Z
-	new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start)
+
+	if do_rotate:
+		# the rotation results should guide the iterative gridsearch
+		new_lb_corner = (best_x_c - 2 * DX, best_y_c - 2 * DX, new_Z_start)
+	else:
+		new_lb_corner = (best_x - 2 * DX, best_y - 2 * DX, new_Z_start)
 
 	new_grid_length = DX * 4
 	new_DX = new_grid_length / args["N_DX"]

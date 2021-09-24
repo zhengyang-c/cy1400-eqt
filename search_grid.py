@@ -14,7 +14,7 @@ import kml_make
 # degrees to kilometers (i think this is like multiplying with factor of)
 
 
-from plot_gridsearch import plotter, gmt_plotter
+from plot_gridsearch import plotter, gmt_plotter, preplot
 import subprocess
 import math
 
@@ -219,7 +219,7 @@ def search(pid, args):
 
 	# exclude after time remapping so phases won't get deleted + throw error (?) whatever
 
-	print(phase_info)
+	#print(phase_info)
 
 	if args["exclude"]:
 		exclude_df = pd.read_csv(args["exclude"])
@@ -267,8 +267,13 @@ def search(pid, args):
 	args["N_Z"] = N_Z	
 
 	# metadata is for json saving
+	if args["run_rotate"]:
+		output_folder = os.path.join(args["output_folder"], pid + "_c")
+	else:
+		output_folder = os.path.join(args["output_folder"], pid)
 
-	output_folder = os.path.join(args["output_folder"], pid)
+
+	args["output_folder"] = output_folder
 
 	if args["append_text"]:
 		base_filename = "{}_{}".format(pid, args["append_text"])
@@ -330,23 +335,43 @@ def search(pid, args):
 			new_Z_start = grid_output["best_z"] - 21 * args["DZ"]
 		else:
 			new_Z_start = grid_output["best_z"] - 10 * args["DZ"]
-		target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
+		
+		if args["run_rotate"]:
+			target_lb = (grid_output["best_x_c"] - target_grid_length/2, grid_output["best_y_c"] - target_grid_length/2, new_Z_start)		
+		else:
+			target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
 
 		args["N_DX"] = 50
 		args["N_Z"] = int(round(21/args["DZ"])) # 20km
 
+
+		print(grid_output)
+		
+		"""
+		oi update grid_output to take in the metadata from plot_Grijadifjsdifajidfjsifidfjaisdjifjsa it's not major but yes
+
+		the best_i best_j is not updated so the indices are different
+		
+		"""
+
+		print("Doing second gridsearch:")
+
 		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
 
+		metadata_output = plot_grid[7]
+
+		metadata_output["station_misfit"] = plot_grid[1]
+
 		# save the results in a dictionary (dump to json later)
-		grid_output["station_misfit"] = plot_grid[1] # this is a dictionary
-		grid_output["lb_corner_x"] = (plot_grid[2][0])
-		grid_output["lb_corner_y"] = (plot_grid[2][1])
-		grid_output["lb_corner_z"] = (plot_grid[2][2])
-		grid_output["cell_size"] = (plot_grid[3])
-		grid_output["cell_n"] = (args["N_DX"] + 1)
-		grid_output["ID"] = pid
-		grid_output["cell_height"] = (args["DZ"])
-		grid_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
+		#grid_output["station_misfit"] = plot_grid[1] # this is a dictionary
+		metadata_output["lb_corner_x"] = (plot_grid[2][0])
+		metadata_output["lb_corner_y"] = (plot_grid[2][1])
+		metadata_output["lb_corner_z"] = (plot_grid[2][2])
+		metadata_output["cell_size"] = (plot_grid[3])
+		metadata_output["cell_n"] = (args["N_DX"] + 1)
+		metadata_output["ID"] = pid
+		metadata_output["cell_height"] = (args["DZ"])
+		metadata_output["misfit_type"] = "Absolute difference between synthetic and observed travel times."
 
 
 		if args["run_rotate"]:
@@ -359,40 +384,49 @@ def search(pid, args):
 			with open(rot_filename, "wb") as f:
 				np.save(f, rotate_grid)
 
-		print(grid_output)
+		_grid = plot_grid[0]
+
+		print(metadata_output)
 
 		with open(npy_filename, "wb") as f:
 			np.save(f, plot_grid[0])
 
 		with open(json_filename, "w") as f:
-			json.dump(grid_output, f, indent = 4, cls=NumpyEncoder)
+			json.dump(metadata_output, f, indent = 4, cls=NumpyEncoder)
 			# https://stackoverflow.com/questions/26646362/numpy-array-is-not-json-serializable
 
-		_grid = plot_grid[0]
 	
 	else:
 		with open(npy_filename,"rb") as f:
 			_grid = np.load(f)
 
 		with open(json_filename, "r") as f:
-			grid_output = json.load(f)
+			metadata_output = json.load(f)
+		
+		with open(rot_filename, "rb") as f:
+			rotate_grid = np.load(f)
+		
+		with open(com_filename, "rb") as f:
+			combined = np.load(f)
 
-		target_lb = (grid_output["lb_corner_x"], grid_output["lb_corner_y"], grid_output["lb_corner_z"])
+
+		target_lb = (metadata_output["lb_corner_x"], metadata_output["lb_corner_y"], metadata_output["lb_corner_z"])
 
 	if args["no_plot"]:
 		return 0
 
 	L2 = _grid[:,:,:,0]
-
 	indices = np.where(L2 == L2.min())
 
-	_lons.append(grid_output["best_x"])
-	_lats.append(grid_output["best_y"])
+	print("Best grid indices: ", indices)
+	_lons.append(metadata_output["best_x"])
+	_lats.append(metadata_output["best_y"])
+
 
 	# the plot limits will depend on the map type (map view, horizontal view)
 	if args["map_type"] == "map":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[1], target_lb[1] + target_grid_length)
-		_y_cell_size = grid_output["cell_size"]
+		_y_cell_size = metadata_output["cell_size"]
 		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2)
 		_output = L2[:,:,indices[2][0]]
 
@@ -408,31 +442,17 @@ def search(pid, args):
 		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
 		_output = L2[indices[0][0], :, :]
 
-	xyz_writer(_output, target_lb, grid_output["cell_size"], DZ, filename = xyz_filename, pers = args["map_type"])
 
-	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
-		xyz_filename,
-		grd_filename,
-		grid_output["cell_size"],
-		_y_cell_size,
-		_lims[0],
-		_lims[1],
-		_lims[2],	
-		_lims[3],
-	)
+	preplot(_output, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, pers = args["map_type"])
 
-	print(output_str)
-	p = subprocess.Popen(output_str, shell = True)
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
 
-
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
-
-	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, grid_output, pid, output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, metadata_output, pid, output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
 
 	_event_info = {pid+"gs":{
-	"lat":grid_output["best_y"], 
-	"lon":grid_output["best_x"], 
-	"dep":grid_output["best_z"],}
+	"lat":metadata_output["best_y"], 
+	"lon":metadata_output["best_x"], 
+	"dep":metadata_output["best_z"],}
 	}
 
 	# write kml file, can just drag and drop into google earth
@@ -442,74 +462,16 @@ def search(pid, args):
 
 	if args["run_rotate"]:
 
-		#_grid_output = grid_output
+		grd_file, ps_file, sh_file = preplot(rotate_grid, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, _type = "_r", pers = "map")
 
-		xyz_file = os.path.join(output_folder, base_filename + "rotated.xyz")
-		grd_file = os.path.join(output_folder, base_filename + "rotated.grd")
-		ps_file = os.path.join(output_folder, base_filename + "rotated.ps")
-		sh_file = os.path.join(output_folder, base_filename + "rotated_plot.sh")
+		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
 
-		xyz_writer(rotate_grid, target_lb, grid_output["cell_size"] , DZ, filename = xyz_file, pers = "map")
+		grd_file, ps_file, sh_file = preplot(combined, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, _type = "_c", pers = "map")
 
-		output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
-				xyz_file,
-				grd_file,
-				grid_output["cell_size"],
-				grid_output["cell_size"],
-				*_lims,
-			)
-
-		print(output_str)
-
-		#gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, _grid_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"])
+		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
 
 
-		p = subprocess.Popen(output_str, shell = True)
-		xyz_file = os.path.join(output_folder, base_filename + "combined.xyz")
-		grd_file = os.path.join(output_folder, base_filename + "combined.grd")
-		ps_file = os.path.join(output_folder, base_filename + "combined.ps")
-		sh_file = os.path.join(output_folder, base_filename + "combined_plot.sh")
-
-		xyz_writer(combined, target_lb, grid_output["cell_size"] , DZ, filename = xyz_file, pers = "map")
-
-		output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
-				xyz_file,
-				grd_file,
-				grid_output["cell_size"],
-				grid_output["cell_size"],
-				*_lims,
-			)
-
-		print(output_str)
-		p = subprocess.Popen(output_str, shell = True)
-def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
-
-	# pers = map, londep, latdep
-
-
-	N_X, N_Y = output.shape
-
-	#plt.imshow(output, cmap = "rainbow")
-	#plt.show()
-
-	with open(filename, "w") as f:
-		for i in range(N_X):
-			for j in range(N_Y):
-				if pers == "map":
-					x = lb_corner[0] + i * DX
-					y = lb_corner[1] + j * DX
-				elif pers == "londep":
-					x = lb_corner[0] + i * DX
-					y = lb_corner[2] + j * DZ
-				elif pers == "latdep":
-					x = lb_corner[1] + i * DX
-					y = lb_corner[2] + j * DZ
-
-				z = output[i,j]
-
-				f.write("{:.7f} {:.7f} {:.3f}\n".format(x,y,z))
-
-# outdated
+		
 def convert_tt_file(input_file, output_file):
 
 	# use the REAL format

@@ -20,14 +20,60 @@ def load_numpy_file(file_name):
 
 		raise ValueError(".npy file does not exist yet, please run search_grid first")
 
+def xyz_writer(output, lb_corner, DX, DZ,  filename = "", pers = "map"):
+	N_X, N_Y = output.shape
 
+	with open(filename, "w") as f:
+		for i in range(N_X):
+			for j in range(N_Y):
+				if pers == "map":
+					x = lb_corner[0] + i * DX
+					y = lb_corner[1] + j * DX
+				elif pers == "londep":
+					x = lb_corner[0] + i * DX
+					y = lb_corner[2] + j * DZ
+				elif pers == "latdep":
+					x = lb_corner[1] + i * DX
+					y = lb_corner[2] + j * DZ
+
+				z = output[i,j]
+
+				f.write("{:.7f} {:.7f} {:.3f}\n".format(x,y,z))
 
 # TODO: rewrite plotter s.t. it will plot the confidence intervals for some range / or also show the contours
 # 3 plots viewing from 3 diff axes i guess
 # also want to put an estimate of vertical and horizontal uncertainty without like any weird coordinate rotation hmm
-# 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, output_folder, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05", gmt_home = "/home/zy/gmt"):
+
+def preplot(plot_data, target_lb, grid_output, y_cell_size, lims, output_folder, base_filename, _type = "", pers = "map"):
+
+	xyz_filename = os.path.join(output_folder, base_filename + _type + ".xyz")
+	grd_filename = os.path.join(output_folder, base_filename + _type + ".grd")
+	ps_file = os.path.join(output_folder, base_filename + _type + ".ps")
+	sh_file = os.path.join(output_folder, base_filename + _type + "_plot.sh")
+	xyz_writer(plot_data, target_lb, grid_output["cell_size"], grid_output["cell_height"], filename = xyz_filename , pers = pers)
+	# xyz writer
+	# gmt xyz2grid
+	# run gmt
+	# call gmt plotter probably
+
+	output_str = "gmt xyz2grd {} -G{} -I{:.5g}/{:.5g} -R{:.5g}/{:.5g}/{:.5g}/{:.5g}".format(
+		xyz_filename,
+		grd_filename,
+		grid_output["cell_size"],
+		y_cell_size,
+		lims[0],
+		lims[1],
+		lims[2],	
+		lims[3],
+	)
+	print(output_str)
+	p = subprocess.Popen(output_str, shell = True)
+
+	return grd_filename, ps_file, sh_file
+
+
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, output_folder, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05", gmt_home = "/home/zy/gmt", rotate = False):
 
 
 	with open(station_file, "w") as f:
@@ -39,6 +85,10 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 	# 
 	# 
 
+	if rotate:
+		grid_output["best_x"] = grid_output["best_x_c"]
+		grid_output["best_y"] = grid_output["best_y_c"]
+		print("hello")
 	
 	#colorscale = "0/1/0.05"
 
@@ -67,7 +117,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
 		"echo \"Best misfit: {:.3g}\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 		"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G{} -C{} --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale, os.path.join(output_folder, "temp.cpt")),
-		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{} -Bya{} -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{}g0.01 -Bya{}g0.01 -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
 		#"rm temp.cpt",
 		]
