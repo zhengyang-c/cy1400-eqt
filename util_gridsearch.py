@@ -329,7 +329,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 				_baz = baz((_station_coords["lon"], _station_coords["lat"]), (output["best_x_c"], output["best_y_c"]))
 				_baz = baz((_station_coords["lon"], _station_coords["lat"]), (output["best_x"], output["best_y"]))
 
-				rotater(_station, args["pid"], args["event_folder"], save = True, output_folder = os.path.join(args["output_folder"], args["base_filename"]), best_baz = _baz)
+				rotater(_station, args["pid"], args["event_folder"], save = True, output_folder = args["output_folder"],  best_baz = _baz)
 
 		else:
 			station_misfit = cell_fn(best_i,best_j,best_k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = True, ref_mean = grid[best_i, best_j, best_k, 1], ref_origin = grid[best_i, best_j, best_k, 2])
