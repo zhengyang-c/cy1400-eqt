@@ -349,13 +349,6 @@ def search(pid, args):
 
 
 		print(grid_output)
-		
-		"""
-		oi update grid_output to take in the metadata from plot_Grijadifjsdifajidfjsifidfjaisdjifjsa it's not major but yes
-
-		the best_i best_j is not updated so the indices are different
-		
-		"""
 
 		print("Doing second gridsearch:")
 
@@ -436,15 +429,15 @@ def search(pid, args):
 		_output = L2[:,:,indices[2][0]]
 
 	elif args["map_type"] == "londep":
-		_lims = (target_lb[0], target_lb[0] + target_grid_length, 0, N_Z)
+		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[2], target_lb[2] + N_Z)
 		_y_cell_size = 1
-		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, 0, N_Z)
+		#_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, 0, N_Z)
 		_output = L2[:, indices[1][0], :]
 
 	elif args["map_type"] == "latdep":
-		_lims = (target_lb[1], target_lb[1] + target_grid_length, 0, N_Z)
+		_lims = (target_lb[1], target_lb[1] + target_grid_length, target_lb[2], target_lb[2] + N_Z)
 		_y_cell_size = 1
-		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
+		#_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
 		_output = L2[indices[0][0], :, :]
 
 
