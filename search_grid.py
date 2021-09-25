@@ -271,10 +271,8 @@ def search(pid, args):
 	if args["run_rotate"]:
 		output_folder = os.path.join(args["output_folder"], pid + "_c")
 	else:
-		output_folder = os.path.join(args["output_folder"], pid)
+		_output_folder = os.path.join(args["output_folder"], pid)
 
-
-	args["output_folder"] = output_folder
 
 	if args["append_text"]:
 		base_filename = "{}_{}".format(pid, args["append_text"])
@@ -286,24 +284,24 @@ def search(pid, args):
 	if args["map_type"] == "londep" or args["map_type"] == "latdep":
 		map_str = "_" + args["map_type"]
 
-	npy_filename = os.path.join(output_folder, base_filename + ".npy")
-	xyz_filename = os.path.join(output_folder, base_filename + map_str + ".xyz")
-	grd_filename = os.path.join(output_folder, base_filename + map_str + ".grd")
-	ps_filename = os.path.join(output_folder, base_filename + map_str + ".ps")
+	npy_filename = os.path.join(_output_folder, base_filename + ".npy")
+	xyz_filename = os.path.join(_output_folder, base_filename + map_str + ".xyz")
+	grd_filename = os.path.join(_output_folder, base_filename + map_str + ".grd")
+	ps_filename = os.path.join(_output_folder, base_filename + map_str + ".ps")
 
-	rot_filename = os.path.join(output_folder, base_filename + "rot.npy") 
+	rot_filename = os.path.join(_output_folder, base_filename + "rot.npy") 
 
-	com_filename = os.path.join(output_folder, base_filename + "com.npy") 
+	com_filename = os.path.join(_output_folder, base_filename + "com.npy") 
 
-	ps_zoomout_filename = os.path.join(output_folder, base_filename + map_str + "_zoom.ps")
-	sh_filename = os.path.join(output_folder, "plot.sh")
-	station_filename = os.path.join(output_folder, "station.txt")
-	json_filename = os.path.join(output_folder, base_filename + ".json")
+	ps_zoomout_filename = os.path.join(_output_folder, base_filename + map_str + "_zoom.ps")
+	sh_filename = os.path.join(_output_folder, "plot.sh")
+	station_filename = os.path.join(_output_folder, "station.txt")
+	json_filename = os.path.join(_output_folder, base_filename + ".json")
 
-	kml_filename = os.path.join(output_folder, base_filename + ".kml")
+	kml_filename = os.path.join(_output_folder, base_filename + ".kml")
 
-	misfit_filename = os.path.join(output_folder, "misfit.txt")
-	misfitplot_filename = os.path.join(output_folder, "misfit.pdf")
+	misfit_filename = os.path.join(_output_folder, "misfit.txt")
+	misfitplot_filename = os.path.join(_output_folder, "misfit.pdf")
 
 	#args["output_folder"] = output_folder
 	args["base_filename"] = base_filename
@@ -442,11 +440,11 @@ def search(pid, args):
 		_output = L2[indices[0][0], :, :]
 
 
-	preplot(_output, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, pers = args["map_type"])
+	preplot(_output, target_lb, metadata_output, _y_cell_size, _lims, _output_folder, base_filename, pers = args["map_type"])
 
 	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
 
-	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, metadata_output, pid, output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
+	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, metadata_output, pid, _output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
 
 	_event_info = {pid+"gs":{
 	"lat":metadata_output["best_y"], 
@@ -461,13 +459,13 @@ def search(pid, args):
 
 	if args["run_rotate"]:
 
-		grd_file, ps_file, sh_file = preplot(rotate_grid, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, _type = "_r", pers = "map")
+		grd_file, ps_file, sh_file = preplot(rotate_grid, target_lb, metadata_output, _y_cell_size, _lims, _output_folder, base_filename, _type = "_r", pers = "map")
 
-		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
+		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, _output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
 
-		grd_file, ps_file, sh_file = preplot(combined, target_lb, metadata_output, _y_cell_size, _lims, output_folder, base_filename, _type = "_c", pers = "map")
+		grd_file, ps_file, sh_file = preplot(combined, target_lb, metadata_output, _y_cell_size, _lims, _output_folder, base_filename, _type = "_c", pers = "map")
 
-		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
+		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, _output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
 
 
 		
