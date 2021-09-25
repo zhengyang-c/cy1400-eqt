@@ -432,13 +432,13 @@ def search(pid, args):
 	elif args["map_type"] == "londep":
 		_lims = (target_lb[0], target_lb[0] + target_grid_length, target_lb[2], target_lb[2] + N_Z)
 		_y_cell_size = 1
-		#_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, 0, N_Z)
+		_all_station_lims = (min(_lons) - target_grid_length/2, max(_lons) + target_grid_length/2, target_lb[2], target_lb[2] + N_Z)
 		_output = L2[:, indices[1][0], :]
 
 	elif args["map_type"] == "latdep":
 		_lims = (target_lb[1], target_lb[1] + target_grid_length, target_lb[2], target_lb[2] + N_Z)
 		_y_cell_size = 1
-		#_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, 0, N_Z)
+		_all_station_lims = (min(_lats) - target_grid_length/2, max(_lats) + target_grid_length/2, target_lb[2], target_lb[2] + N_Z)
 		_output = L2[indices[0][0], :, :]
 
 
