@@ -215,6 +215,8 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 
 	if args["run_rotate"]:
 
+		actual_stnlst = []
+
 		event_folder = args["event_folder"]
 			
 		_station_list = phase_info.keys()
@@ -228,6 +230,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 					continue
 			except:
 				rotation_coeff[station] = _coeff
+				actual_stnlst.append(station)
 
 		if len(rotation_coeff.keys()) == 0:
 			if do_rotate:
@@ -250,7 +253,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 				grid[i][j][k][:] = _cell_output
 
 			if args["run_rotate"]:
-				for station in _station_list:
+				for station in actual_stnlst:
 					station_coord = (station_info[station]["lon"], station_info[station]["lat"])
 
 					rotate_grid[i][j] += cell_rotate(i, j, lb_corner, DX, station_coord, rotation_coeff[station])
@@ -275,7 +278,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	if do_rotate:
 		# get best depth layer
 
-		rotate_grid /= (len(_station_list) - ignored_stations)
+		rotate_grid /= (len(actual_stnlst)) 
 
 		norm_rotate_grid = (rotate_grid - np.min(rotate_grid))/np.ptp(rotate_grid)
 
