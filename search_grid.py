@@ -269,7 +269,7 @@ def search(pid, args):
 
 	# metadata is for json saving
 	if args["run_rotate"]:
-		output_folder = os.path.join(args["output_folder"], pid + "_c")
+		_output_folder = os.path.join(args["output_folder"], pid + "_c")
 	else:
 		_output_folder = os.path.join(args["output_folder"], pid)
 
@@ -310,8 +310,8 @@ def search(pid, args):
 
 	#args["xyz_filename"] = xyz_filename
 
-	if not os.path.exists(output_folder):
-		os.makedirs(output_folder)
+	if not os.path.exists(_output_folder):
+		os.makedirs(_output_folder)
 
 	already_created = os.path.exists(npy_filename) or os.path.exists(json_filename)
 	print("already created: ", already_created)
