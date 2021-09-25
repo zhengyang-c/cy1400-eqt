@@ -440,9 +440,9 @@ def search(pid, args):
 		_output = L2[indices[0][0], :, :]
 
 
-	preplot(_output, target_lb, metadata_output, _y_cell_size, _lims, _output_folder, base_filename, pers = args["map_type"])
+	preplot(_output, target_lb, metadata_output, _y_cell_size, _lims, _output_folder, base_filename, pers = args["map_type"], _type = map_str)
 
-	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, metadata_output, pid, _output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"])
+	gmt_plotter(grd_filename, ps_filename, sh_filename, station_list, station_info, _lims, station_filename, metadata_output, pid, _output_folder, map_type = args["map_type"], misfit_file = misfit_filename, misfitplot_file = misfitplot_filename, gmt_home = args["gmt_home"], )
 
 	gmt_plotter(grd_filename, ps_zoomout_filename, sh_filename, station_list, station_info, _all_station_lims, station_filename, metadata_output, pid, _output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"])
 
