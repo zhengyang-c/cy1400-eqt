@@ -400,12 +400,13 @@ def search(pid, args):
 
 		with open(json_filename, "r") as f:
 			metadata_output = json.load(f)
-		
-		with open(rot_filename, "rb") as f:
-			rotate_grid = np.load(f)
-		
-		with open(com_filename, "rb") as f:
-			combined = np.load(f)
+
+		if args["run_rotate"]:
+			with open(rot_filename, "rb") as f:
+				rotate_grid = np.load(f)
+			
+			with open(com_filename, "rb") as f:
+				combined = np.load(f)
 
 
 		target_lb = (metadata_output["lb_corner_x"], metadata_output["lb_corner_y"], metadata_output["lb_corner_z"])
