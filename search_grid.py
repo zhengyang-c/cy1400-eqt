@@ -1,3 +1,4 @@
+from re import T
 import numpy as np
 import pandas as pd
 import json
@@ -324,8 +325,10 @@ def search(pid, args):
 
 	if args["force"] or (not already_created):		
 		# do initial search get best estimate,
-		grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt, )
-
+		try:
+			grid_output = arbitrary_search(args, seed_lb_corner, seed_grid_length, phase_info, station_info, tt, )
+		except:
+			raise ValueError("Faulty ID: {}".format(pid))
 		# then draw a box around it to get the colour map
 		# second gridsearch without the iterations
 
@@ -356,8 +359,10 @@ def search(pid, args):
 
 		print("Doing second gridsearch:")
 
-		plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
-
+		try:
+			plot_grid = arbitrary_search(args, target_lb, target_grid_length, phase_info, station_info, tt, get_grid = True)
+		except:
+			raise ValueError("Second gridsearch, faulty ID: {}".format(pid))
 		metadata_output = plot_grid[7]
 
 		metadata_output["station_misfit"] = plot_grid[1]
