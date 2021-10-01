@@ -43,8 +43,6 @@ def main(search_folder, output_file):
 
 	#for index, row in df.iterrows():
 
-
-
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("input_folder", help = "")

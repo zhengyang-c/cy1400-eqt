@@ -197,10 +197,31 @@ def search(pid, args):
 
 	phase_info = phase_info[pid]["data"]
 
+	print(args["time_remapping"])
+
+	# convert the arrival times into datetime objects now rather than later:
+
+	for _sta in phase_info:
+
+		if "station_P" in phase_info[_sta]:
+			_arrivaltime = phase_info[_sta]["station_P"]
+			try:
+				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
+			except:
+				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
+
+		if "station_S" in phase_info[_sta]:
+			_arrivaltime = phase_info[_sta]["station_S"]
+			try:
+				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
+			except:
+				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
+
 	if args["time_remapping"]:
 		rdf = pd.read_csv(args["time_remapping"])#remap dataframe
 		rdf["p_arrival_time"] = pd.to_datetime(rdf["p_arrival_time"])
 		rdf["s_arrival_time"] = pd.to_datetime(rdf["s_arrival_time"])
+
 		for index, row in rdf.iterrows():
 			_p = row.p_arrival_time
 			_s = row.s_arrival_time
@@ -209,15 +230,18 @@ def search(pid, args):
 
 			if _sta in phase_info:
 
-				if 'P' in phase_info[_sta]:
-					if _p == phase_info[_sta]['station_P']:
-						phase_info[_sta]['station_P'] += datetime.timedelta(seconds = row.A_delta)
+				# check difference between P arrivals as a way to match? 
 
-				if 'S' in phase_info[_sta]:
-					if _s == phase_info[_sta]['station_S']:
-						phase_info[_sta]['station_S'] += datetime.timedelta(seconds = row.T0_delta)
+				if "station_P" in phase_info[_sta]:
+					if np.abs((_p - phase_info[_sta]["station_P"]).total_seconds()) < 0.01:
+						phase_info[_sta]['station_P'] -= datetime.timedelta(seconds = row.A_delta)
+						print("remapping {}, {}".format(_sta, row.A_delta))
 
-
+				if "station_S" in phase_info[_sta]:
+					if np.abs((_s - phase_info[_sta]["station_S"]).total_seconds()) < 0.01:
+						phase_info[_sta]['station_S'] -= datetime.timedelta(seconds = row.T0_delta)
+						print("remapping {}, {}".format(_sta, row.T0_delta))
+						
 	# exclude after time remapping so phases won't get deleted + throw error (?) whatever
 
 	#print(phase_info)

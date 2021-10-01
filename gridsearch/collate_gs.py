@@ -4,6 +4,7 @@ import numpy as np
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+import datetime
 
 def check_json(search_folder, output_csv, misfit_csv):
 
@@ -30,7 +31,7 @@ def check_json(search_folder, output_csv, misfit_csv):
 
 		e_md = {}
 
-		header_map = {"evla_gs": "best_y", "evlo_gs": "best_x", "evdp_gs":"best_z", "origin_time":"ref_timestamp", "misfit_gs": "sigma_ml", "cell_size": "cell_size", "cell_height": "cell_height", "evla_c": "best_y_c", "evlo_c": "best_x_c"}
+		header_map = {"evla_gs": "best_y", "evlo_gs": "best_x", "evdp_gs":"best_z",  "misfit_gs": "sigma_ml", "cell_size": "cell_size", "cell_height": "cell_height", "evla_c": "best_y_c", "evlo_c": "best_x_c", "misfit_combined": "combined_misfit"}
 
 		with open(json_file, 'r') as f:
 			e_md = json.load(f)
@@ -41,6 +42,13 @@ def check_json(search_folder, output_csv, misfit_csv):
 			e_id = e_md["ID"]
 
 		df.at[c, "ID"] = e_id
+
+		try:
+			r_ts = datetime.datetime.strptime(e_md["ref_timestamp"], "%Y%m%d-%H%M%S.%f")
+		except:
+			r_ts = datetime.datetime.strptime(e_md["ref_timestamp"], "%Y%m%d-%H%M%S")
+
+		df.at[c, "origin_time"] = r_ts + datetime.timedelta(seconds = e_md["mean_time"])
 
 		for h in header_map:
 			try:

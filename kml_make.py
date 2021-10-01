@@ -34,7 +34,7 @@ def events(input_file, output_file, meta_desc, file_type = "event_csv"):
 
 	for _id in event_info:
 		if "dep" in event_info[_id]:
-			pt = kml.newpoint(name=_id, description = meta_desc, coords = [(event_info[_id]["lon"], event_info[_id]["lat"], -1 *event_info[_id]["dep"])])
+			pt = kml.newpoint(name=_id, description = meta_desc + "\nDepth: {}".format(event_info[_id]["dep"]), coords = [(event_info[_id]["lon"], event_info[_id]["lat"], -1 *event_info[_id]["dep"])])
 		else:
 			pt = kml.newpoint(name=_id, description = meta_desc, coords = [(event_info[_id]["lon"], event_info[_id]["lat"])])
 

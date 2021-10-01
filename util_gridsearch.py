@@ -55,10 +55,6 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 
 			_arrivaltime = phase_info[station][phase]
 
-			try:
-				_arrivaltime = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
-			except:
-				_arrivaltime = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
 
 			arrivals.append(_arrivaltime)
 
@@ -223,7 +219,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		ignored_stations = 0
 		rotation_coeff = {}
 		for station in _station_list:
-			_coeff = rotater(station, args["pid"], event_folder,)
+			_coeff = rotater(station, args["pid"], event_folder, _freqmax = 10)
 			try:
 				if _coeff == -1:
 					ignored_stations += 1
@@ -233,8 +229,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 				actual_stnlst.append(station)
 
 		if len(rotation_coeff.keys()) == 0:
-			if do_rotate:
-				print("No rotation operation will be performed.")
+			print("No rotation operation will be performed.")
 			do_rotate = False
 		else:
 			do_rotate = True

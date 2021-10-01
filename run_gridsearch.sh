@@ -1,10 +1,11 @@
 #!/bin/bash
 
-python search_grid.py -station_info new_station_info.dat -phase_json gridsearch/jul7_phases_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 000023 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -m londep 
+python search_grid.py -station_info new_station_info.dat -phase_json gridsearch/jul7_phases_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 409 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -m map -dt arrivaltime_remapping/main.csv  
+
 
 
 #--time_remapping arrivaltime_remapping/main.csv
-# -excl gridsearch/test_exclude.txt -r -ef imported_figures/event_archive 
+# -excl gridsearch/test_exclude.txt -r -ef imported_figures/event_archive  
 
 #python search_grid.py station_info.dat real_postprocessing/5jul_assoc/5jul_aceh_phase.json real_postprocessing/5jul_assoc/hypoDD.reloc hypoDD_loc gridsearch/tt_t.npy gridsearch -event_id 55 -zrange 41 -dx 0.01 -dz 1 -zrange 40 -tt_dx 0.01 -tt_dz 1 -load_only -plot_mpl -show_mpl -write_xyz
 
