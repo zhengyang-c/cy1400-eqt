@@ -343,7 +343,7 @@ def search(pid, args):
 	seed_lb_corner = (94, 3.5, 0)
 	seed_grid_length = 3
 
-	target_grid_length = 0.25
+	target_grid_length = 1
 
 	if args["force"] or (not already_created):		
 		# do initial search get best estimate,
@@ -366,7 +366,7 @@ def search(pid, args):
 		else:
 			target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
 
-		args["N_DX"] = 50
+		args["N_DX"] = 100
 		args["N_Z"] = int(round(21/args["DZ"])) # 20km
 
 
@@ -491,6 +491,7 @@ def search(pid, args):
 
 		gmt_plotter(grd_file, ps_file, sh_file, station_list, station_info, _lims, station_filename, metadata_output, pid, _output_folder, map_type = "map", gmt_home = args["gmt_home"], rotate = True)
 
+		gmt_plotter(grd_file, os.path.join(_output_folder, base_filename + map_str + "_c_zoom.ps"), sh_file, station_list, station_info, _all_station_lims, station_filename, metadata_output, pid, _output_folder, map_type = args["map_type"], ticscale = "0.1", gmt_home = args["gmt_home"], rotate = True)
 
 		
 def convert_tt_file(input_file, output_file):

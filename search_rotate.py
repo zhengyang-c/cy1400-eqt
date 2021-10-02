@@ -353,7 +353,7 @@ def rotater(station, pid, event_folder, _freqmin = 1, _freqmax = 45, t_min = -0.
 
 	if save:
 
-		st.rotate(method="NE->RT", back_azimuth = (best_baz + 90)%360)
+		st.rotate(method="NE->RT", back_azimuth = (best_baz)%360)
 
 		if not os.path.exists(os.path.join(output_folder, "rotated")):
 			os.makedirs(os.path.join(output_folder, "rotated"))

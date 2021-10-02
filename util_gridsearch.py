@@ -219,7 +219,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 		ignored_stations = 0
 		rotation_coeff = {}
 		for station in _station_list:
-			_coeff = rotater(station, args["pid"], event_folder, _freqmax = 10)
+			_coeff = rotater(station, args["pid"], event_folder, _freqmax = 45)
 			try:
 				if _coeff == -1:
 					ignored_stations += 1

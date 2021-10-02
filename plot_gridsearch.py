@@ -73,7 +73,7 @@ def preplot(plot_data, target_lb, grid_output, y_cell_size, lims, output_folder,
 	return grd_filename, ps_file, sh_file
 
 
-def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, output_folder, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.05", gmt_home = "/home/zy/gmt", rotate = False):
+def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, lims, station_file, grid_output, pid, output_folder, misfit_file = "", misfitplot_file = "", map_type = "map", colorscale = "0/1/0.05", ticscale = "0.1", gmt_home = "/home/zy/gmt", rotate = False):
 
 
 	with open(station_file, "w") as f:
@@ -117,7 +117,7 @@ def gmt_plotter(grd_file, output_file, output_sh, station_list, station_info, li
 		"echo {:.7g} {:.7g} | gmt psxy $PROJ $LIMS -Gwhite -Sa0.12i -W0.5p -K -O >> $PSFILE".format(grid_output["best_x"], grid_output["best_y"]),
 		"echo \"Best misfit: {:.3g}\" | gmt pstext $PROJ $LIMS -F+cBC -D0/0.1 -K -O >> $PSFILE".format(grid_output["sigma_ml"]),
 		"gmt psscale $PROJ $LIMS -DjTC+w14c/0.5c+jTC+h -G{} -C{} --FONT_ANNOT_PRIMARY=6p,Helvetica,black -K -O >> $PSFILE".format(colorscale, os.path.join(output_folder, "temp.cpt")),
-		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{}g0.01 -Bya{}g0.01 -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
+		"gmt psbasemap $PROJ $LIMS -BWeSn+t\"ID: {}, Best depth: {:.2g}km\" -Bxa{}g0.05 -Bya{}g0.05 -O >> $PSFILE".format(pid, grid_output["best_z"], ticscale, ticscale),
 		"gmt psconvert $PSFILE -Tf -A+m1c",
 		#"rm temp.cpt",
 		]
