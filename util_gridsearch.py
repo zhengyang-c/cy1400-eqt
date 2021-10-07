@@ -344,7 +344,7 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 					both = {}
 
 					for station in dist_weights:
-						both[station] = (dist_weights + az_weights)/2
+						both[station] = (dist_weights[station] + az_weights[station])/2
 
 					weights = both
 

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-python search_grid.py -station_info new_station_info.dat -phase_json gridsearch/jul7_phases_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 344 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -m map -f -rw
-
+python search_grid.py -station_info new_station_info.dat -phase_json gridsearch/jul7_phases_arrivaltimes.json -tt_path gridsearch/model_dlange2_451km-60km.npy -output_folder gridsearch/output_7jul -event_id 344 -dz 1 -zrange 41 -tt_dx 1 -tt_dz 1 -m map -f -bw
 
 
 
