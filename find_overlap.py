@@ -59,8 +59,8 @@ def main():
 
 		df.at[index, "B"] = float(out[1])
 		df.at[index, "E"] = float(out[2])
-		df.at[index, "KZDATE"] = float(out[3])
-		df.at[index, "KZTIME"] = float(out[4])
+		df.at[index, "KZDATE"] = str(out[3])
+		df.at[index, "KZTIME"] = str(out[4])
 
 		#
 
