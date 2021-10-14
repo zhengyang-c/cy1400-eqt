@@ -95,7 +95,6 @@ def get_all_files(sac_folder, output_file):
 
 		df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
 
-		# fullday?
 	# "station/all_aceh_sac.csv"
 	df.to_csv(output_file, index = False)
 
