@@ -55,7 +55,10 @@ def get_all_files(sac_folder, output_file):
 	# "Deployed-2020-05-MSEED",
 	# "Deployed-2020-07-MSEED",]
 
-	folder_list = [str(p) for p in Path(sac_folder).rglob("Deployed*MSEED")]
+	folder_list =["Deployed-2020-07-MSEED",
+	 "Deployed-2020-08-MSEED",]
+
+	#folder_list = [str(p) for p in Path(sac_folder).rglob("Deployed*MSEED")]
 
 	all_files = []
 
