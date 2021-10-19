@@ -277,7 +277,7 @@ if __name__ == "__main__":
 
 
 	if args.cat:
-		join_catalog_sel(args.input, args.output, args.search_filem, args.start_n)
+		join_catalog_sel(args.input, args.output, args.search_file, args.start_n)
 
 		# to use: Python collect_latlon.py -i INPUT_FOLDER -o OUTPUT_CSV -cat -search_file hypoloc|cat
 
