@@ -105,7 +105,7 @@ def join_hypophase(search_dir, output_file, c = 0):
 	with open(output_file, 'w') as f:
 		f.write("".join(data))
 
-def join_catalog_sel(search_dir, output_file, search_file = ""):
+def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 
 	#search_dir = "/home/zy/Downloads/REAL_test_10station/REAL_test/Waveform"
 	#print(search_file)
@@ -126,7 +126,7 @@ def join_catalog_sel(search_dir, output_file, search_file = ""):
 
 	df = pd.DataFrame()
 
-	c = 0
+	c = n
 	try:
 		assert len(filelist) > 0
 	except:
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('-i','--input', help = "generic input")
 	parser.add_argument('-o', '--output',)
-	parser.add_argument('-search_file', help = "'cat' or 'hypo'", default = "")
+	parser.add_argument("-sf", '--search_file', help = "'cat' or 'hypo'", default = "")
 
 	parser.add_argument('-cat', action = "store_true")
 	parser.add_argument('-pha', action = "store_true")

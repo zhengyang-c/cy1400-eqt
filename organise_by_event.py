@@ -95,7 +95,7 @@ def csv_cutter():
 	# 
 	# 
 
-def df_searcher_one_off(eqt_csv, phase_json):
+def df_searcher_one_off(eqt_csv, phase_json, output_json, output_csv):
 
 	# please have the metadata as very succint bc it will take up storage space
 
@@ -124,7 +124,6 @@ def df_searcher_one_off(eqt_csv, phase_json):
 
 		for sta in phase_dict[event]["data"]:
 
-			print(sta)
 
 			_df = df[(df["station"] == sta)].copy()
 
@@ -201,10 +200,10 @@ def df_searcher_one_off(eqt_csv, phase_json):
 
 					o_c += 1
 
-	with open("real_postprocessing/5jul_assoc/5jul_phase_arrivaltimes.json", "w") as f:
+	with open(output_json, "w") as f:
 		json.dump(phase_dict, f, indent = 4)
 
-	o_df.to_csv("real_postprocessing/5jul_assoc/5jul_phase_arrivaltimes.csv", index = False)
+	o_df.to_csv(output_csv, index = False)
 
 
 def df_searcher(df, _station_dict, _ts,):
@@ -440,16 +439,22 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 if __name__ == "__main__":
 
-	# parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser()
 
-	# parser.add_argument("eqt_csv")
-	# parser.add_argument("phase_json")
-	# parser.add_argument("reloc_csv")
-	# parser.add_argument("output_folder")
+	parser.add_argument("eqt_csv")
+	parser.add_argument("phase_json")
+	parser.add_argument("-r", "--reloc_csv")
+	parser.add_argument("-o", "--output_folder")
 
-	# args = parser.parse_args()
+	parser.add_argument("-tt", "--traveltimes", action = "store_true")
+	parser.add_argument("-oj", "--output_json")
+	parser.add_argument("-oc", "--output_csv")
 
-	# main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
 
-	df_searcher_one_off("real_postprocessing/5jul_assoc/5jul_compiled_customfilter.csv", "real_postprocessing/5jul_assoc/5jul_aceh_phase.json")	
-	#df_searcher_one_off("real_postprocessing/for_gs/7jul_compiled_customfilter.csv","real_postprocessing/for_gs/remap_phase.json")
+	args = parser.parse_args()
+
+	if not args.traveltimes:
+		main(args.eqt_csv, args.phase_json, args.reloc_csv, args.output_folder)
+	else:
+		df_searcher_one_off(args.eqt_csv, args.phase_json, args.output_json, args.output_csv)
+
