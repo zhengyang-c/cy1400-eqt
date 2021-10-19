@@ -126,7 +126,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 
 	df = pd.DataFrame()
 
-	c = n
+	c = 0
 	try:
 		assert len(filelist) > 0
 	except:
@@ -178,7 +178,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 
 	for index, row in df.iterrows():
 		
-		df.at[index, "ID"] = f"{index:06d}"
+		df.at[index, "ID"] = "{:06d}".format(index + n)
 
 	df.to_csv(output_file, index = False)
 
