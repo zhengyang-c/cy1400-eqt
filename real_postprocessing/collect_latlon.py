@@ -81,7 +81,7 @@ def filter_csv(csv_file, output_file, lon = "", lat = "", depth = ""):
 
 
 
-def join_hypophase(search_dir, output_file):
+def join_hypophase(search_dir, output_file, c = 0):
 
 	filelist = [str(p) for p in Path(search_dir).rglob("hypophase.dat")] 
 
@@ -91,29 +91,19 @@ def join_hypophase(search_dir, output_file):
 
 	# just need to append everything and the ID be in order 
 
-	c = 0
 	for file in filelist:
 		with open(file, 'r') as f:
-
-
 			for line in f:
 				if line[0] == "#":
 					_data = line.split(" ")
 					_data[-1] = f"{c:06d}\n"
 					data.append(" ".join(_data))
-
 					c += 1
-					
 				else:
 					data.append(line)
 
 	with open(output_file, 'w') as f:
 		f.write("".join(data))
-
-
-
-
-		
 
 def join_catalog_sel(search_dir, output_file, search_file = ""):
 
@@ -278,6 +268,8 @@ if __name__ == "__main__":
 	parser.add_argument('-lat', default = "")
 	parser.add_argument('-depth', default = "")
 
+	parser.add_argument("-n", "--start_n", default = 0, type = int)
+
 
 
 
@@ -294,7 +286,7 @@ if __name__ == "__main__":
 		# 
 
 	elif args.pha:
-	 	join_hypophase(args.input, args.output)
+	 	join_hypophase(args.input, args.output, args.start_n)
 
 	elif args.reloc:
 		make_reloc_catalog(args.input, args.output)
