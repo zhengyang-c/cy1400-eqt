@@ -65,10 +65,10 @@ def sac_file_checker():
 	# because i can just regenerate the entire archive and it would honestly be easier
 	# than patching it 
 
-	input_csv = "real_postprocessing/julaug_20_assoc/julaug20_compiled_customfilter.csv"
-	output_csv = "real_postprocessing/julaug_20_assoc/julaug_customfilter_matched.csv"
+	input_csv = "~/julaug20_compiled_customfilter.csv"
+	output_csv = "julaug_customfilter_matched.csv"
 
-	sac_csv = "imported_figures/all_jul_aug_2020_ts.csv"
+	sac_csv = "~/all_jul_aug_2020_ts.csv"
 	s_df = pd.read_csv(sac_csv)
 
 	# this is the matcher function
