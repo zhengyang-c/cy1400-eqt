@@ -106,7 +106,8 @@ def sac_file_checker():
 			# or attempt to search for other jdays
 
 			with open("log/sac_timing.txt", "a") as f:
-				f.write("{}\n".format(row.filepath))
+				print(row.event_start_time, row.station)
+				f.write("{} {}\n".format(row.event_start_time, row.station))
 
 		else:
 			search_term = _fdf["filepath"].iloc[0]
