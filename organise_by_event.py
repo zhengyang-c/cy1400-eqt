@@ -9,6 +9,8 @@ from pathlib import Path
 import time
 import subprocess
 
+from utils import parse_station_info
+
 # load all events
 
 # dry run
@@ -49,8 +51,9 @@ def main(sac_csv, input_json, reloc_csv, output_folder):
 	#print(event_df["timestamp"])
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
-	for index, row in event_df.iterrows():
-	 	searcher(output_folder, int(row.ID), df, event_df, phase_dict)
+	for index, row in event_df[event_df["ID"] == 4010 ].iterrows():
+		print(row.ID)
+		searcher(output_folder, int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict, dryrun = True)
 	#header_writer(5, df, event_df, phase_dict)
 
@@ -253,7 +256,7 @@ def df_searcher(df, _station_dict, _ts,):
 
 		if _p_arrival_time:
 			_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] > -1)].copy()
-			#print(_p_df)
+			print(_p_df)
 
 			try:
 				assert _p_df.shape[0] == 1
@@ -302,7 +305,7 @@ def df_searcher(df, _station_dict, _ts,):
 				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
-		#print(search_file_path)
+		print(search_file_path)
 		_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
 
 		files_to_copy.extend(_files_to_copy)
@@ -371,14 +374,20 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	search_output = df_searcher(df, _station_dict, _ts)
 
 
+	print(search_output)
+
+
 	files_to_copy = search_output["files_to_copy"]
-	_station_dict = search_output["_station_dict"]
+	#_station_dict = search_output["_station_dict"]
+	_station_dict = parse_station_info("new_station_info.dat")
 
 
 	if not os.path.exists(dest_folder) and not dryrun:
 		os.makedirs(dest_folder)
 
 	for file in files_to_copy:
+
+		print(file)
 
 		basename = file.split("/")[-1]
 		dest_path = os.path.join(dest_folder, basename)
@@ -412,9 +421,14 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 		_sta = basename.split(".")[0]
 
-		station_lat, station_lon = _station_dict[_sta]['stla'], _station_dict[_sta]['stlo']
+		station_lat, station_lon = _station_dict[_sta]['lat'], _station_dict[_sta]['lon']
+
+		#print("stla", station_lat, "stlo", station_lon)
+
 
 		event_lat, event_lon, event_depth = event_df.loc[event_df["ID"] == uid, "LAT"].values[0], event_df.loc[event_df["ID"] == uid, "LON"].values[0], event_df.loc[event_df["ID"] == uid, "DEPTH"].values[0]
+
+		#print("evlo", event_lon, "evla", event_lat)
 
 		bash_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {} stla {} stlo {}\\nwh\\nq\\n' | sac\n".format(dest_path, output_date_str, event_lat, event_lon, event_depth, station_lat, station_lon)
 
@@ -427,7 +441,7 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	os.chmod(output_file, 0o775)
 	time.sleep(1)
 
-	subprocess.call(["./{}".format(output_file)])
+	#subprocess.call(["./{}".format(output_file)])
 
 	
 

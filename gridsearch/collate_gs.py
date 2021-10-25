@@ -118,7 +118,7 @@ def collate_misfits(source_folder, output_csv):
 	df.to_csv(output_csv)
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(description="-sf -o -m for collating json")
 	parser.add_argument("-sf","--search_folder")
 	parser.add_argument("-o", "--output_csv")
 	parser.add_argument("-m", "--misfit_csv")
