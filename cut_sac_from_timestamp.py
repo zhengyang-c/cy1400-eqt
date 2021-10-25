@@ -117,6 +117,8 @@ def sac_file_checker():
 					search_term.replace(x, ".EH*.")
 			df.at[index, "search_term"] = search_term
 
+	df.to_csv(output_csv, index = False)
+
 
 
 
