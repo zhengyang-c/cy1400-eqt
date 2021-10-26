@@ -65,8 +65,8 @@ def sac_file_checker():
 	# because i can just regenerate the entire archive and it would honestly be easier
 	# than patching it 
 
-	#input_csv = "~/julaug20_compiled_customfilter.csv"
-	input_csv = "julaug_customfilter_matched_patch.csv"
+	input_csv = "~/julaug20_compiled_customfilter.csv"
+	#input_csv = "julaug_customfilter_matched_patch.csv"
 	output_csv = "julaug_customfilter_matched_patch.csv"
 
 	sac_csv = "~/all_jul_aug_2020_ts.csv"
@@ -79,13 +79,12 @@ def sac_file_checker():
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
 
 
-	patch_df = df[df["search_term"].isnull()]
 
 
 	for index, row in s_df.iterrows():
 		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
 
-	for index, row in patch_df.iterrows():
+	for index, row in df.iterrows():
 		# get station
 		# this feel like a n^2 search omg this is going to be so slow
 		jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
