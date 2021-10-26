@@ -24,6 +24,7 @@ import matplotlib
 
 import matplotlib.pyplot as plt
 
+from subprocess import check_output
 import argparse
 from pathlib import Path
 import datetime
@@ -42,10 +43,6 @@ def get_all_files(sac_folder, output_file):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
 	# 
-	
-	# how does SAC to miniSEED conversion work again
-	# i think have a pandas dataframe, find the station. 
-	# you want the path information for each of them
 	
 	# folder_list = ["Deployed-2019-12-MSEED", # this is actually hardcoded
 	# "Deployed-2020-01-MSEED",
@@ -93,10 +90,38 @@ def get_all_files(sac_folder, output_file):
 		df.at[index, 'jday'] = (_jday)
 		df.at[index, 'start_time'] = _file.split(".")[7]
 
-		df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
+		"""
+			out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
+	40 
+	41         sac_df.at[index, "kzdate"] = out[1]                                 
+	42         sac_df.at[index, "kztime"] = out[2]
+	43         sac_df.at[index, "B"] = out[3]
+	44         sac_df.at[index, "E"] = out[4]
+		"""
+
+		out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
+		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
+
+		df.at[index, "kzdate"] = out[1]
+		df.at[index, "kztime"] = out[2]
+		df.at[index, "B"] = out[3]
+		df.at[index, "E"] = out[4]
+
+		df.at[index, "sac_start_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f")
+
+		#df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
+
+
+		# fullday doesn't give useful info because the file could start at 000000 and still be incomplete
 
 	# "station/all_aceh_sac.csv"
 	df.to_csv(output_file, index = False)
+
+def generate_timestamps(input_csv, output_csv):
+
+
+	df = pd.read_csv(input_csv)
+
 
 
 
@@ -563,10 +588,17 @@ if __name__ == "__main__":
 	parser.add_argument("-snr_threshold", type = int, help = "threshold number for S wave SNR", default = 8)
 	parser.add_argument("-config", help = "path to config file from which directories are created")
 
+
+	parser.add_argument("-gts", "--generate_timestamps", action = "store_true")
+
 	args = parser.parse_args()
 
 	if args.selector and not args.plot:
 		select_files(args.selector, args.start_date, args.end_date, args.julian, args.month, args.input, args.output)
+
+	elif args.generate_timestamps:
+		generate_timestamps(args.input, args.output)
+
 	elif args.get:
 		get_all_files(args.get, args.output)
 	elif args.json:
