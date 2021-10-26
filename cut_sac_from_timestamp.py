@@ -129,7 +129,7 @@ def sac_file_checker():
 
 
 
-	df = df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes= = ("", "_sac")) 
+	df = df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes = ("", "_sac")) 
 
 	for index, row in df.iterrows():
 		for x in [".EHE.", ".EHN.", ".EHZ."]:
