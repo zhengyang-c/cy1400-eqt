@@ -65,8 +65,9 @@ def sac_file_checker():
 	# because i can just regenerate the entire archive and it would honestly be easier
 	# than patching it 
 
-	input_csv = "~/julaug20_compiled_customfilter.csv"
-	output_csv = "julaug_customfilter_matched.csv"
+	#input_csv = "~/julaug20_compiled_customfilter.csv"
+	input_csv = "julaug_customfilter_matched.csv"
+	output_csv = "julaug_customfilter_matched_patch.csv"
 
 	sac_csv = "~/all_jul_aug_2020_ts.csv"
 	s_df = pd.read_csv(sac_csv)
@@ -76,6 +77,8 @@ def sac_file_checker():
 	df = pd.read_csv(input_csv)
 
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
+
+	df = df[df["search_term"] == ""]
 
 	for index, row in s_df.iterrows():
 		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
@@ -101,7 +104,8 @@ def sac_file_checker():
 
 		_fdf = _df[_df["is_within"] == True]
 
-		if len(_df) != 3:
+		print(_fdf)
+		if len(_fdf) != 3:
 			# we have a problem, log and fix it later (?)
 			# or attempt to search for other jdays
 
