@@ -79,13 +79,13 @@ def sac_file_checker():
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
 
 
-	df = df[df["search_term"].isnull()]
+	patch_df = df[df["search_term"].isnull()]
 
 
 	for index, row in s_df.iterrows():
 		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
 
-	for index, row in df.iterrows():
+	for index, row in patch_df.iterrows():
 		# get station
 		# this feel like a n^2 search omg this is going to be so slow
 		jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
