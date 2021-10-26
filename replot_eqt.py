@@ -7,6 +7,8 @@ import subprocess
 import matplotlib.pyplot as plt
 import time
 
+import obspy
+
 from pathlib import Path
 
 
@@ -127,7 +129,85 @@ def sac_plotter():
 	os.chmod(plot_file, 0o775)
 
 
+def header_writer():
+
+
+	csv_file ="julaug_customfilter_matched_patch.csv"
+	try:
+		df = pd.read_csv(csv_file)
+	except FileNotFoundError:
+		print("header_writer: file not found")
+		return 0
+
+	df['event_start_time'] = pd.to_datetime(df['event_start_time'])
+	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
+	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
+	df['event_end_time'] = pd.to_datetime(df['event_end_time'])
+
+	df['start_dt'] = pd.to_datetime(df['start_dt'])
+
+	for index, row in df.iterrows():
+		for x in [".EHE.", ".EHN.", ".EHZ."]:
+			if x in row.filepath:
+				search_term = row.filepath.replace(x, ".EH*.")
+				break
+		df.at[index, "filepath"] = search_term
+
+	
+	csv_dir = "julaug_test"
+
+	output_file = os.path.join(csv_dir, "write_headers.sh")
+
+	with open(output_file, 'w') as f:
+		f.write("#!/bin/sh\n")
+
+		for index, row in df.iterrows():
+
+			year_day = datetime.datetime.strftime(row.event_start_time, "%Y.%j")
+
+
+			start_of_file = row.start_dt
+
+			timestamp = datetime.datetime.strftime(row.event_start_time, '%H%M%S')
+
+			if not row.p_arrival_time: # NaN
+				p_diff = "-12345"
+
+			else:
+				p_diff = (row.p_arrival_time - start_of_file).total_seconds()
+
+			if not row.s_arrival_time:
+				s_diff = "-12345"
+
+			else:
+				s_diff = (row.s_arrival_time - start_of_file).total_seconds()
+
+			if not row.event_end_time:
+				end_diff = "-12345"
+
+			else: 
+				end_diff = (row.event_end_time - start_of_file).total_seconds()
+
+
+			f.write("printf \"r {}\\nch A {:.2f}\\nch T0 {:.2f}\\nch F {:.2f}\\nwh\\nq\\n\" | sac\n".format(
+				os.path.join(csv_dir, "*{}.{}*SAC").format(year_day, timestamp),
+				p_diff,
+				s_diff,
+				end_diff
+				))
+
+	time.sleep(1)
+	os.chmod(output_file, 0o775)
+
+	time.sleep(1)
+	subprocess.call(["{}".format(output_file)])	
+	time.sleep(1)
+	#subprocess.call(["{}".format(plot_file)])
+
+
 sac_plotter()
+
+header_writer()
 # if __name__ == "__main__":
 
 # 	parser = argparse.ArgumentParser()
