@@ -140,6 +140,7 @@ def generate_timestamps(input_csv, output_csv):
 		for index, row in _df.iterrows():
 			new_timestamp = (row.sac_start_dt, row.sac_end_dt)
 
+			print("new timestamp", new_timestamp)
 			print(timestamp_set)
 
 			if len(timestamp_set) == 0:
