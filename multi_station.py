@@ -122,8 +122,15 @@ def get_all_files(sac_folder, output_file):
 def generate_timestamps(input_csv, output_csv):
 	df = pd.read_csv(input_csv)
 
+	df["sac_start_dt"] = pd.to_datetime(df["sac_start_dt"])
+	df["sac_end_dt"] = pd.to_datetime(df["sac_end_dt"])
+
 	# do for all stations by default
 	gdf = df.groupby(by = "station")
+
+	c = 0
+
+	of = pd.DataFrame() # output dataframe
 
 	for sta, _df in gdf:
 
@@ -131,7 +138,36 @@ def generate_timestamps(input_csv, output_csv):
 		print(sta)
 		
 		for row, index in _df.iterrows():
-			pass	
+			new_timestamp = (row.sac_start_dt, row.sac_end_dt)
+
+
+			if len(timestamp_set) == 0:
+				timestamp_set.append(new_timestamp)
+
+			else:
+				overlap_set = []
+				# for ~ a few months of data with station-days, an O(n^2) search is acceptable
+				for test_ts in timestamp_set:
+					if new_timestamp[0] <= test_ts[1] and new_timestamp[1] >= test_ts[0]:
+						overlap_set.append(test_ts)
+					# check for overlap, collate set of overlaps
+				
+				# find unique portion of new timestamp
+
+				for test_ts in overlap_set:
+					_t_a = (new_timestamp[1] - test_ts[1]).total_seconds()
+					_t_b = (new_timestamp[0] - test_ts[0]).total_seconds()
+
+					if _t_a >= 0 and _t_b >= 0:
+						new_timestamp = (test_ts[1], new_timestamp[1])
+						print(_t_a)
+					elif _t_a <= 0 and _t_b <= 0:
+						new_timestamp = (new_timestamp[0], test_ts[1])
+						print(_t_b)
+					else:
+						print("Bad error 999")	
+
+
 
 
 
