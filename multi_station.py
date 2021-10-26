@@ -158,10 +158,10 @@ def generate_timestamps(input_csv, output_csv):
 					_t_a = (new_timestamp[1] - test_ts[1]).total_seconds()
 					_t_b = (new_timestamp[0] - test_ts[0]).total_seconds()
 
-					if _t_a >= 0 and _t_b >= 0:
+					if _t_a > 0 and _t_b > 0:
 						new_timestamp = (test_ts[1], new_timestamp[1])
 						print(_t_a)
-					elif _t_a <= 0 and _t_b <= 0:
+					elif _t_a < 0 and _t_b < 0:
 						new_timestamp = (new_timestamp[0], test_ts[1])
 						print(_t_b)
 					else:
