@@ -130,6 +130,8 @@ def sac_plotter():
 
 def header_writer():
 
+	subprocess.call(["./cut.sh"])
+
 
 	csv_file ="julaug_customfilter_matched_patch.csv"
 	try:
