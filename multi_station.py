@@ -125,6 +125,15 @@ def generate_timestamps(input_csv, output_csv):
 	df["sac_start_dt"] = pd.to_datetime(df["sac_start_dt"])
 	df["sac_end_dt"] = pd.to_datetime(df["sac_end_dt"])
 
+
+	c_df = pd.DataFrame()
+
+	for index, row in df.iterrows():
+
+		df.at[index, "c"] = ".EHZ." in row.filepath 
+
+	df = df[df["c"] == True]
+
 	# do for all stations by default
 	gdf = df.groupby(by = "station")
 
