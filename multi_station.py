@@ -163,7 +163,7 @@ def generate_timestamps(input_csv, output_csv):
 						overlap_set.append(test_ts)
 					# check for overlap, collate set of overlaps
 
-				#print("overlap set:", overlap_set)
+				print("overlap set:", overlap_set)
 
 				timestamp_set.append(new_timestamp)
 				
