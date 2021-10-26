@@ -121,10 +121,10 @@ def get_all_files(sac_folder, output_file):
 
 def generate_timestamps(input_csv, output_csv):
 	df = pd.read_csv(input_csv)
-
 	df["sac_start_dt"] = pd.to_datetime(df["sac_start_dt"])
 	df["sac_end_dt"] = pd.to_datetime(df["sac_end_dt"])
 
+	overlap = 0.3
 
 	c_df = pd.DataFrame()
 
@@ -147,7 +147,7 @@ def generate_timestamps(input_csv, output_csv):
 		print(sta)
 		
 		for index, row in _df.iterrows():
-			new_timestamp = (row.sac_start_dt, row.sac_end_dt)
+			new_timestamp = (row.sac_start_dt, row.sac_end_dt, row.filepath)
 
 			#print("new timestamp", new_timestamp)
 			#print(timestamp_set)
@@ -160,36 +160,37 @@ def generate_timestamps(input_csv, output_csv):
 				# for ~ a few months of data with station-days, an O(n^2) search is acceptable
 				for test_ts in timestamp_set:
 					if new_timestamp[0] < test_ts[1] and new_timestamp[1] > test_ts[0]:
-						overlap_set.append(test_ts)
-					# check for overlap, collate set of overlaps
-
-				print("overlap set:", overlap_set)
+						overlap_set.append(test_ts) # check for overlap, collate set of overlaps
 
 				timestamp_set.append(new_timestamp)
 				
-				# find unique portion of new timestamp
-
-				# for test_ts in overlap_set:
-				# 	_t_a = (new_timestamp[1] - test_ts[1]).total_seconds()
-				# 	_t_b = (new_timestamp[0] - test_ts[0]).total_seconds()
-
-				# 	if _t_a > 0 and _t_b > 0:
-				# 		new_timestamp = (test_ts[1], new_timestamp[1])
-				# 		print(_t_a)
-
-				# 		timestamp_set.append(new_timestamp)
-				# 	elif _t_a < 0 and _t_b < 0:
-				# 		new_timestamp = (new_timestamp[0], test_ts[1])
-				# 		print(_t_b)
-				# 		timestamp_set.append(new_timestamp)
-				# 	else:
-				# 		print("Bad error 999")	
-		
 		timestamp_set = sorted(timestamp_set, key = lambda x: x[0])
 
 		for i in timestamp_set:
 			print(i)
 
+		for _ts in timestamp_set:
+			# generate timestamps for each date range into the output dataframe
+			# start time of 1 min, station, filepath, sac_start_time
+
+			n_cuts = ((_ts[1] - _ts[0]).total_seconds() - (overlap * 60))/((1 - overlap)*60)
+
+			for i in range(n_cuts):
+				_ts_start = _ts[0] + datetime.timedelta(seconds = (i * (1 - overlap) * 60))
+
+				_dt = (1 - overlap) * 60 * i
+
+				of.at[c, "station"] = sta
+				of.at[c, "timestamp_start"] = _ts_start 
+				of.at[c, "time_from_file_start"] = _dt
+				of.at[c, "filepath"] = _ts[2]
+
+				c += 1
+
+			
+		print(of)
+
+		of.to_csv("test.csv")
 
 		break
 

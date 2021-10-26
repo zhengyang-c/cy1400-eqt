@@ -137,9 +137,6 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 		# if using partial day file. could just submit a blank file in the future but still need a file anyway hmmm
 		if partial_day_file != "":
-
-
-
 			start_time = st[0].stats.starttime # UTCDateTime object
 			end_time = st[0].stats.endtime
 
