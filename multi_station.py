@@ -153,24 +153,28 @@ def generate_timestamps(input_csv, output_csv):
 					if new_timestamp[0] <= test_ts[1] and new_timestamp[1] >= test_ts[0]:
 						overlap_set.append(test_ts)
 					# check for overlap, collate set of overlaps
+
+				print("overlap set:", overlap_set)
+
+				timestamp_set.append(new_timestamp)
 				
 				# find unique portion of new timestamp
 
-				for test_ts in overlap_set:
-					_t_a = (new_timestamp[1] - test_ts[1]).total_seconds()
-					_t_b = (new_timestamp[0] - test_ts[0]).total_seconds()
+				# for test_ts in overlap_set:
+				# 	_t_a = (new_timestamp[1] - test_ts[1]).total_seconds()
+				# 	_t_b = (new_timestamp[0] - test_ts[0]).total_seconds()
 
-					if _t_a > 0 and _t_b > 0:
-						new_timestamp = (test_ts[1], new_timestamp[1])
-						print(_t_a)
+				# 	if _t_a > 0 and _t_b > 0:
+				# 		new_timestamp = (test_ts[1], new_timestamp[1])
+				# 		print(_t_a)
 
-						timestamp_set.append(new_timestamp)
-					elif _t_a < 0 and _t_b < 0:
-						new_timestamp = (new_timestamp[0], test_ts[1])
-						print(_t_b)
-						timestamp_set.append(new_timestamp)
-					else:
-						print("Bad error 999")	
+				# 		timestamp_set.append(new_timestamp)
+				# 	elif _t_a < 0 and _t_b < 0:
+				# 		new_timestamp = (new_timestamp[0], test_ts[1])
+				# 		print(_t_b)
+				# 		timestamp_set.append(new_timestamp)
+				# 	else:
+				# 		print("Bad error 999")	
 		break
 
 
