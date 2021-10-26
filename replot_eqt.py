@@ -115,7 +115,6 @@ def sac_plotter():
 
 			#plot_str += "convert {0}/sac_picks/{1} -background white -alpha remove -alpha off {0}/sac_picks/{1}\n".format(csv_dir, png_id)
 
-			break
 
 		f.write(write_str)
 
@@ -196,7 +195,6 @@ def header_writer():
 				end_diff
 				))
 
-			break
 
 	time.sleep(1)
 	os.chmod(output_file, 0o775)
