@@ -108,6 +108,8 @@ def get_all_files(sac_folder, output_file):
 		df.at[index, "E"] = out[4]
 
 		df.at[index, "sac_start_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f")
+		df.at[index, "sac_end_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f") + datetime.timedelta(seconds = float(out[4]))
+
 
 		#df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
 
@@ -118,9 +120,18 @@ def get_all_files(sac_folder, output_file):
 	df.to_csv(output_file, index = False)
 
 def generate_timestamps(input_csv, output_csv):
-
-
 	df = pd.read_csv(input_csv)
+
+	# do for all stations by default
+	gdf = df.groupby(by = "station")
+
+	for sta, _df in gdf:
+
+		timestamp_set = []
+		print(sta)
+		
+		for row, index in _df.iterrows():
+			pass	
 
 
 
