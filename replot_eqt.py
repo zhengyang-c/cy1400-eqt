@@ -1,6 +1,5 @@
 import argparse
 import pandas as pd
-import obspy
 import glob
 import os
 import datetime
