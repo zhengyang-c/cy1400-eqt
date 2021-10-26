@@ -159,7 +159,7 @@ def generate_timestamps(input_csv, output_csv):
 				overlap_set = []
 				# for ~ a few months of data with station-days, an O(n^2) search is acceptable
 				for test_ts in timestamp_set:
-					if new_timestamp[0] <= test_ts[1] and new_timestamp[1] >= test_ts[0]:
+					if new_timestamp[0] < test_ts[1] and new_timestamp[1] > test_ts[0]:
 						overlap_set.append(test_ts)
 					# check for overlap, collate set of overlaps
 
