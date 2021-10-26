@@ -175,7 +175,7 @@ def generate_timestamps(input_csv, output_csv):
 
 			n_cuts = ((_ts[1] - _ts[0]).total_seconds() - (overlap * 60))/((1 - overlap)*60)
 
-			n_cuts = np.floor(n_cuts)
+			n_cuts = int(np.floor(n_cuts))
 
 			for i in range(n_cuts):
 				_ts_start = _ts[0] + datetime.timedelta(seconds = (i * (1 - overlap) * 60))
