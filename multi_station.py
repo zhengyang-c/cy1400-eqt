@@ -149,8 +149,8 @@ def generate_timestamps(input_csv, output_csv):
 		for index, row in _df.iterrows():
 			new_timestamp = (row.sac_start_dt, row.sac_end_dt)
 
-			print("new timestamp", new_timestamp)
-			print(timestamp_set)
+			#print("new timestamp", new_timestamp)
+			#print(timestamp_set)
 
 			if len(timestamp_set) == 0:
 				timestamp_set.append(new_timestamp)
@@ -163,7 +163,7 @@ def generate_timestamps(input_csv, output_csv):
 						overlap_set.append(test_ts)
 					# check for overlap, collate set of overlaps
 
-				print("overlap set:", overlap_set)
+				#print("overlap set:", overlap_set)
 
 				timestamp_set.append(new_timestamp)
 				
@@ -184,7 +184,15 @@ def generate_timestamps(input_csv, output_csv):
 				# 		timestamp_set.append(new_timestamp)
 				# 	else:
 				# 		print("Bad error 999")	
+		
+		timestamp_set = sorted(timestamp_set, key = lambda x: x[0])
+
+		for i in timestamp_set:
+			print(i)
+
+
 		break
+
 
 
 
