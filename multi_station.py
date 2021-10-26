@@ -189,6 +189,8 @@ def generate_timestamps(input_csv, output_csv):
 
 				c += 1
 
+				print(c)
+
 			
 		print(of)
 
