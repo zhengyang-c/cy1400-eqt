@@ -196,6 +196,8 @@ def header_writer():
 				end_diff
 				))
 
+			break
+
 	time.sleep(1)
 	os.chmod(output_file, 0o775)
 
