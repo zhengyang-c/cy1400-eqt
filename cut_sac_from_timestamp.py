@@ -66,7 +66,7 @@ def sac_file_checker():
 	# than patching it 
 
 	#input_csv = "~/julaug20_compiled_customfilter.csv"
-	input_csv = "julaug_customfilter_matched.csv"
+	input_csv = "julaug_customfilter_matched_patch.csv"
 	output_csv = "julaug_customfilter_matched_patch.csv"
 
 	sac_csv = "~/all_jul_aug_2020_ts.csv"
@@ -78,7 +78,9 @@ def sac_file_checker():
 
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
 
-	df = df[df["search_term"] == ""]
+
+	df = df[df["search_term"].isnull()]
+
 
 	for index, row in s_df.iterrows():
 		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
@@ -99,19 +101,28 @@ def sac_file_checker():
 
 		# want to check that the time stamp is within the kzdate and time
 
+		print(row.station, jday)
+
 		for s_index, s_row in _df.iterrows():
-			_df.at[s_index, "is_within"] = ((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E
+			_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
+
+			print("event_start_time", row.event_start_time)
+			print("row_start_time", s_row.start_dt)
+			print("is within: ", (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E - 125) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B - 30))
 
 		_fdf = _df[_df["is_within"] == True]
 
-		print(_fdf)
+
+		print(_fdf["start_dt"])
 		if len(_fdf) != 3:
 			# we have a problem, log and fix it later (?)
 			# or attempt to search for other jdays
 
 			with open("log/sac_timing.txt", "a") as f:
-				print(row.event_start_time, row.station)
+				#print(row.event_start_time, row.station)
 				f.write("{} {}\n".format(row.event_start_time, row.station))
+
+			
 
 		else:
 			search_term = _fdf["filepath"].iloc[0]
