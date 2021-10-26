@@ -114,23 +114,22 @@ def sac_file_checker():
 
 
 		print(_fdf["start_dt"])
-		if len(_fdf) != 3:
-			# we have a problem, log and fix it later (?)
-			# or attempt to search for other jdays
+		# if len(_fdf) != 3:
+		# 	# we have a problem, log and fix it later (?)
+		# 	# or attempt to search for other jdays
 
-			with open("log/sac_timing.txt", "a") as f:
-				#print(row.event_start_time, row.station)
-				f.write("{} {}\n".format(row.event_start_time, row.station))
+		# 	with open("log/sac_timing.txt", "a") as f:
+		# 		#print(row.event_start_time, row.station)
+		# 		f.write("{} {}\n".format(row.event_start_time, row.station))
 
 			
 
-		else:
-			search_term = _fdf["filepath"].iloc[0]
+		search_term = _fdf["filepath"].iloc[0]
 
-			for x in [".EHE.", ".EHN.", ".EHN."]:
-				if x in search_term:
-					search_term.replace(x, ".EH*.")
-			df.at[index, "search_term"] = search_term
+		for x in [".EHE.", ".EHN.", ".EHN."]:
+			if x in search_term:
+				search_term.replace(x, ".EH*.")
+		df.at[index, "search_term"] = search_term
 
 	df.to_csv(output_csv, index = False)
 
