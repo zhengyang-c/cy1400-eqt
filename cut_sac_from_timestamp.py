@@ -125,10 +125,19 @@ def sac_file_checker():
 
 		search_term = _fdf["filepath"].iloc[0]
 
-		for x in [".EHE.", ".EHN.", ".EHN."]:
-			if x in search_term:
-				search_term.replace(x, ".EH*.")
-		df.at[index, "search_term"] = search_term
+		df.at[index, "source_file"] = search_term
+
+
+
+	df = df.merge(sac_csv, how = "left", left_on = "source_file", right_on = "filepath") 
+
+	for index, row in df.iterrows():
+		for x in [".EHE.", ".EHN.", ".EHZ."]:
+			if x in row.source_file:
+				search_term = row.source_file.replace(x, ".EH*.")
+				break
+		df.at[index, "source_file"] = search_term
+
 
 	df.to_csv(output_csv, index = False)
 
