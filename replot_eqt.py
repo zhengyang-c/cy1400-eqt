@@ -125,9 +125,6 @@ def sac_plotter():
 	os.chmod(cut_file, 0o775)
 	time.sleep(1)
 	os.chmod(plot_file, 0o775)
-	time.sleep(2)
-	subprocess.call(["{}".format(cut_file)])			
-
 
 
 sac_plotter()
