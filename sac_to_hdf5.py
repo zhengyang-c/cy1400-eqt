@@ -117,115 +117,117 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 		p_df = pd.read_csv(partial_day_file)
 		exclude_list = [int(x) for x in p_df[station].tolist() if x == x] # NaN is != NaN 
 
-	for day_df in indiv_days:
+	for dday_df in indiv_days:
 
 
-		day_df.reset_index(inplace = True)
+		dday_df.reset_index(inplace = True)
 
 		# get unique value of the filenames
 
-
-		year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
-		
-		"""
-		just change it s.t. it will consider more than one entry inside the day_df (?) that's probably the easiest solution
-
-		since i now know that the input mseed file is cut into sac files, there won't be any major overlaps to worry about
-		"""
-
-		filepath_root = Path(day_df.at[0,'filepath']).parent
-
-		file_name_str = os.path.join(filepath_root, "*{}.{:06d}.SAC".format(year_day, day_df.at[0, "start_time"]))
-
-		st = read(file_name_str)
-
-		st.resample(100.0)
-		st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
-		st.detrend('demean')
+		for _, day_df in dday_df.groupby(by = "_uid"):
 
 
-		# if using partial day file. could just submit a blank file in the future but still need a file anyway hmmm
-		if partial_day_file != "":
-			start_time = st[0].stats.starttime # UTCDateTime object
-			end_time = st[0].stats.endtime
-
-			# get jday of 
-			# tbh this should be extended to year-jday but that can... wait??
-			# 
+			year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
 			
-			n_cuts = ((end_time - start_time) - (overlap * 60))/((1 - overlap)*60)
+			"""
+			just change it s.t. it will consider more than one entry inside the day_df (?) that's probably the easiest solution
 
-			n_cuts = math.floor(n_cuts)
+			since i now know that the input mseed file is cut into sac files, there won't be any major overlaps to worry about
+			"""
 
-			timestamps = []
-			dt = [] 
+			filepath_root = Path(day_df.at[0,'filepath']).parent
 
-			for i in range(n_cuts):
+			file_name_str = os.path.join(filepath_root, "*{}.{:06d}.SAC".format(year_day, day_df.at[0, "start_time"]))
 
-				_start_time = (start_time + i * (1 - overlap) * 60).datetime
+			st = read(file_name_str)
 
-				_dt = (1 - overlap) * 60 * i
+			st.resample(100.0)
+			st.filter('bandpass', freqmin = 1.0, freqmax = 45, corners = 2, zerophase = True)
+			st.detrend('demean')
 
-				if int(datetime.datetime.strftime(_start_time, "%j")) in exclude_list:
+
+			# if using partial day file. could just submit a blank file in the future but still need a file anyway hmmm
+			if partial_day_file != "":
+				start_time = st[0].stats.starttime # UTCDateTime object
+				end_time = st[0].stats.endtime
+
+				# get jday of 
+				# tbh this should be extended to year-jday but that can... wait??
+				# 
+				
+				n_cuts = ((end_time - start_time) - (overlap * 60))/((1 - overlap)*60)
+
+				n_cuts = math.floor(n_cuts)
+
+				timestamps = []
+				dt = [] 
+
+				for i in range(n_cuts):
+
+					_start_time = (start_time + i * (1 - overlap) * 60).datetime
+
+					_dt = (1 - overlap) * 60 * i
+
+					if int(datetime.datetime.strftime(_start_time, "%j")) in exclude_list:
+						continue
+
+					timestamps.append(_start_time)
+					dt.append(_dt)
+
+				
+				# get the B E and KZTIME from the SAC header.
+				# generate timestamps as per usual, but for every time stamp check against the partial day file list
+				# if the dt is inside, skip (this can't be that expensive computationally)
+				
+			# default full day 
+			else:
+				start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+
+				end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
+
+
+				n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
+
+				n_cuts = math.floor(n_cuts)
+
+				timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
+
+				timestamps.append(start_of_day + datetime.timedelta(seconds = 86340))
+				dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
+				dt.append(86340) 			
+
+
+			for c, timestamp in enumerate(timestamps):
+				#print(timestamp)
+
+				datum = np.zeros((6000, 3))
+
+				start_index = int(dt[c] * 100)
+				try:
+					for j in range(3):
+						datum[:,j] = st[j].data[start_index : start_index + 6000]
+				except:
 					continue
+				_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
+				_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
 
-				timestamps.append(_start_time)
-				dt.append(_dt)
+				#print(_tracename, _start_time)
 
-			
-			# get the B E and KZTIME from the SAC header.
-			# generate timestamps as per usual, but for every time stamp check against the partial day file list
-			# if the dt is inside, skip (this can't be that expensive computationally)
-			
-		# default full day 
-		else:
-			start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
+				
+				_g.attrs['trace_name'] = _tracename
+				_g.attrs['receiver_code'] = sta
+				_g.attrs['receiver_type'] = "EH"
+				_g.attrs['network_code'] = "AC"
+				_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
+				_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
+				_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
+				_g.attrs["trace_start_time"] = _start_time
 
-			end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
-
-
-			n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
-
-			n_cuts = math.floor(n_cuts)
-
-			timestamps = [start_of_day + datetime.timedelta(seconds = (1 - overlap) * 60) * j for j in range(n_cuts)]
-
-			timestamps.append(start_of_day + datetime.timedelta(seconds = 86340))
-			dt = [(1 - overlap) * 60 * j for j in range(n_cuts)]
-			dt.append(86340) 			
-
-
-		for c, timestamp in enumerate(timestamps):
-			#print(timestamp)
-
-			datum = np.zeros((6000, 3))
-
-			start_index = int(dt[c] * 100)
-			try:
-				for j in range(3):
-					datum[:,j] = st[j].data[start_index : start_index + 6000]
-			except:
-				continue
-			_tracename = "{}_AC_EH_{}".format(sta, str(UTCDateTime(timestamp)))
-			_start_time = datetime.datetime.strftime(timestamp, "%Y-%m-%d %H:%M:%S.%f")
-
-			#print(_tracename, _start_time)
-
-			_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
-			
-			_g.attrs['trace_name'] = _tracename
-			_g.attrs['receiver_code'] = sta
-			_g.attrs['receiver_type'] = "EH"
-			_g.attrs['network_code'] = "AC"
-			_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
-			_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
-			_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
-			_g.attrs["trace_start_time"] = _start_time
-
-			csv_output["trace_name"].append(_tracename)
-			csv_output["start_time"].append(_start_time)
-			csv_output["source_file"].append(file_name_str)
-			csv_output["sac_start_time"].append(str(st[0].stats.starttime))
+				csv_output["trace_name"].append(_tracename)
+				csv_output["start_time"].append(_start_time)
+				csv_output["source_file"].append(file_name_str)
+				csv_output["sac_start_time"].append(str(st[0].stats.starttime))
 
 	_outhf.close()
 	d_csv = pd.DataFrame.from_dict(csv_output)

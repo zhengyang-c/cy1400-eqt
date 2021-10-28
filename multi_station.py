@@ -277,7 +277,7 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 
 
-def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = ""):
+def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "", patch = False):
 
 	
 	# start_date format = e.g. 2020_03 for month
@@ -297,6 +297,7 @@ def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "sta
 	for index, row in df.iterrows():
 		df.at[index, 'dt'] = datetime.datetime.strptime("{}.{}".format(row.year, row.jday), "%Y.%j")
 
+		df.at[index, "_uid"] = "{}-{}-{}-{}".format(row.station, row.year, row.jday, row.start_time)
 
 		for _cha in ["EHE", "EHN", "EHZ"]:
 			if _cha in row.filepath:
@@ -312,7 +313,10 @@ def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "sta
 
 	print(station_list)
 
-	_df = df[df["station"].isin(station_list)]
+	if patch:
+		_df = df[(df["station"].isin(station_list)) & (df["fullday"] == False)]
+	else:
+		_df = df[df["station"].isin(station_list)]
 
 	_df.sort_values("jday", inplace = True)
 
@@ -423,6 +427,7 @@ def encode_multirun(
 	no_execute = False,
 	snr_threshold = 8,
 	config = "",
+	patch = False,
 	):
 
 	# encode everything (sac to hdf5, prediction
@@ -513,7 +518,7 @@ def encode_multirun(
 		project_code = "eos_shjwei"
 
 	if make_sac_csv:
-		select_files(station_file, output_file = sac_select, all_csv_path = make_sac_csv)
+		select_files(station_file, output_file = sac_select, all_csv_path = make_sac_csv, patch = patch)
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
 
@@ -634,6 +639,8 @@ if __name__ == "__main__":
 	parser.add_argument("-n_multi", type = int, help = "no. of times to repeat prediction, default 20", default = 20)
 	parser.add_argument("-n_nodes", type = int, help = "no. of HPC nodes to use", default = None)
 
+	parser.add_argument('-p', "--patch", action = "store_true")
+
 
 	parser.add_argument("-pbs", help = "flag to generate pbs script", default = False, action = "store_true")
 
@@ -687,6 +694,7 @@ if __name__ == "__main__":
 			write_headers = args.write_headers, 
 			no_execute = args.no_execute, 
 			snr_threshold = args.snr_threshold, 
-			config = args.config)
+			config = args.config, 
+			patch = args.patch)
 
 
