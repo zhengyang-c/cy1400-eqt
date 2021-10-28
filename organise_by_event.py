@@ -352,19 +352,11 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 	#origin_time = .values[0]
 	print("origin time", origin_time)
 
-	#print(event_df.loc[event_df["ID"] == uid, "timestamp"])
-
-
-
 	dest_folder = os.path.join(output_folder, padded_id)
-
-
-
 
 	_station_dict = phase_dict[padded_id]['data']
 
 	_ts = (phase_dict[padded_id]['timestamp'])
-
 
 	bash_str = "#!/bin/bash\n"
 	output_file = "cat_header_writer.sh"
@@ -373,14 +365,11 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 
 	search_output = df_searcher(df, _station_dict, _ts)
 
-
 	print(search_output)
-
 
 	files_to_copy = search_output["files_to_copy"]
 	#_station_dict = search_output["_station_dict"]
 	_station_dict = parse_station_info("new_station_info.dat")
-
 
 	if not os.path.exists(dest_folder) and not dryrun:
 		os.makedirs(dest_folder)
@@ -402,7 +391,6 @@ def searcher(output_folder, uid, df, event_df, phase_dict, dryrun = False):
 				print("dest folder: {}".format(dest_folder))
 			else:
 				shutil.copy(file, dest_folder)
-
 
 		# write headers here
 

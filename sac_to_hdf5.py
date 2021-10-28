@@ -122,7 +122,16 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 		day_df.reset_index(inplace = True)
 
+		# get unique value of the filenames
+
+
 		year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
+		
+		"""
+		just change it s.t. it will consider more than one entry inside the day_df (?) that's probably the easiest solution
+
+		since i now know that the input mseed file is cut into sac files, there won't be any major overlaps to worry about
+		"""
 
 		filepath_root = Path(day_df.at[0,'filepath']).parent
 
