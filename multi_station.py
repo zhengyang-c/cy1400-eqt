@@ -303,7 +303,6 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 
 	station_list = list(filter(lambda x: x != "", station_list))
 
-	print(station_list)
 
 	if patch:
 		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != "000000")]
@@ -312,7 +311,6 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 
 	_df.sort_values("jday", inplace = True)
 
-	print(_df["start_time"])
 
 	#_df.to_csv("station/test.csv")
 	# want to check if it's complete, whether it's all fulldays, if any gaps
@@ -511,7 +509,6 @@ def encode_multirun(
 		project_code = "eos_shjwei"
 
 	if make_sac_csv:
-		print("patching: ", patch)
 		select_files(station_file, output_file = sac_select, all_csv_path = make_sac_csv, patch = patch)
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
