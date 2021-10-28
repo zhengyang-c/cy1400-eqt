@@ -314,7 +314,7 @@ def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "sta
 	print(station_list)
 
 	if patch:
-		_df = df[(df["station"].isin(station_list)) & (df["fullday"] == False)]
+		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != 0)]
 	else:
 		_df = df[df["station"].isin(station_list)]
 
