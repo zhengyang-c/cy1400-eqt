@@ -306,13 +306,13 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 	print(station_list)
 
 	if patch:
-		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != 0)]
+		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != "000000")]
 	else:
 		_df = df[df["station"].isin(station_list)]
 
 	_df.sort_values("jday", inplace = True)
 
-	print(_df)
+	print(_df["start_time"])
 
 	#_df.to_csv("station/test.csv")
 	# want to check if it's complete, whether it's all fulldays, if any gaps
