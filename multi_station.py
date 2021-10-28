@@ -616,7 +616,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
 
-	parser.add_argument("-p", "--plot", help = "get uptime file for some start and end date", action = "store_true")
+	parser.add_argument("-pl", "--plot", help = "get uptime file for some start and end date", action = "store_true")
 
 	parser.add_argument("-enc", "--encode", action="store_true", help = "flag for script to encode a csv file for multinode running on HPC array")
 
