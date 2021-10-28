@@ -615,7 +615,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("-enc", "--encode", action="store_true", help = "flag for script to encode a csv file for multinode running on HPC array")
 
-	parser.add_argument("-j", "--job", help = "unique string identifier for the job", default = "")
+	parser.add_argument("-job", help = "unique string identifier for the job", default = "")
 
 	parser.add_argument("-write_hdf5", action = "store_true", help = "flag to write from sac to hdf5 folder, default False")
 	parser.add_argument("-run_eqt", action = "store_true", help = "flag to run eqt prediction and merge multiple predictions, default False")
