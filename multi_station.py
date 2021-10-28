@@ -277,19 +277,11 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 
 
-def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "station/all_aceh_sac.csv", output_file = "", patch = False):
+def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", output_file = "", patch = False):
 
 	
 	# start_date format = e.g. 2020_03 for month
 
-	if y_jul and y_mon:
-		print("invalid options")
-		return 0
-
-	if y_jul:
-		_parse_char = "j"
-	elif y_mon:
-		_parse_char = "m"
 	df = pd.read_csv(all_csv_path)
 
 	# kinda inefficient bc 10^5 rows but it's fine bc it won't be used very often
@@ -320,11 +312,12 @@ def select_files(selector_file, y_jul = True, y_mon = False, all_csv_path = "sta
 
 	_df.sort_values("jday", inplace = True)
 
+	print(_df)
+
 	#_df.to_csv("station/test.csv")
 	# want to check if it's complete, whether it's all fulldays, if any gaps
 	# which should also show me the missing files
 
-	n_stations = len(station_list)
 
 	# if len(_df.index) < expected_files:
 	# 	print("some missing, can report on the no. of missing + flag to continue")
