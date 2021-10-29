@@ -305,7 +305,7 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 
 
 	if patch:
-		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != "000000")]
+		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != "000000") & (df["start_time"].str[-2:] != "-1")]
 	else:
 		_df = df[df["station"].isin(station_list)]
 
