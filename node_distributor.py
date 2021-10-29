@@ -7,6 +7,7 @@
 import argparse
 import pandas as pd
 import os
+import time
 
 # accept argument
 # load encoded file
@@ -124,6 +125,8 @@ def main(uid, encoded_csv):
 		f.write(write_str)
 		
 	os.chmod(output_bash, 0o775)
+
+	time.sleep(1)
 
 
 if __name__ == "__main__":
