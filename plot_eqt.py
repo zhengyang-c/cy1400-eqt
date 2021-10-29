@@ -26,6 +26,10 @@ def sac_plotter(sac_csv, csv_file):
 	try:
 		sac_df = pd.read_csv(sac_csv)
 		df = pd.read_csv(csv_file)	
+
+		# csv file is the merged eqt csv
+		# sac csv is the one generated with the hdf5 which 
+		# links the sac traces to their files 
 	except FileNotFoundError:
 		print("plot eqt: no files found")	
 		return 0
@@ -47,6 +51,9 @@ def sac_plotter(sac_csv, csv_file):
 
 	cut_file = os.path.join(csv_dir, "cut.sh")
 	plot_file = os.path.join(csv_dir, "plot.sh")
+
+	# using the trace_name, do a merge for the source_file and sac_start_time
+	# iterate through the eqt csv without assuming what the "actual" source file is
 
 	with open(cut_file, "w") as f:		
 
