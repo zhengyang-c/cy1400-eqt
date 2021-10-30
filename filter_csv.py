@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('input_file', help = "csv after recompute_snr")
 	parser.add_argument('output_file', help = "output csv with files to plot")	
-	parser.add_argument('-s', '--_snr_threshold', help = "S arrival SNR threshold (db, computed using squared amplitudes with 1s windows", type = float, default = None)
+	parser.add_argument('-s', '--s_snr_threshold', help = "S arrival SNR threshold (db, computed using squared amplitudes with 1s windows", type = float, default = None)
 	parser.add_argument('-m', '--multi', help = "no. of repeats that were performed", type = float, default = None)
 	
 
