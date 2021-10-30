@@ -91,7 +91,7 @@ def main(uid, encoded_csv):
 
 	if md.at[uid, "filter_csv"]:
 
-		write_str += "#filter csv\npython {} {} {} {} {}\n".format(
+		write_str += "#filter csv\npython {} {} {} -s {} -m {}\n".format(
 			os.path.join(md.at[uid, "project_root"], "filter_csv.py"),
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr.csv"), 
 			os.path.join(md.at[uid, "merge_output_folder"], "merge_filtered_snr_customfilter.csv"), 
