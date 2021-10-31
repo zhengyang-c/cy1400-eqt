@@ -344,6 +344,7 @@ def search(pid, args):
 	seed_grid_length = 3
 
 	target_grid_length = 1
+	target_dx = 100
 
 	if args["force"] or (not already_created):		
 		# do initial search get best estimate,
@@ -366,7 +367,7 @@ def search(pid, args):
 		else:
 			target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
 
-		args["N_DX"] = 100
+		args["N_DX"] = target_dx
 		args["N_Z"] = int(round(21/args["DZ"])) # 20km
 
 

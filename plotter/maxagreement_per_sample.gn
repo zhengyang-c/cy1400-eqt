@@ -2,7 +2,7 @@ set key autotitle columnhead
 
 set datafile separator ","
 
-set term pdf font "Helvetica, 12" size 8.6cm,6cm
+set term pdf font "Helvetica, 12" size 8.6cm,7cm
 
 
 plot_file="/home/zy/cy1400-eqt/plot_data/1jun_montecarloABZ_21mardefaultmerge_SNRfilter.csv"
@@ -16,7 +16,7 @@ set ytics nomirror
 set y2tics nomirror
 set xr [0:50]
 
-set key below Left box 3
+set key above 
 
 set xl "No. of runs that all agree"
 set yl "No. of A+B events"

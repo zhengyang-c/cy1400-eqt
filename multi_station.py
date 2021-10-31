@@ -42,15 +42,6 @@ import json
 def get_all_files(sac_folder, output_file):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
-	# 
-	
-	# folder_list = ["Deployed-2019-12-MSEED", # this is actually hardcoded
-	# "Deployed-2020-01-MSEED",
-	# "Deployed-2020-02-MSEED",
-	# "Deployed-2020-03-MSEED",
-	# "Deployed-2020-04-MSEED",
-	# "Deployed-2020-05-MSEED",
-	# "Deployed-2020-07-MSEED",]
 
 	all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
 
