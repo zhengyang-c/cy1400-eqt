@@ -1,8 +1,11 @@
+import enum
 import os
 import pandas as pd
 import numpy as np
 import datetime
 import json
+
+import matplotlib.pyplot as plt
 
 import matplotlib.pyplot as plt
 from subprocess import check_output
@@ -12,6 +15,7 @@ from obspy.geodetics import gps2dist_azimuth
 from obspy.geodetics import locations2degrees
 
 from search_rotate import rotater, normS, S, baz
+from utils import parse_station_info
 
 
 def cell_rotate(i, j, lb_corner, DX, station_coord, rotation_coeff):
@@ -22,7 +26,70 @@ def cell_rotate(i, j, lb_corner, DX, station_coord, rotation_coeff):
 
 	return normS(_baz, *rotation_coeff)
 
-def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = False, ref_mean = 0, ref_origin = 0):
+def weight_station_dist(i, j, lb_corner, DX, phase_info, station_info):
+	cell_coords = (lb_corner[0] + i * DX, lb_corner[1] + j * DX)
+
+	dist_weights = {}
+	az_weights = {}
+	az_sta = []
+
+	Y = []
+
+	def weight_fn(r): # r is in km
+		return np.exp(-1 * r/10)
+
+	for station in phase_info.keys():
+
+		# print("Cell: ", cell_coords, station)
+		#print(station)
+		# print(station_info[station]["lat"], station_info[station]["lon"])
+		_dist, az, _ = gps2dist_azimuth(cell_coords[1], cell_coords[0], station_info[station]["lat"], station_info[station]["lon"])
+
+		_dist /= 1000
+
+		Y.append(weight_fn(_dist))
+
+		#dist_weights[station] = weight_fn(_dist/1000)
+		#print("Dist", station, _dist/1000)
+
+		az_sta.append((station, az))
+
+	Y = np.array(Y)
+	Y /= np.sum(Y)
+
+	for c, station in enumerate(phase_info.keys()):
+		dist_weights[station] = Y[c]
+
+	# sort az_sta using the second item as a key
+	# for each station, compute the min of the angles between first and last
+
+	Y = []
+
+	az_sta = sorted(az_sta, key = lambda x: x[1])
+
+	sorted_sta = [x[0] for x in az_sta]
+	azs = [x[1] for x in az_sta]
+
+	for station in phase_info.keys():
+		s_i = sorted_sta.index(station)
+		az_weight = min((azs[(s_i + 1) % len(azs)] - azs[s_i]) % 360, (azs[s_i] - azs[s_i - 1]) % 360)
+
+		#print("Az", station, az_weight)
+
+		Y.append(az_weight)
+		
+	Y = np.array(Y)
+	Y /= np.sum(Y)
+
+	for c, station in enumerate(phase_info.keys()):
+		az_weights[station] = Y[c]
+
+	return (dist_weights, az_weights)
+
+
+
+
+def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, find_station_misfit = False, ref_mean = 0, ref_origin = 0, weights = None):
 	cell_coords = [i * DX + lb_corner[0], j * DX + lb_corner[1], lb_corner[2] + k * DZ]
 
 	delta_r = [] # distance and depth pairs
@@ -150,9 +217,30 @@ def cell_fn(i,j,k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ
 	for _c in range(len(guess_ot)):
 		guess_ot[_c] = (guess_ot[_c] - min_origin_time).total_seconds()
 
-	mean_time = np.mean(guess_ot)
-	std_time = np.std(guess_ot)
+	guess_ot = np.array(guess_ot)
 
+
+	if weights == None:
+		mean_time = np.mean(guess_ot)
+		std_time = np.std(guess_ot)
+	
+	else:
+		
+
+		weight_list = np.array([weights[x] for x in _station_list])
+		weight_list = weight_list/np.sum(weight_list)
+
+		#print(weight_list)
+
+		#print(guess_ot)
+		mean_time = np.sum(weight_list * guess_ot)
+
+		std_time = np.sqrt(np.sum(guess_ot**2 * weight_list) - mean_time**2)
+
+		# do weighted mean, weighted std
+
+
+	#print(mean_time, std_time)
 
 	# SAVE the misfits on a per station basis (currently it's just summed )
 	# save it somewhere (json)
@@ -242,9 +330,32 @@ def arbitrary_search(args, lb_corner, grid_length, phase_info, station_info, tt,
 	#for i in range(1):
 	#	for j in range(1):
 		for j in range(args["N_DX"] + 1): # lat
+
+			if args["distance_weight"] or args["rotation_weight"] or args["both_weight"]:
+				dist_weights, az_weights = weight_station_dist(i, j, lb_corner, DX, phase_info, station_info)
+
+				if args["distance_weight"]:
+					weights = dist_weights
+
+				elif args["rotation_weight"]:
+					weights = az_weights
+				
+				else:
+					both = {}
+
+					for station in dist_weights:
+						both[station] = (dist_weights[station] + az_weights[station])/2
+
+					weights = both
+
+			else:
+				weights = None 
+
+			#print("Weights:", weights)
+
 			for k in range(N_Z): # depth
 
-				_cell_output = cell_fn(i, j, k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX)
+				_cell_output = cell_fn(i, j, k, lb_corner, phase_info, station_info, tt, DX, DZ, TT_DX, TT_DZ, TT_NX, weights = weights)
 				grid[i][j][k][:] = _cell_output
 
 			if args["run_rotate"]:
@@ -410,6 +521,18 @@ def ip(X, Y):
 
 		return (Y[1] - Y[0])/(X[1] - X[0])
 
+
+if __name__ == "__main__":
+
+	with open("gridsearch/jul7_phases_arrivaltimes.json") as f:
+		phase_info = json.load(f)
+	
+	phase_info = phase_info["000344"]["data"]
+
+	station_info = parse_station_info("new_station_info.dat") 
+
+
+	print(weight_station_dist(0,0, (96.1, 5), 0, phase_info, station_info))
 
 
 """

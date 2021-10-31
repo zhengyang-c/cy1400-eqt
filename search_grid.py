@@ -83,7 +83,10 @@ def parse_input(station_file_name,
 	s_only = False,
 	time_remapping = "",
 	gmt_home = "",
-	no_plot = False
+	no_plot = False,
+	distance_weight = False,
+	rotation_weight = False,
+	both_weight = False,
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]): 
@@ -137,6 +140,10 @@ def parse_input(station_file_name,
 
 	args["time_remapping"] = time_remapping
 	# apply time remapping when loading the phase info
+
+	args["distance_weight"] = distance_weight
+	args["rotation_weight"] = rotation_weight
+	args["both_weight"] = both_weight
 
 
 	if args["event_id"]:
@@ -343,8 +350,10 @@ def search(pid, args):
 	seed_lb_corner = (94, 3.5, 0)
 	seed_grid_length = 3
 
+
 	target_grid_length = 1
 	target_dx = 100
+
 
 	if args["force"] or (not already_created):		
 		# do initial search get best estimate,
@@ -368,6 +377,7 @@ def search(pid, args):
 			target_lb = (grid_output["best_x"] - target_grid_length/2, grid_output["best_y"] - target_grid_length/2, new_Z_start)		
 
 		args["N_DX"] = target_dx
+
 		args["N_Z"] = int(round(21/args["DZ"])) # 20km
 
 
@@ -580,6 +590,9 @@ if __name__ == "__main__":
 
 	parser.add_argument('-np', "--no_plot", action = "store_true")
 
+	parser.add_argument('-dw', "--distance_weight", action = "store_true")
+	parser.add_argument('-bw', "--both_weight", action = "store_true")
+	parser.add_argument('-rw', "--rotation_weight", action = "store_true")
 
 
 	#parser.add_argument("-layer_index", type = int, default = 0, choices = [0,1,2,3], help = "Refer to wiki. 0: L2 norm, 1: L2 stdev, 2: L1 norm, 3: L1 stdev")
@@ -623,7 +636,10 @@ if __name__ == "__main__":
 			s_only = args.s_only,
 			time_remapping = args.time_remapping,
 			gmt_home = args.gmt_home,
-			no_plot = args.no_plot
+			no_plot = args.no_plot,
+			distance_weight = args.distance_weight,
+			rotation_weight = args.rotation_weight,
+			both_weight = args.both_weight,
 			)
 
 

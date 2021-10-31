@@ -4,7 +4,6 @@ python search_grid.py -station_info new_station_info.dat -phase_json gridsearch/
 
 
 
-
 #--time_remapping arrivaltime_remapping/main.csv-dt arrivaltime_remapping/main.csv  
 # -excl gridsearch/test_exclude.txt -r -ef imported_figures/event_archive  
 

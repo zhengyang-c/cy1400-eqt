@@ -72,15 +72,15 @@ def parse_xy(input_file, output_file, meta_desc):
 	kml.save(output_file)
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(description = "Converts event csv, hypoDD_loc files, real_hypoloc files into kml files for viewing in Google Earth. Also handles simple .xy files and station files in some particular format (station, lon, lat).")
 
 	parser.add_argument("input_file")
 	parser.add_argument("output_file")
 	parser.add_argument("meta_desc")
 	parser.add_argument("-ft", "--file_type", default = "event_csv")
 
-	parser.add_argument("-e", "--event", action = "store_true")
-	parser.add_argument("-s", "--station", action = "store_true")
+	parser.add_argument("-e", "--event", action = "store_true", help = "Flag to indicate the input file contains events")
+	parser.add_argument("-s", "--station", action = "store_true", help = "Flag to indicate the input file contains stations")
 	parser.add_argument("-xy", "--xy_file", action = "store_true")
 
 	args = parser.parse_args()
