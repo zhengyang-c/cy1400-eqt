@@ -135,7 +135,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 			since i now know that the input mseed file is cut into sac files, there won't be any major overlaps to worry about
 			"""
 
-			filepath_root = Path(day_df.at[0,'filepath']).parent
+			filepath_root = Path(day_df["filepath"].tolist()[0]).parent
 
 			file_name_str = os.path.join(filepath_root, "*{}.{:06d}.SAC".format(year_day, day_df.at[0, "start_time"]))
 
