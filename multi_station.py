@@ -341,7 +341,7 @@ def make_station_json(station_coords, station_list, output):
 		print(station)
 		i = coordinates.index(station)
 
-		station_json[station]["coords"] = [100, float(coordinates[i + 1]), float(coordinates[i+2])] # i set elevation to 100 because that's the average height in sumatra and i'm not given this information + it's not that important 
+		station_json[station]["coords"] = [float(coordinates[i + 2]), 100, float(coordinates[i+1])] # i set elevation to 100 because that's the average height in sumatra and i'm not given this information + it's not that important 
 
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
