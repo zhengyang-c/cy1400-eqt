@@ -65,6 +65,9 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 	sac_df.dt = pd.to_datetime(sac_df.dt)
 
+	sac_df.sac_start_dt = pd.to_datetime(sac_df.sac_start_dt)
+	sac_df.sac_end_dt = pd.to_datetime(sac_df.sac_end_dt)
+
 	sac_df = sac_df[sac_df.station == station]
 
 	indiv_days = [v for k, v in sac_df.groupby('dt')] # further split into days, not sure if necessary
@@ -128,6 +131,9 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 
 			year_day = datetime.datetime.strftime(day_df["dt"].tolist()[0], "%Y.%j")
+
+			start_of_day = day_df["sac_start_dt"].tolist()[0]
+			end_of_day = day_df["sac_end_dt"].tolist()[0]
 			
 			"""
 			just change it s.t. it will consider more than one entry inside the day_df (?) that's probably the easiest solution
@@ -181,9 +187,9 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 				
 			# default full day 
 			else:
-				start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
+				# start_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.min)
 
-				end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
+				# end_of_day = datetime.datetime.combine(datetime.datetime.strptime(year_day, "%Y.%j"), datetime.time.max)
 
 
 				n_cuts = ((end_of_day - start_of_day).total_seconds() - (overlap * 60))/((1 - overlap)*60)
