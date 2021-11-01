@@ -137,7 +137,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 			filepath_root = Path(day_df["filepath"].tolist()[0]).parent
 
-			file_name_str = os.path.join(filepath_root, "*{}.{:06d}.SAC".format(year_day, day_df["start_time"].tolist()[0])
+			file_name_str = os.path.join(filepath_root, "*{}.{:06d}.SAC".format(year_day, day_df["start_time"].tolist()[0]))
 
 			st = read(file_name_str)
 
