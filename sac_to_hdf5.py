@@ -127,7 +127,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 		for _, day_df in dday_df.groupby(by = "_uid"):
 
 
-			year_day = datetime.datetime.strftime(day_df.at[0, 'dt'], "%Y.%j")
+			year_day = datetime.datetime.strftime(day_df["dt"].tolist()[0], "%Y.%j")
 			
 			"""
 			just change it s.t. it will consider more than one entry inside the day_df (?) that's probably the easiest solution
