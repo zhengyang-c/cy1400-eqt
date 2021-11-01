@@ -402,6 +402,7 @@ def encode_multirun(
 	snr_threshold = 8,
 	config = "",
 	patch = False,
+	json_file = "",
 	):
 
 	# encode everything (sac to hdf5, prediction
@@ -474,7 +475,12 @@ def encode_multirun(
 	else:
 		if not model_path:
 			model_path = "/home/zchoong001/cy1400/cy1400-eqt/EQTransformer/ModelsAndSampleData/EqT_model.h5"
-		station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
+
+		if not json_file:
+			station_json = "/home/zchoong001/cy1400/cy1400-eqt/station/json/all_stations.json"
+
+		else:
+			station_json = json_file
 
 		if hdf5_parent == "":
 			hdf5_parent = os.path.join("/scratch/zchoong001", job_name)
@@ -639,7 +645,7 @@ if __name__ == "__main__":
 
 	elif args.get:
 		get_all_files(args.get, args.output)
-	elif args.json:
+	elif args.json and not args.encode:
 		make_station_json(args.json, args.input, args.output)
 
 	elif args.plot:
@@ -669,6 +675,7 @@ if __name__ == "__main__":
 			no_execute = args.no_execute, 
 			snr_threshold = args.snr_threshold, 
 			config = args.config, 
-			patch = args.patch)
+			patch = args.patch, 
+			json_file = args.json)
 
 
