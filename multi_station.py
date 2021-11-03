@@ -346,15 +346,20 @@ def make_station_json(station_coords, station_list, output):
 	with open(output, 'w') as f:
 		json.dump(station_json, f)
 
-def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = False, yes_execute = False):
+def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = False, yes_execute = False, use_gpu = False):
 
 	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
 
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q gpu8\n#PBS -l select=1:ncpus=4:mpiprocs=4:ngpus=1\n".format(job_name, project_code))
+		if use_gpu:
+			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q gpu8\n#PBS -l select=1:ncpus=4:mpiprocs=4:ngpus=1\n".format(job_name, project_code))
+		else:
+			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q128\n#PBS -l select=1:ncpus=1:mpiprocs=32\n".format(job_name, project_code))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
-		f.write("module load python/3/intel/2020\nmodule load cuda/10.1\nmodule load sac\nexport HDF5_USE_FILE_LOCKING='FALSE'\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
+		if use_gpu:
+			f.write("module load cuda/10.1\nexport HDF5_USE_FILE_LOCKING='FALSE'\n")
+		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
 		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}\n".format(output_csv, job_name, env_name))
 
 		if not yes_execute:
@@ -406,6 +411,7 @@ def encode_multirun(
 	config = "",
 	patch = False,
 	json_file = "",
+	use_gpu = False,
 	):
 
 	# encode everything (sac to hdf5, prediction
@@ -564,7 +570,7 @@ def encode_multirun(
 	df.to_csv(output_csv, index = False)
 
 	if pbs:
-		pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = no_execute, yes_execute = yes_execute)
+		pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = no_execute, yes_execute = yes_execute, use_gpu = use_gpu)
 
 
 	# load station_list, see number of stations
@@ -639,6 +645,7 @@ if __name__ == "__main__":
 
 
 	parser.add_argument("-gts", "--generate_timestamps", action = "store_true")
+	parser.add_argument("-gpu", "--use_gpu", action = "store_true")
 
 	args = parser.parse_args()
 
@@ -682,6 +689,7 @@ if __name__ == "__main__":
 			snr_threshold = args.snr_threshold, 
 			config = args.config, 
 			patch = args.patch, 
-			json_file = args.json)
+			json_file = args.json,
+			use_gpu = args.use_gpu)
 
 
