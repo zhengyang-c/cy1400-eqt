@@ -1,39 +1,10 @@
 set term pdf font "Helvetica, 12" size 10cm,6cm
 set datafile separator ","
-
-set output "../plots/5jul_afterREAL.pdf"
-
-plot_file="../real_postprocessing/5jul_assoc/5jul_wadati_real.csv"
-
-
-f(x) = A * x + B
-
-A = 0.8
-B = 0.1
-
-fit f(x) plot_file u 3:2 via A,B
-
-#set key above box 1
-
-set ytics nomirror
-set xl "P arrival time [s]"
-set yl "SP differential time [s]"
-set title "5 Jul Aceh Catalogue Wadati Diagram (after REAL)"
-
-set yr [0:]
-
-set label 1 sprintf("A = %.2f",A) at -3,20
-set label 2 sprintf("B = %.2f",B) at -3,17
-
-
-plot plot_file u 3:2 ps 0.2 pt 7 lc rgb "red" notitle, f(x) w l lc rgb "black" notitle
-
-
 set term pdf font "Helvetica, 12" size 10cm,6cm
 set datafile separator ","
 
-set output "../plots/5jul_afterDD.pdf"
-plot_file="../real_postprocessing/5jul_assoc/5jul_wadati_dd.csv"
+set output "../plots/jan2sep_REAL_wadati.pdf"
+plot_file="../real_postprocessing/real_jan2sep/jan2sep_REAL_wadati.csv"
 
 
 f(x) = A * x + B
@@ -48,7 +19,7 @@ fit f(x) plot_file u 3:2 via A,B
 set ytics nomirror
 set xl "P arrival time [s]"
 set yl "SP differential time [s]"
-set title "5 Jul Aceh Catalogue Wadati Diagram (after hypoDD)"
+#set title "5 Jul Aceh Catalogue Wadati Diagram (after hypoDD)"
 
 set yr [0:]
 
