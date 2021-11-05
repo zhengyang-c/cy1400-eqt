@@ -27,6 +27,6 @@ set label 1 sprintf("A = %.2f",A) at -3,20
 set label 2 sprintf("B = %.2f",B) at -3,17
 
 
-plot plot_file u 3:2 ps 0.2 pt 7 lc rgb "red" notitle, f(x) w l lc rgb "black" notitle
+plot plot_file u 3:2 ps 0.1 pt 7 lc rgb "black" notitle, f(x) w l lc rgb "red" notitle
 
 
