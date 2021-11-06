@@ -354,8 +354,11 @@ def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
 		if use_gpu:
 			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q gpu8\n#PBS -l select={}:ncpus=1:mpiprocs=32:ngpus=1\n".format(job_name, project_code, n_nodes))
-		else:
-			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes))
+		elif no_execute and not use_gpu:
+			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=2gb -l walltime=1:00:00\n".format(job_name, project_code, n_nodes))
+		
+		elif (yes_execute or not no_execute) and not use_gpu:
+			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime=60:00:00\n".format(job_name, project_code, n_nodes))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		if use_gpu:
 			f.write("module load cuda/10.1\nexport HDF5_USE_FILE_LOCKING='FALSE'\n")
