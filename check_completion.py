@@ -13,6 +13,8 @@ def summary_of_files():
 	job_list = ["oct20_aa_fix1", "oct20_aa_fix2", "oct20_aa_fix3", "oct20_group_b","oct20_sub_0","oct20_sub_1", "oct20_sub_2", "oct20_sub_3", "oct20_sub_4","oct20_sub_5","oct20_sub_6","oct20_sub_7","oct20_sub_8",]
 	summary_df = pd.DataFrame()
 
+	c = 0
+
 	for job in job_list:
 		df = pd.read_csv(os.path.join("node_encode", job + ".csv"))
 
@@ -52,10 +54,10 @@ def summary_of_files():
 			}
 
 			for k,v in flags.items():
-				summary_df.at[index, k] = v
+				summary_df.at[c, k] = v
 
 			for k,v in checks.items():
-				summary_df.at[index, k] = v
+				summary_df.at[c, k] = v
 
 	summary_df.to_csv("oct20_summary.csv", index = False)
 
