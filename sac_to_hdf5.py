@@ -227,9 +227,17 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 				_g.attrs['receiver_code'] = sta
 				_g.attrs['receiver_type'] = "EH"
 				_g.attrs['network_code'] = "AC"
-				_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
-				_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
-				_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
+
+				try:
+					_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
+					_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
+					_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
+
+				except:
+					_g.attrs["receiver_longitude"] = 95.123 
+					_g.attrs["receiver_latitude"] =  5.123
+					_g.attrs["receiver_elevation_m"] = 123
+
 				_g.attrs["trace_start_time"] = _start_time
 
 				csv_output["trace_name"].append(_tracename)
