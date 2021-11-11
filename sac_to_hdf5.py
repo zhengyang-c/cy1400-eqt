@@ -220,7 +220,7 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 
 				#print(_tracename, _start_time)
 
-				try:
+				#try:
 					_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
 					
 					_g.attrs['trace_name'] = _tracename
@@ -236,8 +236,8 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 					csv_output["start_time"].append(_start_time)
 					csv_output["source_file"].append(file_name_str)
 					csv_output["sac_start_time"].append(str(st[0].stats.starttime))
-				except:
-					print("Skipping: {}".format(_tracename))
+				#except:
+				print("Skipping: {}".format(_tracename))
 
 	_outhf.close()
 	d_csv = pd.DataFrame.from_dict(csv_output)

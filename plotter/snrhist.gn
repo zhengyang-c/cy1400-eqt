@@ -13,7 +13,7 @@ set output output_file
 
 set key below
 
-set xl "P SNR"
+set xl "S SNR"
 set yl "No. of graded events"
 
 set style fill transparent solid 0.4 noborder
