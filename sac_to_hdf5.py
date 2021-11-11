@@ -221,21 +221,21 @@ def preproc(csv_paths, station, output_folder, stations_json, overlap = 0.3, n_p
 				#print(_tracename, _start_time)
 
 				#try:
-					_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
-					
-					_g.attrs['trace_name'] = _tracename
-					_g.attrs['receiver_code'] = sta
-					_g.attrs['receiver_type'] = "EH"
-					_g.attrs['network_code'] = "AC"
-					_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
-					_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
-					_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
-					_g.attrs["trace_start_time"] = _start_time
+				_g = _outgrp.create_dataset(_tracename, (6000, 3), data = datum)
+				
+				_g.attrs['trace_name'] = _tracename
+				_g.attrs['receiver_code'] = sta
+				_g.attrs['receiver_type'] = "EH"
+				_g.attrs['network_code'] = "AC"
+				_g.attrs["receiver_longitude"] = stations_[sta]['coords'][1]
+				_g.attrs["receiver_latitude"] = stations_[sta]['coords'][2]				
+				_g.attrs["receiver_elevation_m"] = stations_[sta]['coords'][0]
+				_g.attrs["trace_start_time"] = _start_time
 
-					csv_output["trace_name"].append(_tracename)
-					csv_output["start_time"].append(_start_time)
-					csv_output["source_file"].append(file_name_str)
-					csv_output["sac_start_time"].append(str(st[0].stats.starttime))
+				csv_output["trace_name"].append(_tracename)
+				csv_output["start_time"].append(_start_time)
+				csv_output["source_file"].append(file_name_str)
+				csv_output["sac_start_time"].append(str(st[0].stats.starttime))
 				#except:
 				print("Skipping: {}".format(_tracename))
 
