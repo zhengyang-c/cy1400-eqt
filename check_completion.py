@@ -10,7 +10,7 @@ import json
 
 def summary_of_files():
 
-	job_list = ["oct20_aa_fix1", "oct20_aa_fix2", "oct20_aa_fix3", "oct20_group_b","oct20_sub_0","oct2_sub_1", "oct2_sub_2", "oct2_sub_3", "oct2_sub_4","oct2_sub_5","oct2_sub_6","oct2_sub_7","oct2_sub_8",]
+	job_list = ["oct20_aa_fix1", "oct20_aa_fix2", "oct20_aa_fix3", "oct20_group_b","oct20_sub_0","oct20_sub_1", "oct20_sub_2", "oct20_sub_3", "oct20_sub_4","oct20_sub_5","oct20_sub_6","oct20_sub_7","oct20_sub_8",]
 	summary_df = pd.DataFrame()
 
 	for job in job_list:
