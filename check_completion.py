@@ -6,70 +6,58 @@ import numpy as np
 import datetime
 import json
 
-job_list = []
-with open("joblist.txt", "r") as f:
-	for line in f:
-		job_list.append(line.strip().split(".")[0])
 
-print(job_list)
 
-df_list = []
-
-for job_name in job_list:
-	df = pd.read_csv(os.path.join("node_encode", job_name + ".csv"))
-	df_list.append(df)
-
-df = pd.concat(df_list, ignore_index = True)
-
-print(df)
-# hdf5 dir:
-
-# look for the node encode files
 def summary_of_files():
+
+	job_list = ["oct20_aa_fix1", "oct20_aa_fix2", "oct20_aa_fix3", "oct20_group_b","oct20_sub_0","oct2_sub_1", "oct2_sub_2", "oct2_sub_3", "oct2_sub_4","oct2_sub_5","oct2_sub_6","oct2_sub_7","oct2_sub_8",]
 	summary_df = pd.DataFrame()
 
-	for index, row in df.iterrows():
+	for job in job_list:
+		df = pd.read_csv(os.path.join("node_encode", job + ".csv"))
 
-		# check hdf5 folder for sta.csv and sta.hdf5
+		for index, row in df.iterrows():
 
-		flags = {
-			"sta": row.sta,
+			# check hdf5 folder for sta.csv and sta.hdf5
 
-			"job_name":row.job_name,
+			flags = {
+				"sta": row.sta,
 
-			"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
+				"job_name":row.job_name,
 
-			"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
+				"sac_csv": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".csv")),
 
-			"prediction_made": os.path.exists(row.prediction_output_folder),
+				"sac_hdf5": os.path.exists(os.path.join(row.hdf5_folder, row.sta + ".hdf5")),
 
-			"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
+				"prediction_made": os.path.exists(row.prediction_output_folder),
 
-			"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
+				"merge_filtered": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered.csv")),
 
-			"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
+				"merge_filtered_snr": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr.csv")),
 
-			"n_lines": 0,
+				"merge_filtered_snr_customfilter": os.path.exists(os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")),
 
-			"sac_pick_files":0,
-		}
+				"n_lines": 0,
 
-		if flags["merge_filtered_snr_customfilter"]:
-			flags["n_lines"] = int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1
-			flags["sac_pick_files"] = len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
+				"sac_pick_files":0,
+			}
 
-		checks = {
-			"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
-			"all_plotted": flags["n_lines"] * 4 == flags["sac_pick_files"],
-		}
+			if flags["merge_filtered_snr_customfilter"]:
+				flags["n_lines"] = int(subprocess.check_output(["wc", "-l", os.path.join(row.merge_output_folder, "merge_filtered_snr_customfilter.csv")]).decode("utf8").split()[0]) - 1
+				flags["sac_pick_files"] = len(os.listdir(os.path.join(row.merge_output_folder, "sac_picks")))
 
-		for k,v in flags.items():
-			summary_df.at[index, k] = v
+			checks = {
+				"non_zero_files": flags["sac_csv"] and flags["sac_hdf5"],
+				"all_plotted": flags["n_lines"] * 4 == flags["sac_pick_files"],
+			}
 
-		for k,v in checks.items():
-			summary_df.at[index, k] = v
+			for k,v in flags.items():
+				summary_df.at[index, k] = v
 
-	summary_df.to_csv("07july_summary_3.csv", index = False)
+			for k,v in checks.items():
+				summary_df.at[index, k] = v
+
+	summary_df.to_csv("oct20_summary.csv", index = False)
 
 def infer_actual_uptime():
 	# read through all the generated .csv files and like parse them
@@ -143,7 +131,7 @@ def infer_actual_uptime():
 
 	big_df.to_csv("08jul_aceh_full_uptime.csv")
 	summary_df.to_csv("08jul_aceh_summary_uptime.csv")
-infer_actual_uptime()
+#infer_actual_uptime()
 
 def verify_sac_files():
 
@@ -174,20 +162,5 @@ def verify_sac_files():
 	error_df.to_csv("9jul_plottingerror.csv", index = False)
 
 
-#verify_sac_files()
 
-	# for each station, find the number of full days, number of partial days (hrs / 24)
-
-#infer_actual_uptime()
-
-#infer_actual_uptime()
-
-# check all hdf5 files and csv files generated
-
-# check merge_filtered
-# check merge_filtered_snr_customfilter, check length
-# ls | wc -l the sac_picks folder and check the no. of files
-# 
-
-# node_encode folders
-# id,sta,hdf5_folder,prediction_output_folder,merge_output_folder,start_day,end_day,multi,model_path,nodes,snr_threshold,station_json,job_name,write_hdf5,run_eqt,plot_eqt,merge_csv,filter_csv,recompute_snr,write_headers,sac_select
+summary_of_files()
