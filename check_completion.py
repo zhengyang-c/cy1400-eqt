@@ -54,10 +54,12 @@ def summary_of_files():
 			}
 
 			for k,v in flags.items():
-				summary_df.at[c, k] = v
+				summary_df.at[index, k] = v
 
 			for k,v in checks.items():
-				summary_df.at[c, k] = v
+				summary_df.at[index, k] = v
+
+			c += 1
 
 	summary_df.to_csv("oct20_summary.csv", index = False)
 
