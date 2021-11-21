@@ -13,6 +13,8 @@ set output output_file
 
 set key below
 
+#set logscale x
+
 set xl "S SNR"
 set yl "No. of graded events"
 
