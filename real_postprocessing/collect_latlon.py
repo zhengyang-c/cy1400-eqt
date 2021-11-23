@@ -231,7 +231,13 @@ def convert_phase(input_file, output_file):
 				for i in range(9):
 					all_phases[_id][headers[i]] = metadata[i]
 
-				all_phases[_id]['timestamp'] = str(datetime.datetime.strptime('-'.join(metadata[0:6]), "%Y-%m-%d-%H-%M-%S.%f"))
+				if float(metadata[5]) < 0:
+					ts = datetime.datetime.strptime("-".join(metadata[0:5]), "%Y-%m-%d-%H-%M")
+					ts -= datetime.timedelta(seconds = float(df.at[c, 'SC']))
+				else:
+					ts = str(datetime.datetime.strptime('-'.join(metadata[0:6]), "%Y-%m-%d-%H-%M-%S.%f"))
+
+				all_phases[_id]['timestamp'] = ts
 				all_phases[_id]['data'] = []
 
 
