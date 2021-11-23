@@ -146,7 +146,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 
 					if float(df.at[c, 'SC']) < 0:
 						ts = datetime.datetime.strptime("-".join(data[1:4]), "%Y-%m-%d-%H-%M")
-						ts -= datetime.timedelta(seconds = float(df[c, 'SC']))
+						ts -= datetime.timedelta(seconds = float(df.at[c, 'SC']))
 						df.at[c, 'timestamp'] = ts
 
 					else:
@@ -170,7 +170,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 					df.at[c, 'HR'], df.at[c, 'MI'], df.at[c, 'SC'] = data[3:6]
 					if float(df.at[c, 'SC']) < 0:
 						ts = datetime.datetime.strptime("-".join(data[0:5]), "%Y-%m-%d-%H-%M")
-						ts -= datetime.timedelta(seconds = float(df[c, 'SC']))
+						ts -= datetime.timedelta(seconds = float(df.at[c, 'SC']))
 						df.at[c, 'timestamp'] = ts
 					else:
 						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H-%M-%S.%f")
