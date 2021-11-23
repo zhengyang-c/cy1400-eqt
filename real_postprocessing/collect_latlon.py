@@ -233,7 +233,7 @@ def convert_phase(input_file, output_file):
 
 				if float(metadata[5]) < 0:
 					ts = datetime.datetime.strptime("-".join(metadata[0:5]), "%Y-%m-%d-%H-%M")
-					ts -= datetime.timedelta(seconds = float(df.at[c, 'SC']))
+					ts -= datetime.timedelta(seconds = float(metadata[5]))
 				else:
 					ts = str(datetime.datetime.strptime('-'.join(metadata[0:6]), "%Y-%m-%d-%H-%M-%S.%f"))
 
