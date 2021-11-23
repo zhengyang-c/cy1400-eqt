@@ -150,7 +150,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 						df.at[c, 'timestamp'] = ts
 
 					else:
-						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[1:5]), "%Y-%m-%d-%H:%M:%S.%f")
+						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[1:5]), "%Y-%m-%d-%H-%M-%S.%f")
 
 					df.at[c, 'LAT'] = float(data[7])
 					df.at[c, 'LON'] = float(data[8])
@@ -173,7 +173,7 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 						ts -= datetime.timedelta(seconds = float(df[c, 'SC']))
 						df.at[c, 'timestamp'] = ts
 					else:
-						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H:%M:%S.%f")
+						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H-%M-%S.%f")
 
 					df.at[c, 'LAT'] = float(data[6])
 					df.at[c, 'LON'] = float(data[7])
