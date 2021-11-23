@@ -144,7 +144,14 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 					df.at[c, 'YR'], df.at[c, 'MO'], df.at[c, 'DY'] = data[1:4]			
 					df.at[c, 'HR'], df.at[c, 'MI'], df.at[c, 'SC'] = data[4].split(":")
 
-					df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[1:5]), "%Y-%m-%d-%H:%M:%S.%f")
+					if int(df[c, 'SC']) < 0:
+						ts = datetime.datetime.strptime("-".join(data[1:4]), "%Y-%m-%d-%H:%M")
+						ts -= datetime.timedelta(seconds = float(df[c, 'SC']))
+						df.at[c, 'timestamp'] = ts
+
+					else:
+						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[1:5]), "%Y-%m-%d-%H:%M:%S.%f")
+
 					df.at[c, 'LAT'] = float(data[7])
 					df.at[c, 'LON'] = float(data[8])
 					df.at[c, 'DEPTH'] = float(data[9])
@@ -157,10 +164,17 @@ def join_catalog_sel(search_dir, output_file, search_file = "", n = 0):
 
 
 				elif search_file == "hypo":
+
+
 					df.at[c, 'YR'], df.at[c, 'MO'], df.at[c, 'DY'] = data[0:3]			
 					df.at[c, 'HR'], df.at[c, 'MI'], df.at[c, 'SC'] = data[3:6]
+					if int(df[c, 'SC']) < 0:
+						ts = datetime.datetime.strptime("-".join(data[0:5]), "%Y-%m-%d-%H:%M")
+						ts -= datetime.timedelta(seconds = float(df[c, 'SC']))
+						df.at[c, 'timestamp'] = ts
+					else:
+						df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H:%M:%S.%f")
 
-					df.at[c, 'timestamp'] = datetime.datetime.strptime("-".join(data[0:6]), "%Y-%m-%d-%H-%M-%S.%f")
 					df.at[c, 'LAT'] = float(data[6])
 					df.at[c, 'LON'] = float(data[7])
 					df.at[c, 'DEPTH'] = float(data[8])
