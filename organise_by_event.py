@@ -51,7 +51,7 @@ def main(sac_csv, input_json, reloc_csv, output_folder):
 	#print(event_df["timestamp"])
 	#event_df["timestamp"] = pd.to_datetime(event_df["timestamp"])
 
-	for index, row in event_df[event_df["ID"] == 4010 ].iterrows():
+	for index, row in event_df.iterrows():
 		print(row.ID)
 		searcher(output_folder, int(row.ID), df, event_df, phase_dict)
 	#searcher(5, df, event_df, phase_dict, dryrun = True)
