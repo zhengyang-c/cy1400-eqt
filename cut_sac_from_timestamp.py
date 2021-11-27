@@ -1,3 +1,13 @@
+"""
+this script aims to match existing timestamps of detections (EQT) with the original SAC files, hence linking the two
+
+creates a column "source_file" so we know where to look. this has the wildcard character so you can load all 3C files
+
+also sets the local file root to the "output folder" so you can later run replot_eqt.py and then organise_by_event.py
+
+"""
+
+
 from subprocess import check_output
 import datetime
 import pandas as pd
@@ -41,14 +51,14 @@ def sac_file_checker(input_csv, output_csv, sac_csv, output_folder):
 		for s_index, s_row in _df.iterrows():
 			_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
 
-			print("event_start_time", row.event_start_time)
-			print("row_start_time", s_row.start_dt)
-			print("is within: ", (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E - 125) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B - 30))
+			# print("event_start_time", row.event_start_time)
+			# print("row_start_time", s_row.start_dt)
+			# print("is within: ", (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E - 125) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B - 30))
 
 		_fdf = _df[_df["is_within"] == True]
 
 
-		print(_fdf["start_dt"])
+		#print(_fdf["start_dt"])
 		# if len(_fdf) != 3:
 		# 	# we have a problem, log and fix it later (?)
 		# 	# or attempt to search for other jdays
