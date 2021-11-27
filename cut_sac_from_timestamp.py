@@ -4,72 +4,8 @@ import pandas as pd
 import argparse
 
 
-def main():
+def sac_file_checker(input_csv, output_csv, sac_csv, output_folder):
 
-	#input_csv = "real_postprocessing/julaug_20_assoc/julaug20_compiled_customfilter.csv"
-
-	sac_file_csv = "all_jul_aug_2020.csv"
-
-	output_csv = "all_jul_aug_2020_ts.csv"
-	#df = pd.read_csv(input_csv)
-	sac_df = pd.read_csv(sac_file_csv)
-	"""
-	want to eventualy move this code into multi_station.py s.t.
-	i can generate starting sequences more reliably? currently it just uses all the sac files inside and doesn't handle partial days very well
-
-	tbf chenyu's run on jul-aug might have this problem
-
-	so i should probably fix it fml
-
-	need to find:
-	(1) the missing partial day files that would have been excluded
-	(2) from the raw list of detections, the maximum gaps between events (?) i need access to the hdf5 csv 
-	(3) or, from the available SAC files, infer the maximum possible uptime
-
-	(4) the "empirical" uptime can only come from the hdf5_csv
-
-
-	so i need to patch for julaug, which is fine i guess, i can do this next week
-
-	"""
-	for index, row in sac_df.iterrows():
-		# 108 characters for filename hehe
-
-		out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
-
-		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
-
-		sac_df.at[index, "kzdate"] = out[1]
-		sac_df.at[index, "kztime"] = out[2]
-		sac_df.at[index, "B"] = out[3]
-		sac_df.at[index, "E"] = out[4]
-
-
-	sac_df.to_csv(output_csv, index = False)
-
-
-
-	# with the timestamps of each detection, need to infer the source file, without having information about the 
-	# original hdf5 csv that is generated at the start
-
-
-	# first use the full day file? and if cannot, then look for partial day files with jday - 1
-
-	# tbh i should check the start and end times of the SAC files right that would clear up ALL the ambiguity
-
-
-
-def sac_file_checker():
-
-	# probably not going to write this 
-	# because i can just regenerate the entire archive and it would honestly be easier
-	# than patching it 
-
-	input_csv = "~/julaug20_compiled_customfilter.csv"
-	#input_csv = "julaug_customfilter_matched_patch.csv"
-	output_csv = "julaug_customfilter_matched_patch.csv"
-
-	sac_csv = "~/all_jul_aug_2020_ts.csv"
 	s_df = pd.read_csv(sac_csv)
 
 	# this is the matcher function
@@ -77,7 +13,7 @@ def sac_file_checker():
 	df = pd.read_csv(input_csv)
 
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
-
+	df["local_file_root"] = output_folder
 
 
 
@@ -142,17 +78,13 @@ def sac_file_checker():
 	df.to_csv(output_csv, index = False)
 
 
+if __name__ == "__main__":
+	ap = argparse.ArgumentParser()
+	ap.add_argument("input_csv")
+	ap.add_argument("output_csv")
+	ap.add_argument("sac_csv")
+	ap.add_argument("output_folder")
 
+	args = ap.parse_args()
 
-def diy_filter():
-
-	input_csv = "real_postprocessing/julaug_20_assoc/julaug20_compiled_customfilter.csv"
-	output_csv = ""
-
-	"""
-	not really sure what other filters i'll use in the future aside from local file root but
-	i guess this bit can be manual :) 
-	"""
-
-	df = pd.read_csv(input_csv)
-sac_file_checker()
+	sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, args.output_folder)

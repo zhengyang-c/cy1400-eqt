@@ -19,12 +19,14 @@ def str_to_datetime(x):
 		return datetime.datetime.strptime(x, "%Y-%m-%d %H:%M:%S.%f")
 
 
-def sac_plotter():
+def sac_plotter(input_csv, output_folder):
 
 	# output_file is the bashscript to be kept inside the merged folder
 	# it is generated and when run it will do all the necessary cutting 
 
-	csv_file = "julaug_customfilter_matched_patch.csv"
+	#csv_file = "julaug_customfilter_matched_patch.csv"
+	csv_file = input_csv
+	save_dir = output_folder
 
 	try:
 		df = pd.read_csv(csv_file)	
@@ -37,7 +39,6 @@ def sac_plotter():
 	csv_dir = "/".join(csv_file.split("/")[:-1])
 
 
-	save_dir = "julaug_test/"	
 	if not os.path.exists(os.path.join(csv_dir, save_dir)):
 		os.makedirs(os.path.join(csv_dir, save_dir))
 
@@ -128,12 +129,13 @@ def sac_plotter():
 	os.chmod(plot_file, 0o775)
 
 
-def header_writer():
+def header_writer(input_csv, output_folder):
+	csv_file = input_csv
+	csv_dir = output_folder
 
 	subprocess.call(["./cut.sh"])
 
 
-	csv_file ="julaug_customfilter_matched_patch.csv"
 	try:
 		df = pd.read_csv(csv_file)
 	except FileNotFoundError:
@@ -155,7 +157,6 @@ def header_writer():
 		df.at[index, "filepath"] = search_term
 
 	
-	csv_dir = "julaug_test"
 
 	output_file = os.path.join(csv_dir, "write_headers.sh")
 
@@ -165,7 +166,6 @@ def header_writer():
 		for index, row in df.iterrows():
 
 			year_day = datetime.datetime.strftime(row.event_start_time, "%Y.%j")
-
 
 			start_of_file = row.start_dt
 
