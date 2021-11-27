@@ -59,48 +59,9 @@ def main(sac_csv, input_json, reloc_csv, output_folder):
 
 	# i think the P and S times in the phase_dict are not reliable so just use the new origin
 	# time from the relocated file
-	#
 
-def header_writer(pid, df, event_df, phase_dict):
-
-	pass
-
-	#print(file_list)
-
-	# for each sac file, get the corresponding entry in the sac_csv, to get the P and S times
-
-
-
-	#origin_time = event_df
-
-	# glob the sac files in each folder, for each file, look up in a pandas dataframe using the ID and station name
-	# since the ID will give a unique time
-	# and for each file, load the P/S differential time from the aceh_phase.json file
-	# also get the event location from pandas dataframe
-	# 
-	# 
-
-
-	# write event location (lat lon depth) and apparently sac will calculate the 
-	# reference date (if needed e.g. over 000000, reference time, B and E
-	# 
-	# retrieve lat, lon, depth from the reloc file
-
-	# i could generate a bash file heheheheh to write the headers
-
-	# there's probably a more elegant way to do this i.e. package this inside searcher so i don't have to run 
-
-
-def csv_cutter():
-	pass
-	# for each folder in event_archive, put in a csv file with the metadat from relocated table 
-	# for convenience 
-	# 
-	# 
 
 def df_searcher_one_off(eqt_csv, phase_json, output_json, output_csv):
-
-	# please have the metadata as very succint bc it will take up storage space
 
 	df = pd.read_csv(eqt_csv)
 
