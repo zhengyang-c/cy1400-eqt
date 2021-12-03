@@ -64,23 +64,22 @@ def get_all_files(sac_folder, output_file):
 		_jday = _file.split(".")[6]
 
 		_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
+		out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
+		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
+
+		try:
+			assert len(out[1])
+		except:
+			continue
+
 
 		df.at[index, 'station'] = _sta
 		df.at[index, 'year'] = (_year) # it's saved as a string; so pandas probably inferred that it's an int
 		df.at[index, 'jday'] = (_jday)
 		df.at[index, 'start_time'] = _file.split(".")[7]
 
-		"""
-			out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
-	40 
-	41         sac_df.at[index, "kzdate"] = out[1]                                 
-	42         sac_df.at[index, "kztime"] = out[2]
-	43         sac_df.at[index, "B"] = out[3]
-	44         sac_df.at[index, "E"] = out[4]
-		"""
+	
 
-		out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
-		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
 		df.at[index, "kzdate"] = out[1]
 		df.at[index, "kztime"] = out[2]
