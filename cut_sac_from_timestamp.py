@@ -196,7 +196,6 @@ def df_searcher(df, _station_dict, _ts,):
 
 			except:
 				print("Duplicates found for above p_df")
-				assert False
 
 			for index, row in _p_df.iterrows():
 				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
@@ -208,6 +207,8 @@ def df_searcher(df, _station_dict, _ts,):
 				_station_dict[sta]['stlo'] = row.station_lon
 
 				target_indices.append(index)
+
+				break
 				#print(_station_dict[sta]['P'])
 
 				# REMINDER: this will fail if e.g. not using multi to merge / want to search inside multi_X folder
@@ -221,8 +222,7 @@ def df_searcher(df, _station_dict, _ts,):
 				assert _s_df.shape[0] == 1
 
 			except:
-				print(_s_df)
-				assert False
+				print("Duplicates found for above p_df")
 
 			for index, row in _s_df.iterrows():
 				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
@@ -233,6 +233,8 @@ def df_searcher(df, _station_dict, _ts,):
 				_station_dict[sta]['stlo'] = row.station_lon
 
 				target_indices.append(index)
+
+				break
 		#print(search_file_path)
 		#_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
 
@@ -247,7 +249,7 @@ def df_searcher(df, _station_dict, _ts,):
 
 if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
-	ap.add_argument("input_csv", help = "EQT outputs (filtered the way you want it)")
+	ap.add_argument("eqt_csv", help = "EQT outputs (filtered the way you want it)")
 	ap.add_argument("real_csv", help = "Collated from collect_latlon. Only has event information. Used to iterate over IDs.")
 	ap.add_argument("real_json", help = "Collated from collect_latlon, has phase and event information.")
 	ap.add_argument("output_csv", help = "Patched EQT output csv with source file paths and event ID")
@@ -259,6 +261,6 @@ if __name__ == "__main__":
 
 	#sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
 
-	choose_event_wf(args.real_csv, args.real_json, args.input_csv, args.output_csv, args.output_json)
+	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json)
 
 	#def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
