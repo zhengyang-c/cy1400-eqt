@@ -61,7 +61,7 @@ def sac_file_checker(input_csv, output_csv, sac_csv, ):
 			_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
 
 
-		_fdf = _df[_df["is_within"] == True]
+		_fdf = _df[(_df["is_within"] == True)]
 
 
 		try:
