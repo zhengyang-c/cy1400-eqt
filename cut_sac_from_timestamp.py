@@ -51,6 +51,7 @@ def sac_file_checker(input_csv, output_csv, sac_csv, ):
 		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
 
 	for index, row in df.iterrows():
+		print(index)
 		# get station
 		jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
 
