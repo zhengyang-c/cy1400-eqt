@@ -54,7 +54,7 @@ def sac_file_checker(input_csv, output_csv, sac_csv, ):
 		# get station
 		jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
 
-		_df = s_df[((s_df["station"] == row.station))]
+		_df = s_df[(s_df["station"] == row.station)]
 
 
 		for s_index, s_row in _df.iterrows():
