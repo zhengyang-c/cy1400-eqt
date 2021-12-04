@@ -105,6 +105,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_folder):
 	eqt_df = pd.read_csv(input_csv)
 
 	eqt_df["event_start_time"] = pd.to_datetime(eqt_df["event_start_time"])
+	eqt_df["p_arrival_time"] = pd.to_datetime(eqt_df["p_arrival_time"])
+	eqt_df["s_arrival_time"] = pd.to_datetime(eqt_df["s_arrival_time"])
 
 	with open(real_json, "r") as f:
 		phase_dict = json.load(f)
