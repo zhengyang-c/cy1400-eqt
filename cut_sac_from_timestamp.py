@@ -131,7 +131,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
 		for i in target_indices:
 			eqt_df.at[i, "ID"] = row.ID
 
-		
+		print(row.ID)
+
 		phase_dict[padded_id]['data'] = updated_station_dict
 
 
@@ -140,7 +141,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
 	
 	eqt_df.to_csv(output_csv, index = False)
 
-	with open(output_json, "r") as f:
+	with open(output_json, "w") as f:
 		json.dump(f, indent = 4)
 
 
