@@ -40,6 +40,10 @@ Outputs:
 def sac_file_checker(input_csv, output_csv, sac_csv, ):
 
 	s_df = pd.read_csv(sac_csv)
+
+	s_df = s_df.dropna(subset=["kzdate", "kztime"])
+
+
 	df = pd.read_csv(input_csv)
 	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
 

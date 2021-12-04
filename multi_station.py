@@ -68,7 +68,7 @@ def get_all_files(sac_folder, output_file):
 		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
 		try:
-			assert len(out[1])
+			assert len(out > 2)
 		except:
 			continue
 
