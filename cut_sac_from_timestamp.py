@@ -130,9 +130,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_folder):
 
 		print(search_output)
 
-		break
 
-	files_to_copy = search_output["files_to_copy"]
+	#files_to_copy = search_output["files_to_copy"]
 
 
 
@@ -224,7 +223,7 @@ def df_searcher(df, _station_dict, _ts,):
 
 	# should return a dataframe, then merge the dataframes in memory
 
-	return target_index
+	return {"target_index": target_index, "_station_dict": _station_dict}
 
 	#return {"files_to_copy": files_to_copy, "_station_dict": _station_dict}
 
