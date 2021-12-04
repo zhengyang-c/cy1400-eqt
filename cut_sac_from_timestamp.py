@@ -171,8 +171,6 @@ def df_searcher(df, _station_dict, _ts,):
 
 		# these should give an exact match, and only 1
 
-		search_file_path = ""
-
 		if _p_arrival_time:
 			_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] > -1)].copy()
 			print(_p_df)
@@ -181,31 +179,29 @@ def df_searcher(df, _station_dict, _ts,):
 				assert _p_df.shape[0] == 1
 
 			except:
-				print(_p_df)
+				print("Duplicates found for above p_df")
 				assert False
 
-
-
 			for index, row in _p_df.iterrows():
-				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
+				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
 				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
 				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()
 
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
+
+				target_index = index
 				#print(_station_dict[sta]['P'])
 
 				# REMINDER: this will fail if e.g. not using multi to merge / want to search inside multi_X folder
 				# i.e. the merged arrival time is a median of all the collated picks
 
 
-
 		elif _s_arrival_time:
 			_s_df = _df[(_df['_s_delta'] < 1) & (_df['_s_delta'] > -1)].copy()
 
 			try:
-
 				assert _s_df.shape[0] == 1
 
 			except:
@@ -213,20 +209,24 @@ def df_searcher(df, _station_dict, _ts,):
 				assert False
 
 			for index, row in _s_df.iterrows():
-				search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
+				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
 				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
 				_station_dict[sta]['station_S'] = row.s_arrival_time.to_pydatetime()
 				_station_dict[sta]['stla'] = row.station_lat
 				_station_dict[sta]['stlo'] = row.station_lon
-		print(search_file_path)
-		_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
 
-		files_to_copy.extend(_files_to_copy)
+				target_index = index
+		#print(search_file_path)
+		#_files_to_copy = [str(p) for p in glob(search_file_path)] # 3 channel files
+
+		#files_to_copy.extend(_files_to_copy)
 
 	# should return a dataframe, then merge the dataframes in memory
 
-	return {"files_to_copy": files_to_copy, "_station_dict": _station_dict}
+	return target_index
+
+	#return {"files_to_copy": files_to_copy, "_station_dict": _station_dict}
 
 
 if __name__ == "__main__":
