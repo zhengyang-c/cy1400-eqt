@@ -60,19 +60,14 @@ def sac_file_checker(input_csv, output_csv, sac_csv, ):
 		for s_index, s_row in _df.iterrows():
 			_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
 
-		print(_df.columns)
-
-		print(_df.head)
-
-
-		_fdf = _df[(_df["is_within"] == True)]
-
 
 		try:
 			assert len(_fdf["filepath"]) > 0
 		except:
 			print(row.station, jday, "can't find the correct file")
+			continue
 
+		_fdf = _df[(_df["is_within"] == True)]
 
 		search_term = _fdf["filepath"].iloc[0]
 
