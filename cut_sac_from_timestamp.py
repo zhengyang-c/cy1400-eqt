@@ -13,6 +13,7 @@ import datetime
 import pandas as pd
 import argparse
 import json
+import glob
 import os
 
 
@@ -221,6 +222,8 @@ def df_searcher(df, _station_dict, _ts,):
 
 		files_to_copy.extend(_files_to_copy)
 
+	# should return a dataframe, then merge the dataframes in memory
+
 	return {"files_to_copy": files_to_copy, "_station_dict": _station_dict}
 
 
@@ -235,8 +238,8 @@ if __name__ == "__main__":
 
 	args = ap.parse_args()
 
-	sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
+	#sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
 
-	choose_event_wf(args.real_csv, args.real_json, args.output_csv, args.output_folder)
+	choose_event_wf(args.real_csv, args.real_json, args.input_csv, args.output_folder)
 
 	#def choose_event_wf(real_csv, real_json, input_csv, output_folder):
