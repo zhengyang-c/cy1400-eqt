@@ -41,7 +41,7 @@ Outputs:
 
 
 # this input_csv is the previous output i.e. EQT output but with the source file column
-def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, output_folder, load = False):
+def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, load = False):
 
 	# real_csv: association output
 
@@ -190,7 +190,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, out
 	time.sleep(1)
 	os.chmod(cut_file, 0o775)
 
-def df_searcher(df, _station_dict, _ts, sac_csv):
+def df_searcher(df, _station_dict, _ts, ):
 
 	
 
