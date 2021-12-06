@@ -70,6 +70,9 @@ def recompute_from_sac_source(sac_select, detection_csv, output_csv, station, hd
 	hdf = pd.read_csv(os.path.join(hdf5_folder,"{}.csv".format(station)))
 	hdf.rename(columns = {"trace_name": "file_name"}, inplace = True)
 
+	# THIS IS WHERE SOURCE_FILE / SAC_START_TIME is added into the dataframe
+	# why do i hide important functionality here
+
 	det_df = det_df.merge(hdf, on = "file_name")
 
 	prev_year_day = ""
