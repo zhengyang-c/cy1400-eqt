@@ -13,7 +13,7 @@ import datetime
 import pandas as pd
 import argparse
 import json
-import glob
+import time
 import os
 
 
@@ -38,61 +38,10 @@ Outputs:
 - `output_folder': the folder to create to store all the event names
 
 """
-def sac_file_checker(input_csv, output_csv, sac_csv, ):
-
-	s_df = pd.read_csv(sac_csv)
-
-	s_df = s_df.dropna(subset=["kzdate", "kztime"])
-
-
-	df = pd.read_csv(input_csv)
-	df["event_start_time"] = pd.to_datetime(df["event_start_time"])
-
-	for index, row in s_df.iterrows():
-		s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
-
-	for index, row in df.iterrows():
-		print(index)
-		# get station
-		jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
-
-		_df = s_df[(s_df["station"] == row.station)]
-
-		if len(_df) == 0:
-			continue
-
-
-		for s_index, s_row in _df.iterrows():
-			_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
-
-
-		try:
-			_fdf = _df[(_df["is_within"] == True)]
-		except:
-			print(row.station, row.jday, "error")
-
-		search_term = _fdf["filepath"].iloc[0]
-
-		df.at[index, "source_file"] = search_term
-
-
-
-	df = df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes = ("", "_sac")) 
-
-	for index, row in df.iterrows():
-		for x in [".EHE.", ".EHN.", ".EHZ."]:
-			if x in row.source_file:
-				search_term = row.source_file.replace(x, ".EH*.")
-				break
-		df.at[index, "source_file"] = search_term
-
-
-	df.to_csv(output_csv, index = False)
-
 
 
 # this input_csv is the previous output i.e. EQT output but with the source file column
-def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
+def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, output_folder):
 
 	# real_csv: association output
 
@@ -107,10 +56,10 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
 	eqt_df["event_start_time"] = pd.to_datetime(eqt_df["event_start_time"])
 	eqt_df["p_arrival_time"] = pd.to_datetime(eqt_df["p_arrival_time"])
 	eqt_df["s_arrival_time"] = pd.to_datetime(eqt_df["s_arrival_time"])
+	eqt_df['start_dt'] = pd.to_datetime(eqt_df['start_dt'])
 
 	with open(real_json, "r") as f:
 		phase_dict = json.load(f)
-
 	
 	real_df = pd.read_csv(real_csv)
 
@@ -118,23 +67,14 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
 		padded_id = str(int(row.ID)).zfill(6)
 
 		_station_dict = phase_dict[padded_id]['data']
-
 		_ts = (phase_dict[padded_id]['timestamp'])
-
-		bash_str = "#!/bin/bash\n"
-		output_file = "cat_header_writer.sh"
-
-		# function call: search here
 
 		target_indices, updated_station_dict = df_searcher(eqt_df, _station_dict, _ts)
 
 		for i in target_indices:
 			eqt_df.at[i, "ID"] = row.ID
 
-
 		phase_dict[padded_id]['data'] = updated_station_dict
-
-
 
 		# use station dict information to update the dataframe, then save the dataframe first
 		# this is so you don't have to relink the info every time for the waveforms 
@@ -144,11 +84,87 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
 	with open(output_json, "w") as f:
 		json.dump(phase_dict, f, indent = 4)
 
+	if not os.path.exists(output_folder):
+		os.makedirs(output_folder)
+
+	eqt_df = eqt_df.dropna(subset = ['ID'])
+	cut_str = "#!/bin/bash\n"
+	header_str = "#!/bin/bash\n"
+
+	cut_file = os.path.join(output_folder, "cut.sh")
+	header_file = os.path.join(output_folder, "header.sh")
+
+	for index, row in real_df.iterrows():
+
+		_eqt_df = eqt_df[eqt_df["ID"] == row.ID]
+		pid = str(int(row.ID)).zfill(6)
+		event_folder = os.path.join(output_folder, pid)
+
+		if not os.path.exists(event_folder):
+			os.makedirs(event_folder)
+
+		for _index, _row in _eqt_df.iterrows():
+			sta = _row.station
+			event_dt = _row.event_start_time
+
+			year = (datetime.datetime.strftime(event_dt, "%Y"))
+			jday = (datetime.datetime.strftime(event_dt, "%j"))
+			year_day = year + "."+ jday # need string representation
+
+			#_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
+
+			# load routine
+			#
+
+			sac_source = _row["filepath"]
+
+			timestamp = (datetime.datetime.strftime(event_dt, "%H%M%S"))
+
+			event_id = "{}.{}.{}".format(sta, year_day, timestamp)
+
+			f1 = os.path.join(event_folder, event_id + ".EHE.SAC")
+			f2 = os.path.join(event_folder, event_id + ".EHN.SAC")
+			f3 = os.path.join(event_folder, event_id + ".EHZ.SAC")
+
+			start_time = (event_dt - _row.start_dt).total_seconds() - 30
+			end_time = (event_dt - _row.start_dt).total_seconds() + 120
+
+			cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
+
+			#
+			# HEADER WRITING
+			#
+
+			start_of_file = row.start_dt
+
+			timestamp = datetime.datetime.strftime(_row.event_start_time, '%H%M%S')
+
+			if not _row.p_arrival_time: # NaN
+				p_diff = "-12345"
+			else:
+				p_diff = (_row.p_arrival_time - start_of_file).total_seconds()
+			if not _row.s_arrival_time:
+				s_diff = "-12345"
+			else:
+				s_diff = (_row.s_arrival_time - start_of_file).total_seconds()
 
 
-	#files_to_copy = search_output["files_to_copy"]
+			header_str += ("printf \"r {}\\nch A {:.2f}\\nch T0 {:.2f}\\nwh\\nq\\n\" | sac\n".format(
+				os.path.join(output_folder, pid, "*{}.{}*SAC").format(year_day, timestamp),
+				p_diff,
+				s_diff,
+				))
 
+	with open(header_file, 'w') as f:
+		f.write(header_str)
+	with open(cut_file, 'w') as f:
+		f.write(cut_str)
 
+	# call subprocess
+	time.sleep(1)
+	os.chmod(header_file, 0o775)
+	time.sleep(1)
+	os.chmod(cut_file, 0o775)
 
 def df_searcher(df, _station_dict, _ts,):
 
@@ -256,12 +272,12 @@ if __name__ == "__main__":
 	ap.add_argument("output_csv", help = "Patched EQT output csv with source file paths and event ID")
 	ap.add_argument("output_json", help = "Patched json with timestamps for arrival times")
 	#ap.add_argument("sac_csv", help = "Generated by -msc flag from multi_station, with start and end times for each original SAC file.")
-	#ap.add_argument("output_folder", help = "Folder to create new event archive inside.")
+	ap.add_argument("output_folder", help = "Folder to create new event archive inside.")
 
 	args = ap.parse_args()
 
 	#sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
 
-	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json)
+	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json, args.output_folder)
 
 	#def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
