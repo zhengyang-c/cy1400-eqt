@@ -148,7 +148,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 		for index, row in eqt_df.iterrows():
 			for x in [".EHE.", ".EHN.", ".EHZ."]:
-				if x in row.source_file:
+				if x in str(row.source_file):
 					search_term = row.source_file.replace(x, ".EH*.")
 					break
 			eqt_df.at[index, "source_file"] = search_term
