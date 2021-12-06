@@ -306,6 +306,6 @@ if __name__ == "__main__":
 
 	#sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
 
-	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json, args.output_folder, args.sac_csv,load = args.load)
+	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json,  args.sac_csv,args.output_folder,load = args.load)
 
 	#def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
