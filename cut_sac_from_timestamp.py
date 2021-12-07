@@ -180,7 +180,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				event_dt = _row.event_start_time
 
 				print("event dt",event_dt)
-				print("sac start time", _row.sac_start_time)
+				print("sac start time", _row.sac_start_dt)
 				print("index", _index)
 
 
@@ -204,8 +204,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				f2 = os.path.join(event_folder, event_id + ".EHN.SAC")
 				f3 = os.path.join(event_folder, event_id + ".EHZ.SAC")
 
-				start_time = (event_dt - _row.start_time_sac).total_seconds() - 30
-				end_time = (event_dt - _row.start_time_sac).total_seconds() + 120
+				start_time = (event_dt - _row.sac_start_dt).total_seconds() - 30
+				end_time = (event_dt - _row.sac_start_dt).total_seconds() + 120
 
 				cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 
@@ -213,7 +213,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				# HEADER WRITING
 				#
 
-				start_of_file = _row.start_time_sac
+				start_of_file = _row.sac_start_dt
 
 				timestamp = datetime.datetime.strftime(_row.event_start_time, '%H%M%S')
 
