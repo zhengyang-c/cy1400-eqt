@@ -152,6 +152,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					search_term = row.source_file.replace(x, ".EH*.")
 					break
 			eqt_df.at[index, "source_file"] = search_term
+		
+		eqt_df.to_csv(output_csv, index = False)
 
 
 	if write:
