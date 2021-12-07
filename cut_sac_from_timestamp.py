@@ -161,8 +161,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 	if write:
 
-		
-
 		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"])
 		eqt_df["sac_start_time"] = eqt_df["sac_start_time"].dt.tz_localize(None)
 
@@ -179,6 +177,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
 				event_dt = _row.event_start_time
+
+				print(event_dt)
+				print(_row.sac_start_time)
 
 
 
