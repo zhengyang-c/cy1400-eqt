@@ -161,9 +161,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 	if write:
 
-		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"])
-		eqt_df["start_time_sac"] = pd.to_datetime(eqt_df["start_time_sac"])
-		eqt_df["sac_start_time"] = eqt_df["sac_start_time"].dt.tz_localize(None)
+		eqt_df["sac_start_dt"] = pd.to_datetime(eqt_df["sac_start_dt"])
+		#eqt_df["start_time_sac"] = pd.to_datetime(eqt_df["start_time_sac"])
+		#eqt_df["sac_start_time"] = eqt_df["sac_start_time"].dt.tz_localize(None)
 
 
 		for index, row in real_df.iterrows():
