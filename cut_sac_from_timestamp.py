@@ -178,8 +178,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				sta = _row.station
 				event_dt = _row.event_start_time
 
-				print(event_dt)
-				print(_row.sac_start_time)
+				print("event dt",event_dt)
+				print("sac start time", _row.sac_start_time)
+				print("index", _index)
 
 
 
