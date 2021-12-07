@@ -117,6 +117,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 	if eqt_to_sac:
 
+		eqt_df.drop(['sac_start_time'], axis = 1)
+
 		for index, row in s_df.iterrows():
 			s_df.at[index, "start_dt"] = datetime.datetime.strptime("{} {}".format(row.kzdate, row.kztime), "%Y/%m/%d %H:%M:%S.%f")
 
@@ -133,7 +135,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for s_index, s_row in _df.iterrows():
 				_df.at[s_index, "is_within"] = (((row.event_start_time - s_row.start_dt).total_seconds()) < s_row.E) and (((row.event_start_time - s_row.start_dt).total_seconds()) > s_row.B) 
-
 
 			try:
 				_fdf = _df[(_df["is_within"] == True)]
@@ -152,11 +153,15 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					search_term = row.source_file.replace(x, ".EH*.")
 					break
 			eqt_df.at[index, "source_file"] = search_term
+
+		eqt_df.rename({"sac_start_dt_sac": "sac_start_time"})
 		
 		eqt_df.to_csv(output_csv, index = False)
 
 
 	if write:
+
+		
 
 		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"])
 		eqt_df["sac_start_time"] = eqt_df["sac_start_time"].dt.tz_localize(None)
