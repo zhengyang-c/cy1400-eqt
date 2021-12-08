@@ -41,17 +41,7 @@ Outputs:
 """
 
 
-# this input_csv is the previous output i.e. EQT output but with the source file column
 def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, eqt_to_event = False, eqt_to_sac = False, write = False):
-
-	# real_csv: association output
-
-	# make a dataframe in memory? and then write the text files with the script for cutting all the sac files 
-	
-	# first filter for waveforms that are associated with events using the json
-
-	# next merge in the code from replot_eqt.py
-
 	if not eqt_to_event:
 		eqt_df = pd.read_csv(output_csv)
 	
@@ -62,8 +52,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	eqt_df["p_arrival_time"] = pd.to_datetime(eqt_df["p_arrival_time"])
 	eqt_df["s_arrival_time"] = pd.to_datetime(eqt_df["s_arrival_time"])
 
-
-	# why is only one event getting matched and why is it only the lat one
 
 	with open(real_json, "r") as f:
 		phase_dict = json.load(f)
@@ -84,10 +72,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				print(i)
 				eqt_df.at[i, "ID"] = row.ID
 			phase_dict[padded_id]['data'] = updated_station_dict
-			
-
-			# use station dict information to update the dataframe, then save the dataframe first
-			# this is so you don't have to relink the info every time for the waveforms 
 		
 		eqt_df.to_csv(output_csv, index = False)
 
@@ -104,10 +88,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	cut_file = os.path.join(output_folder, "cut.sh")
 	header_file = os.path.join(output_folder, "header.sh")
 
-
-
-	# do patching: if sac_start_time and source_file entries are blank, do patching
-	# this happens for older detections (jan to jul 2020)
 
 
 	s_df = pd.read_csv(sac_csv)
@@ -155,16 +135,14 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			eqt_df.at[index, "source_file"] = search_term
 
 		eqt_df.rename({"sac_start_dt_sac": "sac_start_time"})
+		eqt_df.drop(['filepath', 'start_dt', 'station_sac'], axis = 1)
 		
 		eqt_df.to_csv(output_csv, index = False)
 
 
 	if write:
 
-		eqt_df["sac_start_dt"] = pd.to_datetime(eqt_df["sac_start_dt"])
-		#eqt_df["start_time_sac"] = pd.to_datetime(eqt_df["start_time_sac"])
-		#eqt_df["sac_start_time"] = eqt_df["sac_start_time"].dt.tz_localize(None)
-
+		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"])
 
 		for index, row in real_df.iterrows():
 
@@ -180,7 +158,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				event_dt = _row.event_start_time
 
 				print("event dt",event_dt)
-				print("sac start time", _row.sac_start_dt)
+				print("sac start time", _row.sac_start_time)
 				print("index", _index)
 
 
@@ -204,8 +182,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				f2 = os.path.join(event_folder, event_id + ".EHN.SAC")
 				f3 = os.path.join(event_folder, event_id + ".EHZ.SAC")
 
-				start_time = (event_dt - _row.sac_start_dt).total_seconds() - 30
-				end_time = (event_dt - _row.sac_start_dt).total_seconds() + 120
+				start_time = (event_dt - _row.sac_start_time).total_seconds() - 30
+				end_time = (event_dt - _row.sac_start_time).total_seconds() + 120
 
 				cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 
@@ -213,7 +191,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				# HEADER WRITING
 				#
 
-				start_of_file = _row.sac_start_dt
+				start_of_file = _row.sac_start_time
 
 				timestamp = datetime.datetime.strftime(_row.event_start_time, '%H%M%S')
 
@@ -360,11 +338,8 @@ if __name__ == "__main__":
 
 	args = ap.parse_args()
 
-	#sac_file_checker(args.input_csv, args.output_csv, args.sac_csv, )
 
 	choose_event_wf(args.real_csv, args.real_json, args.eqt_csv, args.output_csv, args.output_json,  args.sac_csv,args.output_folder,
 	eqt_to_event = args.eqt_to_event, 
 	eqt_to_sac = args.eqt_to_sac, 
 	write = args.write)
-
-	#def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json):
