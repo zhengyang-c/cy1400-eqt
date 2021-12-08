@@ -231,7 +231,7 @@ def df_searcher(df, _station_dict, _ts, ):
 		try:
 			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d %H:%M:%S")
 		except:
-			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d-%H-%M-%S")
+			_ts = datetime.datetime.strptime(_ts, "%Y-%m-%d-%H-%M-%S.%f")
 
 	target_indices = []
 	
