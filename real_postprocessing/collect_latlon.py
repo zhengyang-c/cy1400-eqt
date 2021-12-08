@@ -308,7 +308,7 @@ if __name__ == "__main__":
 		# 
 
 	elif args.pha:
-	 	join_hypophase(args.input, args.output, args.start_n)
+		join_hypophase(args.input, args.output, args.start_n)
 
 	elif args.reloc:
 		make_reloc_catalog(args.input, args.output)
