@@ -39,63 +39,66 @@ import json
 #get_all_files("/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/")
 
 
-def get_all_files(sac_folder, output_file):
+def get_all_files(sac_folders, output_file):
 	# look inside /tgo/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/ 
 	# for .SAC files
 
-	all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
+	df_list = []
+	for sac_folder in sac_folders:
 
-	df = pd.DataFrame()
+		all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
 
-	df["filepath"] = all_files
+		df = pd.DataFrame()
 
-	#print(df)
+		df["filepath"] = all_files
 
-	for index, row in df.iterrows():
-		_sta = row.filepath.split("/")[-2] # second last entry should be the station name
+		#print(df)
 
-		# the sac files have their channel in front and not behind so... 
+		for index, row in df.iterrows():
+			_sta = row.filepath.split("/")[-2] # second last entry should be the station name
 
-		# check if all 3 channels are available too?
+			# the sac files have their channel in front and not behind so... 
 
-		_file = row.filepath.split("/")[-1]
+			# check if all 3 channels are available too?
 
-		_year = _file.split(".")[5]
-		_jday = _file.split(".")[6]
+			_file = row.filepath.split("/")[-1]
 
-		_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
-		out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
-		out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
+			_year = _file.split(".")[5]
+			_jday = _file.split(".")[6]
 
-		try:
-			assert len(out > 2)
-		except:
-			continue
+			_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
+			out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
+			out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
-
-		df.at[index, 'station'] = _sta
-		df.at[index, 'year'] = (_year) # it's saved as a string; so pandas probably inferred that it's an int
-		df.at[index, 'jday'] = (_jday)
-		df.at[index, 'start_time'] = _file.split(".")[7]
-
-	
+			try:
+				assert len(out > 2)
+			except:
+				continue
 
 
-		df.at[index, "kzdate"] = out[1]
-		df.at[index, "kztime"] = out[2]
-		df.at[index, "B"] = out[3]
-		df.at[index, "E"] = out[4]
+			df.at[index, 'station'] = _sta
+			df.at[index, 'year'] = (_year) # it's saved as a string; so pandas probably inferred that it's an int
+			df.at[index, 'jday'] = (_jday)
+			df.at[index, 'start_time'] = _file.split(".")[7]
 
-		df.at[index, "sac_start_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f")
-		df.at[index, "sac_end_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f") + datetime.timedelta(seconds = float(out[4]))
+		
 
+			df.at[index, "kzdate"] = out[1]
+			df.at[index, "kztime"] = out[2]
+			df.at[index, "B"] = out[3]
+			df.at[index, "E"] = out[4]
 
-		#df.at[index, 'fullday'] = (_file.split(".")[7] == "000000")
+			df.at[index, "sac_start_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f")
+			df.at[index, "sac_end_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f") + datetime.timedelta(seconds = float(out[4]))
+
+		df_list.append(df)
 
 
 		# fullday doesn't give useful info because the file could start at 000000 and still be incomplete
 
 	# "station/all_aceh_sac.csv"
+
+	df = pd.concat(df_list)
 	df.to_csv(output_file, index = False)
 
 def generate_timestamps(input_csv, output_csv):
