@@ -92,7 +92,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 	s_df = pd.read_csv(sac_csv)
 
-	s_df = s_df.dropna(subset=["kzdate", "kztime"])
+	if ("kzdate" in s_df.columns) and ("kztime" in s_df.columns):
+		s_df = s_df.dropna(subset=["kzdate", "kztime"])
 
 
 	if eqt_to_sac:

@@ -66,7 +66,6 @@ def get_all_files(sac_folders, output_file):
 			_year = _file.split(".")[5]
 			_jday = _file.split(".")[6]
 
-			_datetime = datetime.datetime.strptime("{}.{}".format(_year,_jday), "%Y.%j")
 			out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
 			out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
@@ -81,8 +80,6 @@ def get_all_files(sac_folders, output_file):
 			df.at[index, 'jday'] = (_jday)
 			df.at[index, 'start_time'] = _file.split(".")[7]
 
-		
-
 			df.at[index, "kzdate"] = out[1]
 			df.at[index, "kztime"] = out[2]
 			df.at[index, "B"] = out[3]
@@ -96,9 +93,9 @@ def get_all_files(sac_folders, output_file):
 
 		# fullday doesn't give useful info because the file could start at 000000 and still be incomplete
 
-	# "station/all_aceh_sac.csv"
 
 	df = pd.concat(df_list)
+	print(df)
 	df.to_csv(output_file, index = False)
 
 def generate_timestamps(input_csv, output_csv):
