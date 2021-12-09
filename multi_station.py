@@ -594,7 +594,7 @@ if __name__ == "__main__":
 
 	parser = argparse.ArgumentParser(description = "utils for preparing multistation hdf5 files, running eqt (future) and plotting sac files")
 
-	parser.add_argument("--get", help = "name of actual target sac folder (month)", default = None)
+	parser.add_argument("--get", help = "name of actual target sac folder (month)", default = None, nargs = '+')
 	parser.add_argument("-i", "--input", help = "input file")
 	parser.add_argument("-o", "--output", help = "output file", default = "")
 
