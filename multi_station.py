@@ -78,7 +78,6 @@ def get_all_files(sac_folders, output_file):
 			except:
 				continue
 
-
 			df.at[index, 'station'] = _sta
 			df.at[index, 'year'] = (_year) # it's saved as a string; so pandas probably inferred that it's an int
 			df.at[index, 'jday'] = (_jday)
@@ -98,9 +97,9 @@ def get_all_files(sac_folders, output_file):
 		# fullday doesn't give useful info because the file could start at 000000 and still be incomplete
 
 
-	df = pd.concat(df_list)
-	print(df)
-	df.to_csv(output_file, index = False)
+	new_df = pd.concat(df_list)
+	print(new_df)
+	new_df.to_csv(output_file, index = False)
 
 def generate_timestamps(input_csv, output_csv):
 	df = pd.read_csv(input_csv)
