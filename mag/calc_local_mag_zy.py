@@ -83,6 +83,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 s += "w append .wa \n"
             s += "q \n"
 
+            print(s)
+
             if sac_transfer:
                 subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())
 
