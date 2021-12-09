@@ -44,6 +44,8 @@ def get_all_files(sac_folders, output_file):
 	# for .SAC files
 
 	df_list = []
+
+	print(sac_folders)
 	for sac_folder in sac_folders:
 
 		all_files = [str(p) for p in Path(sac_folder).rglob("*SAC")]
