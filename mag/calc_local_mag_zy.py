@@ -70,6 +70,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
         for sta in stas:
             s = ""
             for sacfile in glob.glob(basedir+'/'+sacdir+'/*'+sta+'*SAC'):
+
+                print(sacfile)
                 chan_tmp = sacfile.split('/')[-1].split('.')[2]
                 s += "r {} \n".format(sacfile)
                 #s += "ch KCMPNM {} \n".format(chan_tmp)
