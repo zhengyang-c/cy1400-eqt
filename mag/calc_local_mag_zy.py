@@ -152,9 +152,12 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             except:
                 print('May not have some headers in sac file %s'%(efile))
             #mag_mean = np.mean(mags)
+        print(mags) 
         mag_mean = np.median(mags)
         mag_std = np.std(mags)
         f_out.write('%s  %.1f  %.2f\n'%(sacdir,mag_mean,mag_std))
+
+        break
     f_out.close()
     time2 = time.time()
 
