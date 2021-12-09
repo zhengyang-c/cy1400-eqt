@@ -189,4 +189,4 @@ if __name__ == "__main__":
     parser.add_argument("-lf", "--event_location_file", help = "Uses .csv locations instead of SAC headers which may not be available or updated properly.")
     parser.add_argument("-sf", "--station_file", help = "Include to use locations from file instead of the SAC headers.")
     args = parser.parse_args()
-    main(args.event_folder, args.output_txt, args.output_csv, args.sac_wa, args.pz_file, location_file = args.event_location_file, station_file = args.station_file)
+    main(args.event_folder, args.output_txt, args.output_csv, args.pz_file,args.sac_wa,  location_file = args.event_location_file, station_file = args.station_file)
