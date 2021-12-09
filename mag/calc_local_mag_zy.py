@@ -50,7 +50,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
 
     for sacdir in sacdirs:
         print(sacdir)
-        zfiles = glob.glob(basedir+'/'+sacdir+'/*'+chanz+'*SAC')
+        zfiles = glob.glob(os.path.join(basedir, sacdir, '*' + chanz + '*SAC'))
         stas = [zfile.split('/')[-1].split('.')[0] for zfile in zfiles] # get station names for sac file named in "net.sta.*"
 
         #read snr file as dataframe
@@ -82,14 +82,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             if sac_transfer:
                 subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())
 
-            # df1=snr_df[(snr_df['sta']==sta) & (snr_df['chan']==chann)]
-            # snr_n=df1['snr1'].tolist()[0]
-            # df2=snr_df[(snr_df['sta']==sta) & (snr_df['chan']==chane)]
-            # snr_e=df2['snr2'].tolist()[0]
-            
-            #if (float(snr_n)>1.5) & (float(snr_e)>1.5):
-            efile = glob.glob(basedir+'/'+sacdir+'/*'+sta+'*'+chane+'*SAC*wa')
-            nfile = glob.glob(basedir+'/'+sacdir+'/*'+sta+'*'+chann+'*SAC*wa')
+            efile = glob.glob(os.path.join(basedir, sacdir, "*" + str + "*" + chane + "*SAC*wa"))
+            nfile = glob.glob(os.path.join(basedir, sacdir, "*" + str + "*" + chann + "*SAC*wa"))
             ste = read(efile[0])
             ste.detrend('demean')
             ste.detrend('linear')
