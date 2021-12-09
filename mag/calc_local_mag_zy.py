@@ -132,8 +132,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             end_id = ptime_id + round(p_after/delta)
             #amp = max( max(abs(datatre[start_id:end_id])), max(abs(datatrn[start_id:end_id])) ) * 1.0e-6 
             # 1.0e-6 is from nm to millimeter (mm)
-            print(start_id)
-            print(end_id)
+            start_id = int(start_id)
+            end_id = int(end_id)
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
             amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
