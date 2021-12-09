@@ -118,39 +118,39 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 dist = ste[0].stats.sac.dist
 
             
-            try:
-                ptime = ste[0].stats.sac[ptime_header]
-                stime = ste[0].stats.sac[stime_header]
+            #try:
+            ptime = ste[0].stats.sac[ptime_header]
+            stime = ste[0].stats.sac[stime_header]
 
-                #p_after = 0.73*dist/6 + 3
-                p_after = stime - ptime + 3
-                delta = ste[0].stats.delta
-                b_time = ste[0].stats.sac.b
-                ptime_id = round( (ptime - b_time)/delta )
-                start_id = ptime_id - round(p_before/delta)
-                end_id = ptime_id + round(p_after/delta)
-                #amp = max( max(abs(datatre[start_id:end_id])), max(abs(datatrn[start_id:end_id])) ) * 1.0e-6 
-                # 1.0e-6 is from nm to millimeter (mm)
-                datatre=datatre[start_id:end_id]
-                datatrn=datatrn[start_id:end_id]
-                amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
-                # 15000 is for the nodes 
-                # 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
-                mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
-                #mag = math.log10(amp) + 1.110*math.log10(dist) + 0.00189*(dist) - 2.09
-                #mag = math.log10(amp) + 1.60*math.log10(dist) - 0.15
-                #mag = math.log10(amp) + 1.60*math.log10(dist) - 0.15
-                #mag = math.log10(amp) + 2.76*math.log10(dist) - 2.48
+            #p_after = 0.73*dist/6 + 3
+            p_after = stime - ptime + 3
+            delta = ste[0].stats.delta
+            b_time = ste[0].stats.sac.b
+            ptime_id = round( (ptime - b_time)/delta )
+            start_id = ptime_id - round(p_before/delta)
+            end_id = ptime_id + round(p_after/delta)
+            #amp = max( max(abs(datatre[start_id:end_id])), max(abs(datatrn[start_id:end_id])) ) * 1.0e-6 
+            # 1.0e-6 is from nm to millimeter (mm)
+            datatre=datatre[start_id:end_id]
+            datatrn=datatrn[start_id:end_id]
+            amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
+            # 15000 is for the nodes 
+            # 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
+            mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
+            #mag = math.log10(amp) + 1.110*math.log10(dist) + 0.00189*(dist) - 2.09
+            #mag = math.log10(amp) + 1.60*math.log10(dist) - 0.15
+            #mag = math.log10(amp) + 1.60*math.log10(dist) - 0.15
+            #mag = math.log10(amp) + 2.76*math.log10(dist) - 2.48
 
-                odf.at[_c, "ID"] = sacdir
-                odf.at[_c, "sta"] = sta
-                odf.at[_c, "m_l"] = mag 
+            odf.at[_c, "ID"] = sacdir
+            odf.at[_c, "sta"] = sta
+            odf.at[_c, "m_l"] = mag 
 
-                _c += 1
+            _c += 1
 
-                mags.append(mag)
-            except:
-                print('May not have some headers in sac file %s'%(efile))
+            mags.append(mag)
+            #except:
+            #    print('May not have some headers in sac file %s'%(efile))
             #mag_mean = np.mean(mags)
         print(mags) 
         mag_mean = np.median(mags)
