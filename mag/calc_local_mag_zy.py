@@ -126,11 +126,14 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             p_after = stime - ptime + 3
             delta = ste[0].stats.delta
             b_time = ste[0].stats.sac.b
+
             ptime_id = round( (ptime - b_time)/delta )
             start_id = ptime_id - round(p_before/delta)
             end_id = ptime_id + round(p_after/delta)
             #amp = max( max(abs(datatre[start_id:end_id])), max(abs(datatrn[start_id:end_id])) ) * 1.0e-6 
             # 1.0e-6 is from nm to millimeter (mm)
+            print(start_id)
+            print(end_id)
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
             amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
