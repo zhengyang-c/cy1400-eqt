@@ -71,6 +71,8 @@ def get_all_files(sac_folders, output_file):
 			out = check_output(["saclst", "KZDATE", "KZTIME", "B", "E", "f", row.filepath])
 			out = [x for x in out.decode('UTF-8').strip().split(" ") if x != ""]
 
+			print(out)
+
 			try:
 				assert len(out > 2)
 			except:
