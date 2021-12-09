@@ -83,7 +83,6 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 s += "w append .wa \n"
             s += "q \n"
 
-            print(s)
 
             if sac_transfer:
                 subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())
@@ -137,6 +136,9 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             # 1.0e-6 is from nm to millimeter (mm)
             start_id = int(start_id)
             end_id = int(end_id)
+
+            print(start_id, end_id)
+            print(len(datatre), len(datatrn))
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
 
