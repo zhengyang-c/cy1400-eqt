@@ -136,6 +136,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             end_id = int(end_id)
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
+
+            print(datatre, datatrn)
             amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
             # 15000 is for the nodes 
             # 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
