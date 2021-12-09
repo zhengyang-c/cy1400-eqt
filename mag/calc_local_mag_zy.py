@@ -12,11 +12,10 @@ import math
 import numpy as np
 import pandas as pd
 
-def main(event_folder, output_txt, output_csv, sac_transfer = False, location_file = "", station_file = ""):
+def main(event_folder, output_txt, output_csv, pz_file, sac_transfer = False, location_file = "", station_file = ""):
 
     if station_file:
         station_info = parse_station_info(station_file)
-
         df = pd.read_csv(location_file)
 
 
@@ -185,8 +184,9 @@ if __name__ == "__main__":
     parser.add_argument("event_folder")
     parser.add_argument("output_txt")
     parser.add_argument("output_csv")
-    parser.add_argument("-s", "--sac_wa", action = "store_true")
-    parser.add_argument("-lf", "--location_file",)
+    parser.add_argument("pz_file")
+    parser.add_argument("-s", "--sac_wa", action = "store_true", help = "Set to true to create .wa files. Only needs to be run once.")
+    parser.add_argument("-lf", "--event_location_file", help = "")
     parser.add_argument("-sf", "--station_file",)
     args = parser.parse_args()
-    main(args.event_folder, args.output_txt, args.output_csv, args.sac_wa, location_file = args.location_file, station_file = args.station_file)
+    main(args.event_folder, args.output_txt, args.output_csv, args.sac_wa, args.pz_file, location_file = args.event_location_file, station_file = args.station_file)
