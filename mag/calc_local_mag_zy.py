@@ -51,6 +51,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
     for sacdir in sacdirs:
         print(sacdir)
         zfiles = glob.glob(os.path.join(basedir, sacdir, '*' + chanz + '*SAC'))
+
+        print(zfiles)
         stas = [zfile.split('/')[-1].split('.')[0] for zfile in zfiles] # get station names for sac file named in "net.sta.*"
 
         #read snr file as dataframe
