@@ -129,6 +129,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             delta = ste[0].stats.delta
             b_time = ste[0].stats.sac.b
 
+            print(ptime, b_time, delta)
+
             ptime_id = round( (ptime - b_time)/delta )
             start_id = ptime_id - round(p_before/delta)
             end_id = ptime_id + round(p_after/delta)
