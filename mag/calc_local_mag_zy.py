@@ -91,17 +91,20 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             efile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chane + "*SAC*wa"))
             nfile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chann + "*SAC*wa"))
 
-            print(efile, nfile)
             ste = read(efile[0])
             ste.detrend('demean')
             ste.detrend('linear')
             ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
+
+            print(ste[0].data)
+
             datatre = ste[0].data
             stn = read(nfile[0])
             stn.detrend('demean')
             stn.detrend('linear')
             stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
             datatrn = stn[0].data
+            print(ste[0].data)
             if station_file:
                 _df = pd.DataFrame(data = {'ID': [int(sacdir)]})
                 _df = _df.merge(df[["ID", "LAT", "LON"]], how = 'left', on = 'ID')
@@ -137,7 +140,6 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
 
-            print(datatre, datatrn)
             amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 
             # 15000 is for the nodes 
             # 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
