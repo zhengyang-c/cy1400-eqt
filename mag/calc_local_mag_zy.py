@@ -82,8 +82,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             if sac_transfer:
                 subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())
 
-            efile = glob.glob(os.path.join(basedir, sacdir, "*" + str + "*" + chane + "*SAC*wa"))
-            nfile = glob.glob(os.path.join(basedir, sacdir, "*" + str + "*" + chann + "*SAC*wa"))
+            efile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chane + "*SAC*wa"))
+            nfile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chann + "*SAC*wa"))
             ste = read(efile[0])
             ste.detrend('demean')
             ste.detrend('linear')
