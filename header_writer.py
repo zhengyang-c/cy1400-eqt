@@ -61,7 +61,7 @@ def header_writer(csv_file):
 
 
 			f.write("printf \"r {}\\nch A {:.2f}\\nch T0 {:.2f}\\nch F {:.2f}\\nwh\\nq\\n\" | sac\n".format(
-				os.path.join(csv_dir, 'sac_picks', "*{}.{}*SAC").format(year_day, timestamp),
+				os.path.join(csv_dir, 'sac_picks', "{}*{}.{}*SAC").format(row.station, year_day, timestamp),
 				p_diff,
 				s_diff,
 				end_diff
