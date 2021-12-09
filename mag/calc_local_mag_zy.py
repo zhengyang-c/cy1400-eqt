@@ -84,6 +84,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
 
             efile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chane + "*SAC*wa"))
             nfile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chann + "*SAC*wa"))
+
+            print(efile, nfile)
             ste = read(efile[0])
             ste.detrend('demean')
             ste.detrend('linear')
