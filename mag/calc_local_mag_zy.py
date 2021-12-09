@@ -12,7 +12,7 @@ import math
 import numpy as np
 import pandas as pd
 
-def main(event_folder, output_txt, output_csv, pz_file, sac_transfer = False, location_file = "", station_file = ""):
+def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, location_file = "", station_file = ""):
 
     if station_file:
         station_info = parse_station_info(station_file)
@@ -35,7 +35,6 @@ def main(event_folder, output_txt, output_csv, pz_file, sac_transfer = False, lo
     #p_after = 1.5
     #p_win_ratio = 0.09 # time window after P arrival time is p_win_ratio * distance 
 
-    pzfile = '/home/zchoong001/cy1400/cy1400-eqt/mag/zland_nodes.pz'
     #pzfile = os.path.join(basedir,'zland.pz')
     #pzfile1 = './EOS_MM_station_info/q330_nmx.pz'
     #pzfile2 = './EOS_MM_station_info/q330_STS2.5.pz'
@@ -67,7 +66,6 @@ def main(event_folder, output_txt, output_csv, pz_file, sac_transfer = False, lo
 
         mags = []
         for sta in stas:
-            pzfile = pzfile
             s = ""
             for sacfile in glob.glob(basedir+'/'+sacdir+'/*'+sta+'*SAC'):
                 chan_tmp = sacfile.split('/')[-1].split('.')[2]
