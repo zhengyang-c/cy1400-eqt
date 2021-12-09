@@ -206,7 +206,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 
 				header_str += ("printf \"r {}\\nch A {:.2f}\\nch T0 {:.2f}\\nwh\\nq\\n\" | sac\n".format(
-					os.path.join(output_folder, pid, "*{}.{}*SAC").format(year_day, timestamp),
+					os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp),
 					p_diff,
 					s_diff,
 					))#
