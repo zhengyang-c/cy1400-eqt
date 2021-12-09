@@ -91,6 +91,8 @@ def get_all_files(sac_folders, output_file):
 			df.at[index, "sac_start_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f")
 			df.at[index, "sac_end_dt"] = datetime.datetime.strptime("{} {}".format(out[1], out[2]), "%Y/%m/%d %H:%M:%S.%f") + datetime.timedelta(seconds = float(out[4]))
 
+			break
+
 		df_list.append(df)
 
 
