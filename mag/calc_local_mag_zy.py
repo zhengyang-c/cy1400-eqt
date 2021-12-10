@@ -174,7 +174,6 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
         mag_std = np.std(mags)
         f_out.write('%s  %.1f  %.2f\n'%(sacdir,mag_mean,mag_std))
 
-        break
     f_out.close()
     time2 = time.time()
 
