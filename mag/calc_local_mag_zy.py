@@ -90,7 +90,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             efile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chane + "*SAC*wa"))
             nfile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chann + "*SAC*wa"))
 
-            print(efile, nfile )
+            #print(efile, nfile )
 
             try:
                 ste = read(efile[0])
@@ -102,14 +102,14 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             ste.detrend('linear')
             ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
 
-            print(ste[0].data)
+            #print(ste[0].data)
 
             datatre = ste[0].data
             stn.detrend('demean')
             stn.detrend('linear')
             stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
             datatrn = stn[0].data
-            print(ste[0].data)
+            #print(ste[0].data)
             if station_file:
                 _df = pd.DataFrame(data = {'ID': [int(sacdir)]})
                 _df = _df.merge(df[["ID", "LAT", "LON"]], how = 'left', on = 'ID')
@@ -135,7 +135,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             delta = ste[0].stats.delta
             b_time = ste[0].stats.sac.b
 
-            print(ptime, b_time, delta)
+            #print(ptime, b_time, delta)
 
             ptime_id = round( (ptime - b_time)/delta )
             start_id = ptime_id - round(p_before/delta)
@@ -145,8 +145,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             start_id = int(start_id)
             end_id = int(end_id)
 
-            print(start_id, end_id)
-            print(len(datatre), len(datatrn))
+            #print(start_id, end_id)
+            #print(len(datatre), len(datatrn))
             datatre=datatre[start_id:end_id]
             datatrn=datatrn[start_id:end_id]
 
