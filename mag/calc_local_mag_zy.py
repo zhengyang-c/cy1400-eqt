@@ -98,10 +98,13 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             except:
                 ste = read(efile)
                 stn = read(nfile)
-            ste.detrend('demean')
-            ste.detrend('linear')
-            ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
 
+            try:
+                ste.detrend('demean')
+                ste.detrend('linear')
+                ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
+            except:
+                print("Error with the .wa file")
             #print(ste[0].data)
 
             datatre = ste[0].data
