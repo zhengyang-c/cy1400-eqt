@@ -44,6 +44,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
 
     f_out = open(output_txt,'w')
 
+    error_count = 0
 
     odf = pd.DataFrame()
     _c = 0
@@ -108,10 +109,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 stn.detrend('linear')
                 stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
                 datatrn = stn[0].data
-                print("Error with the .wa file")
-            #print(ste[0].data)
 
-            #print(ste[0].data)
                 if station_file:
                     _df = pd.DataFrame(data = {'ID': [int(sacdir)]})
                     _df = _df.merge(df[["ID", "LAT", "LON"]], how = 'left', on = 'ID')
@@ -170,8 +168,9 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 mags.append(mag)
             except:
                 print('May not have some headers in sac file %s'%(efile))
+
+                error_count += 1
             #mag_mean = np.mean(mags)
-        print(mags) 
         mag_mean = np.median(mags)
         mag_std = np.std(mags)
         f_out.write('%s  %.1f  %.2f\n'%(sacdir,mag_mean,mag_std))
@@ -181,6 +180,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
 
     odf.to_csv(output_csv, index = False)
     print("elapsed time: %.2f"%(time2-time1))
+
+    print("files with error: ", error_count)
 
 
 
