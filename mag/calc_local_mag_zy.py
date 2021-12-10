@@ -102,16 +102,16 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             try:
                 ste.detrend('demean')
                 ste.detrend('linear')
-                ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
+                ste.filter
+                datatre = ste[0].data
+                stn.detrend('demean')
+                stn.detrend('linear')
+                stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
+                datatrn = stn[0].data(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
             except:
                 print("Error with the .wa file")
             #print(ste[0].data)
 
-            datatre = ste[0].data
-            stn.detrend('demean')
-            stn.detrend('linear')
-            stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
-            datatrn = stn[0].data
             #print(ste[0].data)
             if station_file:
                 _df = pd.DataFrame(data = {'ID': [int(sacdir)]})
