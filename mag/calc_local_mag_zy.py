@@ -90,7 +90,12 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             efile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chane + "*SAC*wa"))
             nfile = glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*" + chann + "*SAC*wa"))
 
-            ste = read(efile[0])
+            try:
+                ste = read(efile[0])
+                stn = read(nfile[0])
+            except:
+                ste = read(efile)
+                stn = read(nfile)
             ste.detrend('demean')
             ste.detrend('linear')
             ste.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
@@ -98,7 +103,6 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
             print(ste[0].data)
 
             datatre = ste[0].data
-            stn = read(nfile[0])
             stn.detrend('demean')
             stn.detrend('linear')
             stn.filter(type="bandpass", freqmin=0.2, freqmax=20.0, zerophase=True)
