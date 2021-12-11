@@ -186,6 +186,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
     print("elapsed time: %.2f"%(time2-time1))
 
     print("files with error: ", error_count)
+    print(error_list)
 
 
 
