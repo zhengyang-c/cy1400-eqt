@@ -45,6 +45,7 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
     f_out = open(output_txt,'w')
 
     error_count = 0
+    error_list = []
 
     odf = pd.DataFrame()
     _c = 0
@@ -68,9 +69,10 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
         #         snr_df=snr_df.append(pd1,ignore_index=True)
 
         mags = []
+
         for sta in stas:
             s = ""
-            for sacfile in glob.glob(basedir+'/'+sacdir+'/*'+sta+'*SAC'):
+            for sacfile in glob.glob(os.path.join(basedir, sacdir, "*" + sta + "*SAC")):
 
                 print(sacfile)
                 chan_tmp = sacfile.split('/')[-1].split('.')[2]
@@ -168,6 +170,8 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 mags.append(mag)
             except:
                 print('May not have some headers in sac file %s'%(efile))
+
+                error_list.append(efile)
 
                 error_count += 1
             #mag_mean = np.mean(mags)
