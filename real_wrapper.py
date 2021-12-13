@@ -256,36 +256,36 @@ def call_REAL(params, paths, date_info):
 	)
 
 	call_string += " -R"
-	for k in params["R_args"]:
-		if (k == "gridsearch_centre_lon" or k == "gridsearch_centre_lat") and not params["R_args"]["gridsearch_centre_lon"]:
+	for k in ["gridsearch_horizontal_range_deg", "gridsearch_vertical_range_km", "gridsearch_horizontal_cellsize_deg", "gridsearch_vertical_cellsize_km",]:
+		if (k == "gridsearch_centre_lon" or k == "gridsearch_centre_lat") and not params["gridsearch_centre_lon"]:
 			break
 		else:
-			call_string += "{:.2f}/".format(params["R_args"][k])
+			call_string += "{:.2f}/".format(params[k])
 
 		
 	call_string += " -G"
-	for k in params["G_args"]:
-		call_string += "{:.2f}/".format(params["G_args"][k])
+	for k in ["traveltime_horizontal_range_deg", "traveltime_vertical_range_km", "traveltime_horizontal_cellsize_deg", "traveltime_vertical_cellsize_km"]:
+		call_string += "{:.2f}/".format(params[k])
 	
 	call_string += " -V"
-	for k in params["V_args"]:
-		if not params["V_args"]["consider_station_elevation"] and k == "consider_station_elevation":
+	for k in ["average_p_velocity_kms", "average_s_velocity_kms", "consider_station_elevation", "shallow_p_velocity_kms", "shallow_s_velocity_kms"]:
+		if not params["consider_station_elevation"] and k == "consider_station_elevation":
 			break
 		else:
-			call_string += "{:.2f}/".format(params["V_args"][k])
+			call_string += "{:.2f}/".format(params[k])
 
 	call_string += " -S{:n}/{:n}/{:n}/{:n}/{}/{}/{}/{}/{}/{}/{}".format(
-		params["S_args"]["n_p_picks"],
-		params["S_args"]["n_s_picks"],
-		params["S_args"]["n_total_picks"],
-		params["S_args"]["n_both_ps_picks"],
-		params["S_args"]["stdev_residual_threshold_seconds"],
-		params["S_args"]["p-s_minimum_separation_seconds"],
-		params["S_args"]["arrival_time_window_scaling"],
-		params["S_args"]["remove_initiating_picks_window_scaling"],
-		params["S_args"]["distance_scaling"],
-		params["S_args"]["std_tolerance_factor"],
-		params["S_args"]["ires"],
+		params["n_p_picks"],
+		params["n_s_picks"],
+		params["n_total_picks"],
+		params["n_both_ps_picks"],
+		params["stdev_residual_threshold_seconds"],
+		params["p-s_minimum_separation_seconds"],
+		params["arrival_time_window_scaling"],
+		params["remove_initiating_picks_window_scaling"],
+		params["distance_scaling"],
+		params["std_tolerance_factor"],
+		params["ires"],
 	)
 
 	call_string += " {} {} {}".format(
