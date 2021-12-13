@@ -84,8 +84,11 @@ def generate_job():
 		"binary_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench/blank/REAL/REAL", # use absolute path for this
 		"station_file_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat",
 		"tt_table_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt",
-		"pick_dir_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick/20200102" ,
+
+		"pick_dir_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
+
 		"test_bench_folder": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench",
+
 		"day_list_path ": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/REAL/test_filelist.txt",
 	}
 
