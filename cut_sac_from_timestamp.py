@@ -42,11 +42,11 @@ Outputs:
 
 
 def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, eqt_to_event = False, eqt_to_sac = False, write = False):
-	if not eqt_to_event:
-		eqt_df = pd.read_csv(output_csv)
+	if eqt_to_event or write:
+		eqt_df = pd.read_csv(input_csv)
 	
 	else:
-		eqt_df = pd.read_csv(input_csv)
+		eqt_df = pd.read_csv(output_csv)
 
 	eqt_df["event_start_time"] = pd.to_datetime(eqt_df["event_start_time"])
 	eqt_df["p_arrival_time"] = pd.to_datetime(eqt_df["p_arrival_time"])
@@ -211,7 +211,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					p_diff,
 					s_diff,
 					))#
-				header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {}\\nwh\\nq\\n' | sac\n".format(
+				header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {:.5f} evlo {:.5f} evdp {:.5f}\\nwh\\nq\\n' | sac\n".format(
 					os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp),
 					event_date_string, 
 					event_lat, 
