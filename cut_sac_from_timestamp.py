@@ -42,7 +42,7 @@ Outputs:
 
 
 def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, eqt_to_event = False, eqt_to_sac = False, write = False):
-	if eqt_to_event or write:
+	if eqt_to_event:
 		eqt_df = pd.read_csv(input_csv)
 	
 	else:
