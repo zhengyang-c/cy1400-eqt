@@ -211,7 +211,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					p_diff,
 					s_diff,
 					))#
-				header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {} stla {} stlo {}\\nwh\\nq\\n' | sac\n".format(
+				header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {}\\nwh\\nq\\n' | sac\n".format(
 					os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp),
 					event_date_string, 
 					event_lat, 
