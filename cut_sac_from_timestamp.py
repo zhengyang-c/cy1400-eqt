@@ -89,15 +89,11 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	cut_file = os.path.join(output_folder, "cut.sh")
 	header_file = os.path.join(output_folder, "header.sh")
 
-
-
-	s_df = pd.read_csv(sac_csv)
-
-	if ("kzdate" in s_df.columns) and ("kztime" in s_df.columns):
-		s_df = s_df.dropna(subset=["kzdate", "kztime"])
-
-
 	if eqt_to_sac:
+		s_df = pd.read_csv(sac_csv)
+
+		if ("kzdate" in s_df.columns) and ("kztime" in s_df.columns):
+			s_df = s_df.dropna(subset=["kzdate", "kztime"])
 
 		eqt_df.drop(['sac_start_time'], axis = 1)
 
