@@ -57,6 +57,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 		phase_dict = json.load(f)
 	
 	real_df = pd.read_csv(real_csv)
+	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
 	if eqt_to_event:
 
@@ -151,6 +152,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			pid = str(int(row.ID)).zfill(6)
 			event_folder = os.path.join(output_folder, pid)
 
+			event_date_string = datetime.datetime.strftime(row["timestamp"], "%Y %j %H %M %S %f")[:-3] # drop the last 3 zeros
+			event_lat, event_lon, event_depth = row["LAT"],row["LON"],row["DEPTH"]
+
 			if not os.path.exists(event_folder):
 				os.makedirs(event_folder)
 
@@ -211,6 +215,14 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					p_diff,
 					s_diff,
 					))#
+				header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {} evlo {} evdp {} stla {} stlo {}\\nwh\\nq\\n' | sac\n".format(
+					os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp),
+					event_date_string, 
+					event_lat, 
+					event_lon, 
+					event_depth, )
+
+				header_str += "printf 'r {}\\nwh\\nq\\n' | sac\n".format(os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp)) # this is for calculating DIST etc
 
 		with open(header_file, 'w') as f:
 			f.write(header_str)
