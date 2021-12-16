@@ -340,9 +340,9 @@ def df_searcher(df, _station_dict, _ts, ):
 
 if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
-	ap.add_argument("eqt_csv", help = "EQT outputs (filtered the way you want it)")
 	ap.add_argument("real_csv", help = "Collated from collect_latlon. Only has event information. Used to iterate over IDs.")
 	ap.add_argument("output_folder", help = "Folder to create new event archive inside.")
+	ap.add_argument("-eqt_csv", help = "EQT outputs (filtered the way you want it)")
 	ap.add_argument("-rj", "--real_json", help = "Collated from collect_latlon, has phase and event information.")
 	ap.add_argument("-oc", "--output_csv", help = "Patched EQT output csv with source file paths and event ID")
 	ap.add_argument("-oj", "--output_json", help = "Patched json with timestamps for arrival times")
