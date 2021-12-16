@@ -154,6 +154,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			event_date_string = datetime.datetime.strftime(row["timestamp"], "%Y %j %H %M %S %f")[:-3] # drop the last 3 zeros
 			event_lat, event_lon, event_depth = row["LAT"],row["LON"],row["DEPTH"]
 
+			print(row["DEPTH"])
+
 			if not os.path.exists(event_folder):
 				os.makedirs(event_folder)
 
@@ -161,17 +163,12 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				sta = _row.station
 				event_dt = _row.event_start_time
 
-				print("event dt",event_dt)
-				print("sac start time", _row.sac_start_time)
-				print("index", _index)
-
-
-
+				# print("event dt",event_dt)
+				# print("sac start time", _row.sac_start_time)
+				# print("index", _index)
 				year = (datetime.datetime.strftime(event_dt, "%Y"))
 				jday = (datetime.datetime.strftime(event_dt, "%j"))
 				year_day = year + "."+ jday # need string representation
-
-				#_df = (sac_df[(sac_df.station == sta) & (sac_df.year == int(year)) & (sac_df.jday == int(jday))])
 
 				# load routine
 				#
