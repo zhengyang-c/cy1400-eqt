@@ -136,6 +136,12 @@ def generate_job(job_name):
 
 	# save the job info dictionaries as json files later
 
+	# each job will handle multiple days in a linear sequence i.e. put many different REAL calls in a sequence
+	# in principle you could parallelise everything but eh 
+	#
+	#
+	#
+
 	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name)):
 		os.makedirs(os.path.join(paths["pbs_folder"], job_name))
 
@@ -146,15 +152,18 @@ def generate_job(job_name):
 			_params[k] = expt_info[k]
 
 		print(expt_info)
-		_date_info = {
-			"year":"2020",
-			"month":"01",
-			"day":"02",
-			"date_str":"20200102",
-		}
+		# _date_info = {
+		# 	"year":"2020",
+		# 	"month":"01",
+		# 	"day":"02",
+		# 	"date_str":"20200102",
+		# }
 
-		test_fn_call = (call_REAL(_params, paths, _date_info))
-		print(test_fn_call)
+		day_dict_list = generate_ymd(paths["day_list_path"])
+
+		for d in day_dict_list:
+			test_fn_call = (call_REAL(_params, paths, d))
+			print(test_fn_call)
 
 
 	# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
@@ -190,7 +199,6 @@ def generate_ymd(day_list_path):
 
 	return file_dict_list
 
-	
 
 def pbs_writer(n_nodes, job_name,  n_cores = 4):
 
@@ -213,11 +221,11 @@ def script_job_writer(job_name, index, real_call, paths):
 	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, index)):
 		os.makedirs(os.path.join(paths["pbs_folder"], job_name, index))
 
-	with open(output_script, "w") as f:
+	with open(output_script, "a") as f:
 		# cp REAL binary into this folder
 		# think it just depends on the directory it's calling from? 
 		# f.write("cp {} .\n".format(paths["binary_path"]))
-		f.write("{} > log_{}.txt".format(real_call, index))
+		f.write("{} >> log_{}.txt".format(real_call, index))
 		# call REAL
 
 
