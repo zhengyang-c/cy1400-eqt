@@ -282,5 +282,9 @@ def call_REAL(params, paths, date_info):
 	return call_string
 
 if __name__ == "__main__":
-	generate_job()
+	ap = argparse.ArgumentParser()
+	ap.add_argument("job_name")
+
+	args = ap.parse_args()
+	generate_job(args.job_name)
 
