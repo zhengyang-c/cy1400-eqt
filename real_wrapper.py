@@ -222,8 +222,8 @@ def pbs_writer(n_nodes, job_name,  n_cores = 4):
 def script_job_writer(job_name, index, real_call, paths):
 	output_script = os.path.join(paths["pbs_folder"], job_name, str(index), "{}.sh".format(index))
 
-	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, index)):
-		os.makedirs(os.path.join(paths["pbs_folder"], job_name, index))
+	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, str(index))):
+		os.makedirs(os.path.join(paths["pbs_folder"], job_name, str(index)))
 
 	with open(output_script, "a") as f:
 		# cp REAL binary into this folder
