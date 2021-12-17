@@ -5,7 +5,7 @@ from subprocess import check_output
 import shutil
 
 
-def generate_job():
+def generate_job(job_name):
 
 	# will have to construct the function call from scratch
 
@@ -70,6 +70,7 @@ def generate_job():
 
 		# nxd, still don't understand, probably some magic number for remove impossible events that are too far from the stations
 		# GCarc0
+		# cold try varying this probably
 		"distance_scaling": 0.5,
 		"std_tolerance_factor": 4,
 		# used for synthetic resolution analysis
@@ -85,11 +86,12 @@ def generate_job():
 		"station_file_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat",
 		"tt_table_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt",
 
-		"pick_dir_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
+		"pick_dir_path": "/home/zchoo/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scriptsg001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
 
-		"test_bench_folder": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench",
 
 		"day_list_path ": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/REAL/test_filelist.txt",
+		"output_log_file": "",
+		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts"
 	}
 
 	
@@ -134,6 +136,8 @@ def generate_job():
 
 	# save the job info dictionaries as json files later
 
+	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name)):
+		os.makedirs(os.path.join(paths["pbs_folder"], job_name))
 
 	for expt_info in job_info_list:
 		_params = default_params
@@ -149,20 +153,8 @@ def generate_job():
 			"date_str":"20200102",
 		}
 
-
 		test_fn_call = (call_REAL(_params, paths, _date_info))
-
-		output = check_output(test_fn_call.split(" "))
-
-		print(output)
-
-
-	if not os.path.exists(paths["test_bench_folder"]):
-		pass
-		#os.makedirs(paths["test_bench_folder"])
-
-	# construct function call
-
+		print(test_fn_call)
 
 
 	# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
@@ -200,54 +192,37 @@ def generate_ymd(day_list_path):
 
 	
 
-def pbs_writer():
-	pass
-
-def one_job():
-	pass
-
-
-"""
-def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute = False, yes_execute = False, use_gpu = False):
+def pbs_writer(n_nodes, job_name,  n_cores = 4):
 
 	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
 
+	project_code = 'eos_shjwei'
+
 	with open(output_pbs, "w") as f:
 		f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		if use_gpu:
-			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q gpu8\n#PBS -l select={}:ncpus=1:mpiprocs=32:ngpus=1\n".format(job_name, project_code, n_nodes))
-		elif no_execute and not use_gpu:
-			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=2gb -l walltime=1:00:00\n".format(job_name, project_code, n_nodes))
-		
-		elif (yes_execute or not no_execute) and not use_gpu:
-			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes))
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes, n_cores))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
-		if use_gpu:
-			f.write("module load cuda/10.1\nexport HDF5_USE_FILE_LOCKING='FALSE'\n")
-		f.write("module load python/3/intel/2020\nmodule load sac\ncd $PBS_O_WORKDIR\nnprocs=`cat $PBS_NODEFILE|wc -l`\ninputfile=/home/zchoong001/cy1400/cy1400-eqt/node_distributor.py\n")
-		f.write("encoded_file={}\nmkdir -p log/pbs/{}\nsource activate {}\n".format(output_csv, job_name, env_name))
 
-		if not yes_execute:
-			f.write("python $inputfile -id $PBS_ARRAY_INDEX -decode $encoded_file\n")
+		f.write("cd /home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}\n")
+		f.write("./${{PBS_ARRAY_INDEX}}.sh\n")
 
-		if not no_execute:
-			f.write("/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}.sh >& log/pbs/{0}/$PBS_JOBID.log 2>&1\n".format(job_name))
 
-"""
-def copy_files(target_folder_name, paths):
+def script_job_writer(job_name, index, real_call, paths):
+	output_script = os.path.join(paths["pbs_folder"], job_name, index, "{}.sh".format(index))
 
-	target_folder =  os.path.join(paths["test_bench_folder"], target_folder_name)
+	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, index)):
+		os.makedirs(os.path.join(paths["pbs_folder"], job_name, index))
 
-	if not os.path.exists(target_folder):
-		os.makedirs(target_folder)
-	
-	shutil.copyfile(paths["binary_path"], target_folder)
-	
+	with open(output_script, "w") as f:
+		# cp REAL binary into this folder
+		# think it just depends on the directory it's calling from? 
+		# f.write("cp {} .\n".format(paths["binary_path"]))
+		f.write("{} > log_{}.txt".format(real_call, index))
+		# call REAL
+
 
 def call_REAL(params, paths, date_info):
 	call_string = ""
-
-	# "system("../../bin/REAL -D$D -R$R -G$G -S$S -V$V $station $dir $ttime");"
 
 	call_string += paths["binary_path"]
 
@@ -296,29 +271,8 @@ def call_REAL(params, paths, date_info):
 		os.path.join(paths["pick_dir_path"], date_info["date_str"] ),
 		paths["tt_table_path"]
 		)
-
-
 	return call_string
-
-
 
 if __name__ == "__main__":
 	generate_job()
 
-
-"""
-# -S(np0/ns0/nps0/npsboth0/std0/dtps/nrt[drt/nxd/rsel/ires])
-# -S(np0/ns0/nps0/npsboth0/std0/dtps/nrt[/rsel/ires])
-$S = "3/3/6/3/0.5/0.2/1.5";
-#$S = "5/4/9/2/0.5/0.2/1.5";
-
-$dir = "../../Pick/$year$mon$day";
-$station = "../../Data/station_new.dat";
-$ttime = "../tt_db/ttdb.txt";
-
-#system("REAL -D$D -R$R -G$G -S$S -V$V $station $dir $ttime");
-system("../REAL -D$D -R$R -G$G -S$S -V$V $station $dir $ttime");
-print"REAL -D$D -R$R -G$G -S$S -V$V $station $dir $ttime\n";
-
-
-"""
