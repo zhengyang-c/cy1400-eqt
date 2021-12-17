@@ -85,14 +85,12 @@ def generate_job(job_name):
 		"binary_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench/blank/REAL/REAL", # use absolute path for this
 		"station_file_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat",
 		"tt_table_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt",
-
-		"pick_dir_path": "/home/zchoo/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scriptsg001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
-
-
-		"day_list_path ": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/REAL/test_filelist.txt",
-		"output_log_file": "",
+		"pick_dir_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
+		"day_list_path ": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench/filelist.txt",
 		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts"
 	}
+
+	print(paths)
 
 	
 
