@@ -17,7 +17,7 @@ def generate_job(job_name):
 	default_params = {
 		"lat_centre": 4.75,
 		# -R
-		"gridsearch_horizontal_range_deg": 1 ,
+		"gridsearch_horizontal_range_deg": 3 ,
 		"gridsearch_vertical_range_km": 60,
 		"gridsearch_horizontal_cellsize_deg" : 0.05,
 		"gridsearch_vertical_cellsize_km" : 2,
@@ -229,7 +229,7 @@ def script_job_writer(job_name, index, real_call, paths):
 		# cp REAL binary into this folder
 		# think it just depends on the directory it's calling from? 
 		# f.write("cp {} .\n".format(paths["binary_path"]))
-		f.write("{} >> log_{}.txt".format(real_call, index))
+		f.write("{} >> log_{}.txt\n".format(real_call, index))
 		# call REAL
 
 
