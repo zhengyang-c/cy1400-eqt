@@ -159,9 +159,15 @@ def generate_job(job_name):
 
 		day_dict_list = generate_ymd(paths["day_list_path"])
 
-		for d in day_dict_list:
-			test_fn_call = (call_REAL(_params, paths, d))
-			print(test_fn_call)
+		for c, d in enumerate(day_dict_list):
+			real_call = (call_REAL(_params, paths, d))
+
+			script_job_writer(job_name, c, real_call, paths)
+
+		
+		pbs_string = pbs_writer(len(day_dict_list), job_name)
+
+		print(pbs_string)
 
 
 	# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
@@ -242,6 +248,7 @@ def call_REAL(params, paths, date_info):
 	call_string += " -R"
 	for k in ["gridsearch_horizontal_range_deg", "gridsearch_vertical_range_km", "gridsearch_horizontal_cellsize_deg", "gridsearch_vertical_cellsize_km",]:
 		if (k == "gridsearch_centre_lon" or k == "gridsearch_centre_lat") and not params["gridsearch_centre_lon"]:
+			call_string = call_string[:-1]
 			break
 		else:
 			call_string += "{:.2f}/".format(params[k])
@@ -254,6 +261,8 @@ def call_REAL(params, paths, date_info):
 	call_string += " -V"
 	for k in ["average_p_velocity_kms", "average_s_velocity_kms", "consider_station_elevation", "shallow_p_velocity_kms", "shallow_s_velocity_kms"]:
 		if not params["consider_station_elevation"] and k == "consider_station_elevation":
+
+			call_string = call_string[:-1]
 			break
 		else:
 			call_string += "{:.2f}/".format(params[k])
