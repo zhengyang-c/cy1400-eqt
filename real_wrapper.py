@@ -143,7 +143,7 @@ def generate_job(job_name):
 	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name)):
 		os.makedirs(os.path.join(paths["pbs_folder"], job_name))
 
-	for expt_info in job_info_list:
+	for c, expt_info in enumerate(job_info_list):
 		_params = default_params
 
 		for k in expt_info:
@@ -161,7 +161,7 @@ def generate_job(job_name):
 
 		real_calls = []
 
-		for c, d in enumerate(day_dict_list):
+		for d in enumerate(day_dict_list):
 			real_call = (call_REAL(_params, paths, d))
 			real_calls.append(real_call)
 
