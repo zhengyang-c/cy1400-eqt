@@ -166,11 +166,9 @@ def generate_job(job_name):
 			real_calls.append(real_call)
 
 		script_job_writer(job_name, c, real_calls, paths)
-
 		
 		pbs_string = pbs_writer(len(day_dict_list), job_name)
 
-		print(pbs_string)
 
 
 	# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
@@ -223,6 +221,8 @@ def pbs_writer(n_nodes, job_name,  n_cores = 4):
 
 def script_job_writer(job_name, index, real_call, paths):
 	output_script = os.path.join(paths["pbs_folder"], job_name, str(index), "run.sh".format(index))
+
+	print(output_script)
 
 	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, str(index))):
 		os.makedirs(os.path.join(paths["pbs_folder"], job_name, str(index)))
