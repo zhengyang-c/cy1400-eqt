@@ -1,3 +1,4 @@
+import time
 import argparse
 import itertools
 import os
@@ -236,6 +237,9 @@ def script_job_writer(job_name, index, real_call, paths):
 		# f.write("cp {} .\n".format(paths["binary_path"]))
 			f.write("{} >> log_{}.txt\n".format(call, index))
 		# call REAL
+
+	time.sleep(1)
+	os.chmod(output_script, 0o775)
 
 
 def call_REAL(params, paths, date_info):
