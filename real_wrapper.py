@@ -159,10 +159,13 @@ def generate_job(job_name):
 
 		day_dict_list = generate_ymd(paths["day_list_path"])
 
+		real_calls = []
+
 		for c, d in enumerate(day_dict_list):
 			real_call = (call_REAL(_params, paths, d))
+			real_calls.append(real_call)
 
-			script_job_writer(job_name, c, real_call, paths)
+		script_job_writer(job_name, c, real_calls, paths)
 
 		
 		pbs_string = pbs_writer(len(day_dict_list), job_name)
@@ -215,21 +218,23 @@ def pbs_writer(n_nodes, job_name,  n_cores = 4):
 		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes, n_cores))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 
-		f.write("cd /home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}\n")
-		f.write("./${{PBS_ARRAY_INDEX}}.sh\n")
+		f.write("/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n")
 
 
 def script_job_writer(job_name, index, real_call, paths):
-	output_script = os.path.join(paths["pbs_folder"], job_name, str(index), "{}.sh".format(index))
+	output_script = os.path.join(paths["pbs_folder"], job_name, str(index), "run.sh".format(index))
 
 	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, str(index))):
 		os.makedirs(os.path.join(paths["pbs_folder"], job_name, str(index)))
 
 	with open(output_script, "a") as f:
+		f.write("cd /home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}/{}\n".format(job_name, index))
+
+		for call in real_call:
 		# cp REAL binary into this folder
 		# think it just depends on the directory it's calling from? 
 		# f.write("cp {} .\n".format(paths["binary_path"]))
-		f.write("{} >> log_{}.txt\n".format(real_call, index))
+			f.write("{} >> log_{}.txt\n".format(call, index))
 		# call REAL
 
 
