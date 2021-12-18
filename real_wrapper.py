@@ -161,7 +161,7 @@ def generate_job(job_name):
 
 		real_calls = []
 
-		for d in enumerate(day_dict_list):
+		for d in (day_dict_list):
 			real_call = (call_REAL(_params, paths, d))
 			real_calls.append(real_call)
 
