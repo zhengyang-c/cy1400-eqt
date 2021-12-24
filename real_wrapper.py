@@ -241,7 +241,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1):
 		f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
 
-def script_job_writer(job_name, index, real_call, paths):
+def script_job_writer(job_name, index, real_calls, paths):
 	output_script = os.path.join(paths["pbs_folder"], "runtime_scripts", job_name, str(index), "run.sh".format(index))
 
 	print(output_script)
@@ -255,10 +255,12 @@ def script_job_writer(job_name, index, real_call, paths):
 
 	write_str = "OMP_NUM_THREADS=32\ncd {}/runtime_scripts/{}/{}\n".format(paths["pbs_folder"], job_name, index)
 
+	for real_call in real_calls:
+
 	# cp REAL binary into this folder
 	# think it just depends on the directory it's calling from? 
 	# f.write("cp {} .\n".format(paths["binary_path"]))
-	write_str += "{} >> log_{}.txt 2>&1\n".format(real_call, index)
+		write_str += "{} >> log_{}.txt 2>&1\n".format(real_call, index)
 	# call REAL
 
 	with open(output_script, "w") as f:
