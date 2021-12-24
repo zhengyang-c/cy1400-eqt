@@ -103,7 +103,7 @@ run_parallel = False,
 	if not day_list_path:
 		paths["day_list_path"] = "/home/zchoong001/cy1400/cy1400-eqt/REAL/all_redo/filelist.txt"
 	if not pbs_folder:
-		paths["pbs_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts"
+		paths["pbs_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs"
 	if not output_folder:
 		paths["output_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/log"
 
