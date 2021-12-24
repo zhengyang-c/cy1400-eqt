@@ -6,7 +6,16 @@ from subprocess import check_output
 import shutil
 
 
-def generate_job(job_name):
+def generate_job(job_name,
+real_path = "",
+station_file_path = "",
+tt_path = "",
+pick_dir_path = "",
+day_list_path = "",
+pbs_folder = "",
+output_folder = "",
+run_parallel = False,
+):
 
 	# will have to construct the function call from scratch
 
@@ -18,10 +27,10 @@ def generate_job(job_name):
 	default_params = {
 		"lat_centre": 4.75,
 		# -R
-		"gridsearch_horizontal_range_deg": 3 ,
+		"gridsearch_horizontal_range_deg": 2 ,
 		"gridsearch_vertical_range_km": 60,
-		"gridsearch_horizontal_cellsize_deg" : 0.05,
-		"gridsearch_vertical_cellsize_km" : 2,
+		"gridsearch_horizontal_cellsize_deg" : 0.01,
+		"gridsearch_vertical_cellsize_km" : 5,
 
 		"minimum_event_time_gap_seconds" : 3,
 
@@ -79,17 +88,24 @@ def generate_job(job_name):
 		
 
 	}
+	paths = {}
 
-	## copy the REAL 
+	# default options because i am very lazy
 
-	paths = {
-		"binary_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench/blank/REAL/REAL", # use absolute path for this
-		"station_file_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat",
-		"tt_table_path": "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt",
-		"pick_dir_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/7jul_redojan/Pick" ,
-		"day_list_path": "/home/zchoong001/cy1400/cy1400-eqt/REAL/testbench/filelist.txt",
-		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts"
-	}
+	if not real_path:
+		paths["binary_path"] = "/home/zchoong001/cy1400/cy1400-eqt/REAL/bin/REAL"
+	if not station_file_path:
+		paths["station_file_path"] = "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat" 
+	if not tt_path:
+		paths["tt_table_path"] = "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt"
+	if not pick_dir_path:
+		paths["pick_dir_path"]	 = "/home/zchoong001/cy1400/cy1400-eqt/REAL/all_redo/Pick"
+	if not day_list_path:
+		paths["day_list_path"] = "/home/zchoong001/cy1400/cy1400-eqt/REAL/all_redo/filelist.txt"
+	if not pbs_folder:
+		paths["pbs_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts"
+	if not output_folder:
+		paths["output_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/log"
 
 	print(paths)
 
@@ -108,80 +124,85 @@ def generate_job(job_name):
 
 	# this implies that i could have to qsub N x M jobs
 
-	vary_params = {
-		"gridsearch_horizontal_cellsize_deg": [0.05, 0.1, 0.2],
-		#"gridsearch_horizontal_range_deg": [1, 1.5, 2],
-	}
+	if not run_parallel:
 
-	# my own config:
-	#################
-	params = default_params
-	params["gridsearch_vertical_cellsize_km"] = 5
+		vary_params = {
+			"gridsearch_horizontal_cellsize_deg": [0.1, 0.1, 0.1],
+			#"gridsearch_horizontal_range_deg": [1, 1.5, 2],
+		}
 
-	## generate all the test bench folders
-	
-	job_info_list = []
+		# my own config:
+		#################
+		params = default_params
+		params["gridsearch_vertical_cellsize_km"] = 5
 
-	for v in itertools.product(*[vary_params[k] for k in vary_params]):
-		print(v)
-
-		change_key_list = list(vary_params.keys())
-
-		_job_dict = {}
-		for c, k in enumerate(change_key_list):
-			_job_dict[k] = v[c]
-
-		job_info_list.append(_job_dict)
-
-	# save the job info dictionaries as json files later
-
-	# each job will handle multiple days in a linear sequence i.e. put many different REAL calls in a sequence
-	# in principle you could parallelise everything but eh 
-	#
-	#
-	#
-
-	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name)):
-		os.makedirs(os.path.join(paths["pbs_folder"], job_name))
-
-	for c, expt_info in enumerate(job_info_list):
-		_params = default_params
-
-		for k in expt_info:
-			_params[k] = expt_info[k]
-
-		print(expt_info)
-		# _date_info = {
-		# 	"year":"2020",
-		# 	"month":"01",
-		# 	"day":"02",
-		# 	"date_str":"20200102",
-		# }
-
-		day_dict_list = generate_ymd(paths["day_list_path"])
-
-		real_calls = []
-
-		for d in (day_dict_list):
-			real_call = (call_REAL(_params, paths, d))
-			real_calls.append(real_call)
-
-		script_job_writer(job_name, c, real_calls, paths)
+		## generate all the test bench folders
 		
-		pbs_string = pbs_writer(len(day_dict_list), job_name)
+		job_info_list = []
+
+		for v in itertools.product(*[vary_params[k] for k in vary_params]):
+			print(v)
+
+			change_key_list = list(vary_params.keys())
+
+			_job_dict = {}
+			for c, k in enumerate(change_key_list):
+				_job_dict[k] = v[c]
+
+			job_info_list.append(_job_dict)
+
+		# save the job info dictionaries as json files later
+
+		# each job will handle multiple days in a linear sequence i.e. put many different REAL calls in a sequence
+		# in principle you could parallelise everything but eh 
+
+		if not os.path.exists(os.path.join(paths["pbs_folder"], job_name)):
+			os.makedirs(os.path.join(paths["pbs_folder"], job_name))
+
+		for c, expt_info in enumerate(job_info_list):
+			_params = default_params
+
+			for k in expt_info:
+				_params[k] = expt_info[k]
+
+			print(expt_info)
+			# _date_info = {
+			# 	"year":"2020",
+			# 	"month":"01",
+			# 	"day":"02",
+			# 	"date_str":"20200102",
+			# }
+
+			day_dict_list = generate_ymd(paths["day_list_path"])
+
+			real_calls = []
+
+			for d in (day_dict_list):
+				real_call = (call_REAL(_params, paths, d, job_name, c))
+				real_calls.append(real_call)
+
+			script_job_writer(job_name, c, real_calls, paths)
+			
+			pbs_string = pbs_writer(len(day_dict_list), job_name, paths)
+
+	else:
+
+		pass
+
+		# split file list
 
 
 
-	# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
-	# GCarc
+		# i think GCarc0 is geographical distance in degrees from the initiating event to the station?
+		# GCarc
 
-	# then call REAL (skipping the perl script which uses YMD)
+		# then call REAL (skipping the perl script which uses YMD)
 
-	# do all the file copying within the python script (i.e. replace the bash script)
-	
-	# to construct the test bench you'll have to reproduce the folder structure (?) if you're just doing one day, it doesn't really matter
+		# do all the file copying within the python script (i.e. replace the bash script)
+		
+		# to construct the test bench you'll have to reproduce the folder structure (?) if you're just doing one day, it doesn't really matter
 
-	# but then for test bench you do obviouly want to find the number of events in the whole catalogue i.e. need to reproduce folder structure somehow
+		# but then for test bench you do obviouly want to find the number of events in the whole catalogue i.e. need to reproduce folder structure somehow
 
 def generate_ymd(day_list_path):
 
@@ -206,9 +227,9 @@ def generate_ymd(day_list_path):
 	return file_dict_list
 
 
-def pbs_writer(n_nodes, job_name,  n_cores = 4):
+def pbs_writer(n_nodes, job_name, paths, n_cores = 1):
 
-	output_pbs = os.path.join("/home/zchoong001/cy1400/cy1400-eqt/pbs", job_name +".pbs")
+	output_pbs = os.path.join(paths["pbs_folder"], job_name +".pbs")
 
 	project_code = 'eos_shjwei'
 
@@ -217,33 +238,38 @@ def pbs_writer(n_nodes, job_name,  n_cores = 4):
 		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes, n_cores))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 
-		f.write("/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n")
+		f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
 
 def script_job_writer(job_name, index, real_call, paths):
-	output_script = os.path.join(paths["pbs_folder"], job_name, str(index), "run.sh".format(index))
+	output_script = os.path.join(paths["pbs_folder"], "runtime_scripts", job_name, str(index), "run.sh".format(index))
 
 	print(output_script)
 
-	if not os.path.exists(os.path.join(paths["pbs_folder"], job_name, str(index))):
-		os.makedirs(os.path.join(paths["pbs_folder"], job_name, str(index)))
+	if not os.path.exists(os.path.join(paths["pbs_folder"], "runtime_scripts", job_name, str(index))):
+		os.makedirs(os.path.join(paths["pbs_folder"], "runtime_scripts", job_name, str(index)))
 
-	with open(output_script, "a") as f:
-		f.write("cd /home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts/{}/{}\n".format(job_name, index))
+	# need to create a folder for every day ......... god
 
-		for call in real_call:
-		# cp REAL binary into this folder
-		# think it just depends on the directory it's calling from? 
-		# f.write("cp {} .\n".format(paths["binary_path"]))
-			f.write("{} >> log_{}.txt\n".format(call, index))
-		# call REAL
+	# or... is there another way to use python to save in between
+
+	write_str = "OMP_NUM_THREADS=32\ncd {}/runtime_scripts/{}/{}\n".format(paths["pbs_folder"], job_name, index)
+
+	# cp REAL binary into this folder
+	# think it just depends on the directory it's calling from? 
+	# f.write("cp {} .\n".format(paths["binary_path"]))
+	write_str += "{} >> log_{}.txt 2>&1\n".format(real_call, index)
+	# call REAL
+
+	with open(output_script, "w") as f:
+		f.write(write_str)
 
 	time.sleep(1)
 	os.chmod(output_script, 0o775)
 
 
-def call_REAL(params, paths, date_info):
-	call_string = ""
+def call_REAL(params, paths, date_info, job_name, index):
+	call_string = "time "
 
 	call_string += paths["binary_path"]
 
@@ -290,10 +316,15 @@ def call_REAL(params, paths, date_info):
 		params["ires"],
 	)
 
-	call_string += " {} {} {}".format(
+	output_dir = os.path.join(paths["output_folder"], job_name, str(index), date_info["date_str"])
+	if not os.path.exists(output_dir):
+		os.makedirs(output_dir)
+
+	call_string += " {} {} {} {}".format(
 		paths["station_file_path"], 
 		os.path.join(paths["pick_dir_path"], date_info["date_str"] ),
-		paths["tt_table_path"]
+		paths["tt_table_path"],
+		output_dir,
 		)
 	return call_string
 
@@ -301,6 +332,23 @@ if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
 	ap.add_argument("job_name")
 
+	ap.add_argument("-r", "--real", help = "Path to REAL binary")
+	ap.add_argument("-sfp", "--station_file_path",)
+	ap.add_argument("-tt", "--tt_path")
+	ap.add_argument("-pd", "--pick_dir_path")
+	ap.add_argument("-dlp", "--day_list_path")
+	ap.add_argument("-pbs", "--pbs_folder")
+	ap.add_argument("-o", "--output_folder")
+	ap.add_argument("-p", "--parallel", help = "Split file list across multiple jobs, without varying any parameters", action = "store_true")
+
 	args = ap.parse_args()
-	generate_job(args.job_name)
+	generate_job(args.job_name, 
+	real_path = args.real, 
+	station_file_path = args.station_file_path,
+	tt_path = args.tt_path,
+	pick_dir_path = args.pick_dir_path,
+	day_list_path = args.day_list_path,
+	pbs_folder = args.pbs_folder,
+	output_folder = args.output_folder,
+	)
 

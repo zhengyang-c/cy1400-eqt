@@ -211,7 +211,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					))#
 
 				if station_file:
-					print(event_depth)
 					header_str += "printf 'r {}\\nch o gmt {}\\nch iztype IO\\nch allt (-1.0 * &1,o)\\nch evla {:.5f} evlo {:.5f} evdp {:.5f} stla {:.5f} stlo {:.5f}\\nwh\\nq\\n' | sac\n".format(
 					os.path.join(output_folder, pid, "{}*{}.{}*SAC").format(sta, year_day, timestamp),
 					event_date_string, 
