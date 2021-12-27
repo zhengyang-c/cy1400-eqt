@@ -260,7 +260,7 @@ def script_job_writer(job_name, index, real_calls, paths):
 	# cp REAL binary into this folder
 	# think it just depends on the directory it's calling from? 
 	# f.write("cp {} .\n".format(paths["binary_path"]))
-		write_str += "{} >> log_{}.txt 2>&1\n".format(real_call, index)
+		write_str += "({}) &> log_{}.txt 2>&1\n".format(real_call, index)
 	# call REAL
 
 	with open(output_script, "w") as f:
