@@ -183,7 +183,7 @@ run_parallel = False,
 
 			script_job_writer(job_name, c, real_calls, paths)
 			
-			pbs_string = pbs_writer(len(day_dict_list), job_name, paths)
+			pbs_string = pbs_writer(len(job_info_list), job_name, paths)
 
 	else:
 
