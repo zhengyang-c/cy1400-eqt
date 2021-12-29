@@ -128,14 +128,14 @@ run_parallel = False,
 	if not run_parallel:
 
 		vary_params = {
-			"gridsearch_horizontal_range_deg": np.arange(0.2, 2.2 ,0.2),
+			"gridsearch_horizontal_cellsize_deg": [0.01, 0.02, 0.05, 0.10, 0.15, 0.20, 0.25, 0.5],
 		}
 
 		# my own config:
 		#################
 		params = default_params
 		params["gridsearch_vertical_cellsize_km"] = 5
-		params["gridsearch_horizontal_cellsize_deg"] = 0.05
+		params["gridsearch_horizontal_range_deg"] = 1
 
 		## generate all the test bench folders
 		
