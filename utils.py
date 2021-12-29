@@ -175,10 +175,21 @@ def parse_station_info(input_file):
 		for line in f:
 			#print(line)
 			try:
-				sta, lon, lat = [x for x in line.strip().split("\t") if x != ""]
+				data = [x for x in line.strip().split("\t") if x != ""]
 			except:
-				sta, lon, lat = [x for x in line.strip().split(" ") if x != ""] 
+				data = [x for x in line.strip().split(" ") if x != ""] 
+
+			sta = data[0]
+			lon = data[1]
+			lat = data[2]
+
+
 			station_info[sta] = {"lon": float(lon), "lat": float(lat)}	
+
+			if len(data) == 4:
+				elv = data[3]
+				station_info[sta]["elv"] = float(elv)
+
 	return station_info
 
 def parse_event_coord(file_name, _format):

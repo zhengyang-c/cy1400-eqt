@@ -1,4 +1,5 @@
 import time
+import numpy as np
 import argparse
 import itertools
 import os
@@ -127,14 +128,14 @@ run_parallel = False,
 	if not run_parallel:
 
 		vary_params = {
-			"gridsearch_horizontal_cellsize_deg": [0.05, 0.1, 0.2],
-			"gridsearch_horizontal_range_deg": [1, 1.5, 2],
+			"gridsearch_horizontal_range_deg": np.arange(0.2, 2.2 ,0.2),
 		}
 
 		# my own config:
 		#################
 		params = default_params
 		params["gridsearch_vertical_cellsize_km"] = 5
+		params["gridsearch_horizontal_cellsize_deg"] = 0.05
 
 		## generate all the test bench folders
 		
@@ -288,7 +289,7 @@ def call_REAL(params, paths, date_info, job_name, index):
 			call_string = call_string[:-1]
 			break
 		else:
-			call_string += "{:.2f}/".format(params[k])
+			call_string += "{:.3f}/".format(params[k])
 
 		
 	call_string += " -G"
