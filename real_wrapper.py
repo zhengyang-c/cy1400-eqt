@@ -128,7 +128,7 @@ run_parallel = False,
 	if not run_parallel:
 
 		vary_params = {
-			"gridsearch_horizontal_cellsize_deg": [0.01, 0.02, 0.05, 0.10, 0.15, 0.20, 0.25, 0.5],
+			"gridsearch_horizontal_cellsize_deg": [0.05],
 		}
 
 		# my own config:
