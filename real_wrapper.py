@@ -200,9 +200,12 @@ do_parallel = False,
 
 		N_WORKERS = 16
 
-		print(chunker_list(real_calls, N_WORKERS))
+		chunked = (chunker_list(real_calls, N_WORKERS))
 
-		
+		for c, chunk in enumerate(chunked):
+			if len(chunk) == 0:
+				continue
+			script_job_writer(job_name, c, chunk, paths)
 
 
 		# generate all REAL calls
