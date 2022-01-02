@@ -195,13 +195,14 @@ do_parallel = False,
 			real_call = (call_REAL(default_params, paths, d, job_name, index = -1))
 			real_calls.append(real_call)
 
-		def chunks(l, n):
-			n = max(1, n)
-			return [l[i:i+n] for i in range(0, len(l), n)]
+		def chunker_list(seq, size):
+			return [seq[i::size] for i in range(size)]
 
 		N_WORKERS = 16
 
-		print(chunks(real_calls, N_WORKERS))
+		print(chunker_list(real_calls, N_WORKERS))
+
+		
 
 
 		# generate all REAL calls
