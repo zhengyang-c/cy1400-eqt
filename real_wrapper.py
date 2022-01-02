@@ -15,7 +15,7 @@ pick_dir_path = "",
 day_list_path = "",
 pbs_folder = "",
 output_folder = "",
-run_parallel = False,
+do_parallel = False,
 ):
 
 	# will have to construct the function call from scratch
@@ -125,7 +125,7 @@ run_parallel = False,
 
 	# this implies that i could have to qsub N x M jobs
 
-	if not run_parallel:
+	if not do_parallel:
 
 		vary_params = {
 			"gridsearch_horizontal_cellsize_deg": [0.05],
@@ -188,9 +188,24 @@ run_parallel = False,
 
 	else:
 
-		pass
+		day_dict_list = generate_ymd(paths["day_list_path"])
+		real_calls = []
 
-		# split file list
+		for d in day_dict_list:
+			real_call = (call_REAL(default_params, paths, d, job_name, index = -1))
+			real_calls.append(real_call)
+
+		def chunks(l, n):
+			n = max(1, n)
+			return (l[i:i+n] for i in range(0, len(l), n))
+
+		N_WORKERS = 16
+
+		print(chunks(real_calls, N_WORKERS))
+
+
+		# generate all REAL calls
+		# then divide into diff jobs depending on some specified number of output files
 
 
 
@@ -266,7 +281,7 @@ def script_job_writer(job_name, index, real_calls, paths):
 	# cp REAL binary into this folder
 	# think it just depends on the directory it's calling from? 
 	# f.write("cp {} .\n".format(paths["binary_path"]))
-		write_str += "({}) &> log_{}.txt 2>&1\n".format(real_call, index)
+		write_str += "({}) &>> log_{}.txt 2>&1\n".format(real_call, index)
 	# call REAL
 
 	with open(output_script, "w") as f:
@@ -276,7 +291,7 @@ def script_job_writer(job_name, index, real_calls, paths):
 	os.chmod(output_script, 0o775)
 
 
-def call_REAL(params, paths, date_info, job_name, index):
+def call_REAL(params, paths, date_info, job_name, index = 0):
 	call_string = "time "
 
 	call_string += paths["binary_path"]
@@ -324,9 +339,13 @@ def call_REAL(params, paths, date_info, job_name, index):
 		params["ires"],
 	)
 
-	output_dir = os.path.join(paths["output_folder"], job_name, str(index), date_info["date_str"])
-	if not os.path.exists(output_dir):
-		os.makedirs(output_dir)
+	if index == -1:
+		output_dir = os.path.join(paths["output_folder"], job_name, date_info["date_str"])
+
+	else:
+		output_dir = os.path.join(paths["output_folder"], job_name, str(index), date_info["date_str"])
+		if not os.path.exists(output_dir):
+			os.makedirs(output_dir)
 
 	call_string += " {} {} {} {}".format(
 		paths["station_file_path"], 
@@ -358,5 +377,6 @@ if __name__ == "__main__":
 	day_list_path = args.day_list_path,
 	pbs_folder = args.pbs_folder,
 	output_folder = args.output_folder,
+	do_parallel = args.parallel,
 	)
 
