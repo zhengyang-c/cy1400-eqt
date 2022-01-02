@@ -206,7 +206,7 @@ do_parallel = False,
 				continue
 			script_job_writer(job_name, c, chunk, paths)
 
-		pbs_writer(len([x for x in chunked if len(x) != 0], job_name, paths))
+		pbs_writer(len([x for x in chunked if len(x) != 0]), job_name, paths)
 
 
 		# generate all REAL calls
