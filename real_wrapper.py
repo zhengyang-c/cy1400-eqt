@@ -127,6 +127,7 @@ do_parallel = False,
 	params = default_params
 	params["gridsearch_vertical_cellsize_km"] = 5
 	params["gridsearch_horizontal_range_deg"] = 1
+	params["gridsearch_horizontal_cellsize_deg"] = 0.05
 
 	if not do_parallel:
 
