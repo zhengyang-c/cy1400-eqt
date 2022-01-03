@@ -124,6 +124,9 @@ do_parallel = False,
 	# exhausting the possible permutations
 
 	# this implies that i could have to qsub N x M jobs
+	params = default_params
+	params["gridsearch_vertical_cellsize_km"] = 5
+	params["gridsearch_horizontal_range_deg"] = 1
 
 	if not do_parallel:
 
@@ -133,9 +136,6 @@ do_parallel = False,
 
 		# my own config:
 		#################
-		params = default_params
-		params["gridsearch_vertical_cellsize_km"] = 5
-		params["gridsearch_horizontal_range_deg"] = 1
 
 		## generate all the test bench folders
 		
@@ -192,7 +192,7 @@ do_parallel = False,
 		real_calls = []
 
 		for d in day_dict_list:
-			real_call = (call_REAL(default_params, paths, d, job_name, index = -1))
+			real_call = (call_REAL(params, paths, d, job_name, index = -1))
 			real_calls.append(real_call)
 
 		def chunker_list(seq, size):
