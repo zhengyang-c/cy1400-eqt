@@ -346,6 +346,8 @@ def call_REAL(params, paths, date_info, job_name, index = 0):
 
 	if index == -1:
 		output_dir = os.path.join(paths["output_folder"], job_name, date_info["date_str"])
+		if not os.path.exists(output_dir):
+			os.makedirs(output_dir)
 
 	else:
 		output_dir = os.path.join(paths["output_folder"], job_name, str(index), date_info["date_str"])

@@ -6,7 +6,7 @@ from pathlib import Path
 import datetime
 import matplotlib.pyplot as plt
 
-def runtime(log_folder, output_csv):
+def runtime(log_folders, output_csv):
 
 	"""
 	add like multiple folder inputs via command line args, then join the outputs in the same dataframe
@@ -20,47 +20,49 @@ def runtime(log_folder, output_csv):
 
 	# log_folder = "imported_figures/gridtest_1227"
 
-	folder_list = [str(p) for p in Path(log_folder).glob("*")]
+	df_list = []
 
-	df = pd.DataFrame()
+	for log_folder in log_folders:
 
-	for f in (folder_list):
+		folder_list = [str(p) for p in Path(log_folder).glob("*")]
 
-		_id = f.split("/")[-1]
-		_script_path = os.path.join(f, "run.sh")
-		_log_path = [str(p) for p in Path(f).glob("*.txt")][0]
+		df = pd.DataFrame()
 
-		with open(_script_path, "r") as _f:
-			contents = _f.read()
-			_contents = [x.strip() for x in contents.split(" ") if '-R' in x][0]
-			print(_contents)
-			_data = _contents[2:].split("/")
+		for f in (folder_list):
 
-			df.at[_id, "horizontal_search_deg"] = float(_data[0])
-			df.at[_id, "vertical_search_km"] = float(_data[1])
-			df.at[_id, "horizontal_cell_deg"] = float(_data[2])
-			df.at[_id, "vertical_cell_km"] = float(_data[3])
+			_id = f.split("/")[-1]
+			_script_path = os.path.join(f, "run.sh")
+			_log_path = [str(p) for p in Path(f).glob("*.txt")][0]
 
+			with open(_script_path, "r") as _f:
+				contents = _f.read()
+				_contents = [x.strip() for x in contents.split(" ") if '-R' in x][0]
+				print(_contents)
+				_data = _contents[2:].split("/")
 
+				df.at[_id, "horizontal_search_deg"] = float(_data[0])
+				df.at[_id, "vertical_search_km"] = float(_data[1])
+				df.at[_id, "horizontal_cell_deg"] = float(_data[2])
+				df.at[_id, "vertical_cell_km"] = float(_data[3])
 
-		with open(_log_path, "r") as _f:
-			contents = _f.read()
+			with open(_log_path, "r") as _f:
+				contents = _f.read()
+				try:
+					timing = [x.split("\t")[1] for x in contents.split("\n") if 'real' in x][0]
 
-			try:
-				timing = [x.split("\t")[1] for x in contents.split("\n") if 'real' in x][0]
+					df.at[_id, "runtime"] = (int(timing.split("m")[0]) * 60 + float(timing.split("m")[1][:-1]))
+					df.at[_id, "ln_runtime"] = np.log(int(timing.split("m")[0]) * 60 + float(timing.split("m")[1][:-1]))
+					n_events = [int(x.split(":")[1].strip()) for x in contents.split("\n") if 'second selection' in x][0]
+					df.at[_id, "n_events"] = n_events
 
-				df.at[_id, "runtime"] = (int(timing.split("m")[0]) * 60 + float(timing.split("m")[1][:-1]))
-				df.at[_id, "ln_runtime"] = np.log(int(timing.split("m")[0]) * 60 + float(timing.split("m")[1][:-1]))
-				n_events = [int(x.split(":")[1].strip()) for x in contents.split("\n") if 'second selection' in x][0]
-				df.at[_id, "n_events"] = n_events
+				except:
+					print(contents)
 
-			except:
-				print(contents)
+		df["ln_n_est_cells"] = np.log((df["horizontal_search_deg"] / df["horizontal_cell_deg"]) + 1)**2 * ((df["vertical_search_km"] / df["vertical_cell_km"]) + 1)
 
-	df["ln_n_est_cells"] = np.log((df["horizontal_search_deg"] / df["horizontal_cell_deg"]) + 1)**2 * ((df["vertical_search_km"] / df["vertical_cell_km"]) + 1)
+		df_list.append(df)
 
-	print(df)
-
+	df = pd.concat(df_list, ignore_index = True)
 	df.to_csv(output_csv, index = False)
 
 
@@ -69,7 +71,7 @@ def runtime(log_folder, output_csv):
 
 if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
-	ap.add_argument('log_folder')
 	ap.add_argument('output_csv')
+	ap.add_argument('-l', '--log_folder', nargs='+', required = True)
 	args = ap.parse_args()
 	runtime(args.log_folder, args.output_csv)
