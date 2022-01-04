@@ -16,6 +16,7 @@ day_list_path = "",
 pbs_folder = "",
 output_folder = "",
 do_parallel = False,
+n_workers = 0,
 ):
 
 	# will have to construct the function call from scratch
@@ -25,6 +26,10 @@ do_parallel = False,
 	# expected input: run REAL on file list
 
 	# the default params are by definition opioniated
+
+	if not n_workers:
+		n_workers = 16
+
 	default_params = {
 		"lat_centre": 4.75,
 		# -R
@@ -214,9 +219,8 @@ do_parallel = False,
 		def chunker_list(seq, size):
 			return [seq[i::size] for i in range(size)]
 
-		N_WORKERS = 16
 
-		chunked = (chunker_list(real_calls, N_WORKERS))
+		chunked = (chunker_list(real_calls, n_workers))
 		for c, chunk in enumerate(chunked):
 			if len(chunk) == 0:
 				continue
@@ -388,6 +392,7 @@ if __name__ == "__main__":
 	ap.add_argument("-pd", "--pick_dir_path")
 	ap.add_argument("-dlp", "--day_list_path")
 	ap.add_argument("-pbs", "--pbs_folder")
+	ap.add_argument("-nw", "--n_workers", default = 0, type = int)
 	ap.add_argument("-o", "--output_folder")
 	ap.add_argument("-p", "--parallel", help = "Split file list across multiple jobs, without varying any parameters", action = "store_true")
 
@@ -401,5 +406,6 @@ if __name__ == "__main__":
 	pbs_folder = args.pbs_folder,
 	output_folder = args.output_folder,
 	do_parallel = args.parallel,
+	n_workers = args.n_workers,
 	)
 
