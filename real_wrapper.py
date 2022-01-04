@@ -92,21 +92,36 @@ do_parallel = False,
 	paths = {}
 
 	# default options because i am very lazy
+	# also rewrite with something less stupid in the future
 
 	if not real_path:
 		paths["binary_path"] = "/home/zchoong001/cy1400/cy1400-eqt/REAL/bin/REAL"
+	else:
+		paths["binary_path"] = real_path
 	if not station_file_path:
 		paths["station_file_path"] = "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/Data/station_new.dat" 
+	else:
+		paths["station_file_path"] = station_file_path
 	if not tt_path:
 		paths["tt_table_path"] = "/home/zchoong001/cy1400/cy1400-eqt/detections/febmar21/blank/REAL/tt_db/ttdb.txt"
+	else:
+		paths["tt_table_path"] = tt_path
 	if not pick_dir_path:
 		paths["pick_dir_path"]	 = "/home/zchoong001/cy1400/cy1400-eqt/REAL/all_redo/Pick"
+	else:
+		paths["pick_dir_path"] = pick_dir_path
 	if not day_list_path:
 		paths["day_list_path"] = "/home/zchoong001/cy1400/cy1400-eqt/REAL/all_redo/filelist.txt"
+	else:
+		paths["day_list_path"] = day_list_path
 	if not pbs_folder:
 		paths["pbs_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs"
+	else:
+		paths["pbs_folder"] = pbs_folder
 	if not output_folder:
 		paths["output_folder"] = "/home/zchoong001/cy1400/cy1400-eqt/pbs/log"
+	else:
+		paths["output_folder"] = output_folder
 
 	print(paths)
 
