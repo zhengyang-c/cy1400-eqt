@@ -144,6 +144,8 @@ n_workers = 0,
 	# exhausting the possible permutations
 
 	# this implies that i could have to qsub N x M jobs
+
+	### CHANGE HERE
 	params = default_params
 	params["gridsearch_vertical_cellsize_km"] = 5
 	params["gridsearch_horizontal_range_deg"] = 1
