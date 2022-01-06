@@ -30,4 +30,4 @@ if __name__ == "__main__":
 	ap.add_argument("rel_dir")
 	ap.add_argument("output_sh")
 	args = ap.parse_args()
-	main(args.input_folder, args.output_sh)
+	main(args.input_folder, args.rel_dir, args.output_sh)
