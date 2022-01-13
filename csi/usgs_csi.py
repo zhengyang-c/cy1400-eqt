@@ -67,12 +67,14 @@ udf.rename(columns = {"time": "timestamp", "latitude": "LAT", "longitude": "LON"
 udf['timestamp'] = pd.to_datetime(udf['timestamp']).dt.tz_localize(None)
 
 # detections
-eqt_df = pd.read_csv("../master_csv/eqtfiles/merged_customfilter_jan20-may21.csv") 
+# eqt_df = pd.read_csv("../master_csv/eqtfiles/merged_customfilter_jan20-may21.csv") 
+eqt_df = pd.read_csv("../master_csv/eqtfiles/merged_merged_jan20-may21.csv")
 eqt_df['p_arrival_time'] = pd.to_datetime(eqt_df['p_arrival_time'])
 eqt_df['s_arrival_time'] = pd.to_datetime(eqt_df['s_arrival_time'])
 
 # association file
-real_df = pd.read_csv("../master_csv/master_merged_REAL_mags.csv") 
+# real_df = pd.read_csv("../master_csv/master_merged_REAL_mags.csv") 
+real_df = pd.read_csv("../imported_figures/all_rereal_events.csv")
 real_df.drop("MAG", 1, inplace = True)
 real_df['timestamp'] = pd.to_datetime(real_df['timestamp'])
 
@@ -82,7 +84,6 @@ real_df['timestamp'] = pd.to_datetime(real_df['timestamp'])
 match_counter = 0
 
 for index, row in udf.iterrows():
-	P_ARRIVAL_WINDOW = 60
 	ASSOC_WINDOW = 4 # symmetric over left and right side
 
 	real_df['dt'] = (real_df['timestamp'] - row.timestamp).astype('timedelta64[s]') # this does rounding to seconds, which is not the same as .total_seconds() in python datetime
@@ -97,7 +98,10 @@ for index, row in udf.iterrows():
 		headers = ["ID", "timestamp", "dt", "LON", "LAT", "DEPTH", "m_l", "station_gap", "residual_time", "n_picks"]
 
 		for h in headers:
-			udf.at[index, 'matched_' + h] = window_real_df[h].to_list()[0]
+			try:
+				udf.at[index, 'matched_' + h] = window_real_df[h].to_list()[0]
+			except:
+				pass
 		
 
 mudf = (udf[udf['matched'] == 1])# matched usgs dataframe
@@ -221,21 +225,29 @@ for index, row in udf[udf["DEPTH"] < 80].iterrows(): # the travel time table goe
 	for sta in station_info:
 		_eqt_df = eqt_df[eqt_df['station'] == sta].copy() 
 
-		_eqt_df['dt_p'] = ((_eqt_df['p_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_P"]).abs() 
-		_eqt_df['dt_s'] = ((_eqt_df['s_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_S"]).abs() 
+		_eqt_df['dt_p'] = ((_eqt_df['p_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_P"]) 
+		_eqt_df['dt_s'] = ((_eqt_df['s_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_S"])
+		_eqt_df['absdt_p'] = ((_eqt_df['p_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_P"]).abs()
+		_eqt_df['absdt_s'] = ((_eqt_df['s_arrival_time'] - row.timestamp).dt.total_seconds() - station_info[sta]["tt_S"]).abs()
 
-		if _eqt_df['dt_p'].min() < P_WINDOW and _eqt_df['dt_s'].min() < S_WINDOW:
-			if (_eqt_df['dt_p'].idxmin()) == (_eqt_df['dt_s'].idxmin()):
-				target_index = _eqt_df['dt_p'].idxmin()
+		
+
+		if (_eqt_df['absdt_p'].min()) < P_WINDOW and (_eqt_df['absdt_s'].min()) < S_WINDOW:
+			if (_eqt_df['absdt_p'].idxmin()) == (_eqt_df['absdt_s'].idxmin()):
+				target_index = _eqt_df['absdt_p'].idxmin()
 				matched_phases.append(target_index)
 
 				for h in ["id", "matched_ID" ]:
 					eqt_df.at[target_index, h] = row[h]
 
+				eqt_df.at[target_index, "dt_p"] = _eqt_df.at[target_index, "dt_p"]
+				eqt_df.at[target_index, "dt_s"] = _eqt_df.at[target_index, "dt_s"]
+
+
 print(matched_phases)
 
 m_df = eqt_df.iloc[matched_phases]
-m_df.to_csv("matched_usgs_eqt.csv", index = False)
+m_df.to_csv("rereal_matched_usgs_eqt.csv", index = False)
 
 
 

@@ -1,4 +1,21 @@
 """
+- run multi_station on the root folder to get a master SAC file
+- run cut_sac to link the rereal catalogue to the eqt picks
+- then link to sac
+- also write the filter csv option to be included with the -w write flag
+
+
+in parallel:
+do mpl visualisations for the other large events along the creeping section
+add alpha so you can see if events are being hidden under others
+
+compare w locked section
+
+and then start looking at the seiscloud papers etc
+
+
+
+
 this script aims to match existing timestamps of detections (EQT) with the original SAC files, hence linking the two
 
 creates a column "source_file" so we know where to look. this has the wildcard character so you can load all 3C files
@@ -283,7 +300,7 @@ def df_searcher(df, _station_dict, _ts, ):
 		# these should give an exact match, and only 1
 
 		if _p_arrival_time:
-			_p_df = _df[(_df['_p_delta'] < 1) & (_df['_p_delta'] > -1)].copy()
+			_p_df = _df[(_df['p_arrival_time'] < _p_arrival_time + datetime.timedelta(seconds=1)) & (_df['p_arrival_time'] > _p_arrival_time - datetime.timedelta(seconds=1))].copy()
 			print(_p_df)
 
 			try:
@@ -313,7 +330,7 @@ def df_searcher(df, _station_dict, _ts, ):
 
 
 		elif _s_arrival_time:
-			_s_df = _df[(_df['_s_delta'] < 1) & (_df['_s_delta'] > -1)].copy()
+			_s_df = _df[(_df['s_arrival_time'] < _s_arrival_time + datetime.timedelta(seconds=1)) & (_df['s_arrival_time'] > _s_arrival_time - datetime.timedelta(seconds=1))].copy()
 
 			try:
 				assert _s_df.shape[0] == 1
