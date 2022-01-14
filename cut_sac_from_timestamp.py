@@ -288,15 +288,6 @@ def df_searcher(df, _station_dict, _ts, ):
 
 		_df = df[(df["station"] == sta)].copy()
 
-			
-		for index, row in _df.iterrows():
-
-			if _p_arrival_time:
-				_df.at[index, '_p_delta'] = (row.p_arrival_time - _p_arrival_time).total_seconds()
-
-			if _s_arrival_time:
-				_df.at[index, '_s_delta'] = (row.s_arrival_time - _s_arrival_time).total_seconds()						
-
 		# these should give an exact match, and only 1
 
 		if _p_arrival_time:
