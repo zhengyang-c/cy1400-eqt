@@ -58,7 +58,7 @@ Outputs:
 """
 
 
-def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, station_file, eqt_to_event = False, eqt_to_sac = False, write = False):
+def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, station_file, eqt_to_event = False, eqt_to_sac = False, write = False, filter_csv = ""):
 	if eqt_to_event:
 		eqt_df = pd.read_csv(input_csv)
 	
@@ -161,6 +161,16 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	if write:
 
 		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"]).dt.tz_localize(None)
+
+		if filter_csv:
+			fdf = pd.read_csv(filter_csv)
+
+			# check that the int types are the same?
+
+			fdf["ID"] = fdf["ID"].astype('int64')
+			real_df["ID"] = real_df["ID"].astype('int64')
+
+			real_df = real_df[real_df["ID"].isin(fdf["ID"].tolist())]
 
 		for index, row in real_df.iterrows():
 
@@ -365,6 +375,7 @@ if __name__ == "__main__":
 	ap.add_argument("-ee", "--eqt_to_event", action = 'store_true')
 	ap.add_argument("-es", "--eqt_to_sac", action = 'store_true')
 	ap.add_argument("-w", "--write", action = 'store_true')
+	ap.add_argument('-f', "--filter_csv", help = "column of IDs to write events for")
 
 	args = ap.parse_args()
 
