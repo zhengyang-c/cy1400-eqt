@@ -207,15 +207,15 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				f2 = os.path.join(event_folder, event_id + ".EHN.SAC")
 				f3 = os.path.join(event_folder, event_id + ".EHZ.SAC")
 
-				start_time = (event_dt - _row.sac_start_dt).total_seconds() - 30
-				end_time = (event_dt - _row.sac_start_dt).total_seconds() + 120
+				start_time = (event_dt - _row.sac_start_time).total_seconds() - 30
+				end_time = (event_dt - _row.sac_start_time).total_seconds() + 120
 
 				cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 
 				if "{:.2f}".format(start_time) == "nan":
 					print(start_time)
 					print(event_dt)
-					print(_row.sac_start_dt)
+					print(_row.sac_start_time)
 					raise ValueError
 
 				#
