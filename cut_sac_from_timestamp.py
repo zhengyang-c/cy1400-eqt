@@ -133,6 +133,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			_fdf = _df[(_df["sac_start_dt"] < row.event_start_time) & (_df["sac_end_dt"] > row.event_start_time )]
 
+			if len(_fdf) == 0 :
+				continue
+
 			search_term = _fdf["filepath"].iloc[0]
 
 			eqt_df.at[index, "source_file"] = search_term
