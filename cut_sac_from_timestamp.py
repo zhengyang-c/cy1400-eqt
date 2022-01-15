@@ -208,6 +208,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 				start_time = (event_dt - _row.sac_start_time).total_seconds() - 30
 				end_time = (event_dt - _row.sac_start_time).total_seconds() + 120
+				print(start_time)
+
+				raise ValueError
 
 				if not start_time:
 					print(start_time)
