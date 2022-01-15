@@ -212,6 +212,12 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 				cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
 
+				if "{:.2f}".format(start_time) == "nan":
+					print(start_time)
+					print(event_dt)
+					print(_row.sac_start_dt)
+					raise ValueError
+
 				#
 				# HEADER WRITING
 				#
