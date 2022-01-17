@@ -94,8 +94,8 @@ def main():
 		st = obspy.read(source_file)
 
 		st.interpolate(sampling_rate = 100)
-		st.detread("demean")
-		st.detread("linear")
+		st.detrend("demean")
+		st.detrend("linear")
 
 		st.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
 
