@@ -1,6 +1,6 @@
 import pandas as pd
 import argparse
-from obspy import read
+import obspy
 from obspy.geodetics import gps2dist_azimuth
 import os
 import glob
