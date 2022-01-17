@@ -160,5 +160,7 @@ def main():
 
 
 if __name__ == "__main__":
+
+	station_event_distances()
 	
 	main()
