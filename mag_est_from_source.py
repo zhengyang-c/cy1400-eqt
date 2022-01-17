@@ -121,7 +121,7 @@ def main():
 				_id = str(int(row.ID)).zfill(6)
 				p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds() + 3
 
-				ptime_id = 500 #round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
+				ptime_id = round(5/delta) #round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
 				start_id = ptime_id - round(p_before/delta)
 				end_id = ptime_id + round(p_after/delta)
 
