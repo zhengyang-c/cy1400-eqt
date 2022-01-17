@@ -98,15 +98,14 @@ def main():
 		st.detrend("linear")
 
 		st.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
+		st[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+		st[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 
 		ch_e = st[0].data
 		ch_n = st[1].data
 
-		print(ch_e.stats.channel)
-		print(ch_n.stats.channel)
-
-		ch_e.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
-		ch_n.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+		print(st[0].stats.channel)
+		print(st[1].stats.channel)
 
 		for row, index in _df.iterrows():
 			print(row.p_arrival_time)
