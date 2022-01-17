@@ -31,10 +31,19 @@ def dx(X1, X2):
 
 def station_event_distances():
 
-	patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
-	event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
-	output_json = "real_postprocessing/rereal/rereal_station_dist.json"
+	# patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
+	# event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
+	# output_json = "real_postprocessing/rereal/rereal_station_dist.json"
+	# station_file = "new_station_info.dat"
 	station_file = "new_station_info.dat"
+	# output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
+
+	event_csv = "real_postprocessing/julaug20/julaug_real_cat.csv"
+
+	patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
+	output_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
+	output_csv = "real_postprocessing/julaug20/mags_test.csv"
+
 
 	station_info = parse_station_info(station_file)
 
@@ -66,11 +75,14 @@ def station_event_distances():
 
 def main():
 
-	patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
-	dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
+	# patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
+	# dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
 	station_file = "new_station_info.dat"
-	output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
+	# output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
 
+	patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
+	dist_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
+	output_csv = "real_postprocessing/julaug20/mags_test.csv"
 
 	df = pd.read_csv(patched_csv)
 
