@@ -129,8 +129,14 @@ def main():
 			start_id = ptime_id - round(p_before/delta)
 			end_id = ptime_id + round(p_after/delta)
 
+			print(ch_e)
+			print(ch_n)
+
 			datatre = ch_e[start_id:end_id]
 			datatrn = ch_n[start_id:end_id]
+
+			print(datatre)
+			print(datatrn)
 
 			dist = station_dist[_id][row.station]
 
