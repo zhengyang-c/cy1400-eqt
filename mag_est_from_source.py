@@ -98,6 +98,7 @@ def main():
 		st = obspy.read(source_file)
 		delta = st[0].stats.delta
 		p_before = 0.5
+		print(_df)
 		for index, row in _df.iterrows():
 			stt = st.copy()
 
@@ -107,6 +108,7 @@ def main():
 			stt.detrend("linear")
 
 			stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
+			print(stt[0])
 			stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 			stt[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 
