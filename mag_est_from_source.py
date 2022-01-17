@@ -73,9 +73,14 @@ def main():
 	event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
 	dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
 	station_file = "new_station_info.dat"
+	output_csv = "real_postprocessing/rereal/test_mag.csv"
 
 
 	df = pd.read_csv(patched_csv)
+
+	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
+	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
+	df['sac_start_dt'] = pd.to_datetime(df['sac_start_dt'])
 
 
 	with open(dist_json, "r") as f:
@@ -107,12 +112,38 @@ def main():
 		print(st[0].stats.channel)
 		print(st[1].stats.channel)
 
+		delta = 100
+		p_before = 0.5
+
+
 		for index, row in _df.iterrows():
+
+			_id = str(int(row.ID)).zfill(6)
+
 			print(row.p_arrival_time)
 			print(row.s_arrival_time)
 			print(row.sac_start_dt)
+			p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds()
 
-		break
+			ptime_id = round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
+			start_id = ptime_id - round(p_before/delta)
+			end_id = ptime_id + round(p_after/delta)
+
+			datatre = ch_e[start_id:end_id]
+			datatrn = ch_n[start_id:end_id]
+
+			dist = station_dist[_id][row.station]
+
+			amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 * 15000 
+			# 15000 is for the nodes 
+			# 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
+			mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
+
+			df.at[index, "mag"] = mag
+
+	print(df.mag.tolist())
+	
+	df.to_csv(output_csv, index = False)
 
 		# get P and S times: get EQT time by matching the ID, subtract from the sac start time that is included in the eqt dataframe
 
