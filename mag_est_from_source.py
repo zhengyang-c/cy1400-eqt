@@ -98,7 +98,6 @@ def main():
 	for source_file, _df in df.groupby("source_file"):
 		st = obspy.read(source_file)
 
-		st.interpolate(sampling_rate = 100)
 		st.detrend("demean")
 		st.detrend("linear")
 
@@ -109,28 +108,19 @@ def main():
 		ch_e = st[0].data
 		ch_n = st[1].data
 
-		print(st[0].stats.channel)
-		print(st[1].stats.channel)
 
-		delta = 100
+		delta = st[0].stats.delta
 		p_before = 0.5
 
 
 		for index, row in _df.iterrows():
 
 			_id = str(int(row.ID)).zfill(6)
-
-			print(row.p_arrival_time)
-			print(row.s_arrival_time)
-			print(row.sac_start_dt)
 			p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds()
 
 			ptime_id = round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
 			start_id = ptime_id - round(p_before/delta)
 			end_id = ptime_id + round(p_after/delta)
-
-			print(ch_e)
-			print(ch_n)
 
 			datatre = ch_e[start_id:end_id]
 			datatrn = ch_n[start_id:end_id]
