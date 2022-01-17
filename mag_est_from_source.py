@@ -109,7 +109,7 @@ def main():
 		for index, row in _df.iterrows():
 			stt = st.copy()
 
-			stt.trim((row.p_arrival_time + datetime.timedelta(seconds = -5)), (row.s_arrival_time + datetime.timedelta(seconds = 3)))
+			stt.trim(obspy.UTCDateTime(row.p_arrival_time + datetime.timedelta(seconds = -5)), obspy.UTCDateTime(row.s_arrival_time + datetime.timedelta(seconds = 4)))
 
 			stt.detrend("demean")
 			stt.detrend("linear")
