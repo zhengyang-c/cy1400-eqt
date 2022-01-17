@@ -91,6 +91,8 @@ def main():
 
 	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 , 'sensitivity': 1} 
 
+	df = df[df["source_file"] == "/home/eos_data/SEISMIC_DATA_TECTONICS/RAW/ACEH/MSEED/Deployed-2020-01-MSEED/A54/AC.A54.00.EH*.D.2020.030.000000.SAC"]
+
 	for source_file, _df in df.groupby("source_file"):
 		print(source_file)
 		st = obspy.read(source_file)
