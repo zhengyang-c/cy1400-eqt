@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 import argparse
 import obspy
@@ -96,17 +97,9 @@ def main():
 	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 , 'sensitivity': 1} 
 
 	for source_file, _df in df.groupby("source_file"):
+		print(source_file)
 		st = obspy.read(source_file)
 
-		st.detrend("demean")
-		st.detrend("linear")
-
-		st.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
-		st[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
-		st[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
-
-		ch_e = st[0].data
-		ch_n = st[1].data
 
 
 		delta = st[0].stats.delta
@@ -114,19 +107,29 @@ def main():
 
 
 		for index, row in _df.iterrows():
+			stt = st.copy()
+
+			stt.trim((row.p_arrival_time + datetime.timedelta(seconds = -5)), (row.s_arrival_time + datetime.timedelta(seconds = 3)))
+
+			stt.detrend("demean")
+			stt.detrend("linear")
+
+			stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
+			stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+			stt[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+
+			ch_e = stt[0].data
+			ch_n = stt[1].data
 
 			_id = str(int(row.ID)).zfill(6)
-			p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds()
+			p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds() + 3
 
-			ptime_id = round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
+			ptime_id = 500 #round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
 			start_id = ptime_id - round(p_before/delta)
 			end_id = ptime_id + round(p_after/delta)
 
 			datatre = ch_e[start_id:end_id]
 			datatrn = ch_n[start_id:end_id]
-
-			print(datatre)
-			print(datatrn)
 
 			dist = station_dist[_id][row.station]
 
