@@ -107,7 +107,7 @@ def main():
 		print(st[0].stats.channel)
 		print(st[1].stats.channel)
 
-		for row, index in _df.iterrows():
+		for index, row in _df.iterrows():
 			print(row.p_arrival_time)
 			print(row.s_arrival_time)
 			print(row.sac_start_dt)
