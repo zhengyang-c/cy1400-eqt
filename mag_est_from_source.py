@@ -92,7 +92,8 @@ def main():
 	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 , 'sensitivity': 1} 
 
 
-	_f = "real_postprocessing/rereal/error.log"
+	_f = open("real_postprocessing/rereal/error.log", "w")
+	_g = open("real_postprocessing/rereal/output.log", "w")
 
 
 	for source_file, _df in df.groupby("source_file"):
@@ -100,7 +101,6 @@ def main():
 		st = obspy.read(source_file)
 		delta = st[0].stats.delta
 		p_before = 0.5
-		print(_df)
 		for index, row in _df.iterrows():
 			try:
 				stt = st.copy()
@@ -136,11 +136,15 @@ def main():
 				mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
 
 				df.at[index, "mag"] = mag
+				_g.write("{} {:.4f}\n").format(index, mag)
 
 			except:
 				_f.write("{} {}\n".format(source_file, index))
 	
 	df.to_csv(output_csv, index = False)
+
+	_f.close()
+	_g.close()
 
 
 if __name__ == "__main__":
