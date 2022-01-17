@@ -108,6 +108,11 @@ def main():
 		ch_e.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 		ch_n.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 
+		for row, index in _df.iterrows():
+			print(row.p_arrival_time)
+			print(row.s_arrival_time)
+			print(row.sac_start_dt)
+
 		break
 
 		# get P and S times: get EQT time by matching the ID, subtract from the sac start time that is included in the eqt dataframe
