@@ -3,10 +3,6 @@ import pandas as pd
 import argparse
 import obspy
 from obspy.geodetics import gps2dist_azimuth
-import os
-import glob
-import time
-import subprocess
 import math
 import numpy as np
 import json
@@ -70,11 +66,10 @@ def station_event_distances():
 
 def main():
 
-	patched_csv = "real_postprocessing/rereal/test.csv"
-	event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
+	patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
 	dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
 	station_file = "new_station_info.dat"
-	output_csv = "real_postprocessing/rereal/test_mag.csv"
+	output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
 
 
 	df = pd.read_csv(patched_csv)
@@ -99,13 +94,8 @@ def main():
 	for source_file, _df in df.groupby("source_file"):
 		print(source_file)
 		st = obspy.read(source_file)
-
-
-
 		delta = st[0].stats.delta
 		p_before = 0.5
-
-
 		for index, row in _df.iterrows():
 			stt = st.copy()
 
@@ -140,23 +130,10 @@ def main():
 
 			df.at[index, "mag"] = mag
 
-	print(df.mag.tolist())
 	
 	df.to_csv(output_csv, index = False)
 
-		# get P and S times: get EQT time by matching the ID, subtract from the sac start time that is included in the eqt dataframe
-
-
-
-	# group by 'source_file'
-	# for each day, load the source file in obspy
-
-
-
-	# 
-
-	pass
-
 
 if __name__ == "__main__":
+	
 	main()
