@@ -67,18 +67,50 @@ def station_event_distances():
 	with open(output_json, "w") as f:
 		json.dump(output_info, f, indent = 4)
 
-
-
-
-
-
 def main():
 
+	patched_csv = "real_postprocessing/rereal/test.csv"
+	event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
+	dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
+	station_file = "new_station_info.dat"
+
+
+	df = pd.read_csv(patched_csv)
+
+
+	with open(dist_json, "r") as f:
+		station_dist = json.load(f)
+
+	station_info = parse_station_info(station_file)
 	# load the main dataframe (patched) which is an output from cut_sac_from_timestamp.py
 
 	# first go through the json to calculate station - event locations, of which there are a lot
 
-	# or do a one-off computation
+	paz_wa = {'sensitivity': 2080, 'zeros': [0j,0j], 'gain': 1, 'poles': [-5.4978 - 5.6089j, -5.4978 + 5.6089j]}
+
+	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 } 
+
+	for source_file, _df in df.groupby("source_file"):
+		st = obspy.read(source_file)
+
+		st.interpolate(sampling_rate = 100)
+		st.detread("demean")
+		st.detread("linear")
+
+		st.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
+
+		ch_e = st[0].data
+		ch_n = st[1].data
+
+		print(ch_e.stats.channel)
+		print(ch_n.stats.channel)
+
+		ch_e.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+		ch_n.filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+
+		break
+
+		# get P and S times: get EQT time by matching the ID, subtract from the sac start time that is included in the eqt dataframe
 
 
 
@@ -93,4 +125,4 @@ def main():
 
 
 if __name__ == "__main__":
-	station_event_distances()
+	main()
