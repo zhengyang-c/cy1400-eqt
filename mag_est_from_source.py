@@ -110,9 +110,15 @@ def main():
 
 	for source_file, _df in df.groupby("source_file"):
 		print(source_file)
-		st = obspy.read(source_file)
-		delta = st[0].stats.delta
-		p_before = 0.5
+
+		try:
+			st = obspy.read(source_file)
+			delta = st[0].stats.delta
+			p_before = 0.5
+		except:
+			# try using the station remapping, if not exit gracefully
+			_g.write("error", source_file)
+			continue
 		for index, row in _df.iterrows():
 			try:
 				stt = st.copy()
@@ -148,7 +154,7 @@ def main():
 				mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
 
 				df.at[index, "mag"] = mag
-				_g.write("{} {:.4f}\n").format(index, mag)
+				_g.write("{} {:.4f}\n".format(index, mag))
 
 			except:
 				_f.write("{} {}\n".format(source_file, index))
