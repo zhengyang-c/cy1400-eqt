@@ -117,7 +117,7 @@ def main():
 			p_before = 0.5
 		except:
 			# try using the station remapping, if not exit gracefully
-			_g.write("error", source_file)
+			_g.write("error {}".format(source_file))
 			continue
 		for index, row in _df.iterrows():
 			try:
