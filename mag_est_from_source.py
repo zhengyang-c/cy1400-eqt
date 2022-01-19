@@ -141,7 +141,8 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		except:
 			print("ERROR")
 			# try using the station remapping, if not exit gracefully
-			_g.write("error {}".format(source_file))
+			if oe:
+				_g.write("error {}".format(source_file))
 			continue
 		for index, row in _df.iterrows():
 			try:
