@@ -132,6 +132,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 						source_file = source_file.replace(k, rev_map[k])
 						break
 				if not os.path.isfile(source_file):
+					print("new source file", source_file)
 					raise ValueError
 
 				st = obspy.read(source_file)
