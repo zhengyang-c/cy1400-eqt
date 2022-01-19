@@ -112,7 +112,6 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 
 	for source_file, _df in df[df["station"] == "GN13"].groupby("source_file"):
 		print(source_file)
-
 		try:
 
 			if os.path.isfile(source_file):
@@ -132,12 +131,15 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 					if k in source_file:
 						source_file = source_file.replace(k, rev_map[k])
 						break
+				if not os.path.isfile(source_file):
+					raise ValueError
 
 				st = obspy.read(source_file)
 				delta = st[0].stats.delta
 				p_before = 0.5
 
 		except:
+			print("ERROR")
 			# try using the station remapping, if not exit gracefully
 			_g.write("error {}".format(source_file))
 			continue
