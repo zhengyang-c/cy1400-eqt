@@ -29,20 +29,19 @@ def dx(X1, X2):
 	#print(X1, X2)
 	return gps2dist_azimuth(X1[1], X1[0], X2[1], X2[0])[0] / 1000
 
-def station_event_distances():
+def station_event_distances(station_file, event_csv, patched_csv, output_json):
 
 	# patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
 	# event_csv = "real_postprocessing/rereal/all_rereal_events.csv"
 	# output_json = "real_postprocessing/rereal/rereal_station_dist.json"
 	# station_file = "new_station_info.dat"
-	station_file = "new_station_info.dat"
-	# output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
+	# station_file = "new_station_info.dat"
+	# # output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
 
-	event_csv = "real_postprocessing/julaug20/julaug_real_cat.csv"
+	# event_csv = "real_postprocessing/julaug20/julaug_real_cat.csv"
 
-	patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
-	output_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
-	output_csv = "real_postprocessing/julaug20/mags_test.csv"
+	# patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
+	# output_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
 
 
 	station_info = parse_station_info(station_file)
@@ -73,16 +72,16 @@ def station_event_distances():
 	with open(output_json, "w") as f:
 		json.dump(output_info, f, indent = 4)
 
-def main():
+def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 
 	# patched_csv = "real_postprocessing/rereal/patch_merged_eqt_rereal.csv"
 	# dist_json = "real_postprocessing/rereal/rereal_station_dist.json"
-	station_file = "new_station_info.dat"
-	# output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
+	# station_file = "new_station_info.dat"
+	# # output_csv = "real_postprocessing/rereal/all_rereal_eqt_mags.csv"
 
-	patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
-	dist_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
-	output_csv = "real_postprocessing/julaug20/mags_test.csv"
+	# patched_csv = "real_postprocessing/julaug20/julaug20_eqt_patched.csv"
+	# dist_json = "real_postprocessing/julaug20/julaug20_station_dist.json"
+	# output_csv = "real_postprocessing/julaug20/mags_test.csv"
 
 	df = pd.read_csv(patched_csv)
 
@@ -103,9 +102,10 @@ def main():
 
 	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 , 'sensitivity': 1} 
 
-
-	_f = open("real_postprocessing/rereal/error.log", "w")
-	_g = open("real_postprocessing/rereal/output.log", "w")
+	if om:
+		_g = open(om, "w")
+	if oe:
+		_f = open(oe, "w")
 
 
 	for source_file, _df in df.groupby("source_file"):
@@ -129,7 +129,6 @@ def main():
 				stt.detrend("linear")
 
 				stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
-				print(stt[0])
 				stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 				stt[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 
@@ -154,19 +153,41 @@ def main():
 				mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
 
 				df.at[index, "mag"] = mag
-				_g.write("{} {:.4f}\n".format(index, mag))
+
+				if om:
+					_g.write("{} {:.4f}\n".format(index, mag))
 
 			except:
-				_f.write("{} {}\n".format(source_file, index))
+				if oe:
+					_f.write("{} {}\n".format(source_file, index))
+				print("{} {}".format(source_file, index))
 	
 	df.to_csv(output_csv, index = False)
-
-	_f.close()
-	_g.close()
+	if oe:
+		_f.close()
+	if om:
+		_g.close()
 
 
 if __name__ == "__main__":
-
-	station_event_distances()
 	
-	main()
+	ap = argparse.ArgumentParser()
+
+	ap.add_argument("station_file")
+	ap.add_argument("dist_json")
+	ap.add_argument("-e", "--event_csv")
+	ap.add_argument("-o", "--output_csv")
+	ap.add_argument("-omag", "--output_mags")
+	ap.add_argument("-oerr", "--output_errors")
+	ap.add_argument("-p", "--patched_eqt")
+	ap.add_argument("-cd", "--calc_dist", action = "store_true")
+	ap.add_argument("-cm", "--calc_mag", action = "store_true")
+
+	args = ap.parse_args()
+
+	if args.calc_dist:
+		station_event_distances(args.station_file, args.event_csv, args.patched_eqt, )
+	if args.calc_mag:
+		main(args.station_file, args.patched_csv, args.dist_json, args.output_csv, om = args.output_mags, oe = args.output_errors)
+#def station_event_distances(station_file, event_csv, patched_csv, output_json)):
+#def main(station_file, patched_csv, dist_json, output_csv):
