@@ -209,7 +209,9 @@ if __name__ == "__main__":
 
 	if args.calc_dist:
 		station_event_distances(args.station_file, args.event_csv, args.patched_eqt, )
-	if args.calc_mag:
-		main(args.station_file, args.patched_csv, args.dist_json, args.output_csv, om = args.output_mags, oe = args.output_errors)
+	elif args.calc_mag:
+		main(args.station_file, args.patched_eqt, args.dist_json, args.output_csv, om = args.output_mags, oe = args.output_errors)
+	else:
+		raise ValueError("Specify -cd or -cm")
 #def station_event_distances(station_file, event_csv, patched_csv, output_json)):
 #def main(station_file, patched_csv, dist_json, output_csv):
