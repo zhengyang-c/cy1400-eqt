@@ -7,8 +7,8 @@ import math
 import numpy as np
 import json
 from utils  import parse_station_info
-import string
 import os
+import glob
 
 # need to know event distance 
 
@@ -114,7 +114,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		print(source_file)
 		try:
 
-			if os.path.isfile(source_file):
+			if len(glob.glob(source_file)):
 				st = obspy.read(source_file)
 				delta = st[0].stats.delta
 				p_before = 0.5
@@ -131,7 +131,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 					if k in source_file:
 						source_file = source_file.replace(k, rev_map[k])
 						break
-				if not os.path.isfile(source_file):
+				if not len(glob.glob(source_file)):
 					print("new source file", source_file)
 					raise ValueError
 
