@@ -7,6 +7,8 @@ import math
 import numpy as np
 import json
 from utils  import parse_station_info
+import string
+import os
 
 # need to know event distance 
 
@@ -112,9 +114,29 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		print(source_file)
 
 		try:
-			st = obspy.read(source_file)
-			delta = st[0].stats.delta
-			p_before = 0.5
+
+			if os.path.isfile(source_file):
+				st = obspy.read(source_file)
+				delta = st[0].stats.delta
+				p_before = 0.5
+			else:
+				# load remap
+
+				station_remap = {"A02": "A54", "A10": "TG03", "GE01": "GN01", "GE16": "GN16", "GE10": "GN10", "GE07":"GN07", "AS09":"AN09", "GE13":"GN13", "TA02":"TN02", "MA01": "MN01", "GE15":"GN16", "GM05":"GM55"}
+
+				rev_map = {v:k for k,v in station_remap.items()}
+
+				# get station from sourcefile, try changing station. if it fails, then raise Exception 
+
+				for k in rev_map:
+					if k in source_file:
+						source_file = source_file.replace(k, rev_map[k])
+						break
+
+				st = obspy.read(source_file)
+				delta = st[0].stats.delta
+				p_before = 0.5
+
 		except:
 			# try using the station remapping, if not exit gracefully
 			_g.write("error {}".format(source_file))
