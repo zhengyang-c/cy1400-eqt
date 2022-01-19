@@ -110,7 +110,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		_f = open(oe, "w")
 
 
-	for source_file, _df in df.groupby("source_file"):
+	for source_file, _df in df[df["station"] == "GN13"].groupby("source_file"):
 		print(source_file)
 
 		try:
