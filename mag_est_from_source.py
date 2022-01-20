@@ -200,6 +200,8 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		groups = [(group, groupby.get_group(group)) for group in groupby.groups] 
 
 		indices, mags = zip(*p.map(worker, zip(groups, repeat({"station_dist": station_dist}))))
+
+		print(indices, mags)
 	
 	for i in range(len(indices)):
 		for j in indices[i]:
