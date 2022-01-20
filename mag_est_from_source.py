@@ -155,6 +155,7 @@ def worker(df_info, station_dist):
 			output_mags.append(mag)
 
 		except:
+			print("error")
 			pass
 
 	return (output_indices, output_mags)
