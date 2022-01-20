@@ -196,8 +196,8 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		print(indices, mags)
 	
 	for i in range(len(indices)):
-		for j in indices[i]:
-			df.at[j, "m_l"] = mags[i][j]
+		for j in range(len(indices[i]):
+			df.at[indices[i][j], "m_l"] = mags[i][j]
 	
 	df.to_csv(output_csv)
 
