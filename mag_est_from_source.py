@@ -215,7 +215,7 @@ if __name__ == "__main__":
 	args = ap.parse_args()
 
 	if args.calc_dist:
-		station_event_distances(args.station_file, args.event_csv, args.patched_eqt, )
+		station_event_distances(args.station_file, args.event_csv, args.patched_eqt, args.dist_json)
 	elif args.calc_mag:
 		main(args.station_file, args.patched_eqt, args.dist_json, args.output_csv, om = args.output_mags, oe = args.output_errors)
 	else:
