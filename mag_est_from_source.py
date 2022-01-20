@@ -77,11 +77,9 @@ def station_event_distances(station_file, event_csv, patched_csv, output_json):
 	with open(output_json, "w") as f:
 		json.dump(output_info, f, indent = 4)
 
-def worker(df_info, args):
+def worker(df_info, station_dist):
 	source_file = df_info[0]	
 	_df = df_info[1]
-
-	station_dist = args["station_dist"]
 
 	paz_wa = {'sensitivity': 2080, 'zeros': [0j,0j], 'gain': 1, 'poles': [-5.4978 - 5.6089j, -5.4978 + 5.6089j]}
 
@@ -189,17 +187,12 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 
 	# stt is the stream data
 
-	if om:
-		_g = open(om, "w")
-	if oe:
-		_f = open(oe, "w")
-	
 
 	with mp.Pool(mp.cpu_count()) as p:
 		groupby = df.groupby("source_file")
 		groups = [(group, groupby.get_group(group)) for group in groupby.groups] 
 
-		indices, mags = zip(*p.map(worker, zip(groups, repeat({"station_dist": station_dist}))))
+		indices, mags = zip(*p.map(worker, zip(groups, repeat(station_dist))))
 
 		print(indices, mags)
 	
