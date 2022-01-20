@@ -195,7 +195,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		_f = open(oe, "w")
 	
 
-	with mp.Pool(mp.cpu_count_()) as p:
+	with mp.Pool(mp.cpu_count()) as p:
 		groupby = df.groupby("source_file")
 		groups = [(group, groupby.get_group(group)) for group in groupby.groups] 
 
