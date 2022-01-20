@@ -64,9 +64,11 @@ def station_event_distances(station_file, event_csv, patched_csv, output_json):
 		for index, row in _df.iterrows():
 			stla, stlo = station_info[row.station]["lat"], station_info[row.station]["lon"]
 
-			evla, evlo = event_df[event_df["ID"] == id]["LAT"].iloc[0], event_df[event_df["ID"] == id]["LON"].iloc[0]
+			evla, evlo, evdp = event_df[event_df["ID"] == id]["LAT"].iloc[0], event_df[event_df["ID"] == id]["LON"].iloc[0], event_df[event_df["ID"]==id]["DEPTH"].iloc[0]
 
 			dist = dx((stlo, stla), (evlo, evla))
+
+			dist = np.sqrt(dist**2 + evdp**2)
 
 			output_info[_id][row.station] = dist
 
@@ -103,6 +105,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 	paz_wa = {'sensitivity': 2080, 'zeros': [0j,0j], 'gain': 1, 'poles': [-5.4978 - 5.6089j, -5.4978 + 5.6089j]}
 
 	own_pz = {'zeros': [0j, 0j, 0j], 'poles': [-2.199000e+01 +2.243000e+01j, -2.199000e+01 -2.243000e+01j], 'gain':1.029447e+09 , 'sensitivity': 1} 
+	# stt is the stream data
 
 	if om:
 		_g = open(om, "w")
