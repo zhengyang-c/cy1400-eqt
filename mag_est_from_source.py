@@ -180,7 +180,6 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 	with open(dist_json, "r") as f:
 		station_dist = json.load(f)
 
-	station_info = parse_station_info(station_file)
 	# load the main dataframe (patched) which is an output from cut_sac_from_timestamp.py
 
 	# first go through the json to calculate station - event locations, of which there are a lot
@@ -192,7 +191,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		groupby = df.groupby("source_file")
 		groups = [(group, groupby.get_group(group)) for group in groupby.groups] 
 
-		indices, mags = zip(*p.map(worker, zip(groups, repeat(station_dist))))
+		indices, mags = zip(*p.starmap(worker, zip(groups, repeat(station_dist))))
 
 		print(indices, mags)
 	
