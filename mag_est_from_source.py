@@ -53,6 +53,8 @@ def station_event_distances(station_file, event_csv, patched_csv, output_json):
 
 	df = pd.read_csv(patched_csv)
 
+	df = df[(df["ID"] < 4126) & (df["ID"] > 4100)]
+
 	output_info = {}
 
 	for id, _df in df.groupby('ID'):
@@ -202,11 +204,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 		for j in range(len(indices[i])):
 			df.at[indices[i][j], "m_l"] = mags[i][j]
 	
-	df.to_csv(output_csv)
-
-
-
-
+	df.to_csv(output_csv, index = False)
 
 
 if __name__ == "__main__":
