@@ -55,6 +55,8 @@ def station_event_distances(station_file, event_csv, patched_csv, output_json):
 
 	df = df[(df["ID"] == 4125)]
 
+	print(len(df))
+
 	output_info = {}
 
 	for id, _df in df.groupby('ID'):
