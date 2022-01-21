@@ -121,46 +121,41 @@ def worker(df_info, station_dist):
 	except:
 		print("ERROR")
 	for index, row in _df.iterrows():
-		try:
-			stt = st.copy()
+		stt = st.copy()
 
-			stt.trim(obspy.UTCDateTime(row.p_arrival_time + datetime.timedelta(seconds = -5)), obspy.UTCDateTime(row.s_arrival_time + datetime.timedelta(seconds = 4)))
+		stt.trim(obspy.UTCDateTime(row.p_arrival_time + datetime.timedelta(seconds = -5)), obspy.UTCDateTime(row.s_arrival_time + datetime.timedelta(seconds = 4)))
 
-			stt.detrend("demean")
-			stt.detrend("linear")
+		stt.detrend("demean")
+		stt.detrend("linear")
 
-			stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
-			stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
-			stt[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+		stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
+		stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
+		stt[1].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
 
-			ch_e = stt[0].data
-			ch_n = stt[1].data
+		ch_e = stt[0].data
+		ch_n = stt[1].data
 
-			_id = str(int(row.ID)).zfill(6)
-			p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds() + 3
+		_id = str(int(row.ID)).zfill(6)
+		p_after = (row.s_arrival_time - row.p_arrival_time).total_seconds() + 3
 
-			ptime_id = round(5/delta) #round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
-			start_id = ptime_id - round(p_before/delta)
-			end_id = ptime_id + round(p_after/delta)
+		ptime_id = round(5/delta) #round((row.p_arrival_time - row.sac_start_dt).total_seconds()/delta)
+		start_id = ptime_id - round(p_before/delta)
+		end_id = ptime_id + round(p_after/delta)
 
-			datatre = ch_e[start_id:end_id]
-			datatrn = ch_n[start_id:end_id]
+		datatre = ch_e[start_id:end_id]
+		datatrn = ch_n[start_id:end_id]
 
-			dist = station_dist[_id][row.station]
+		dist = station_dist[_id][row.station]
 
-			amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 * 15000 
-			# 15000 is for the nodes 
-			# 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
-			mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
+		amp = (np.max(datatre) + np.abs(np.min(datatre)) + np.max(datatrn) + np.abs(np.min(datatrn)))/4 * 1000 * 15000 
+		# 15000 is for the nodes 
+		# 1000 is from meter to millimeter (mm) see Hutton and Boore (1987)
+		mag = math.log10(amp) + 1.110*math.log10(dist/100) + 0.00189*(dist-100) + 3.0
 
-			output_indices.append(index)
-			output_mags.append(mag)
-			
-			print(index, mag)
-
-		except:
-			print("@@@@ ERROR @@@")
-			pass
+		output_indices.append(index)
+		output_mags.append(mag)
+		
+		print(index, mag)
 
 	return (output_indices, output_mags)
 
