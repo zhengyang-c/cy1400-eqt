@@ -179,8 +179,6 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 
 	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
 	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
-	df['sac_start_dt'] = pd.to_datetime(df['sac_start_dt'])
-
 
 	with open(dist_json, "r") as f:
 		station_dist = json.load(f)
