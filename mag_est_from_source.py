@@ -53,10 +53,6 @@ def station_event_distances(station_file, event_csv, patched_csv, output_json):
 
 	df = pd.read_csv(patched_csv)
 
-	df = df[(df["ID"] == 4125)]
-
-	print(len(df))
-
 	output_info = {}
 
 	for id, _df in df.groupby('ID'):
@@ -173,6 +169,8 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 	# output_csv = "real_postprocessing/julaug20/mags_test.csv"
 
 	df = pd.read_csv(patched_csv)
+
+	df = df[df["ID"] == 4125]
 
 	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
 	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
