@@ -170,7 +170,7 @@ def main(station_file, patched_csv, dist_json, output_csv, om = "", oe = ""):
 
 	df = pd.read_csv(patched_csv)
 
-	df = df[(df["ID"] < 4125) & (df["ID"] > 4099)]
+	df = df[(df["ID"] < 5000)]
 
 	df['p_arrival_time'] = pd.to_datetime(df['p_arrival_time'])
 	df['s_arrival_time'] = pd.to_datetime(df['s_arrival_time'])
