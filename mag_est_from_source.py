@@ -117,7 +117,7 @@ def worker(df_info, station_dist):
 			p_before = 0.5
 
 	except:
-		print("ERROR")
+		return (None, None)
 	for index, row in _df.iterrows():
 		stt = st.copy()
 
