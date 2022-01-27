@@ -270,6 +270,8 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 	# kinda inefficient bc 10^5 rows but it's fine bc it won't be used very often
 
 	for index, row in df.iterrows():
+		if "bad" in row.filepath:
+			continue
 		df.at[index, 'dt'] = datetime.datetime.strptime("{}.{}".format(int(row.year), int(row.jday)), "%Y.%j")
 
 		df.at[index, "_uid"] = "{}-{}-{}-{}".format(row.station, row.year, row.jday, row.start_time)
