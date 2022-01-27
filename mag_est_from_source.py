@@ -127,6 +127,10 @@ def worker(df_info, station_dist):
 
 			stt.detrend("demean")
 			stt.detrend("linear")
+			stt.taper(max_percentage = 0.05)
+			stt.filter(type = "bandpass", freqmin = 1, freqmax = 45, zerophase = True)
+
+			# i didn't RTR or bp filter.. is that why its different??
 
 			stt.simulate(paz_remove = own_pz, paz_simulate = paz_wa)
 			stt[0].filter(type = "bandpass", freqmin = 0.2, freqmax = 20.0, zerophase = True)
