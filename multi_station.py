@@ -420,7 +420,7 @@ def encode_multirun(
 	patch = False,
 	json_file = "",
 	use_gpu = False,
-	n_split = 1
+	split = 1
 	):
 
 	# encode everything (sac to hdf5, prediction
