@@ -296,7 +296,7 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 	if start_day and end_day:
 		start_day = datetime.datetime.strptime(start_day, "%Y.%j")
 		end_day = datetime.datetime.strptime(end_day, "%Y.%j")
-		_df = _df[(df["sac_start_dt"] >= start_day) & (df["sac_start_dt"] <= end_day)]
+		_df = _df[(_df["sac_start_dt"] >= start_day) & (_df["sac_start_dt"] <= end_day)]
 
 	_df.sort_values("jday", inplace = True)
 
