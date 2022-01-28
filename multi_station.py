@@ -325,16 +325,19 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 		_df.to_csv(output_file, index = False)
 
 
-def make_station_json(station_coords, station_list, output):
-
+def make_station_json(station_coords, station_list, output, channel_name = ""):
 	station_json = {}
-
 	with open(station_list, "r") as f:
 		station_list = f.read().split("\n")[:-1]
 
+	if not channel_name:
+		channel_name = "EH"
+
+	chan = [channel_name + x for x in ["Z", "E", "N"]]
+
 	for _station in station_list:
 		print(_station)
-		station_json[_station] = {"network": "AC", "channels":["EHZ", "EHE", "EHN"]}
+		station_json[_station] = {"network": "AC", "channels":chan}
 
 
 	with open(station_coords, "r") as f:
@@ -616,6 +619,7 @@ if __name__ == "__main__":
 
 
 	parser.add_argument("-js", "--json", help = "file with the coordinates of all the stations")
+	parser.add_argument("-ch", "--channel_name", help = "name of channel prefix, default is EH", )
 
 	parser.add_argument("-pl", "--plot", help = "get uptime file for some start and end date", action = "store_true")
 
@@ -670,7 +674,7 @@ if __name__ == "__main__":
 	elif args.get:
 		get_all_files(args.get, args.output)
 	elif args.json and not args.encode:
-		make_station_json(args.json, args.input, args.output)
+		make_station_json(args.json, args.input, args.output, channel_name=args.channel_name)
 
 	elif args.plot:
 		plot_all_uptime(args.selector, args.start_date, args.end_date, args.input)
