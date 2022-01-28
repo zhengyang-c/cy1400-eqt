@@ -296,7 +296,7 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 	if start_day and end_day:
 		start_day = datetime.datetime.strptime(start_day, "%Y.%j")
 		end_day = datetime.datetime.strptime(end_day, "%Y.%j")
-		_df = _df[(df["sac_start_dt"] >= start_day) & (df["sac_end_dt"] <= end_day)]
+		_df = _df[(df["sac_start_dt"] >= start_day) & (df["sac_start_dt"] <= end_day)]
 
 	_df.sort_values("jday", inplace = True)
 
@@ -363,7 +363,7 @@ def pbs_writer(n_nodes, output_csv, job_name, env_name, project_code, no_execute
 			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=2gb -l walltime=1:00:00\n".format(job_name, project_code, n_nodes))
 		
 		elif (yes_execute or not no_execute) and not use_gpu:
-			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes))
+			f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime=40:00:00\n".format(job_name, project_code, n_nodes))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 		if use_gpu:
 			f.write("module load cuda/10.1\nexport HDF5_USE_FILE_LOCKING='FALSE'\n")
