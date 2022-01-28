@@ -260,14 +260,13 @@ def plot_all_uptime(selector_file, start_date, end_date, all_csv_path = "station
 
 
 
-def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", output_file = "", patch = False):
-
+def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", output_file = "", patch = False, start_day = None, end_day = None):
 	
-	# start_date format = e.g. 2020_03 for month
-
+	# start_date format = %Y.%j no options non-negotiable
 	df = pd.read_csv(all_csv_path)
 
-	# kinda inefficient bc 10^5 rows but it's fine bc it won't be used very often
+	df["sac_start_dt"] = pd.to_datetime(df["sac_start_dt"])
+	df["sac_end_dt"] = pd.to_datetime(df["sac_end_dt"])
 
 	for index, row in df.iterrows():
 		if "bad" in row.filepath:
@@ -280,14 +279,10 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 			if _cha in row.filepath:
 				df.at[index,'channel'] = _cha
 
-
-	#station_list = []
-
 	with open(selector_file, 'r') as f:
 		station_list = f.read().split("\n")
 
 	station_list = list(filter(lambda x: x != "", station_list))
-
 
 	if patch:
 		_df = df[(df["station"].isin(station_list)) & (df["start_time"] != "000000") & (df["start_time"].str[-2:] != "-1")]
@@ -297,6 +292,11 @@ def select_files(selector_file,  all_csv_path = "station/all_aceh_sac.csv", outp
 
 	else:
 		_df = df[df["station"].isin(station_list)]
+
+	if start_day and end_day:
+		start_day = datetime.datetime.strptime(start_day, "%Y.%j")
+		end_day = datetime.datetime.strptime(end_day, "%Y.%j")
+		_df = _df[(df["sac_start_dt"] >= start_day) & (df["sac_end_dt"] <= end_day)]
 
 	_df.sort_values("jday", inplace = True)
 
@@ -420,6 +420,7 @@ def encode_multirun(
 	patch = False,
 	json_file = "",
 	use_gpu = False,
+	n_split = 1
 	):
 
 	# encode everything (sac to hdf5, prediction
@@ -518,7 +519,7 @@ def encode_multirun(
 		project_code = "eos_shjwei"
 
 	if make_sac_csv:
-		select_files(station_file, output_file = sac_select, all_csv_path = make_sac_csv, patch = patch)
+		select_files(station_file, output_file = sac_select, all_csv_path = make_sac_csv, patch = patch, start_day = start_day, end_day = end_day)
 
 	df = pd.DataFrame(columns = ["id", "sta", "hdf5_folder", "prediction_output_folder", "merge_output_folder", "start_day", "end_day", "multi", "model_path"])
 
@@ -604,7 +605,7 @@ if __name__ == "__main__":
 	parser.add_argument("-i", "--input", help = "input file")
 	parser.add_argument("-o", "--output", help = "output file", default = "")
 
-
+	parser.add_argument("-split", "--split", help = "n. of job to split into", default = 1, type = int)
 	parser.add_argument("-sf", "--selector", help = "txt file with linebreak separated station names, specifying stations of interest")
 
 
@@ -701,6 +702,8 @@ if __name__ == "__main__":
 			config = args.config, 
 			patch = args.patch, 
 			json_file = args.json,
-			use_gpu = args.use_gpu)
+			use_gpu = args.use_gpu,
+			split = args.split,
+			)
 
 
