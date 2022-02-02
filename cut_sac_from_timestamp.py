@@ -116,7 +116,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			s_df = s_df.dropna(subset=["kzdate", "kztime"])
 
 		eqt_df.drop(['sac_start_time'], axis = 1)
-		eqt_df["source_file"].astype("string")
+		eqt_df["source_file"].astype("object")
 
 		s_df['sac_start_dt'] = pd.to_datetime(s_df['sac_start_dt'])
 		s_df['sac_end_dt'] = pd.to_datetime(s_df['sac_end_dt'])
