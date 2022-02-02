@@ -141,6 +141,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			search_term = _fdf["filepath"].iloc[0]
 
+			print("found source_file:", search_term)
+
 			eqt_df.at[index, "source_file"] = search_term
 
 		eqt_df = eqt_df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes = ("", "_sac")) 
