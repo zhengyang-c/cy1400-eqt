@@ -129,8 +129,17 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			_df = s_df[(s_df["station"] == row.station)]
 			# station dataframe
 			if len(_df) == 0:
-				print(row.station, "error for")
-				continue
+				station_remap = {"A02": "A54", "A10": "TG03", "GE01": "GN01", "GE16": "GN16", "GE10": "GN10", "GE07":"GN07", "AS09":"AN09", "GE13":"GN13", "TA02":"TN02", "MA01": "MN01", "GE15":"GN16", "GM05":"GM55"}
+				rev_map = {v:k for k,v in station_remap.items()}
+
+				try:
+					_station = rev_map[row.station]
+					_df = s_df[(s_df["station"] == _station)]
+					assert len(_df) != 0
+
+				except:
+					print("unable to fix via mapping, skipping")
+					continue
 
 			_fdf = _df[(_df["sac_start_dt"] < row.event_start_time) & (_df["sac_end_dt"] > row.event_start_time )]
 
