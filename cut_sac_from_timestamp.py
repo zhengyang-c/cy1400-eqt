@@ -170,6 +170,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			real_df["ID"] = real_df["ID"].astype('int64')
 
 			real_df = real_df[real_df["ID"].isin(fdf["ID"].tolist())]
+		
+		print(len(real_Df))
 
 		for index, row in real_df.iterrows():
 

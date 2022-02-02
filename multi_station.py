@@ -336,7 +336,6 @@ def make_station_json(station_coords, station_list, output, channel_name = ""):
 	chan = [channel_name + x for x in ["Z", "E", "N"]]
 
 	for _station in station_list:
-		print(_station)
 		station_json[_station] = {"network": "AC", "channels":chan}
 
 
@@ -346,7 +345,6 @@ def make_station_json(station_coords, station_list, output, channel_name = ""):
 		coordinates = [y.strip() for x in coordinates if len(x) > 0 for y in x.strip().split("\t") if len(y) > 0 ]
 
 	for station in station_json:
-		print(station)
 		i = coordinates.index(station)
 
 		station_json[station]["coords"] = [float(coordinates[i + 2]), 100, float(coordinates[i+1])] # i set elevation to 100 because that's the average height in sumatra and i'm not given this information + it's not that important 
