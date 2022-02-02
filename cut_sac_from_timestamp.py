@@ -162,7 +162,10 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 		eqt_df["sac_start_dt"] = pd.to_datetime(eqt_df["sac_start_dt"])
 
 		if filter_csv:
+
+			print("filtering")
 			fdf = pd.read_csv(filter_csv)
+			print(fdf)
 
 			# check that the int types are the same?
 
@@ -171,7 +174,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			real_df = real_df[real_df["ID"].isin(fdf["ID"].tolist())]
 		
-		print(len(real_Df))
+		print(len(real_df))
 
 		for index, row in real_df.iterrows():
 
