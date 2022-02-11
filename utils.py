@@ -268,8 +268,144 @@ def split_csv(input_csv, output_csv_root, N = 4):
 	remainder = len(df) % 4
 	n_rows_per_file = len(df) // 4
 
+
+
+def theoretical_misfit(tt, station_info, target_ID, df, station_metadata):
+	"""
+	station_info
+	tt path 
+	real_json (with travel time and phases)
+	real_csv
+	ID
+	"""
+
+	print(target_ID)
+
+	TT_DX = 1
+	TT_DZ = 1 
+	TT_NX = tt.shape[0]
+	TT_NZ = tt.shape[1]
+
+	station_metadata = parse_station_info(station_metadata)
+
+	# key ordering is immutable: throw into array and let numpy handle it
+
+	dists = []
+	depths = []
+
+	_lon = df[df["ID"] == target_ID]["LON"].tolist()[0]
+	_lat = df[df["ID"] == target_ID]["LAT"].tolist()[0]
+	_dep = df[df["ID"] == target_ID]["DEPTH"].tolist()[0]
+
+	# compute station distances for all stations
+	for sta in station_info:
+		_dist = dx((_lon, _lat), (station_metadata[sta]["lon"], station_metadata[sta]["lat"]))
+		dists.append(_dist)
+		depths.append(_dep)
+
+	dists = np.array(dists)
+	depths = np.array(depths)
+
+	dist_indices = np.array([int(round(x)) for x in dists/TT_DX]) # for table interpolation
+	depth_indices = np.array([int(round(x)) for x in depths/TT_DZ]) # for table interpolation
+
+	dist_deltas = dists - dist_indices * TT_DX
+	depth_deltas = depths - depth_indices * TT_DZ
+
+	dist_grad_P = []
+	dist_grad_S = []
+
+	depth_grad_P = []
+	depth_grad_S = []
+
+	tt_P = []
+	tt_S = []
+
+	for _c, _i in enumerate(dist_indices):
+		if _i + 1 > TT_NX:
+			_indices = np.array([_i - 1, _i])
+		elif _i - 1 < 0:
+			_indices = np.array([_i, _i + 1])
+		else:
+			_indices = np.array([_i - 1, _i, _i + 1]) 
+		
+
+		_Y_P = [tt[_x][depth_indices[_c]][0] for _x in _indices]
+		_Y_S = [tt[_x][depth_indices[_c]][1] for _x in _indices]
+
+		tt_P.append(tt[_i][depth_indices[_c]][0])
+		tt_S.append(tt[_i][depth_indices[_c]][1])
+
+		dist_grad_P.append(ip((_indices) * TT_DX, _Y_P))
+		dist_grad_S.append(ip((_indices) * TT_DX, _Y_S))
+
+	for _c, _i in enumerate(depth_indices):
+		if _i + 1 > TT_NZ:
+			_indices = np.array([_i - 1, _i])
+		elif _i - 1 < 0:
+			_indices = np.array([_i, _i + 1])
+		else:
+			_indices = np.array([_i - 1, _i, _i + 1]) 
+
+		_Y_P = [tt[dist_indices[_c]][_x][0] for _x in _indices]
+		_Y_S = [tt[dist_indices[_c]][_x][1]for _x in _indices]
+
+		depth_grad_P.append(ip((_indices) * TT_DZ, _Y_P))
+		depth_grad_S.append(ip((_indices) * TT_DZ, _Y_S))
+
+	dist_grad_P = np.array(dist_grad_P)
+	dist_grad_S = np.array(dist_grad_S)
+	depth_grad_P = np.array(depth_grad_P)
+	depth_grad_S = np.array(depth_grad_S)
+
+	tt_P = np.array(tt_P)
+	tt_S = np.array(tt_S)
+
+	tt_P += dist_grad_P * dist_deltas
+	tt_S += dist_grad_S * dist_deltas
+	tt_P += depth_grad_P * depth_deltas
+	tt_S += depth_grad_S * depth_deltas
 	
+	output_times = {}
+
+	for c, sta in enumerate(station_info):
+		output_times[sta] = {
+			"tt_P": tt_P[c],
+			"tt_S": tt_S[c]
+		} 
+
+	return output_times
+
+def dx(X1, X2):
+	from obspy.geodetics import gps2dist_azimuth
+	"""
 	
+	takes in two coordinate tuples (lon, lat), (lon, lat) returning their distance in kilometres
+	gps2dist_azimuth also returns the azimuth but i guess i don't need that yet
+	it also returns distances in metres so i just divide by 1000
+
+	the order doesn't matter
+	
+	:param      X1:   The x 1
+	:type       X1:   { type_description }
+	:param      X2:   The x 2
+	:type       X2:   { type_description }
+
+	"""
+
+	print(X1, X2)
+	return gps2dist_azimuth(X1[1], X1[0], X2[1], X2[0])[0] / 1000
+
+
+def ip(X, Y):
+	if len(X) == 3:
+
+		# arithmetic average of in between gradients to approximate gradient at midpoint
+
+		return 0.5 * ((Y[2] - Y[1])/(X[2] - X[1]) + (Y[1] - Y[0])/(X[1] - X[0]))
+
+	if len(X) == 2:
+		return (Y[1] - Y[0])/(X[1] - X[0])
 
 if __name__ == "__main__":
 	pass

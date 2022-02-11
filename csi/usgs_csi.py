@@ -130,7 +130,6 @@ TT_NX = tt.shape[0]
 TT_NZ = tt.shape[1]
 matched_phases = []
 
-
 for index, row in udf[udf["DEPTH"] < 80].iterrows(): # the travel time table goes up to 90km but uh
 	print(row.timestamp)
 
