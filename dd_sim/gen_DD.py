@@ -31,7 +31,7 @@ def main(job_name, n_bootstrap):
 
 	input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
 
-	source_station_file = "/home/zchoong001/cy1400/cy1400-eqt/rereal/station.dat"
+	source_station_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/station.dat"
 
 	remap_file = "../4aug_station_remap.txt"
 
