@@ -29,7 +29,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 
 def main(job_name, n_bootstrap):
 
-	input_json_phase_file = "../real_postprocessing/rereal_all/patch_all_rereal_events.json"
+	input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal_all/patch_all_rereal_events.json"
 
 	source_station_file = "/home/zchoong001/cy1400/cy1400-eqt/rereal/station.dat"
 
@@ -54,6 +54,7 @@ def main(job_name, n_bootstrap):
 
 	generate_folder_structure(n_bootstrap, paths)
 	generate_runtime_scripts(n_bootstrap, paths)
+	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = 0.1)
 
 	pbs_writer(n_bootstrap, job_name, paths, walltime_hours=5)
 
