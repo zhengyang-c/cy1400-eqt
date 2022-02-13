@@ -87,12 +87,12 @@ def generate_runtime_scripts(n_bootstrap, paths):
 
 	for n in range(n_bootstrap):
 
-		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"])
-		target_file = os.path.join(target_folder, str(n), "run.sh")
+		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"], str(n))
+		target_file = os.path.join(target_folder,  "run.sh")
 
 		with open(target_file, "w") as f:
 			f.write("cd {}\n{} {}\n{} {}".format(
-				os.path.join(target_file, str(n)),
+				target_folder,
 				paths["ph2dt"],
 				paths["ph2dt_inp"],
 				paths["hypodd"], 
