@@ -29,7 +29,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def main(job_name, n_bootstrap):
+def main(job_name, n_bootstrap, bootstrap_fraction = 0.9):
 
 	input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
 
@@ -57,7 +57,7 @@ def main(job_name, n_bootstrap):
 
 	generate_folder_structure(n_bootstrap, paths)
 	generate_runtime_scripts(n_bootstrap, paths)
-	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = 0.1)
+	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = bootstrap_fraction)
 
 	pbs_writer(n_bootstrap, job_name, paths, walltime_hours=5)
 
@@ -271,6 +271,7 @@ if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
 	ap.add_argument("job_name")
 	ap.add_argument("n_bootstrap", type = int)
+	ap.add_argument("-f", "--bootstrapfraction", type = float)
 
 	args = ap.parse_args()
 
