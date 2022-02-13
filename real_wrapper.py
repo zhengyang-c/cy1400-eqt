@@ -5,18 +5,20 @@ import itertools
 import os
 from subprocess import check_output
 import shutil
+from utils import pbs_writer
 
 
-def generate_job(job_name,
-real_path = "",
-station_file_path = "",
-tt_path = "",
-pick_dir_path = "",
-day_list_path = "",
-pbs_folder = "",
-output_folder = "",
-do_parallel = False,
-n_workers = 0,
+def generate_job(
+	job_name,
+	real_path = "",
+	station_file_path = "",
+	tt_path = "",
+	pick_dir_path = "",
+	day_list_path = "",
+	pbs_folder = "",
+	output_folder = "",
+	do_parallel = False,
+	n_workers = 0,
 ):
 
 	# will have to construct the function call from scratch
@@ -269,24 +271,6 @@ def generate_ymd(day_list_path):
 
 	return file_dict_list
 
-
-def pbs_writer(n_nodes, job_name, paths, n_cores = 1):
-	output_pbs = os.path.join(paths["pbs_folder"], job_name +".pbs")
-
-	project_code = 'eos_shjwei'
-
-	with open(output_pbs, "w") as f:
-		if n_nodes == 1:
-			pass
-		else:
-			f.write("#PBS -J 0-{}\n".format(n_nodes - 1))
-		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime=80:00:00\n".format(job_name, project_code, n_nodes, n_cores))
-		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
-
-		if n_nodes == 1:
-			f.write("{1}/runtime_scripts/{0}/0/run.sh\n".format(job_name, paths["pbs_folder"]))
-		else:
-			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
 
 def script_job_writer(job_name, index, real_calls, paths):

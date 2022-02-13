@@ -1,5 +1,6 @@
 # fill this in with the common functions so i can clean up my shitty code 
 
+import os
 import json
 import pandas as pd
 import datetime
@@ -406,6 +407,26 @@ def ip(X, Y):
 
 	if len(X) == 2:
 		return (Y[1] - Y[0])/(X[1] - X[0])
+
+def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
+	output_pbs = os.path.join(paths["pbs_folder"], job_name +".pbs")
+
+	project_code = 'eos_shjwei'
+
+	with open(output_pbs, "w") as f:
+		if n_nodes == 1:
+			pass
+		else:
+			f.write("#PBS -J 0-{:d}\n".format(n_nodes - 1))
+
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime={}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
+		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
+
+		if n_nodes == 1:
+			f.write("{1}/runtime_scripts/{0}/0/run.sh\n".format(job_name, paths["pbs_folder"]))
+		else:
+			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
+
 
 if __name__ == "__main__":
 	pass

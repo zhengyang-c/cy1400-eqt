@@ -54,7 +54,6 @@ def sac_remapping(search_folder, search_term, map_file, station_file, output_fil
 
 
 def json_remapping(json_file, map_file, station_info_file, output_file):
-	print("what")
 
 	station_info = parse_station_info(station_info_file)
 
@@ -75,8 +74,6 @@ def json_remapping(json_file, map_file, station_info_file, output_file):
 
 		if not y_m in station_map:
 			continue
-
-		#print("wow")
 
 		for station in list(phase_dict[event]["data"].keys()):
 			if station in station_map[y_m]:
