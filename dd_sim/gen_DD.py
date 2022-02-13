@@ -9,6 +9,8 @@ import datetime
 import shutil
 
 def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
+
+	paths["pbs_folder"] = paths["pbs_file_folder"]
 	output_pbs = os.path.join(paths["pbs_folder"], job_name +".pbs")
 
 	project_code = 'eos_shjwei'
@@ -36,7 +38,8 @@ def main(job_name, n_bootstrap):
 	remap_file = "../4aug_station_remap.txt"
 
 	paths = {
-		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs",
+		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts",
+		"pbs_file_folder":"/home/zchoong001/cy1400/cy1400-eqt/pbs",
 		"hypodd":"/home/zchoong001/HYPODD/src/hypoDD/hypoDD",
 		"ph2dt":"/home/zchoong001/HYPODD/src/ph2dt/ph2dt",
 		"job_name": job_name,
@@ -89,7 +92,7 @@ def generate_runtime_scripts(n_bootstrap, paths):
 
 		with open(target_file, "w") as f:
 			f.write("cd {}\n{} {}\n{} {}".format(
-				target_folder,
+				os.path.join(target_file, str(n)),
 				paths["ph2dt"],
 				paths["ph2dt_inp"],
 				paths["hypodd"], 
