@@ -105,8 +105,8 @@ def generate_folder_structure(n_bootstrap, paths):
 	if not os.path.exists(target_folder):
 		os.makedirs(target_folder)
 	for n in range(n_bootstrap):
-		os.makedirs(os.path.join(target_folder, str(n)))
-
+		if not os.path.exists(os.path.join(target_folder, str(n))):
+			os.makedirs(os.path.join(target_folder, str(n)))
 
 
 def create_map(input_file):
