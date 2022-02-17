@@ -271,7 +271,7 @@ if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
 	ap.add_argument("job_name")
 	ap.add_argument("n_bootstrap", type = int)
-	ap.add_argument("-f", "--bootstrap_fraction", type = float)
+	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9)
 
 	args = ap.parse_args()
 
