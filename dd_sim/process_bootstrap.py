@@ -4,7 +4,6 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse as ap
-from obspy.geodetics import gps2dist_azimuth
 
 def make_reloc_catalog(input_file, ):
 
