@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse as ap
+from obspy.geodetics import gps2dist_azimuth
 
 def make_reloc_catalog(input_file, ):
 
@@ -65,17 +66,41 @@ def main(input_folders, output_json = ""):
 		_df = make_reloc_catalog(f)
 		for index, row in _df.iterrows():
 			_id = str(row.ID).zfill(6)
-			if row.ID not in data:
+			if _id not in data:
 				data[_id] = []
-
 			try:
 				data[_id].append([float(row.LON), float(row.LAT), float(row.DEPTH)])
 			except:
 				print(row.LAT, row.LON, row.DEPTH)
-				pass
 
 	with open(output_json, "w") as f:
 		json.dump(data, f, indent = 4)
+
+
+
+def process_data(input_json):
+	with open(input_json, "r") as f:
+		data = json.load(f)
+
+	# for each ID,
+	# if there's only 1 point, then skip, otherwise find the average
+
+	for id in data:
+		if len(data[id]) == 1:
+			continue
+
+		# get average of lon and lat
+
+		locs = pd.DataFrame.from_records(data[id], columns = ['lon', 'lat', 'dep'])
+
+		mean_lon, mean_lat, mean_dep = locs['lon'].mean(), locs['lat'].mean(), locs['dep'].mean()
+
+		# convert to cartesian coordinates
+
+
+
+
+
 
 	
 
