@@ -214,16 +214,16 @@ def search(pid, args):
 		if "station_P" in phase_info[_sta]:
 			_arrivaltime = phase_info[_sta]["station_P"]
 			try:
-				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
+				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y-%m-%d %H:%M:%S.%f")
 			except:
-				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
+				phase_info[_sta]["station_P"] = datetime.datetime.strptime(_arrivaltime, "%Y-%m-%d %H:%M:%S")
 
 		if "station_S" in phase_info[_sta]:
 			_arrivaltime = phase_info[_sta]["station_S"]
 			try:
-				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S.%f")
+				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y-%m-%d %H:%M:%S.%f")
 			except:
-				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y%m%d-%H%M%S")
+				phase_info[_sta]["station_S"] = datetime.datetime.strptime(_arrivaltime, "%Y-%m-%d %H:%M:%S")
 
 	if args["time_remapping"]:
 		rdf = pd.read_csv(args["time_remapping"])#remap dataframe
