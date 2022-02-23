@@ -87,6 +87,7 @@ def parse_input(station_file_name,
 	distance_weight = False,
 	rotation_weight = False,
 	both_weight = False,
+	no_repeat = False,
 	):
 
 	if any([x == None for x in [DZ, TT_DX, TT_DZ, ZRANGE]]): 
@@ -204,8 +205,8 @@ def search(pid, args):
 
 	phase_info = phase_info[pid]["data"]
 
-	print(args["time_remapping"])
 
+	print(pid)
 	# convert the arrival times into datetime objects now rather than later:
 
 	for _sta in phase_info:
@@ -551,8 +552,8 @@ if __name__ == "__main__":
 	parser.add_argument("-output_tt")
 
 
-	parser.add_argument("-station_info")
-	parser.add_argument("-phase_json")
+	parser.add_argument("-station_info", help = "")
+	parser.add_argument("-phase_json", help = "Each entry has the event_id (padded string) as the key. The P and S arrivals from REAL are inside the 'data' dictionary, along with the absolute arrival times from EQT. You have to 'patch' the json first using the event archive writer")
 
 	#parser.add_argument("-eqt_csv")
 	# parser.add_argument("-coord_file")
@@ -562,7 +563,7 @@ if __name__ == "__main__":
 
 	parser.add_argument("-f", "--force", help = "Force to run gridsearch", action = 'store_true')
 
-	parser.add_argument("-event_csv")
+	parser.add_argument("-event_csv", help = "CSV file that selects IDs for which to perform grid search")
 	parser.add_argument("-event_id", type = int)
 
 	parser.add_argument("-zrange", type = float)
@@ -578,6 +579,8 @@ if __name__ == "__main__":
 	parser.add_argument("-load_only", action = "store_true")
 	parser.add_argument("-plot_mpl", action = "store_true")
 	parser.add_argument("-show_mpl", action = "store_true")
+
+	parser.add_argument("-nr", "--no_repeat", action = "store_true")
 
 	parser.add_argument("-r", "--run_rotate", action = "store_true")
 	parser.add_argument("-ef", "--event_folder", type = str, default = "imported_figures/event_archive")
@@ -640,6 +643,7 @@ if __name__ == "__main__":
 			distance_weight = args.distance_weight,
 			rotation_weight = args.rotation_weight,
 			both_weight = args.both_weight,
+			no_repeat = args.no_repeat,
 			)
 
 
