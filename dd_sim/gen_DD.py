@@ -29,9 +29,12 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def main(job_name, n_bootstrap, bootstrap_fraction = 0.9):
+def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = ""):
 
-	input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
+	if json_file == "":
+		input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
+	else:
+		input_json_phase_file = json_file
 
 	source_station_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/station.dat"
 
@@ -47,7 +50,6 @@ def main(job_name, n_bootstrap, bootstrap_fraction = 0.9):
 		"hypodd_inp": "hypoDD.inp",
 		"input_station_file": "station.dat",
 		"phase_file_name": "phase.dat",
-
 	}
 
 	with open(input_json_phase_file, "r") as f:
@@ -272,7 +274,8 @@ if __name__ == "__main__":
 	ap.add_argument("job_name")
 	ap.add_argument("n_bootstrap", type = int)
 	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9)
+	ap.add_argument("-j", "--json_file")
 
 	args = ap.parse_args()
 
-	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction)
+	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction, json_file = args.json_file, )
