@@ -191,7 +191,7 @@ def generate_phase_file(phase_json, bootstrap_factor, output_file):
 		output_str += header_str + "\n"
 
 		for sta in data["data"]:
-			p = ff.FortranRecordWriter('(A4,3x,f6.3,1x,i1,1x,a1)')
+			p = ff.FortranRecordWriter('(A4,1x,f7.3,1x,i1,1x,a1)')
 			if "P" in data["data"][sta]:
 				output_str += (p.write([sta, float(data["data"][sta]["P"]), 1, "P"])) + "\n"
 			if "S" in data["data"][sta]:
