@@ -26,15 +26,77 @@ import argparse
 import pandas as pd
 from utils import parse_station_info
 import fortranformat as ff
+import shutil
+import json
+import random
 
-def main():
+def main(job_name, n_bootstrap, **kwargs):
+	paths = {
+		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts",
+		"pbs_file_folder":"/home/zchoong001/cy1400/cy1400-eqt/pbs",
+		"job_name": job_name,
+	}
+	# create all the needed folders, generate runtime scripts
 
-	N_EVENTS = 20
+	# then generate the work files
+
+	# then generate the .pbs file
+
+	for k in kwargs:
+		paths[k] = kwargs[k]
+
+def generate_runtime_scripts(n_bootstrap, paths):
+
+	for n in range(n_bootstrap):
+
+		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"], str(n))
+		target_file = os.path.join(target_folder,  "run.sh")
+
+		with open(target_file, "w") as f:
+			f.write("cd {}\n{} {}\n{} {}".format(
+				target_folder,
+				paths["ph2dt"],
+				paths["ph2dt_inp"],
+				paths["hypodd"], 
+				paths["hypodd_inp"], 
+			))
+
+		os.chmod(target_file, 0o775)
+def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
+
+	paths["pbs_folder"] = paths["pbs_file_folder"]
+	output_pbs = os.path.join(paths["pbs_folder"], job_name +".pbs")
+
+	project_code = 'eos_shjwei'
+
+	with open(output_pbs, "w") as f:
+		if n_nodes == 1:
+			pass
+		else:
+			f.write("#PBS -J 0-{:d}\n".format(n_nodes - 1))
+
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime={}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
+		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
+
+		if n_nodes == 1:
+			f.write("{1}/runtime_scripts/{0}/0/run.sh\n".format(job_name, paths["pbs_folder"]))
+		else:
+			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
+
+def generate_all(
+	output_folder = "",
+	output_root = "",
+	json_file = "",
+	station_file = "",
+	velest_source = "",
+	bootstrap_fraction = 0.1,
+):
+
 
 	# do the station file first since it's easiest
-	station_info = parse_station_info("csi/new_station_info_elv.dat")
-	phase_file = "real_postprocessing/rereal_all/all_rereal_events.pha"
-	mag_file = "imported_figures/all_rereal_mags.csv"
+	station_info = parse_station_info(station_file)
+	# phase_file = "real_postprocessing/rereal_all/all_rereal_events.pha"
+	# mag_file = "imported_figures/all_rereal_mags.csv"
 
 	for key in list(station_info.keys()):
 		if len(key) == 3:
@@ -42,11 +104,26 @@ def main():
 
 	# this is because VELEST is written with station names of 4 characters, so just append a Z at the back 
 
-	output_folder = "velest"	
-	output_root = "master_real_test"
-	output_path = os.path.join(output_folder, output_root)
+	# output_folder = "velest"	
+	# output_root = "master_real_test"
 
+	if not os.path.exists(output_folder):
+		os.makedirs(output_folder)
 	
+	if velest_source:
+		try:
+			shutil.copy(velest_source, output_folder)
+		except:
+			print("Unable to copy VELEST file over, skipping...")
+
+
+	output_path = os.path.join(output_folder, output_root)
+	with open(json_file, "r") as f:
+		phase_json = json.load(f)
+
+	event_ids = list(phase_json.keys())
+	n_events = int(bootstrap_fraction * len(event_ids))
+
 	outputs = {
 		"station_file": output_path + ".sta",
 		"event_file": output_path + ".events",
@@ -59,10 +136,11 @@ def main():
 		"event":output_root + ".events",
 		"model":output_root + ".model",
 		"output": output_root + ".output",
-		"n_events": N_EVENTS,
+		"bootstrap_fraction": bootstrap_fraction,
 		"station_corr": output_root + ".stacorr",
 		"hypo_output": output_root + ".hypo",
 		"residual": output_root + ".res",
+		"n_events": n_events,
 	}
 
 	def write_station(station_info):
@@ -127,7 +205,7 @@ def main():
 		mod_str += "{}\n".format(len(initial_p_model))
 		for i in initial_p_model:
 			if c:
-				temp_str = h.write([i[1], i[0], 1, "S"]) + "\n"
+				temp_str = h.write([i[1]/1.73, i[0], 1, "S"]) + "\n"
 				temp_str = temp_str.replace("1.000", "001.00")
 				mod_str += temp_str
 				c = 0
@@ -157,10 +235,10 @@ def main():
 		return ctrl_str
 
 
-	def write_event(mag_file):
-		# event file....
+	def write_event(json_file):
 
-		mdf = pd.read_csv(mag_file)
+		bootstrap = random.sample(event_ids, n_events)
+		# event file....
 
 		# just modify the first line
 
@@ -170,68 +248,72 @@ def main():
 		h = ff.FortranRecordWriter('(3i2.2,1x,2i2.2,1x,f5.2,1x,f7.4,a1,1x,f8.4,a1,f7.2,f7.2,i2)')
 
 		g = ff.FortranRecordWriter('(a4,a1,i1,f6.2)')
-
 		out_str = ""
-		c = 0
+		
 		start_flag = True
-		event_buffer = []
-		with open(phase_file, "r") as f:
-			for line in f:
-				# print(event_buffer)
-				data = [x.strip() for x in line.split(" ") if x != ""]
-				if line[0] == "#":
-					if start_flag:
-						pass
-					else:
-						for i in event_buffer:
-							out_str += i
 
-						out_str +=  (6 - len(event_buffer)) * 12 * " "
-						out_str += "\n\n"	
-					event_buffer = []
-
-					if c == N_EVENTS:
-						break
-
-					event_id = int(data[-1])
-
-					if len(mdf[mdf["ID"] == event_id]) == 0:
-						event_mag = 0
-					else:
-						event_mag = mdf[mdf["ID"] == event_id]["m_l"].sum()
-
-					#out_str += "{}{}{} {}{} {} {}N {}E    {}    {:.2f} 1\n".format(data[1][2:4], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], event_mag)
-					out_str += h.write([int(data[1][2:4]), int(data[2]), int(data[3]), int(data[4]), int(data[5]), float(data[6]), float(data[7]), "N", float(data[8]), "E", float(data[9]), event_mag, 1])
-					out_str += "\n"
-					c += 1
+		for e in bootstrap:
+			event_buffer = []
+			data = phase_json[e]
+			header_str = h.write([
+				int(data["year"][2:4]),
+				int(data["month"]),
+				int(data["day"]),
+				int(data["hour"]),
+				int(data["min"]),
+				float(data["sec"]),
+				float(data["lat_guess"]),
+				"N",
+				float(data["lon_guess"]),
+				"E",
+				float(data["dep_guess"]),
+				0.00,
+				1
+			])
+			out_str += header_str + "\n"
+			for sta in data["data"]:
+				if len(sta) == 3:
+					_sta = sta + "Z"
 				else:
-					start_flag = False
-					if len(event_buffer) < 6:
-						pass
-					else:
-						# print("writing")
-						for i in event_buffer:
-							out_str += i
-						out_str += "\n"
-						event_buffer = []
+					_sta = sta
 
-					if len(data[0]) == 3: #station name
-						_sta = data[0] + "Z"
-					else:
-						_sta = data[0]
+				if "P" in data["data"][sta]:
+					event_buffer.append(
+						g.write(
+							[_sta, "P", 1, float(data["data"][sta]["P"])]))
 
-					event_buffer.append(g.write([_sta, data[3], 1, float(data[1])]))
-			if len(event_buffer) != 0:
-				# print("print last")
-				for i in event_buffer:
-					out_str += i
-				out_str += " " * 10 + "\n"
+				if "S" in data["data"][sta]:
+					event_buffer.append(
+						g.write(
+							[_sta, "S", 1, float(data["data"][sta]["S"])]))
+
+			cut_off = 150
+			if len(event_buffer) > cut_off:
+				event_buffer = event_buffer[:cut_off]
+
+			c = 0
+			_c = len(event_buffer)
+			while len(event_buffer) > 0:
+				c += 1
+				out_str += event_buffer.pop()
+
+				if c == 6:
+					out_str += "\n"
+					c = 0
+			
+			if (_c % 6):
+				out_str += " " * 12 * (6 - (_c % 6))
+
 			out_str += "\n"
 
-		return out_str 
+			if out_str[-2:] != "\n\n":
+				out_str += "\n"
+		
+		return out_str
+
 	sta_str = write_station(station_info)
 	mod_str = write_model()
-	out_str = write_event(mag_file)
+	out_str = write_event(json_file)
 	ctrl_str = write_control_file(params)
 
 	with open(outputs["station_file"], "w") as f:
@@ -248,4 +330,13 @@ def main():
 if __name__ == "__main__":
 
 	ap = argparse.ArgumentParser()
-	main()
+
+	ap.add_argument("-o", "--output_folder")
+	ap.add_argument("-n", "--file_root")
+	ap.add_argument("-j", "--json_file")
+	ap.add_argument("-sta", "--station_file")
+	ap.add_argument("-m", "--mag_file", default = "")
+	ap.add_argument("-v", "--velest")
+	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9 )
+	args = ap.parse_args()
+	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction)

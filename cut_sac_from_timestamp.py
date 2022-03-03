@@ -134,6 +134,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				rev_map = {v:k for k,v in station_remap.items()}
 
 				try:
+					print("attempting fix")
 					_station = rev_map[row.station]
 					_df = s_df[(s_df["station"] == _station)]
 					assert len(_df) != 0
@@ -200,6 +201,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
+				if sta != "A54":
+					continue
+				print(row)
 				event_dt = _row.event_start_time
 
 				# print("event dt",event_dt)
