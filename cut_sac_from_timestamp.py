@@ -203,7 +203,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				sta = _row.station
 				if sta != "A54":
 					continue
-				print(_row["sac_source_file"])
+				print(_row["source_file"])
 				print(_row["sac_start_time"])
 				event_dt = _row.event_start_time
 
