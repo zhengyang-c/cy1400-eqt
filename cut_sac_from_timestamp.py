@@ -91,7 +91,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			target_indices, updated_station_dict = df_searcher(eqt_df, _station_dict, _ts)
 
 			for i in target_indices:
-				print(i)
 				eqt_df.at[i, "ID"] = row.ID
 			phase_dict[padded_id]['data'] = updated_station_dict
 		
@@ -202,8 +201,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
-				if not sta in ["GN13"]:
-					continue
+				print(_row.station)
 				print(_row["source_file"])
 				print(_row["sac_start_time"])
 
@@ -325,17 +323,18 @@ def df_searcher(df, _station_dict, _ts, ):
 
 		if _p_arrival_time:
 			_p_df = _df[(_df['p_arrival_time'] < _p_arrival_time + datetime.timedelta(seconds=1)) & (_df['p_arrival_time'] > _p_arrival_time - datetime.timedelta(seconds=1))].copy()
-			print(_p_df)
+			# print(_p_df)
 
 			try:
 				assert _p_df.shape[0] == 1
 
 			except:
-				print("Duplicates found for above p_df")
+				pass
+				# print("Duplicates found for above p_df")
 
 			for index, row in _p_df.iterrows():
 
-				print(index)
+				# print(index)
 				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
 
 				_station_dict[sta]['station_P'] = row.p_arrival_time.to_pydatetime()
@@ -360,7 +359,8 @@ def df_searcher(df, _station_dict, _ts, ):
 				assert _s_df.shape[0] == 1
 
 			except:
-				print("Duplicates found for above p_df")
+				pass
+				# print("Duplicates found for above p_df")
 
 			for index, row in _s_df.iterrows():
 				#search_file_path = os.path.join(row.local_file_root, 'sac_picks', row.datetime_str+"*C") 
