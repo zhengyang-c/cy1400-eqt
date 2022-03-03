@@ -201,10 +201,13 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
-				if sta != "A54":
+				if not sta in ["A54", "GN13"]:
 					continue
 				print(_row["source_file"])
 				print(_row["sac_start_time"])
+
+				if not _row["sac_start_time"]:
+					print("patch sac start time somehow")
 				event_dt = _row.event_start_time
 
 				# print("event dt",event_dt)
