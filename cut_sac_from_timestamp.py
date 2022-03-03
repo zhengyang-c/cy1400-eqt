@@ -76,10 +76,11 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df = pd.read_csv(real_csv)
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
+	real_df = real_df[real_df["ID"] in [403, 8343]]
+
 	if eqt_to_event:
 		with open(real_json, "r") as f:
 			phase_dict = json.load(f)
-	
 
 		for index, row in real_df.iterrows():
 			padded_id = str(int(row.ID)).zfill(6)
@@ -123,7 +124,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 
 		for index, row in eqt_df.iterrows():
-			print(index)
+			print(row.station)
 			# get station
 			jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
 
@@ -134,9 +135,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				rev_map = {v:k for k,v in station_remap.items()}
 
 				try:
-					print("attempting fix")
 					_station = rev_map[row.station]
 					_df = s_df[(s_df["station"] == _station)]
+					print("attempting fix new station", _station)
 					assert len(_df) != 0
 
 				except:
@@ -201,12 +202,12 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
-				if not sta in ["A54", "GN13"]:
+				if not sta in ["GN13"]:
 					continue
 				print(_row["source_file"])
 				print(_row["sac_start_time"])
 
-				if not _row["sac_start_time"]:
+				if pd.isnull(_row["sac_start_time"]):
 					print("patch sac start time somehow")
 				event_dt = _row.event_start_time
 
