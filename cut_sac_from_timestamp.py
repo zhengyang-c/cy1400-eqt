@@ -75,7 +75,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df = pd.read_csv(real_csv)
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
-	real_df = real_df[(real_df["ID"] > 21900) ]
+	real_df = real_df[(real_df["ID"].isin([21900:21905])]
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
@@ -83,11 +83,13 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 		for index, row in real_df.iterrows():
 			padded_id = str(int(row.ID)).zfill(6)
+			print(padded_id)
 
 			_station_dict = phase_dict[padded_id]['data']
 			_ts = (phase_dict[padded_id]['timestamp'])
 
 			target_indices, updated_station_dict = df_searcher(eqt_df, _station_dict, _ts)
+			print(target_indices)
 
 			for i in target_indices:
 				eqt_df.at[i, "ID"] = row.ID
