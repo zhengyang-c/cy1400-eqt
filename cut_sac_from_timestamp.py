@@ -159,7 +159,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			eqt_df.at[index, "source_file"] = search_term
 
-		eqt_df.dropna(subset = "source_file") # this should fix the faulty merge
+		eqt_df.dropna(subset = ["source_file"]) # this should fix the faulty merge
 
 		eqt_df = eqt_df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes = ("", "_sac")) 
 
