@@ -76,7 +76,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df = pd.read_csv(real_csv)
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
-	real_df = real_df[real_df["ID"] < 40]
+	real_df = real_df[(real_df["ID"] < 40) ]
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
@@ -128,6 +128,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
 
 			_df = s_df[(s_df["station"] == row.station)]
+			print(_df["sac_start_dt"])
 			# station dataframe
 			if len(_df) == 0:
 				station_remap = {"A02": "A54", "A10": "TG03", "GE01": "GN01", "GE16": "GN16", "GE10": "GN10", "GE07":"GN07", "AS09":"AN09", "GE13":"GN13", "TA02":"TN02", "MA01": "MN01", "GE15":"GN16", "GM05":"GM55"}
@@ -148,7 +149,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			if len(_fdf) == 0 :
 				print(_df)
-				_df.to_csv("log/A54_check.csv", index = False)
 				print(row.station, "error for")
 				print(index, row.station, row.event_start_time)
 				continue
@@ -236,7 +236,12 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				start_time = (event_dt - _row.sac_start_dt).total_seconds() - 30
 				end_time = (event_dt - _row.sac_start_dt).total_seconds() + 120
 
-				cut_str += "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
+				_cut_str = "printf \"cut {:.2f} {:.2f}\\nr {}\\nwrite SAC {} {} {}\\nq\\n\" | sac\n".format(start_time, end_time, sac_source, f1, f2, f3)
+
+				if not "nan" in _cut_str:
+					cut_str += _cut_str
+				else:
+					continue
 
 				#
 				# HEADER WRITING
