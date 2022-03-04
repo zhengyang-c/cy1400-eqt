@@ -147,6 +147,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			_fdf = _df[(_df["sac_start_dt"] < row.event_start_time) & (_df["sac_end_dt"] > row.event_start_time )]
 
 			if len(_fdf) == 0 :
+				print(_df)
+				_df.to_csv("log/A54_check.csv", index = False)
 				print(row.station, "error for")
 				print(index, row.station, row.event_start_time)
 				continue
@@ -156,6 +158,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			print("found source_file:", search_term)
 
 			eqt_df.at[index, "source_file"] = search_term
+
+		eqt_df.dropna(subset = "source_file") # this should fix the faulty merge
 
 		eqt_df = eqt_df.merge(s_df, how = "left", left_on = "source_file", right_on = "filepath", suffixes = ("", "_sac")) 
 
