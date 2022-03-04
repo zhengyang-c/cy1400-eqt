@@ -61,7 +61,6 @@ Outputs:
 def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac_csv, output_folder, station_file, eqt_to_event = False, eqt_to_sac = False, write = False, filter_csv = ""):
 	if eqt_to_event:
 		eqt_df = pd.read_csv(input_csv)
-	
 	else:
 		eqt_df = pd.read_csv(output_csv)
 
@@ -92,6 +91,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for i in target_indices:
 				eqt_df.at[i, "ID"] = row.ID
+				print("updating ",i)
 			phase_dict[padded_id]['data'] = updated_station_dict
 		
 		eqt_df.to_csv(output_csv, index = False)
