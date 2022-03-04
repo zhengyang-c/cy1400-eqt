@@ -76,7 +76,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df = pd.read_csv(real_csv)
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
-	real_df = real_df[real_df["ID"].isin([403, 8343])]
+	real_df = real_df[real_df["ID"] < 40]
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
@@ -112,8 +112,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	if eqt_to_sac:
 		s_df = pd.read_csv(sac_csv)
 
-		if ("kzdate" in s_df.columns) and ("kztime" in s_df.columns):
-			s_df = s_df.dropna(subset=["kzdate", "kztime"])
+		# if ("kzdate" in s_df.columns) and ("kztime" in s_df.columns):
+		# 	s_df = s_df.dropna(subset=["kzdate", "kztime"])
 
 		eqt_df.drop(['sac_start_time'], axis = 1)
 		eqt_df["source_file"] = eqt_df["source_file"].astype("object")
@@ -141,6 +141,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 				except:
 					print("unable to fix via mapping, skipping")
+					print(row.station, row.timestamp)
 					continue
 
 			_fdf = _df[(_df["sac_start_dt"] < row.event_start_time) & (_df["sac_end_dt"] > row.event_start_time )]
@@ -204,7 +205,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				print(_row.station)
 				print(_row["source_file"])
 				print(_row["sac_start_time"])
-
 				if pd.isnull(_row["sac_start_time"]):
 					print("patch sac start time somehow")
 				event_dt = _row.event_start_time
