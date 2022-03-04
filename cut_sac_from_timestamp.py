@@ -76,7 +76,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
 	real_df = real_df[(real_df["ID"] > 19500)]
-	print(real_df)
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
@@ -84,17 +83,14 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 		for index, row in real_df.iterrows():
 			padded_id = str(int(row.ID)).zfill(6)
-			print(padded_id)
 
 			_station_dict = phase_dict[padded_id]['data']
 			_ts = (phase_dict[padded_id]['timestamp'])
 
 			target_indices, updated_station_dict = df_searcher(eqt_df, _station_dict, _ts)
-			print(target_indices)
 
 			for i in target_indices:
 				eqt_df.at[i, "ID"] = row.ID
-				print("updating ",i)
 			phase_dict[padded_id]['data'] = updated_station_dict
 		
 		eqt_df.to_csv(output_csv, index = False)
@@ -105,8 +101,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
 
-
-	print("null values inside ID", eqt_df["ID"].isnull().values.any())
 	eqt_df = eqt_df.dropna(subset = ['ID'])
 	cut_str = "#!/bin/bash\n"
 	header_str = "#!/bin/bash\n"
@@ -210,8 +204,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 			for _index, _row in _eqt_df.iterrows():
 				sta = _row.station
-				print(_row.station)
-				print(_row["source_file"])
 				event_dt = _row.event_start_time
 
 				# print("event dt",event_dt)
@@ -242,6 +234,10 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				if not "nan" in _cut_str:
 					cut_str += _cut_str
 				else:
+					print("found nan, excluding")
+					print(_row.station)
+					print(_row["source_file"])
+					print(_row.ID)
 					continue
 
 				#
