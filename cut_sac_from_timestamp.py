@@ -102,6 +102,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
 
+
+	print("null values inside ID", eqt_df["ID"].isnull().values.any())
 	eqt_df = eqt_df.dropna(subset = ['ID'])
 	cut_str = "#!/bin/bash\n"
 	header_str = "#!/bin/bash\n"
