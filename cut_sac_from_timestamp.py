@@ -128,7 +128,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			jday = int(datetime.datetime.strftime(row.event_start_time, "%j"))
 
 			_df = s_df[(s_df["station"] == row.station)]
-			print(_df["sac_start_dt"])
 			# station dataframe
 			if len(_df) == 0:
 				station_remap = {"A02": "A54", "A10": "TG03", "GE01": "GN01", "GE16": "GN16", "GE10": "GN10", "GE07":"GN07", "AS09":"AN09", "GE13":"GN13", "TA02":"TN02", "MA01": "MN01", "GE15":"GN16", "GM05":"GM55"}
@@ -178,8 +177,8 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 
 	if write:
 
-		eqt_df["sac_start_time"] = pd.to_datetime(eqt_df["sac_start_time"]).dt.tz_localize(None)
 		eqt_df["sac_start_dt"] = pd.to_datetime(eqt_df["sac_start_dt"])
+		eqt_df["event_start_time"] = pd.to_datetime(eqt_df["event_start_time"])
 
 		if filter_csv:
 			fdf = pd.read_csv(filter_csv)
@@ -208,9 +207,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				sta = _row.station
 				print(_row.station)
 				print(_row["source_file"])
-				print(_row["sac_start_time"])
-				if pd.isnull(_row["sac_start_time"]):
-					print("patch sac start time somehow")
 				event_dt = _row.event_start_time
 
 				# print("event dt",event_dt)
@@ -247,7 +243,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				# HEADER WRITING
 				#
 
-				start_of_file = _row.sac_start_time
+				start_of_file = _row.sac_start_dt
 
 				timestamp = datetime.datetime.strftime(_row.event_start_time, '%H%M%S')
 
