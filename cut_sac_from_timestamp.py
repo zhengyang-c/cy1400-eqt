@@ -76,6 +76,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
 	real_df = real_df[(real_df["ID"].isin([21900, 21901, 21902, 21903, 21904, 21905]))]
+	print(real_df)
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
