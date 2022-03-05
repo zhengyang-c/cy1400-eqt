@@ -75,7 +75,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 	real_df = pd.read_csv(real_csv)
 	real_df["timestamp"] = pd.to_datetime(real_df["timestamp"])
 
-	real_df = real_df[(real_df["ID"] == 17805)]
+	# real_df = real_df[(real_df["ID"] == 17805)]
 
 	if eqt_to_event:
 		with open(real_json, "r") as f:
@@ -169,7 +169,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 			eqt_df.at[index, "source_file"] = search_term
 
 		eqt_df.rename({"sac_start_dt_sac": "sac_start_time"})
-		eqt_df.drop(['filepath', 'station_sac'], axis = 1)
+		# eqt_df.drop(['filepath', 'station_sac'], axis = 1)
 		
 		eqt_df.to_csv(output_csv, index = False)
 
@@ -238,6 +238,7 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					print("event dt",event_dt)
 					print("sac start time", _row.sac_start_dt)
 					print("index", _index)
+					print(_row.filepath)
 					continue
 
 				#
