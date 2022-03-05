@@ -206,9 +206,6 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 				sta = _row.station
 				event_dt = _row.event_start_time
 
-				# print("event dt",event_dt)
-				# print("sac start time", _row.sac_start_time)
-				# print("index", _index)
 				year = (datetime.datetime.strftime(event_dt, "%Y"))
 				jday = (datetime.datetime.strftime(event_dt, "%j"))
 				year_day = year + "."+ jday # need string representation
@@ -238,6 +235,9 @@ def choose_event_wf(real_csv, real_json, input_csv, output_csv, output_json, sac
 					print(_row.station)
 					print(_row["source_file"])
 					print(_row.ID)
+					print("event dt",event_dt)
+					print("sac start time", _row.sac_start_dt)
+					print("index", _index)
 					continue
 
 				#
