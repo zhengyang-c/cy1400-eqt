@@ -30,6 +30,7 @@ import shutil
 import json
 import random
 
+
 def main(job_name, n_bootstrap, **kwargs):
 	paths = {
 		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts",
@@ -90,6 +91,7 @@ def generate_all(
 	station_file = "",
 	velest_source = "",
 	bootstrap_fraction = 0.1,
+	mag_file = "",
 ):
 
 
@@ -99,8 +101,12 @@ def generate_all(
 	# mag_file = "imported_figures/all_rereal_mags.csv"
 
 	for key in list(station_info.keys()):
-		if len(key) == 3:
-			station_info[key + "Z"] = station_info.pop(key)
+		if key == "A10":
+			_key = "TG03"
+		else:
+			_key = key
+		if len(_key) == 3:
+			station_info[_key + "Z"] = station_info.pop(key)
 
 	# this is because VELEST is written with station names of 4 characters, so just append a Z at the back 
 
@@ -124,11 +130,21 @@ def generate_all(
 	event_ids = list(phase_json.keys())
 	n_events = int(bootstrap_fraction * len(event_ids))
 
+
+	## FILTER
+
+	for e in event_ids:
+		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4:
+			phase_json.pop(e)
+
+	event_ids = list(phase_json.keys())
+
 	outputs = {
 		"station_file": output_path + ".sta",
 		"event_file": output_path + ".events",
 		"model_file": output_path + ".model",
-		"control_file": os.path.join(output_folder, "velest.cmn")
+		"control_file": os.path.join(output_folder, "velest.cmn"),
+		"id_list": output_path + ".id"
 	}
 
 	params = {
@@ -210,7 +226,7 @@ def generate_all(
 				mod_str += temp_str
 				c = 0
 			else:
-				mod_str += h.write([i[1], i[0], 1.0]) + "\n"
+				mod_str += h.write([i[1]/1.73, i[0], 1.0]) + "\n"
 
 		return mod_str
 
@@ -236,6 +252,11 @@ def generate_all(
 
 
 	def write_event(json_file):
+
+		# record down lat and lons, then compute the centroid, and compute the distances from the centroid
+		# plot a histogram
+		# then decide whether you want to pre-filter or to filter on the fly
+		# probably want to pre-filter the events you feed in
 
 		bootstrap = random.sample(event_ids, n_events)
 		# event file....
@@ -309,11 +330,11 @@ def generate_all(
 			if out_str[-2:] != "\n\n":
 				out_str += "\n"
 		
-		return out_str
+		return out_str, bootstrap
 
 	sta_str = write_station(station_info)
 	mod_str = write_model()
-	out_str = write_event(json_file)
+	out_str, bootstrap_list = write_event(json_file)
 	ctrl_str = write_control_file(params)
 
 	with open(outputs["station_file"], "w") as f:
@@ -322,6 +343,8 @@ def generate_all(
 		f.write(mod_str)
 	with open(outputs["event_file"], "w") as f:
 		f.write(out_str)
+	with open(outputs["id_list"], "w") as f:
+		f.write("\n".join(bootstrap_list))
 	
 	with open(outputs["control_file"], "w") as f:
 		f.write(ctrl_str)
@@ -333,10 +356,12 @@ if __name__ == "__main__":
 
 	ap.add_argument("-o", "--output_folder")
 	ap.add_argument("-n", "--file_root")
-	ap.add_argument("-j", "--json_file")
-	ap.add_argument("-sta", "--station_file")
-	ap.add_argument("-m", "--mag_file", default = "")
-	ap.add_argument("-v", "--velest")
+	ap.add_argument("-j", "--json_file", help = "phase data kept in json format")
+	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
+	ap.add_argument("-m", "--mag_file", default = "", help = "optional, writes mag = 0 if you leave this blank")
+	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
 	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9 )
 	args = ap.parse_args()
 	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction)
+
+# python make_velest.py -o velest/test2/ -n test -j gridsearch/rereal_patch_negative.json -sta csi/new_station_info_elv.dat -v velest/velest -f 0.1
