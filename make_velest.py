@@ -92,6 +92,7 @@ def generate_all(
 	velest_source = "",
 	bootstrap_fraction = 0.1,
 	mag_file = "",
+	n_repeats = 3, 
 ):
 
 
@@ -128,7 +129,6 @@ def generate_all(
 		phase_json = json.load(f)
 
 	event_ids = list(phase_json.keys())
-	n_events = int(bootstrap_fraction * len(event_ids))
 
 
 	## FILTER
@@ -138,6 +138,7 @@ def generate_all(
 			phase_json.pop(e)
 
 	event_ids = list(phase_json.keys())
+	n_events = int(bootstrap_fraction * len(event_ids))
 
 	outputs = {
 		"station_file": output_path + ".sta",
@@ -237,7 +238,7 @@ def generate_all(
 		# lat lons
 
 		ctrl_str += "test\n4.8 96 1 0.000 0 0.00 0\n"
-		ctrl_str += "{0} 0 0.0\n0 0\n100 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n1 1 1 0\n0 0 0 0 0 0 0\n0.010 3 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
+		ctrl_str += "{0} 0 0.0\n0 0\n100 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n1 1 1 0\n0 0 0 0 0 0 0\n0.010 {8} 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
 			params["n_events"],
 			params["model"],
 			params["station"],
@@ -246,6 +247,7 @@ def generate_all(
 			params["hypo_output"],
 			params["station_corr"],
 			params["residual"],
+			n_repeats,
 		)
 		print(ctrl_str)
 		return ctrl_str
@@ -361,7 +363,8 @@ if __name__ == "__main__":
 	ap.add_argument("-m", "--mag_file", default = "", help = "optional, writes mag = 0 if you leave this blank")
 	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
 	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9 )
+	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3)
 	args = ap.parse_args()
-	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction)
+	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction, n_repeats = args.n_repeats)
 
 # python make_velest.py -o velest/test2/ -n test -j gridsearch/rereal_patch_negative.json -sta csi/new_station_info_elv.dat -v velest/velest -f 0.1
