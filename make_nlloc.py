@@ -84,24 +84,25 @@ def main(target_dir, vel_file, phase_json, station_file, run = False):
 	w_nll_input(params, 'P', loc_dir_virtual, params["obs_file_virtual"], default_nll )
 	print(nll_input)
 
-	os.system('Vel2Grid {}'.format(nll_input))
-	os.system('Grid2Time {}'.format(nll_input))
-	if params["wave_type"] == 1:
-		print('calculating S travel times...')
-		w_nll_input(params, 'S', loc_dir_virtual, params["obs_file_virtual"], default_nll)
+	if not run:
 		os.system('Vel2Grid {}'.format(nll_input))
 		os.system('Grid2Time {}'.format(nll_input))
+		if params["wave_type"] == 1:
+			print('calculating S travel times...')
+			w_nll_input(params, 'S', loc_dir_virtual, params["obs_file_virtual"], default_nll)
+			os.system('Vel2Grid {}'.format(nll_input))
+			os.system('Grid2Time {}'.format(nll_input))
 
-	neve_good = 0
+		neve_good = 0
 
-	loc_success_sum_file = params["loc_dir_base"] + 'loc_success_sum.hyp'
-	pha_file_hypodd = params["obs_file_dir"] + 'phase_success_sum.pha'
-	pha_file_outlier = params["obs_file_dir"] + 'phase_outlier_sum.obs'
-	t_dist_file = params["loc_dir_base"] + 't_dist.dat'
-	pha_res_file = params["loc_dir_base"] + 'phase_res.dat'
-	eve_loc_sum_file = params["loc_dir_base"] + 'event_info.dat'
+		loc_success_sum_file = params["loc_dir_base"] + 'loc_success_sum.hyp'
+		pha_file_hypodd = params["obs_file_dir"] + 'phase_success_sum.pha'
+		pha_file_outlier = params["obs_file_dir"] + 'phase_outlier_sum.obs'
+		t_dist_file = params["loc_dir_base"] + 't_dist.dat'
+		pha_res_file = params["loc_dir_base"] + 'phase_res.dat'
+		eve_loc_sum_file = params["loc_dir_base"] + 'event_info.dat'
 
-	w_phase_from_json(phase_data, params)
+		w_phase_from_json(phase_data, params)
 
 
 	event_id_list = list(phase_data.keys())
