@@ -71,7 +71,7 @@ def main(target_dir, vel_file, phase_json, station_file):
 			os.makedirs(params[_k])
 
 	# calculate travel times
-	nll_input = os.path.join(params["target_dir"], "nll_" + params["proj_name"] + ".in")
+	nll_input = os.path.join(params["target_dir"], params["nll_ctrl_name"])
 	params["nll_input"] = nll_input
 
 	loc_dir_virtual = os.path.join(params["loc_dir_base"], 'loc_virtual')
@@ -82,6 +82,7 @@ def main(target_dir, vel_file, phase_json, station_file):
 
 	print('calculating P travel times...')
 	w_nll_input(params, 'P', loc_dir_virtual, params["obs_file_virtual"], default_nll )
+	print(nll_input)
 
 	os.system('Vel2Grid {}'.format(nll_input))
 	os.system('Grid2Time {}'.format(nll_input))
