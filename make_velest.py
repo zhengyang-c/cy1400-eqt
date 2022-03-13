@@ -130,6 +130,7 @@ def generate_all(
 		phase_json = json.load(f)
 
 
+	event_ids = list(sorted(phase_json.keys()))
 
 	## FILTER
 
