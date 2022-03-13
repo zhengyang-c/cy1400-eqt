@@ -68,7 +68,7 @@ def main(target_dir, vel_file, phase_json, station_file):
 		params[_k] = os.path.join(params["target_dir"], params[_k])
 
 		if not os.path.exists(params[_k]):
-			os.mkdir(params[_k])
+			os.makedirs(params[_k])
 
 	# calculate travel times
 	nll_input = os.path.join(params["target_dir"], "nll_" + params["proj_name"] + ".in")
