@@ -316,14 +316,16 @@ def generate_all(
 					_sta = sta
 
 				if "P" in data["data"][sta]:
-					event_buffer.append(
-						g.write(
-							[_sta, "P", 1, float(data["data"][sta]["P"])]))
+					if float(data["data"][sta]["P"]) > 0:
+						event_buffer.append(
+							g.write(
+								[_sta, "P", 1, float(data["data"][sta]["P"])]))
 
 				if "S" in data["data"][sta]:
-					event_buffer.append(
-						g.write(
-							[_sta, "S", 1, float(data["data"][sta]["S"])]))
+					if float(data["data"][sta]["S"]) > 0:
+						event_buffer.append(
+							g.write(
+								[_sta, "S", 1, float(data["data"][sta]["S"])]))
 
 			cut_off = 150
 			if len(event_buffer) > cut_off:
