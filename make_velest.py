@@ -129,7 +129,6 @@ def generate_all(
 	with open(json_file, "r") as f:
 		phase_json = json.load(f)
 
-	event_ids = list(phase_json.keys())
 
 
 	## FILTER
@@ -150,6 +149,7 @@ def generate_all(
 	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
 	
 	# print(event_ids[0:5])
+	event_ids = list(sorted(phase_json.keys()))
 	n_events = int(bootstrap_fraction * len(event_ids))
 
 
