@@ -6,7 +6,7 @@ import datetime
 from multiprocessing import Pool
 import multiprocessing
 
-def main(target_dir, vel_file, phase_json, station_file):
+def main(target_dir, vel_file, phase_json, station_file, run = False):
 	
 	params = {
 		# "target_dir": "/home/zy/NonLinLoc/nlloc_owntest",
@@ -111,9 +111,9 @@ def main(target_dir, vel_file, phase_json, station_file):
 	print(target_file_list)
 
 
-	
-	with Pool(multiprocessing.cpu_count()) as p:
-		p.map(nll_runner, target_file_list)
+	if run:	
+		with Pool(multiprocessing.cpu_count()) as p:
+			p.map(nll_runner, target_file_list)
 
 
 	#w_nll_input(params, 'S', os.path.join(params["loc_dir_base"], "002639"), os.path.join(params["obs_file_dir"], "002639", params["obs_file"]))
@@ -235,5 +235,6 @@ if __name__ == "__main__":
 	ap.add_argument("-p", "--phase_json")
 	ap.add_argument("-v", "--vel_file")
 	ap.add_argument("-sta", '--station_file')
+	ap.add_argument("-r", "--run", action = "store_true", )
 	args = ap.parse_args()
-	main(args.target_dir, args.vel_file,args.phase_json,  args.station_file)
+	main(args.target_dir, args.vel_file,args.phase_json,  args.station_file, args.run)
