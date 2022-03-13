@@ -140,19 +140,18 @@ def generate_all(
 
 	# n_events = len(event_ids)
 
-	print(split)
+	# print(split)
 
-	if split == 1:
-		event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) < 7000]
-	elif split == 2:
-		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 7000 and int(x) < 14000)]
-	elif split == 3:
-		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
+	# if split == 1:
+	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) < 7000]
+	# elif split == 2:
+	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 7000 and int(x) < 14000)]
+	# elif split == 3:
+	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
 	
-	print(event_ids[0:5])
-	#	n_events = int(bootstrap_fraction * len(event_ids))
+	# print(event_ids[0:5])
+	n_events = int(bootstrap_fraction * len(event_ids))
 
-	n_events = len(event_ids)
 
 	outputs = {
 		"station_file": output_path + ".sta",
@@ -274,8 +273,8 @@ def generate_all(
 		# then decide whether you want to pre-filter or to filter on the fly
 		# probably want to pre-filter the events you feed in
 
-		# bootstrap = random.sample(event_ids, n_events)
-		bootstrap = event_ids
+		bootstrap = random.sample(event_ids, n_events)
+		# bootstrap = event_ids
 		# event file....
 
 		# just modify the first line
