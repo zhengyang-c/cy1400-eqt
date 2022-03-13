@@ -375,7 +375,8 @@ if __name__ == "__main__":
 	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
 	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9 )
 	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3)
+	ap.add_argument('-s', "--split")
 	args = ap.parse_args()
-	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction, n_repeats = args.n_repeats)
+	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction, n_repeats = args.n_repeats, split = args.split)
 
 # python make_velest.py -o velest/test2/ -n test -j gridsearch/rereal_patch_negative.json -sta csi/new_station_info_elv.dat -v velest/velest -f 0.1
