@@ -146,6 +146,8 @@ def generate_all(
 		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 7000 and int(x) < 14000)]
 	elif split == 3:
 		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
+	
+	print(event_ids[0:5])
 	#	n_events = int(bootstrap_fraction * len(event_ids))
 
 	n_events = len(event_ids)
