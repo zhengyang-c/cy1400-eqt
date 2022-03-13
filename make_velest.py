@@ -93,6 +93,7 @@ def generate_all(
 	bootstrap_fraction = 0.1,
 	mag_file = "",
 	n_repeats = 3, 
+	split = 1,
 ):
 
 
@@ -137,9 +138,17 @@ def generate_all(
 		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4:
 			phase_json.pop(e)
 
-	event_ids = [x for x in list(phase_json.keys()) if int(x) >= 10000]
+	# n_events = len(event_ids)
+
+	if split == 1:
+		event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) < 7000]
+	elif split == 2:
+		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 7000 and int(x) < 14000)]
+	elif split == 3:
+		event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
+	#	n_events = int(bootstrap_fraction * len(event_ids))
+
 	n_events = len(event_ids)
-	# n_events = int(bootstrap_fraction * len(event_ids))
 
 	outputs = {
 		"station_file": output_path + ".sta",
