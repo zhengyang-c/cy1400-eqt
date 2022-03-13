@@ -137,8 +137,9 @@ def generate_all(
 		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4:
 			phase_json.pop(e)
 
-	event_ids = list(phase_json.keys())
-	n_events = int(bootstrap_fraction * len(event_ids))
+	event_ids = [x for x in list(phase_json.keys()) if int(x) < 10000]
+	n_events = len(event_ids)
+	# n_events = int(bootstrap_fraction * len(event_ids))
 
 	outputs = {
 		"station_file": output_path + ".sta",
@@ -260,7 +261,8 @@ def generate_all(
 		# then decide whether you want to pre-filter or to filter on the fly
 		# probably want to pre-filter the events you feed in
 
-		bootstrap = random.sample(event_ids, n_events)
+		# bootstrap = random.sample(event_ids, n_events)
+		bootstrap = event_ids
 		# event file....
 
 		# just modify the first line

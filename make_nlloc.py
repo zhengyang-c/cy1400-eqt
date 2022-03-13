@@ -83,13 +83,13 @@ def main(target_dir, vel_file, phase_json, station_file):
 	print('calculating P travel times...')
 	w_nll_input(params, 'P', loc_dir_virtual, params["obs_file_virtual"], default_nll )
 
-	# os.system('Vel2Grid {}'.format(nll_input))
-	# os.system('Grid2Time {}'.format(nll_input))
+	os.system('Vel2Grid {}'.format(nll_input))
+	os.system('Grid2Time {}'.format(nll_input))
 	if params["wave_type"] == 1:
 		print('calculating S travel times...')
 		w_nll_input(params, 'S', loc_dir_virtual, params["obs_file_virtual"], default_nll)
-		# os.system('Vel2Grid {}'.format(nll_input))
-		# os.system('Grid2Time {}'.format(nll_input))
+		os.system('Vel2Grid {}'.format(nll_input))
+		os.system('Grid2Time {}'.format(nll_input))
 
 	neve_good = 0
 
