@@ -140,6 +140,8 @@ def generate_all(
 
 	# n_events = len(event_ids)
 
+	print(split)
+
 	if split == 1:
 		event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) < 7000]
 	elif split == 2:
