@@ -90,7 +90,7 @@ def generate_all(
 	json_file = "",
 	station_file = "",
 	velest_source = "",
-	bootstrap_fraction = 0.1,
+	bootstrap_fraction = 0,
 	mag_file = "",
 	n_repeats = 3, 
 	split = 1,
@@ -134,22 +134,24 @@ def generate_all(
 
 	## FILTER
 
+
 	for e in event_ids:
-		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4 or float(phase_json[e]["lon_guess"] > 96.5):
+		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4 or float(phase_json[e]["lon_guess"]) > 96.5:
 			phase_json.pop(e)
 
 	# n_events = len(event_ids)
 
+	if bootstrap_fraction:
+		event_ids = list(sorted(phase_json.keys()))
+		n_events = int(bootstrap_fraction * len(event_ids))
 
-
-	event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) % 4 == (split - 1)]
+	else:
+		event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) % 4 == (split - 1)]
 	# hardcode split into 4
 	
 	# print(event_ids[0:5])
-	# event_ids = list(sorted(phase_json.keys()))
-	# n_events = int(bootstrap_fraction * len(event_ids))
 
-	n_events = len(event_ids)
+		n_events = len(event_ids)
 
 	outputs = {
 		"station_file": output_path + ".sta",
@@ -249,7 +251,7 @@ def generate_all(
 		# lat lons
 
 		ctrl_str += "test\n4.8 96 1 0.000 0 0.00 0\n"
-		ctrl_str += "{0} 0 0.0\n0 0\n100 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n1 1 1 0\n0 0 0 0 0 0 0\n0.010 {8} 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
+		ctrl_str += "{0} 0 0.0\n0 0\n100 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n0 1 1 0\n0 0 0 0 0 0 1\n0.010 {8} 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
 			params["n_events"],
 			params["model"],
 			params["station"],
@@ -271,8 +273,10 @@ def generate_all(
 		# then decide whether you want to pre-filter or to filter on the fly
 		# probably want to pre-filter the events you feed in
 
-		bootstrap = random.sample(event_ids, n_events)
-		# bootstrap = event_ids
+		if bootstrap_fraction:
+			bootstrap = random.sample(event_ids, n_events)
+		else:
+			bootstrap = event_ids
 		# event file....
 
 		# just modify the first line
@@ -376,9 +380,10 @@ if __name__ == "__main__":
 	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
 	ap.add_argument("-m", "--mag_file", default = "", help = "optional, writes mag = 0 if you leave this blank")
 	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
-	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9 )
+	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0 )
 	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3)
 	ap.add_argument('-s', "--split", type = int)
+	ap.add_argument('-p', "--pbs", type = int)
 	args = ap.parse_args()
 	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction, n_repeats = args.n_repeats, split = args.split)
 
