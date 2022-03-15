@@ -140,19 +140,16 @@ def generate_all(
 
 	# n_events = len(event_ids)
 
-	# print(split)
 
-	# if split == 1:
-	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) < 7000]
-	# elif split == 2:
-	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 7000 and int(x) < 14000)]
-	# elif split == 3:
-	# 	event_ids = [x for x in sorted(list(phase_json.keys())) if (int(x) >= 14000)]
+
+	event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) % 4 == (split - 1)]
+	# hardcode split into 4
 	
 	# print(event_ids[0:5])
-	event_ids = list(sorted(phase_json.keys()))
-	n_events = int(bootstrap_fraction * len(event_ids))
+	# event_ids = list(sorted(phase_json.keys()))
+	# n_events = int(bootstrap_fraction * len(event_ids))
 
+	n_events = len(event_ids)
 
 	outputs = {
 		"station_file": output_path + ".sta",
