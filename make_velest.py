@@ -135,7 +135,7 @@ def generate_all(
 	## FILTER
 
 	for e in event_ids:
-		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4 or float(phase[e]["lon_guess"] > 96.5):
+		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4 or float(phase_json[e]["lon_guess"] > 96.5):
 			phase_json.pop(e)
 
 	# n_events = len(event_ids)
