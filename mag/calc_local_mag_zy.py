@@ -164,6 +164,10 @@ def main(event_folder, output_txt, output_csv, pzfile, sac_transfer = False, loc
                 odf.at[_c, "ID"] = sacdir
                 odf.at[_c, "sta"] = sta
                 odf.at[_c, "m_l"] = mag 
+                odf.at[_c, "max_e"] = np.max(datatre)
+                odf.at[_c, "max_n"] = np.max(datatrn)
+                odf.at[_c, "min_e"] = np.min(datatre)
+                odf.at[_c, "min_n"] = np.min(datatrn)
 
                 _c += 1
 
