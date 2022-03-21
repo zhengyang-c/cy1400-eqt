@@ -72,7 +72,7 @@ def generate_runtime_script(target_folder):
 	target_file = os.path.join(target_folder,  "run.sh")
 
 	with open(target_file, "w") as f:
-		f.write("cd {}\nvelest velest.cmn > run.log".format(
+		f.write("cd {}\n./velest velest.cmn > run.log".format(
 			target_folder,
 		))
 	os.chmod(target_file, 0o775)
