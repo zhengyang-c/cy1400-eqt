@@ -357,8 +357,8 @@ if __name__ == "__main__":
 	ap = argparse.ArgumentParser()
 
 	ap.add_argument("job_name")
-	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3)
-	ap.add_argument("-nm", "--n_models", help = "no. of models to generate", default = 1)
+	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3, type = int)
+	ap.add_argument("-nm", "--n_models", help = "no. of models to generate", default = 1, type = int)
 	ap.add_argument("-or", "--output_root", default = "velest")
 	ap.add_argument("-j", "--json_path", help = "phase data kept in json format")
 	ap.add_argument("-e", "--event_list", help = "csv file with list of events to run VELEST for")
