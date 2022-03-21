@@ -101,7 +101,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 def generate_at_folder(output_folder, params):
 	station_file = params["station_file"]
 	velest_source = params["velest_path"]
-	output_root = params["output_root"]
+	output_root = params["file_root"]
 	json_file = params["json_file"]	
 	n_repeats = params["n_repeats"]
 	event_list = params["event_list"]
