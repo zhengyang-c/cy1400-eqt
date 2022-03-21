@@ -48,7 +48,7 @@ def main(job_name,
 		"event_list": event_list,
 		"station_file": station_file,
 		"velest_path": velest_path,
-		"file_root": output_root,
+		"output_root": output_root,
 		"n_repeats": n_repeats,
 	}
 	output_path = os.path.join(params["pbs_folder"], job_name)
@@ -101,8 +101,8 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 def generate_at_folder(output_folder, params):
 	station_file = params["station_file"]
 	velest_source = params["velest_path"]
-	output_root = params["file_root"]
-	json_file = params["json_file"]	
+	output_root = params["output_root"]
+	json_file = params["json_path"]	
 	n_repeats = params["n_repeats"]
 	event_list = params["event_list"]
 
