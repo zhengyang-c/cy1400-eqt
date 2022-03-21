@@ -31,38 +31,52 @@ import json
 import random
 
 
-def main(job_name, n_bootstrap, **kwargs):
-	paths = {
+def main(job_name, 
+	n_repeats = 3,
+	n_models = 1,
+	output_root = "",
+	json_path = "",
+	event_list = "",
+	station_file = "",
+	velest_path = "",	
+	):
+	params = {
 		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts",
 		"pbs_file_folder":"/home/zchoong001/cy1400/cy1400-eqt/pbs",
 		"job_name": job_name,
+		"json_path": json_path,
+		"event_list": event_list,
+		"station_file": station_file,
+		"velest_path": velest_path,
+		"file_root": output_root,
+		"n_repeats": n_repeats,
 	}
-	# create all the needed folders, generate runtime scripts
+	output_path = os.path.join(params["pbs_folder"], job_name)
 
-	# then generate the work files
+	target_folder_list = [os.path.join(output_path), str(x) for x in range(n_models)]
 
-	# then generate the .pbs file
+	for x in target_folder_list:
+		if not os.exists(x):
+			os.makedirs(x)
 
-	for k in kwargs:
-		paths[k] = kwargs[k]
+		generate_runtime_script(x)
+	
+		# generate VELEST files
+		generate_at_folder(params)
 
-def generate_runtime_scripts(n_bootstrap, paths):
+	pbs_writer(n_models, job_name, params, walltime_hours=40)
 
-	for n in range(n_bootstrap):
 
-		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"], str(n))
-		target_file = os.path.join(target_folder,  "run.sh")
+def generate_runtime_script(target_folder):
 
-		with open(target_file, "w") as f:
-			f.write("cd {}\n{} {}\n{} {}".format(
-				target_folder,
-				paths["ph2dt"],
-				paths["ph2dt_inp"],
-				paths["hypodd"], 
-				paths["hypodd_inp"], 
-			))
+	target_file = os.path.join(target_folder,  "run.sh")
 
-		os.chmod(target_file, 0o775)
+	with open(target_file, "w") as f:
+		f.write("cd {}\nvelest velest.cmn".format(
+			target_folder,
+		))
+	os.chmod(target_file, 0o775)
+
 def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 
 	paths["pbs_folder"] = paths["pbs_file_folder"]
@@ -76,7 +90,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("#PBS -J 0-{:d}\n".format(n_nodes - 1))
 
-		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus={}:mpiprocs=32:mem=16gb -l walltime={}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime={:2d}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 
 		if n_nodes == 1:
@@ -84,18 +98,14 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def generate_all(
-	output_folder = "",
-	output_root = "",
-	json_file = "",
-	station_file = "",
-	velest_source = "",
-	bootstrap_fraction = 0,
-	mag_file = "",
-	n_repeats = 3, 
-	split = 1,
-):
-
+def generate_at_folder(params):
+	station_file = params["station_file"]
+	output_folder = params["output_folder"]
+	velest_source = params["velest_path"]
+	output_root = params["output_root"]
+	json_file = params["json_file"]	
+	n_repeats = params["n_repeats"]
+	event_list = params["event_list"]
 
 	# do the station file first since it's easiest
 	station_info = parse_station_info(station_file)
@@ -117,41 +127,18 @@ def generate_all(
 
 	if not os.path.exists(output_folder):
 		os.makedirs(output_folder)
-	
-	if velest_source:
-		try:
-			shutil.copy(velest_source, output_folder)
-		except:
-			print("Unable to copy VELEST file over, skipping...")
-
+	try:
+		shutil.copy(velest_source, output_folder)
+	except:
+		print("Unable to copy VELEST file over, skipping...")
 
 	output_path = os.path.join(output_folder, output_root)
 	with open(json_file, "r") as f:
 		phase_json = json.load(f)
 
-
-	event_ids = list(sorted(phase_json.keys()))
-
-	## FILTER
-
-
-	for e in event_ids:
-		if float(phase_json[e]["lon_guess"]) < 95.2 or float(phase_json[e]["lat_guess"]) < 4.4 or float(phase_json[e]["lat_guess"]) > 5.4 or float(phase_json[e]["lon_guess"]) > 96.5:
-			phase_json.pop(e)
-
-	# n_events = len(event_ids)
-
-	if bootstrap_fraction:
-		event_ids = list(sorted(phase_json.keys()))
-		n_events = int(bootstrap_fraction * len(event_ids))
-
-	else:
-		event_ids = [x for x in sorted(list(phase_json.keys())) if int(x) % 4 == (split - 1)]
-	# hardcode split into 4
-	
-	# print(event_ids[0:5])
-
-		n_events = len(event_ids)
+	df = pd.read_csv(event_list)
+	event_ids = df["ID"].tolist()
+	n_events = len(event_ids)
 
 	outputs = {
 		"station_file": output_path + ".sta",
@@ -166,7 +153,6 @@ def generate_all(
 		"event":output_root + ".events",
 		"model":output_root + ".model",
 		"output": output_root + ".output",
-		"bootstrap_fraction": bootstrap_fraction,
 		"station_corr": output_root + ".stacorr",
 		"hypo_output": output_root + ".hypo",
 		"residual": output_root + ".res",
@@ -214,7 +200,7 @@ def generate_all(
 	def write_model():
 		initial_p_model = [(-3, 5.2), (0, 5.2), (2.5, 5.35), (5, 5.5), (7.5, 5.75), (10, 6), (15, 6.3), (20, 6.6), (30, 7.6), (40, 8), (50, 8.1), (70, 8.2), (90, 8.2)]
 
-		metadata = "test"
+		metadata = "Aceh"
 		mod_str = "{}\n{}        vel,depth,vdamp,phase (f5.2,5x,f7.2,2x,f7.3,3x,a1)\n".format(metadata, len(initial_p_model))
 
 		h = ff.FortranRecordWriter('(f5.2,5x,f7.2,2x,f7.3,3x,a1)')
@@ -273,10 +259,6 @@ def generate_all(
 		# then decide whether you want to pre-filter or to filter on the fly
 		# probably want to pre-filter the events you feed in
 
-		if bootstrap_fraction:
-			bootstrap = random.sample(event_ids, n_events)
-		else:
-			bootstrap = event_ids
 		# event file....
 
 		# just modify the first line
@@ -291,7 +273,7 @@ def generate_all(
 		
 		start_flag = True
 
-		for e in bootstrap:
+		for e in event_ids:
 			event_buffer = []
 			data = phase_json[e]
 			header_str = h.write([
@@ -350,7 +332,7 @@ def generate_all(
 			if out_str[-2:] != "\n\n":
 				out_str += "\n"
 		
-		return out_str, bootstrap
+		return out_str, event_ids
 
 	sta_str = write_station(station_info)
 	mod_str = write_model()
@@ -374,17 +356,22 @@ if __name__ == "__main__":
 
 	ap = argparse.ArgumentParser()
 
-	ap.add_argument("-o", "--output_folder")
-	ap.add_argument("-n", "--file_root")
-	ap.add_argument("-j", "--json_file", help = "phase data kept in json format")
-	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
-	ap.add_argument("-m", "--mag_file", default = "", help = "optional, writes mag = 0 if you leave this blank")
-	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
-	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0 )
+	ap.add_argument("job_name")
 	ap.add_argument("-nr", "--n_repeats", help = "no. of iterations", default = 3)
-	ap.add_argument('-s', "--split", type = int)
-	ap.add_argument('-p', "--pbs", type = int)
+	ap.add_argument("-nm", "--n_models", help = "no. of models to generate", default = 1)
+	ap.add_argument("-or", "--output_root", default = "velest")
+	ap.add_argument("-j", "--json_path", help = "phase data kept in json format")
+	ap.add_argument("-e", "--event_list", help = "csv file with list of events to run VELEST for")
+	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
+	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
 	args = ap.parse_args()
-	generate_all(output_folder = args.output_folder, output_root = args.file_root, json_file = args.json_file, station_file = args.station_file, mag_file = args.mag_file, velest_source = args.velest, bootstrap_fraction = args.bootstrap_fraction, n_repeats = args.n_repeats, split = args.split)
 
-# python make_velest.py -o velest/test2/ -n test -j gridsearch/rereal_patch_negative.json -sta csi/new_station_info_elv.dat -v velest/velest -f 0.1
+	main(args.job_name,
+	args.n_repeats,
+	args.n_models,
+	args.output_root,
+	args.json_path,
+	args.event_list,
+	args.station_file,
+	args.velest,
+	)
