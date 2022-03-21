@@ -44,7 +44,7 @@ def get_vel_model():
 
 	output = ([list(x) for x in np.dstack((layer_heights, f(layer_heights)))[0] ])
 
-	output = [-3, output[0][1]] + output
+	output = [[-3, output[0][1]]] + output
 	return(output)
 
 
