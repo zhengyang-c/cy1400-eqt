@@ -32,7 +32,7 @@ from scipy import interpolate
 import numpy as np
 
 def get_vel_model():
-	layer_heights = [0, 1, 5, 7, 8, 9, 10, 12, 16, 20, 25, 30, 35, 40, 50, 90]
+	layer_heights = [0, 1, 5, 7, 8, 9, 10, 12, 16, 20, 25, 30, 35, 40, 50, 60]
 	top_layer_velocity = np.random.uniform(3, 5.5) # range of 3 to 5.5km
 	moho_height_choice = np.random.choice([25,30,35,40])
 	middle_crust_choice = np.random.choice([16,20])
