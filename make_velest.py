@@ -56,7 +56,7 @@ def main(job_name,
 	target_folder_list = [os.path.join(output_path, str(x)) for x in range(n_models)]
 
 	for x in target_folder_list:
-		if not os.exists(x):
+		if not os.path.exists(x):
 			os.makedirs(x)
 
 		generate_runtime_script(x)
