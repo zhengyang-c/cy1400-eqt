@@ -136,7 +136,7 @@ def generate_at_folder(output_folder, params):
 		phase_json = json.load(f)
 
 	df = pd.read_csv(event_list)
-	event_ids = df["ID"].tolist()
+	event_ids = [str(x).zfill(6) for x in df["ID"].tolist()]
 	n_events = len(event_ids)
 
 	outputs = {
