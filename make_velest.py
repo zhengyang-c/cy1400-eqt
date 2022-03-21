@@ -250,7 +250,7 @@ def generate_at_folder(output_folder, params):
 		# lat lons
 
 		ctrl_str += "test\n4.8 96 1 0.000 0 0.00 0\n"
-		ctrl_str += "{0} 0 0.0\n0 0\n100 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n0 1 1 0\n0 0 0 0 0 0 1\n0.010 {8} 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
+		ctrl_str += "{0} 0 0.0\n0 0\n300 0 0.0 0.20 5.00 0\n2 0.8 1.73 1\n0.01 0.01 0.01 1.0 0.01\n0 0 0 1 0\n0 1 1 0\n0 0 0 0 0 0 1\n0.010 {8} 1\n{1}\n{2}\n\n\n\n\n\n{3}\n\n{4}\n\n{5}\n{6}\n\n\n\n\n\n\n\n{7}".format(
 			params["n_events"],
 			params["model"],
 			params["station"],
