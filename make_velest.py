@@ -90,7 +90,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("#PBS -J 0-{:d}\n".format(n_nodes - 1))
 
-		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={}:ncpus=1:mpiprocs=32:mem=16gb -l walltime={:2d}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
+		f.write("#PBS -N {}\n#PBS -P {}\n#PBS -q q32\n#PBS -l select={:d}:ncpus={:d}:mpiprocs=32:mem=16gb -l walltime={:d}:00:00\n".format(job_name, project_code, n_nodes, n_cores, walltime_hours))
 		f.write("#PBS -e log/pbs/{0}/error.log \n#PBS -o log/pbs/{0}/output.log\n".format(job_name))
 
 		if n_nodes == 1:
@@ -247,7 +247,6 @@ def generate_at_folder(output_folder, params):
 			params["residual"],
 			n_repeats,
 		)
-		print(ctrl_str)
 		return ctrl_str
 
 
