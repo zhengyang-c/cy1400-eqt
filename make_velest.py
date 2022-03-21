@@ -42,7 +42,7 @@ def get_vel_model():
 
 	f = interpolate.interp1d(input_x, input_y,)
 
-	return (np.dstack((layer_heights, f(layer_heights))))
+	return (np.dstack((layer_heights, f(layer_heights)))[0])
 
 
 def main(job_name, 
