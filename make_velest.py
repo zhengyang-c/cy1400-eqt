@@ -28,7 +28,21 @@ from utils import parse_station_info
 import fortranformat as ff
 import shutil
 import json
-import random
+from scipy import interpolate
+import numpy as np
+
+def get_vel_model():
+	layer_heights = [0, 1, 5, 7, 8, 9, 10, 12, 16, 20, 25, 30, 35, 40, 50, 90]
+	top_layer_velocity = np.random.uniform(3, 5.5) # range of 3 to 5.5km
+	moho_height_choice = np.random.choice([25,30,35,40])
+	middle_crust_choice = np.random.choice([16,20])
+
+	input_x = [0, middle_crust_choice, moho_height_choice, 60]
+	input_y = [top_layer_velocity, 6.5, 8.0, 8.2 ]
+
+	f = interpolate.interp1d(input_x, input_y,)
+
+	return (np.dstack((layer_heights, f(layer_heights))))
 
 
 def main(job_name, 
@@ -64,7 +78,7 @@ def main(job_name,
 		# generate VELEST files
 		generate_at_folder(x, params)
 
-	pbs_writer(n_models, job_name, params, walltime_hours=40)
+	pbs_writer(n_models, job_name, params, walltime_hours=n_repeats * 4)
 
 
 def generate_runtime_script(target_folder):
@@ -197,7 +211,7 @@ def generate_at_folder(output_folder, params):
 	# then do the model file
 
 	def write_model():
-		initial_p_model = [(-3, 5.2), (0, 5.2), (2.5, 5.35), (5, 5.5), (7.5, 5.75), (10, 6), (15, 6.3), (20, 6.6), (30, 7.6), (40, 8), (50, 8.1), (70, 8.2), (90, 8.2)]
+		initial_p_model = get_vel_model()
 
 		metadata = "Aceh"
 		mod_str = "{}\n{}        vel,depth,vdamp,phase (f5.2,5x,f7.2,2x,f7.3,3x,a1)\n".format(metadata, len(initial_p_model))
