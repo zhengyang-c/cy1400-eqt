@@ -62,7 +62,7 @@ def main(job_name,
 		generate_runtime_script(x)
 	
 		# generate VELEST files
-		generate_at_folder(params)
+		generate_at_folder(x, params)
 
 	pbs_writer(n_models, job_name, params, walltime_hours=40)
 
@@ -98,9 +98,8 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def generate_at_folder(params):
+def generate_at_folder(output_folder, params):
 	station_file = params["station_file"]
-	output_folder = params["output_folder"]
 	velest_source = params["velest_path"]
 	output_root = params["output_root"]
 	json_file = params["json_file"]	
