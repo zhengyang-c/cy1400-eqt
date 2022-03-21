@@ -53,7 +53,7 @@ def main(job_name,
 	}
 	output_path = os.path.join(params["pbs_folder"], job_name)
 
-	target_folder_list = [os.path.join(output_path), str(x) for x in range(n_models)]
+	target_folder_list = [os.path.join(output_path, str(x)) for x in range(n_models)]
 
 	for x in target_folder_list:
 		if not os.exists(x):
