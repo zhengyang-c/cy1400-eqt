@@ -102,7 +102,7 @@ def parse_hyp_file(file_path):
 
 		if phase_flag:
 			phase_data.at[c, "ID"] = event_id
-			phase_data.at[c, "station"] = _x[1]
+			phase_data.at[c, "station"] = _x[0]
 			phase_data.at[c, "phase"] = _x[4]
 			phase_data.at[c, "error_mag"] = _x[10]
 			phase_data.at[c, "tt_pred"] = _x[15]
