@@ -35,7 +35,7 @@ def get_vel_model(x, y, do_random = False):
 	layer_heights = [0, 1, 5, 7, 8, 9, 10, 12, 16, 20, 25, 30, 35, 40, 50, 60]
 
 	if do_random:
-		top_layer_velocity = np.random.uniform(3, 6.5,) # range of 3 to 5.5km
+		top_layer_velocity = np.random.uniform(3, 6,) # range of 3 to 5.5km
 	else:
 		top_layer_velocity = np.linspace(3, 6.5, y)[x] # range of 3 to 5.5km
 	moho_height_choice = np.random.choice([25,30,35,40])
