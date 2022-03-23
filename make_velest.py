@@ -391,7 +391,7 @@ if __name__ == "__main__":
 	ap.add_argument("-e", "--event_list", help = "csv file with list of events to run VELEST for")
 	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
 	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
-	ap.add_argument("-r", "--random", action = "store_true", help = "Choose surface velocity randomly")
+	ap.add_argument("-r", "--random", action = "store_true", help = "Choose surface velocity randomly", default = False)
 	args = ap.parse_args()
 
 	main(args.job_name,
@@ -402,5 +402,5 @@ if __name__ == "__main__":
 	args.event_list,
 	args.station_file,
 	args.velest,
-	args.random
+	do_random = args.random,
 	)
