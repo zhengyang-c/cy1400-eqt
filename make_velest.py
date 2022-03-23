@@ -304,7 +304,7 @@ def generate_at_folder(output_folder, params):
 				"E",
 				float(data["dep_guess"]),
 				0.00,
-				1
+				0
 			])
 			out_str += header_str + "\n"
 			for sta in data["data"]:
@@ -317,13 +317,13 @@ def generate_at_folder(output_folder, params):
 					if float(data["data"][sta]["P"]) > 0:
 						event_buffer.append(
 							g.write(
-								[_sta, "P", 1, float(data["data"][sta]["P"])]))
+								[_sta, "P", 0, float(data["data"][sta]["P"])]))
 
 				if "S" in data["data"][sta]:
 					if float(data["data"][sta]["S"]) > 0:
 						event_buffer.append(
 							g.write(
-								[_sta, "S", 1, float(data["data"][sta]["S"])]))
+								[_sta, "S", 0, float(data["data"][sta]["S"])]))
 
 			cut_off = 150
 			if len(event_buffer) > cut_off:
