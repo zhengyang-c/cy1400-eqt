@@ -31,9 +31,13 @@ import json
 from scipy import interpolate
 import numpy as np
 
-def get_vel_model():
+def get_vel_model(x, y, do_random = False):
 	layer_heights = [0, 1, 5, 7, 8, 9, 10, 12, 16, 20, 25, 30, 35, 40, 50, 60]
-	top_layer_velocity = np.random.uniform(3, 5.5) # range of 3 to 5.5km
+
+	if do_random:
+		top_layer_velocity = np.random.uniform(3, 6.5,) # range of 3 to 5.5km
+	else:
+		top_layer_velocity = np.linspace(3, 6.5, y)[x] # range of 3 to 5.5km
 	moho_height_choice = np.random.choice([25,30,35,40])
 	middle_crust_choice = np.random.choice([16,20])
 
@@ -56,6 +60,7 @@ def main(job_name,
 	event_list = "",
 	station_file = "",
 	velest_path = "",	
+	do_random = False,
 	):
 	params = {
 		"pbs_folder": "/home/zchoong001/cy1400/cy1400-eqt/pbs/runtime_scripts",
@@ -67,12 +72,15 @@ def main(job_name,
 		"velest_path": velest_path,
 		"output_root": output_root,
 		"n_repeats": n_repeats,
+		"n_models": n_models,
+		"do_random" : do_random,
 	}
+
 	output_path = os.path.join(params["pbs_folder"], job_name)
 
 	target_folder_list = [os.path.join(output_path, str(x)) for x in range(n_models)]
 
-	for x in target_folder_list:
+	for x in (target_folder_list):
 		if not os.path.exists(x):
 			os.makedirs(x)
 
@@ -116,6 +124,10 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
 def generate_at_folder(output_folder, params):
+
+	_model_number = int(output_folder.split("/")[-1])
+	n_models = params["n_models"]
+
 	station_file = params["station_file"]
 	velest_source = params["velest_path"]
 	output_root = params["output_root"]
@@ -214,7 +226,7 @@ def generate_at_folder(output_folder, params):
 	# then do the model file
 
 	def write_model():
-		initial_p_model = get_vel_model()
+		initial_p_model = get_vel_model(_model_number, n_models, random = params["do_random"])
 
 		metadata = "Aceh"
 		mod_str = "{}\n{}        vel,depth,vdamp,phase (f5.2,5x,f7.2,2x,f7.3,3x,a1)\n".format(metadata, len(initial_p_model))
@@ -379,6 +391,7 @@ if __name__ == "__main__":
 	ap.add_argument("-e", "--event_list", help = "csv file with list of events to run VELEST for")
 	ap.add_argument("-sta", "--station_file", help = "source station file in sta lon lat format")
 	ap.add_argument("-v", "--velest", help = "location of VELEST binary")
+	ap.add_argument("-r", "--random", action = "store_true", help = "Choose surface velocity randomly")
 	args = ap.parse_args()
 
 	main(args.job_name,
@@ -389,4 +402,5 @@ if __name__ == "__main__":
 	args.event_list,
 	args.station_file,
 	args.velest,
+	args.random
 	)
