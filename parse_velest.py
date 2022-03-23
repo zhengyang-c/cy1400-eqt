@@ -369,12 +369,15 @@ def plot_best_model(search_folder, output_csv):
 
 	for x in target_files:
 		with open(x, 'r') as f:
-			_model, _rms, _n_iter = parse_full_output(x)
-			_model["source"] = x
-			_model["rms"] = _rms
-			_model["n_iter"] = _n_iter
-			models.append(_model)
-			rms.append(_rms)
+			try:
+				_model, _rms, _n_iter = parse_full_output(x)
+				_model["source"] = x
+				_model["rms"] = _rms
+				_model["n_iter"] = _n_iter
+				models.append(_model)
+				rms.append(_rms)
+			except:
+				continue
 
 	best = np.argmin(rms)
 	print("best residual: {}".format(rms[best]))
