@@ -226,7 +226,7 @@ def generate_at_folder(output_folder, params):
 	# then do the model file
 
 	def write_model():
-		initial_p_model = get_vel_model(_model_number, n_models, random = params["do_random"])
+		initial_p_model = get_vel_model(_model_number, n_models, do_random = params["do_random"])
 
 		metadata = "Aceh"
 		mod_str = "{}\n{}        vel,depth,vdamp,phase (f5.2,5x,f7.2,2x,f7.3,3x,a1)\n".format(metadata, len(initial_p_model))
