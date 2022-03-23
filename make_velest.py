@@ -123,17 +123,18 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def generate_at_folder(output_folder, params):
+def generate_at_folder(output_folder, args):
 
 	_model_number = int(output_folder.split("/")[-1])
-	n_models = params["n_models"]
+	n_models = args["n_models"]
 
-	station_file = params["station_file"]
-	velest_source = params["velest_path"]
-	output_root = params["output_root"]
-	json_file = params["json_path"]	
-	n_repeats = params["n_repeats"]
-	event_list = params["event_list"]
+	station_file = args["station_file"]
+	velest_source = args["velest_path"]
+	output_root = args["output_root"]
+	json_file = args["json_path"]	
+	n_repeats = args["n_repeats"]
+	event_list = args["event_list"]
+	do_random = args["do_random"]
 
 	# do the station file first since it's easiest
 	station_info = parse_station_info(station_file)
@@ -226,7 +227,7 @@ def generate_at_folder(output_folder, params):
 	# then do the model file
 
 	def write_model():
-		initial_p_model = get_vel_model(_model_number, n_models, do_random = params["do_random"])
+		initial_p_model = get_vel_model(_model_number, n_models, do_random = args["do_random"])
 
 		metadata = "Aceh"
 		mod_str = "{}\n{}        vel,depth,vdamp,phase (f5.2,5x,f7.2,2x,f7.3,3x,a1)\n".format(metadata, len(initial_p_model))
