@@ -371,10 +371,16 @@ def collect_input_models(search_folder, output_csv):
 				s_flag = True
 
 			if p_flag:
-				df.at[float(x[1]), "v_p"] = float(x[0])
-				df.at[float(x[1]), "source"] = file
+				try:
+					df.at[float(x[1]), "v_p"] = float(x[0])
+					df.at[float(x[1]), "source"] = file
+				except:
+					pass
 			if s_flag:
-				df.at[float(x[1]), "v_s"] = float(x[0])
+				try:
+					df.at[float(x[1]), "v_s"] = float(x[0])
+				except:
+					pass
 			
 		df_list.append(df)
 
