@@ -346,26 +346,50 @@ def parse_full_output(file_path):
 	# get_station_residuals(data_dump)
 
 
-def plot_best_model(search_folder, output_csv):
+def collect_input_models(search_folder, output_csv):
+	target_files = [str(p) for p in Path(search_folder).rglob("*.model")]
+
+	df_list = []
+
+	for file in target_files:
+		df = pd.DataFrame()
+
+		p_flag = False
+		s_flag = False
+
+		with open(file, "r") as f:
+			data = f.read().split("\n")
+
+		data = [[y for y in x.split(" ") if len(y)] for x in data]
+
+		for x in data:
+			if "P" in x:
+				p_flag = True
+			elif "S" in x:
+				p_flag = False
+				s_flag = True
+
+			if p_flag:
+				df.at[float(x[1]), "v_p"] = float(x[0])
+				df.at[float(x[1]), "source"] = file
+			if s_flag:
+				df.at[float(x[1]), "v_s"] = float(x[0])
+			
+		df_list.append(df)
+
+	odf = pd.concat(df_list)
+	odf.index.name = "depth"
+
+	odf.to_csv(output_csv)
+
+
+
+def collect_output_models(search_folder, output_csv):
 	# search_folder = "imported_figures/velest_test_output"
 	target_files = [str(p) for p in Path(search_folder).rglob("*.output")]
 
 	models = []
 	rms = [] 	
-
-	def get_xy(original):
-		o_x = []
-		o_y = []
-
-		for index, row in original.iterrows():
-			print(row)
-			if (not index == 0) and (not index == len(original) - 1):
-				o_x.append(original.at[index - 1, "v_p"])
-				o_y.append(original.at[index, "depth"])
-			
-			o_x.append(row.v_p)
-			o_y.append(row.depth)
-		return o_x, o_y
 
 	for x in target_files:
 		with open(x, 'r') as f:
@@ -415,15 +439,16 @@ def plot_best_model(search_folder, output_csv):
 
 
 if __name__ == "__main__":
-	# main()
-	# parse_full_output("imported_figures/all_rereal_1/all_rereal.output")
-	# parse_full_output("imported_figures/all_rereal_2/all_rereal.output")
-	# parse_full_output("imported_figures/all_rereal_3/all_rereal.output")
-	# parse_full_output("imported_figures/all_rereal_4/all_rereal.output")
-	# # file_path = "imported_figures/all_rereal_1/all_rereal.output"
 	a = ap.ArgumentParser()
 	a.add_argument("search_folder")
 	a.add_argument("output_csv")
-	
+	a.add_argument("-im", "--input_model", action = "store_true")
+	a.add_argument("-om", "--output_model", action = "store_true")
+
 	args = a.parse_args()
-	plot_best_model(args.search_folder, args.output_csv)
+
+	if args.input_model ^ args.output_model:
+		if args.input_model:
+			collect_input_models(args.search_folder, args.output_csv)
+		else:
+			collect_output_models(args.search_folder, args.output_csv)
