@@ -78,6 +78,7 @@ def parse_hyp_file(file_path):
 		elif "QML_OriginQuality" in line:
 			event_metadata["RMS"] = float(_x[12])
 			event_metadata["gap"] = float(_x[14])
+			event_metadata["n_phases"] = float(_x[2])
 
 		elif "QML_OriginUncertainty" in line:
 			event_metadata["min_hor_unc"] = float(_x[4])
