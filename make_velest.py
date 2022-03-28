@@ -330,13 +330,14 @@ def generate_at_folder(output_folder, args):
 					if float(data["data"][sta]["P"]) > 0:
 						event_buffer.append(
 							g.write(
-								[_sta, "P", 0, float(data["data"][sta]["P"])]))
+								[_sta, "P", 1, float(data["data"][sta]["P"])])) # the number is the weight, do not touch
+								# what if i used NLL weights??
 
 				if "S" in data["data"][sta]:
 					if float(data["data"][sta]["S"]) > 0:
 						event_buffer.append(
 							g.write(
-								[_sta, "S", 0, float(data["data"][sta]["S"])]))
+								[_sta, "S", 1, float(data["data"][sta]["S"])])) # the number is the weight, do not touch
 
 			cut_off = 150
 			if len(event_buffer) > cut_off:

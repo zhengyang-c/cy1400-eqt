@@ -363,7 +363,6 @@ def collect_input_models(search_folder, output_csv):
 		data = [[y for y in x.split(" ") if len(y)] for x in data]
 
 		for x in data:
-			print(x)
 			if "P" in x:
 				p_flag = True
 			elif "S" in x:
