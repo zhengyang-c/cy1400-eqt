@@ -305,7 +305,7 @@ def generate_at_folder(output_folder, args):
 			event_buffer = []
 			data = phase_json[e]
 			header_str = h.write([
-				int(data["year"][2:4]),
+				int(str(data["year"])[2:4]),
 				int(data["month"]),
 				int(data["day"]),
 				int(data["hour"]),
