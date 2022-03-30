@@ -164,11 +164,13 @@ def check_mapping(phase_dict, remap_file):
 def generate_phase_file(phase_json, bootstrap_factor, output_file):
 
 	event_ids = list(phase_json.keys())
+	if bootstrap_factor == 1.0:
+		bootstrap = event_ids
+	else:
+		n_events = int( bootstrap_factor * len(event_ids))
 
-	n_events = int( bootstrap_factor * len(event_ids))
-
-	bootstrap = random.sample(event_ids, n_events )
-	print(len(bootstrap))
+		bootstrap = random.sample(event_ids, n_events )
+		print(len(bootstrap))
 
 	output_str = ""
 
