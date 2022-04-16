@@ -229,11 +229,12 @@ def w_phase_from_json(phase_data, params):
 			os.makedirs(target_folder)
 
 		with open(os.path.join(target_folder, params["obs_file"]), "w") as f:
+			print("opening {}".format(os.path.join(target_folder, params["obs_file"])))
 			for sta in phase_data[event_id]["data"]:
-				if "station_P" in phase_data[event_id]["data"][sta]:
+				if "P" in phase_data[event_id]["data"][sta]:
 					ts = phase_data[event_id]["data"][sta]["station_P"]
 					f.write(write_ts(ts, "P", sta, params["p_err"]))
-				if "station_S" in phase_data[event_id]["data"][sta]:
+				if "S" in phase_data[event_id]["data"][sta]:
 					ts = phase_data[event_id]["data"][sta]["station_S"]
 					f.write(write_ts(ts, "S", sta, params["s_err"]))
 
