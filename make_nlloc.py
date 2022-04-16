@@ -137,8 +137,20 @@ def w_nll_input(params, phase_type, loc_dir, target_phase_file, target_nll_ctrl)
 		f_nll.write('VGGRID {}\n'.format(params["VGGRID"]))
 
 		with open(params["vel_file"] , 'r') as f_vel:
+
+			if "csv" in params["vel_file"]:
+				vf = pd.read_csv(params["vel_file"])
+				vf = vf.sort_values("depth", inplace = True)
+				for index, row in vf.iterrows():
+					f_nll.write('LAYER {:6.2f} {:6.3f} 0.00 {:6.3f} 0.00 {:5.2f} 0.00\n'.format(
+						row.depth,
+						row.v_p,
+						row.v_s,
+						3.0
+					))
+
 			
-			if params["vel_type"] == 1:
+			elif params["vel_type"] == 1:
 				for line in f_vel:
 					if len(line) > 0:
 						depth_top, vp, vs, pho = line.strip().split()
@@ -151,6 +163,7 @@ def w_nll_input(params, phase_type, loc_dir, target_phase_file, target_nll_ctrl)
 					f_nll.write('LAYER {:6.2f} {:6.3f} 0.00 {:6.3f} 0.00 {:5.2f} 0.00\n'.format(
 						float(depth_top), float(vp), float(vs), float(pho) ) )
 					dep_top += thk
+			
 
 		f_nll.write('\n')
 

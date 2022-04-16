@@ -443,7 +443,6 @@ def collect_output_models(search_folder, output_csv):
 # besides the velocity model is suspect because of some of the residuals
 
 
-
 if __name__ == "__main__":
 	a = ap.ArgumentParser()
 	a.add_argument("search_folder")
