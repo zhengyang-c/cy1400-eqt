@@ -140,7 +140,7 @@ def w_nll_input(params, phase_type, loc_dir, target_phase_file, target_nll_ctrl)
 
 			if "csv" in params["vel_file"]:
 				vf = pd.read_csv(params["vel_file"])
-				vf = vf.sort_values("depth", inplace = True)
+				vf.sort_values("depth", inplace = True)
 				for index, row in vf.iterrows():
 					f_nll.write('LAYER {:6.2f} {:6.3f} 0.00 {:6.3f} 0.00 {:5.2f} 0.00\n'.format(
 						row.depth,
