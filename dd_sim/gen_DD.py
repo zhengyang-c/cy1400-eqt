@@ -245,8 +245,8 @@ def generate_dd_inp(station_file, output_file, vpvs_ratio = 1.73, vel_model = ""
 	if vel_model:
 		df = pd.read_csv(vel_model) 
 		df = df.iloc[1:, :] # exclude the top negative layer
-		top = vel_model["depth"].tolist()
-		vel = vel_model["v_p"].tolist()
+		top = df["depth"].tolist()
+		vel = df["v_p"].tolist()
 
 		args["VEL"] = vel
 		args["TOP"] = top
