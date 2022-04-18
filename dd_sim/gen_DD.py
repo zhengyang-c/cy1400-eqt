@@ -29,7 +29,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = ""):
+def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = "", vpvs_ratio = 1.73, vel_model = ""):
 
 	if json_file == "":
 		input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
@@ -59,12 +59,12 @@ def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = ""):
 
 	generate_folder_structure(n_bootstrap, paths)
 	generate_runtime_scripts(n_bootstrap, paths)
-	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = bootstrap_fraction)
+	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = bootstrap_fraction, vpvs_ratio=1.73, vel_model = vel_model)
 
 	pbs_writer(n_bootstrap, job_name, paths, walltime_hours=5)
 
 
-def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9):
+def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9, vpvs_ratio = 1.73, vel_model = ""):
 
 	for n in range(n_bootstrap):
 		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"])
@@ -79,7 +79,7 @@ def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_f
 			paths["phase_file_name"],
 			target_file_ph)
 
-		generate_dd_inp(paths["input_station_file"], target_file_dd)
+		generate_dd_inp(paths["input_station_file"], target_file_dd, vpvs_ratio = vpvs_ratio, vel_model = vel_model)
 
 		generate_phase_file(phases, bootstrap_fraction, target_file_pha)
 
@@ -228,7 +228,7 @@ def generate_ph2dt_inp(station_file, phase_file, output_file, args = None):
 	
 
 
-def generate_dd_inp(station_file, output_file, args = None):
+def generate_dd_inp(station_file, output_file, vpvs_ratio = 1.73, vel_model = "", args = None):
 
 	if not args:
 		args = {
@@ -237,10 +237,21 @@ def generate_dd_inp(station_file, output_file, args = None):
 			"WEIGHT": "4 -9 -9 -9 -9 1 1 -9 -9 20\n4 -9 -9 -9 -9 1 1 5 10 20\n",
 			"DAMP": 20,
 			"NLAY":9,
-			"RATIO": 1.73,
+			"RATIO": vpvs_ratio,
 			"TOP": [0.0, 5.0, 10.0, 20.0, 30.0,40.0,50.0,70.0,90.0],
 			"VEL": [5.2, 5.5, 6.0, 6.6, 7.6, 8.0, 8.1, 8.2, 8.2],
 		}
+
+	if vel_model:
+		df = pd.read_csv(vel_model) 
+		df = df.iloc[1:, :] # exclude the top negative layer
+		top = vel_model["depth"].tolist()
+		vel = vel_model["v_p"].tolist()
+
+		args["VEL"] = vel
+		args["TOP"] = top
+		args["NLAY"] = len(top)
+
 
 	output_str = "\ndt.ct\nevent.sel\n{}\nhypoDD.loc\nhypoDD.reloc\nhypoDD.sta\nhypoDD.res\nhypoDD.src\n2 3 200\n0 {}\n2 2 2\n{}{} {}\n{}{}0\n".format(
 		station_file,
@@ -248,8 +259,8 @@ def generate_dd_inp(station_file, output_file, args = None):
 		args["WEIGHT"],
 		args["NLAY"],
 		args["RATIO"],
-		" ".join(["{:.1f}".format(x) for x in args["TOP"]]) + "\n", 
-		" ".join(["{:.1f}".format(x) for x in args["VEL"]]) + "\n", 
+		" ".join(["{:.2f}".format(x) for x in args["TOP"]]) + "\n", 
+		" ".join(["{:.2f}".format(x) for x in args["VEL"]]) + "\n", 
 	)
 
 	print(output_str)
@@ -277,7 +288,9 @@ if __name__ == "__main__":
 	ap.add_argument("n_bootstrap", type = int)
 	ap.add_argument("-f", "--bootstrap_fraction", type = float, default = 0.9)
 	ap.add_argument("-j", "--json_file")
+	ap.add_argument("-v", "--vel_model", help = "Path to velocity model file")
+	ap.add_argument("-vpvs", "--vpvs_ratio", type = float)
 
 	args = ap.parse_args()
 
-	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction, json_file = args.json_file, )
+	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction, json_file = args.json_file, vel_model = args.vel_model, vpvs_ratio = args.vpvs_ratio)
