@@ -29,7 +29,7 @@ def pbs_writer(n_nodes, job_name, paths, n_cores = 1, walltime_hours = 80):
 		else:
 			f.write("{1}/runtime_scripts/{0}/${{PBS_ARRAY_INDEX}}/run.sh\n".format(job_name, paths["pbs_folder"]))
 
-def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = "", vpvs_ratio = 1.73, vel_model = ""):
+def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = "", vpvs_ratio = 1.73, vel_model = "", dd_obsct = 20):
 
 	if json_file == "":
 		input_json_phase_file = "/home/zchoong001/cy1400/cy1400-eqt/real_postprocessing/rereal/patch_all_rereal_events.json"
@@ -59,12 +59,12 @@ def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = "", vpvs_r
 
 	generate_folder_structure(n_bootstrap, paths)
 	generate_runtime_scripts(n_bootstrap, paths)
-	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = bootstrap_fraction, vpvs_ratio=1.73, vel_model = vel_model)
+	generate_runtime_files(n_bootstrap, paths, phases, source_station_file, bootstrap_fraction = bootstrap_fraction, vpvs_ratio=1.73, vel_model = vel_model, dd_obsct = dd_obsct)
 
 	pbs_writer(n_bootstrap, job_name, paths, walltime_hours=5)
 
 
-def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9, vpvs_ratio = 1.73, vel_model = ""):
+def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9, vpvs_ratio = 1.73, vel_model = "", dd_obsct = obsct):
 
 	for n in range(n_bootstrap):
 		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"])
@@ -79,7 +79,7 @@ def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_f
 			paths["phase_file_name"],
 			target_file_ph)
 
-		generate_dd_inp(paths["input_station_file"], target_file_dd, vpvs_ratio = vpvs_ratio, vel_model = vel_model)
+		generate_dd_inp(paths["input_station_file"], target_file_dd, vpvs_ratio = vpvs_ratio, vel_model = vel_model, dd_obsct = dd_obsct)
 
 		generate_phase_file(phases, bootstrap_fraction, target_file_pha)
 
@@ -228,11 +228,11 @@ def generate_ph2dt_inp(station_file, phase_file, output_file, args = None):
 	
 
 
-def generate_dd_inp(station_file, output_file, vpvs_ratio = 1.73, vel_model = "", args = None):
+def generate_dd_inp(station_file, output_file, vpvs_ratio = 1.73, vel_model = "", dd_obsct = 20, args = None):
 
 	if not args:
 		args = {
-			"OBSCT": 20,
+			"OBSCT": dd_obsct,
 			"NITER": 4,
 			"WEIGHT": "4 -9 -9 -9 -9 1 1 -9 -9 20\n4 -9 -9 -9 -9 1 1 5 10 20\n",
 			"DAMP": 20,
@@ -290,7 +290,8 @@ if __name__ == "__main__":
 	ap.add_argument("-j", "--json_file")
 	ap.add_argument("-v", "--vel_model", help = "Path to velocity model file")
 	ap.add_argument("-vpvs", "--vpvs_ratio", type = float)
+	ap.add_argument("-obsct", "--obsct", type = int, help = "set obsct directly", default = 20)
 
 	args = ap.parse_args()
 
-	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction, json_file = args.json_file, vel_model = args.vel_model, vpvs_ratio = args.vpvs_ratio)
+	main(args.job_name, args.n_bootstrap, bootstrap_fraction = args.bootstrap_fraction, json_file = args.json_file, vel_model = args.vel_model, vpvs_ratio = args.vpvs_ratio, dd_obsct = args.obsct)
