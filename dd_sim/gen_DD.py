@@ -64,7 +64,7 @@ def main(job_name, n_bootstrap, bootstrap_fraction = 0.9, json_file = "", vpvs_r
 	pbs_writer(n_bootstrap, job_name, paths, walltime_hours=5)
 
 
-def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9, vpvs_ratio = 1.73, vel_model = "", dd_obsct = obsct):
+def generate_runtime_files(n_bootstrap, paths, phases, station_file, bootstrap_fraction = 0.9, vpvs_ratio = 1.73, vel_model = "", dd_obsct = 20):
 
 	for n in range(n_bootstrap):
 		target_folder = os.path.join(paths["pbs_folder"], paths["job_name"])
