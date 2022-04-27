@@ -14,18 +14,22 @@ import pandas as pd
 import argparse as ap
 import fortranformat as ff
 from pathlib import Path
+import os
 
-def main():
+def main(search_folder, output_csv, do_after = True, output_json = ""):
 
 	velest_hypo = {}
 
 	# hypo_file = "velest/test2/test.hypo"
 	# output_file = "velest/test2/test.output"
 	# id_file = "velest/test2/test.id"
+	
+	file_list = os.listdir(search_folder)
+	output_location_file = os.path.join(search_folder, [x for x in file_list if ".hypo" in x][0])
+	input_location_file = os.path.join(search_folder, [x for x in file_list if ".events" in x][0])
+	id_file = os.path.join(search_folder, [x for x in file_list if ".id" in x][0])
 
-	hypo_file = "velest/all_rereal/all_rereal.hypo"
-	output_file = "velest/all_rereal/all_rereal.output"
-	id_file = "velest/all_rereal/all_rereal.id"
+	df = pd.DataFrame()
 
 	def parse_header(x):
 		
@@ -40,9 +44,14 @@ def main():
 			"lon":float(x[27:35].strip()),
 			"depth":float(x[36:43].strip()),
 			"mag": float(x[44:50].strip()),
-			"un1": float(x[50:57].strip()),
-			"res": float(x[58:67].strip()),
 		}
+
+		# catch for input hypo files
+		try:
+			metadata["un1"] = float(x[50:57].strip())
+			metadata["res"] =  float(x[58:67].strip())
+		except:
+			pass
 
 		return metadata
 
@@ -51,12 +60,12 @@ def main():
 		_phases = []
 
 		while len(x) > 12:
-			slice = x[:12]
-			if len(slice) < 12:
+			_slice = x[:12]
+			if len(_slice.strip()) == 0:
 				break
-			_sta = slice[0:4]
-			_phase = slice[4]
-			_dt = slice[8:12]
+			_sta = _slice[0:4]
+			_phase = _slice[4]
+			_dt = _slice[8:12]
 			_phases.append((_sta, _phase, float(_dt.strip())))
 			x = x[12:]
 
@@ -72,6 +81,11 @@ def main():
 	start = True
 	event_counter = 0
 	phase_buffer = []
+
+	if do_after:
+		hypo_file = output_location_file 
+	else:
+		hypo_file = input_location_file 
 
 	with open(hypo_file, "r") as f:
 		for line in f:
@@ -116,98 +130,21 @@ def main():
 				inject[p[0]][p[1]] = p[2]
 
 		velest_hypo[event]["data"] = inject
+
+	for c, event in enumerate(velest_hypo):
+		df.at[c, "ID"] = int(event)
+		df.at[c,"LAT"] = velest_hypo[event]["lat"]
+		df.at[c,"LON"] = velest_hypo[event]["lon"]
+		df.at[c,"DEPTH"] = velest_hypo[event]["depth"]
+
+		# the origin time information is kinda.. optional... and not needed
+
+	df.to_csv(output_csv, index = False)
+
 	
-	with open("csi/test_velest_output.json", "w") as f:
-		json.dump(velest_hypo, f, indent = 4)
-
-	with open(output_file, "r") as f:
-		output_text_dump = f.read().split("\n")
-
-	read_flag = False
-	stats_flag = False
-
-	vel_model_text = []
-	stat_text = []
-
-	stats = {}
-	vel_model = pd.DataFrame()
-
-	for line in output_text_dump:
-		if "nlay   top" in line:
-			read_flag = True
-			continue
-		
-		if read_flag:
-			if len(line) < 2:
-				continue
-			if 'Total' in line:
-				stats_flag = True
-			if stats_flag:
-				stat_text.append(line)
-			else:
-				vel_model_text.append(line)
-
-			if "Average  vertical  ray length" in line:
-				break
-
-	# print(vel_model)
-	# print(stats)
-
-	plot_x = []
-	plot_y = []
-
-	for c, line in enumerate(vel_model_text):
-		_data = [x.strip() for x in line.split(" ") if len(x) != 0]
-
-		if float(_data[4]) == 0:
-			break
-
-		vel_model.at[c, "top"] = float(_data[1][:-3])
-
-		vel_model.at[c, "bottom"] = float(_data[2])
-		plot_y.extend([float(_data[1][:-3]), float(_data[2])])
-		vel_model.at[c, "p_vel"] = float(_data[4]) 
-		plot_x.extend([float(_data[4]), float(_data[4])])
-		vel_model.at[c, "n_hyp"] = float(_data[6])
-		try:
-			vel_model.at[c, "n_ref"] = float(_data[7])
-		except:
-			vel_model.at[c, "n_ref"] = np.nan
-		try:
-			vel_model.at[c, "n_hit"] = float(_data[9]) 
-		except:
-			vel_model.at[c, "n_hit"] = np.nan 
-		vel_model.at[c, "xy_km"] = float(_data[10]) 
-		vel_model.at[c, "z_km"] = float(_data[11]) 
-
-	print(vel_model)
-
-	plt.plot(plot_x, plot_y, "r-", label = "after VELEST")
-
-	original = pd.read_csv("velest/vel.mod", delim_whitespace=True)
-	print(original)
-
-	o_x = []
-	o_y = []
-
-	for index, row in original.iterrows():
-		if (not index == 0) and (not index == len(original) - 1):
-			o_x.append(original.at[index - 1, "p_vel"])
-			o_y.append(original.at[index, "depth"])
-		
-		o_x.append(row.p_vel)
-		o_y.append(row.depth)
-
-	plt.plot(o_x, o_y, "b-", label = "input model")
-
-	plt.legend()
-	plt.xlabel("P velocity [km/s]")
-	plt.ylabel("Depth [km]")
-	plt.ylim(0,40)
-	plt.gca().invert_yaxis()
-	plt.tick_params(axis='x', which='both', labeltop='on', labelbottom='on')
-	plt.show()
-
+	if output_json:
+		with open(output_json, "w") as f:
+			json.dump(velest_hypo, f, indent = 4)
 
 def parse_full_output(file_path):
 
@@ -395,6 +332,7 @@ def collect_output_models(search_folder, output_csv):
 	target_files = [str(p) for p in Path(search_folder).rglob("*.output")]
 
 	models = []
+	sources = []
 	rms = [] 	
 
 	for x in target_files:
@@ -405,12 +343,14 @@ def collect_output_models(search_folder, output_csv):
 				_model["rms"] = _rms
 				_model["n_iter"] = _n_iter
 				models.append(_model)
+				sources.append(x)
 				rms.append(_rms)
 			except:
 				continue
 
 	best = np.argmin(rms)
 	print("best residual: {}".format(rms[best]))
+	print("best source: {}".format(sources[best]))
 
 	df = pd.concat(models)
 
@@ -446,14 +386,19 @@ def collect_output_models(search_folder, output_csv):
 if __name__ == "__main__":
 	a = ap.ArgumentParser()
 	a.add_argument("search_folder")
-	a.add_argument("output_csv")
+	a.add_argument("output_file")
+	a.add_argument("-bef", "--before", action = "store_true")
+	a.add_argument("-aft", "--after", action = "store_true")
+	a.add_argument("--output_phases", help = "Path to output json file")
 	a.add_argument("-im", "--input_model", action = "store_true")
 	a.add_argument("-om", "--output_model", action = "store_true")
 
 	args = a.parse_args()
 
-	if args.input_model ^ args.output_model:
+	if args.before ^ args.after:
+		main(args.search_folder, args.output_file, do_after = args.after, output_json = args.output_phases)
+	elif args.input_model ^ args.output_model:
 		if args.input_model:
-			collect_input_models(args.search_folder, args.output_csv)
+			collect_input_models(args.search_folder, args.output_file)
 		else:
-			collect_output_models(args.search_folder, args.output_csv)
+			collect_output_models(args.search_folder, args.output_file)
