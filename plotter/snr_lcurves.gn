@@ -1,0 +1,61 @@
+set key autotitle columnhead
+
+set datafile separator ","
+
+set macros
+
+POS = "right at graph 0.95,0.9 font ',6'"
+TMARGIN = "set tmargin at screen 0.95; set bmargin at screen 0.55"
+BMARGIN = "set tmargin at screen 0.45; set bmargin at screen 0.1"
+LMARGIN = "set lmargin at screen 0.05; set rmargin at screen 0.45"
+RMARGIN = "set lmargin at screen 0.55; set rmargin at screen 0.95"
+# taken from http://www.gnuplotting.org/tag/multiplot/
+
+
+YTICS = "set ytics font ',4'; set xtics font ',4' ;set y2tics font ',4'"
+
+
+set term pdf font "Helvetica, 12" size 8.6cm,6cm
+
+
+#plot_file="/home/zy/cy1400-eqt/plot_data/21mar_recomputeredsnr.csv"
+#output_file="/home/zy/cy1400-eqt/plots/21may_snr_lcurves_ampsq.pdf"
+plot_file = "../plot_data/16apr_22marmodel_snr.csv"
+output_file = "../plots/16apr_merged1e-6-22marmodel_snrlcurve_percentile.pdf"
+
+set output output_file
+
+set key off
+
+set multiplot layout 2,2 rowsfirst
+
+set xtics offset 0,graph 0.05
+
+@TMARGIN; @LMARGIN
+
+set label 1 'P SNR' @POS # P snr
+@YTICS
+set ytics nomirror
+set xtics nomirror
+
+plot plot_file u 1:3 w p pt 7 ps 0.2 lc rgb "blue" title "Precision" axis x1y2, '' u 1:2 w p pt 7 ps 0.2 lc rgb "black" title "No. of good picks" axis x1y1
+
+@TMARGIN; @RMARGIN
+set label 1 'S SNR' @POS # s snr
+
+plot plot_file u 4:6 w p pt 7 ps 0.2 lc rgb "blue" title "Precision" axis x1y2, '' u 4:5 w p pt 7 ps 0.2 lc rgb "black" title "No. of good picks" axis x1y1
+
+
+@BMARGIN; @LMARGIN
+set label 1 'P SNR, A50' @POS # p snr agreement 50
+plot plot_file u 7:9 w p pt 7 ps 0.2 lc rgb "blue" title "Precision" axis x1y2, '' u 7:8 w p pt 7 ps 0.2 lc rgb "black" title "No. of good picks" axis x1y1
+
+
+@BMARGIN; @RMARGIN
+set label 1 'S SNR, A50' @POS # s snr agreement 50
+
+set key at 4,-45 font ",6" box 3 
+
+plot plot_file u 10:12 w p pt 7 ps 0.2 lc rgb "blue" title "Precision" axis x1y2, '' u 10:11 w p pt 7 ps 0.2 lc rgb "black" title "No. of good picks" axis x1y1
+unset multiplot
+

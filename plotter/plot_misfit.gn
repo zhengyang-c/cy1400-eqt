@@ -1,0 +1,13 @@
+set term pdf font "Helvetica, 12" 
+
+outputfile=ARG1
+plotfile=ARG2
+
+set output outputfile
+set style fill solid
+set boxwidth 0.5
+
+set title "Absolute misfits |t_{syn} - t_{obs}| for best location [s]"
+
+set xtics font ",6"
+plot plotfile u 1:3:xtic(2) w boxes notitle lc rgb "red"
